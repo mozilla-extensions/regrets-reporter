@@ -1,0 +1,14 @@
+# do not lint/format generated artifacts
+test/results/coverage/
+dist/
+package-lock.json
+src/content.js
+src/feature.js
+# makes sure that eslintrc.js gets linted/formatted
+!.eslintrc.js
+# don't lint/format code the directory where get-firefox stores the Firefox binaries
+/firefox-*
+# don't lint/format package.json since npm install formats it differently by default
+package.json
+# don't lint node_modules
+node_modules
