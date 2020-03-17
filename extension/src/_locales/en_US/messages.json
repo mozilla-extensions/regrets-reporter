@@ -6,5 +6,13 @@
   "extensionDescription": {
     "message": "YouTube Regrets Reporter",
     "description": "Description of the extension."
+  },
+  "pageActionButtonTitle": {
+    "message": "Report YouTube Regret",
+    "description": "The page action button title."
+  },
+  "browserActionButtonTitle": {
+    "message": "Download Collected YouTube Regrets Data",
+    "description": "The browser action button title."
   }
 }

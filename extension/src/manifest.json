@@ -28,6 +28,13 @@
     "alarms",
     "tabs"
   ],
-  "icons": {
+  "icons": {},
+  "page_action": {
+    "browser_style": true,
+    "default_title": "__MSG_pageActionButtonTitle__"
+  },
+  "browser_action": {
+    "browser_style": true,
+    "default_title": "__MSG_browserActionButtonTitle__"
   }
 }

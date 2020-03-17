@@ -24,6 +24,50 @@ class Feature {
   async configure() {
     const feature = this;
 
+    browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      if (
+        tab.url.match(
+          /:\/\/[^\/]*\.?(youtube.com|youtu.be|youtube-nocookies.com)/,
+        )
+      ) {
+        browser.pageAction.show(tab.id);
+      } else {
+        browser.pageAction.hide(tab.id);
+      }
+    });
+
+    const exportSeenTelementry = async () => {
+      console.debug("Exporting seen events");
+      const { seenEvents } = await browser.storage.local.get("seenEvents");
+      const json = JSON.stringify(seenEvents);
+      const blob = new Blob([json], {
+        type: "application/json;charset=utf-8",
+      });
+      console.debug("foo");
+      await browser.downloads.download({
+        url: URL.createObjectURL(blob),
+        filename: "seenEvents.json",
+      });
+    };
+
+    browser.browserAction.onClicked.addListener(exportSeenTelementry);
+
+    // tmp code
+    const reportRegret = async () => {
+      const regretEvent = { regret: "foo" };
+
+      const { seenEvents } = await browser.storage.local.get("seenEvents");
+      if (seenEvents) {
+        seenEvents.push(regretEvent);
+        await browser.storage.local.set({ seenEvents });
+      } else {
+        await browser.storage.local.set({ seenEvents: [regretEvent] });
+      }
+      console.log("Regret reported");
+    };
+
+    browser.pageAction.onClicked.addListener(reportRegret);
+
     // Start OpenWPM instrumentation
     const openwpmConfig = {
       navigation_instrument: true,
@@ -34,25 +78,6 @@ class Feature {
       crawl_id: 0,
     };
     await this.startOpenWPMInstrumentation(openwpmConfig);
-
-    // Start Pioneer telemetry export helper
-    /*
-      console.debug("Will export seen telemetry in 10s");
-      const exportSeenTelementry = async () => {
-        console.debug("Exporting seen telemetry");
-        const json = JSON.stringify(internals.seenTelemetry);
-        const blob = new Blob([json], {
-          type: "application/json;charset=utf-8",
-        });
-        console.debug("foo");
-        browser.downloads.download({
-          url: URL.createObjectURL(blob),
-          filename: "seenTelemetry.json",
-        });
-      };
-      // TODO: onNavigation to specific url instead of setTimeout
-      setTimeout(exportSeenTelementry, 1000 * 10);
-    */
   }
 
   async startOpenWPMInstrumentation(config) {

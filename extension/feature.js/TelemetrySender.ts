@@ -332,6 +332,18 @@ export class TelemetrySender {
       "acceptablySizedReadyForSending",
       acceptablySizedReadyForSending,
     );
+    const { seenEvents } = await browser.storage.local.get("seenEvents");
+    if (seenEvents) {
+      console.log("existing", { seenEvents });
+      seenEvents.push(acceptablySizedReadyForSending);
+      await browser.storage.local.set({ seenEvents });
+    } else {
+      await browser.storage.local.set({
+        seenEvents: [acceptablySizedReadyForSending],
+      });
+    }
+    console.log("Event stored");
+
     // return browser.study.sendTelemetry(acceptablySizedReadyForSending);
   }
 }
