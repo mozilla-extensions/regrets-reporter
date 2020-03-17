@@ -207,11 +207,6 @@
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.11.tgz#d3614d6c5f500142358e6ed24e1bf16657536c50"
   integrity sha512-t7uW6eFafjO+qJ3BIV2gGUyZs27egcNRkUdalkud+Qa3+kg//f129iuOFivHDXQ+vnU3fDXuwgv0cqMCbcE8sw==
 
-"@types/firefox-webext-browser@^63.0.0":
-  version "63.0.2"
-  resolved "https://registry.yarnpkg.com/@types/firefox-webext-browser/-/firefox-webext-browser-63.0.2.tgz#2fa10510928a5a7d4a9352eb5544d40e5e26c4f5"
-  integrity sha512-vQvFaCgnHJSbo8ccR++HLf91+seSHSfHFaRJtwE80G6HWro+foY9+XlgC5vgtSrM5Qc6thnqMpywVB5+6GIz9g==
-
 "@types/minimatch@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -10183,6 +10178,18 @@ web-ext@^3.2.1:
     ws "7.1.2"
     yargs "13.3.0"
     zip-dir "1.0.2"
+
+webextension-polyfill-ts@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/webextension-polyfill-ts/-/webextension-polyfill-ts-0.13.0.tgz#2a55837fd626736758523cdae6c10ac8b6684edc"
+  integrity sha512-L5kCTh0koc/F8QYgIowr6009oR1QXqQPJbball8xs7Ltmv7ORfda95OEozTmCHLyrb1ZKSjCFofrvzlrLHKrkg==
+  dependencies:
+    webextension-polyfill "^0.6.0"
+
+webextension-polyfill@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/webextension-polyfill/-/webextension-polyfill-0.6.0.tgz#1afd925f3274a0d4848083579b9c0b649a5c6763"
+  integrity sha512-PlYwiX8e4bNZrEeBFxbFFsLtm0SMPxJliLTGdNCA0Bq2XkWrAn2ejUd+89vZm+8BnfFB1BclJyCz3iKsm2atNg==
 
 webidl-conversions@^4.0.2:
   version "4.0.2"
