@@ -3,10 +3,7 @@
 
 ("use strict");
 
-declare namespace browser.downloads {
-  function download(options: any): any;
-}
-
+import { browser } from "webextension-polyfill-ts";
 import * as dataReceiver from "./dataReceiver";
 import {
   CookieInstrument,

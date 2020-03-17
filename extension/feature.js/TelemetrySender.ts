@@ -9,6 +9,7 @@ import {
   TrimmedNavigationBatch,
 } from "./StudyPayloadPreprocessor";
 import { escapeString } from "@openwpm/webext-instrumentation";
+import { browser } from "webextension-polyfill-ts";
 
 export const thresholdSize = 1024 * 500;
 
