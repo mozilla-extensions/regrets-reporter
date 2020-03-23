@@ -24,6 +24,9 @@ class Feature {
   async configure() {
     const feature = this;
 
+    // TODO: "Client ID"
+    // For A1: A unique identifier of the user or browser such as telemetry client_id is sent with each report.
+
     browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (
         tab.url.match(

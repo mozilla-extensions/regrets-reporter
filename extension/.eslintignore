@@ -4,6 +4,7 @@ dist/
 package-lock.json
 src/content.js
 src/feature.js
+src/report.js
 # don't lint third party resources
 src/popup/photon-components-web.css
 src/popup/tailwind.min.css
