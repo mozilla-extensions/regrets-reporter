@@ -32,7 +32,7 @@ export class ReportRegretForm extends React.Component<
               height="32"
             />
           </div>
-          <div className="text-section-header">Report Regret</div>
+          <div className="text-section-header">Report a "YouTube Regret" to Mozilla</div>
         </header>
 
         {/*
