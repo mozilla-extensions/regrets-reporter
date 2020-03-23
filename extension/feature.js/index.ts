@@ -27,7 +27,7 @@ class Feature {
     browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (
         tab.url.match(
-          /:\/\/[^\/]*\.?(youtube.com|youtu.be|youtube-nocookies.com)/,
+          /:\/\/[^\/]*\.?(youtube.com|youtu.be|youtube-nocookies.com)\/watch/,
         )
       ) {
         browser.pageAction.show(tab.id);
