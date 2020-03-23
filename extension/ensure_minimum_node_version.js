@@ -1,7 +1,7 @@
 /* eslint-env node */
 
 const semver = require("semver");
-const requiredNodeEngineVersion = require("../package.json").engines.node;
+const requiredNodeEngineVersion = require("./package.json").engines.node;
 const currentNodeEngineVersion = process.versions.node;
 if (!semver.satisfies(currentNodeEngineVersion, requiredNodeEngineVersion)) {
   console.error(
