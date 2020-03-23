@@ -71,7 +71,7 @@ class Feature {
     // Start OpenWPM instrumentation
     const openwpmConfig = {
       navigation_instrument: true,
-      cookie_instrument: true,
+      cookie_instrument: false,
       js_instrument: false,
       http_instrument: true,
       save_content: false,
