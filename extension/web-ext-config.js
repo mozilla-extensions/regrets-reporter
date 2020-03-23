@@ -12,7 +12,10 @@ const defaultConfig = {
   run: {
     firefox: process.env.FIREFOX_BINARY || "firefoxdeveloperedition",
     browserConsole: true,
-    startUrl: ["about:debugging#/runtime/this-firefox"],
+    startUrl: [
+      "about:debugging#/runtime/this-firefox",
+      "https://www.youtube.com/watch?v=g4mHPeMGTJM",
+    ],
     pref: ["browser.ctrlTab.recentlyUsedOrder=false"],
   },
 };
