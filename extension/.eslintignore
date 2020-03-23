@@ -4,6 +4,9 @@ dist/
 package-lock.json
 src/content.js
 src/feature.js
+# don't lint third party resources
+src/popup/photon-components-web.css
+src/popup/tailwind.min.css
 # makes sure that eslintrc.js gets linted/formatted
 !.eslintrc.js
 # don't lint/format code the directory where get-firefox stores the Firefox binaries

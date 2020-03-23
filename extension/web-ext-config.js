@@ -13,10 +13,7 @@ const defaultConfig = {
     firefox: process.env.FIREFOX_BINARY || "firefoxdeveloperedition",
     browserConsole: true,
     startUrl: ["about:debugging#/runtime/this-firefox"],
-    pref: [
-      "shieldStudy.logLevel=All",
-      "browser.ctrlTab.recentlyUsedOrder=false",
-    ],
+    pref: ["browser.ctrlTab.recentlyUsedOrder=false"],
   },
 };
 
