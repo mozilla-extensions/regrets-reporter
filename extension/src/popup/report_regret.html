@@ -18,9 +18,41 @@
     <div class="text-section-header">Report Regret</div>
   </header>
 
+  <!--
+  <div class="panel-section-separator"></div>
+
   <div class="panel-section panel-section-formElements">
     <div class="panel-formElements-item">
-      <strong>I wish that YouTube had not recommended me to watch this video:</strong>
+      <strong>Choose the video that altered your recommendations for the worse:</strong>
+    </div>
+  </div>
+
+  <div class="panel-section panel-section-list">
+
+    <div class="panel-list-item">
+      <div class="icon"></div>
+      <div class="text">List Item</div>
+      <div class="text-shortcut">13:12</div>
+    </div>
+
+    <div class="panel-list-item">
+      <div class="icon"></div>
+      <div class="text">List Item</div>
+      <div class="text-shortcut">foo</div>
+    </div>
+
+    <div class="panel-list-item">
+      <div class="icon"></div>
+      <div class="text">List Item</div>
+      <div class="text-shortcut">bar</div>
+    </div>
+
+  </div>
+  -->
+
+  <div class="panel-section panel-section-formElements">
+    <div class="panel-formElements-item">
+      <strong>I regret watching this video:</strong>
     </div>
   </div>
 
@@ -55,37 +87,37 @@
         <div class="panel-section panel-section-formElements">
           <div class="panel-formElements-item mb-6">
             <div>
-              <p><span class="input__label mb-3">Category (optional)</span></p>
+              <p><span class="input__label mb-3">Why do you regret watching the video?<!--How were your recommendations affected?--></span></p>
               <ul class="list-none">
                 <li class="mb-2">
                   <label class="radio__label">
-                    <input type="radio" class="radio" name="user_supplied_video_content_category"
+                    <input type="radio" class="radio" name="user_supplied_regret_category"
                            value="conspiracy-theory"/>
                     <span class="radio__label__text">Conspiracy theory</span>
                   </label>
                 </li>
                 <li class="mb-2">
                   <label class="radio__label">
-                    <input type="radio" class="radio" name="user_supplied_video_content_category" value="hate-speech"/>
+                    <input type="radio" class="radio" name="user_supplied_regret_category" value="hate-speech"/>
                     <span class="radio__label__text">Hate speech</span>
                   </label>
                 </li>
                 <li class="mb-2">
                   <label class="radio__label">
-                    <input type="radio" class="radio" name="user_supplied_video_content_category"
+                    <input type="radio" class="radio" name="user_supplied_regret_category"
                            value="misinformation"/>
                     <span class="radio__label__text">Misinformation</span>
                   </label>
                 </li>
                 <li class="mb-2">
                   <label class="radio__label">
-                    <input type="radio" class="radio" name="user_supplied_video_content_category" value="violence"/>
+                    <input type="radio" class="radio" name="user_supplied_regret_category" value="violence"/>
                     <span class="radio__label__text">Violence</span>
                   </label>
                 </li>
                 <li class="mb-2">
                   <label class="radio__label">
-                    <input type="radio" class="radio" name="user_supplied_video_content_category" value="other"/>
+                    <input type="radio" class="radio" name="user_supplied_regret_category" value="other"/>
                     <span class="radio__label__text">Other</span>
                   </label>
                 </li>
@@ -106,8 +138,10 @@
           -->
           <div class="panel-formElements-item mb-8">
             <div class="w-full">
-              <label for="user_supplied_comment" class="input__label mb-3" style="text-align: left;">Comment
-                (optional)</label>
+              <!--
+              <label for="user_supplied_comment" class="input__label mb-3" style="text-align: left;">How were your recommendations affected?</label>
+              -->
+              <label for="user_supplied_comment" class="input__label mb-3" style="text-align: left;">Comment (optional)</label>
               <input type="text" class="input__field w-full" id="user_supplied_comment" name="user_supplied_comment"
                      value=""
                      placeholder="This is a placeholder"/>
@@ -134,31 +168,6 @@
       </span>
     </div>
   </div>
-
-  <!--
-  <div class="panel-section-separator"></div>
-
-  <div class="panel-section panel-section-list">
-    <div class="panel-list-item">
-      <div class="icon"></div>
-      <div class="text">List Item</div>
-      <div class="text-shortcut">13:12</div>
-    </div>
-
-    <div class="panel-list-item">
-      <div class="icon"></div>
-      <div class="text">List Item</div>
-      <div class="text-shortcut"></div>
-    </div>
-
-    <div class="panel-list-item">
-      <div class="icon"></div>
-      <div class="text">List Item</div>
-      <div class="text-shortcut"></div>
-    </div>
-
-  </div>
-  -->
 
   <div class="panel-section-separator"></div>
 
