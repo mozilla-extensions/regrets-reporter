@@ -1,10 +1,10 @@
 import { assert } from "chai";
-import { StudyPayloadPreprocessor } from "./StudyPayloadPreprocessor";
+import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { TelemetrySender } from "./TelemetrySender";
 
 describe("TelemetrySender", function() {
-  const studyPayloadPreprocessor = new StudyPayloadPreprocessor();
-  const telemetrySender = new TelemetrySender(studyPayloadPreprocessor);
+  const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+  const telemetrySender = new TelemetrySender(navigationBatchPreprocessor);
   it("should exist", function() {
     assert.isNotEmpty(telemetrySender);
   });

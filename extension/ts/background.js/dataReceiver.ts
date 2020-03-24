@@ -1,6 +1,6 @@
 import { humanFileSize } from "./humanFileSize";
 import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
-import { StudyPayloadPreprocessor } from "./StudyPayloadPreprocessor";
+import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { TelemetrySender } from "./TelemetrySender";
 
 // Export active dwell time monitor singleton
@@ -8,10 +8,10 @@ import { TelemetrySender } from "./TelemetrySender";
 export const activeTabDwellTimeMonitor = new ActiveTabDwellTimeMonitor();
 
 // Setup study payload processor singleton
-export const studyPayloadPreprocessor = new StudyPayloadPreprocessor();
+export const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
 
 // Setup telemetry sender singleton
-const telemetrySender = new TelemetrySender(studyPayloadPreprocessor);
+const telemetrySender = new TelemetrySender(navigationBatchPreprocessor);
 
 // To be able to pause and resume data collection
 let active = true;

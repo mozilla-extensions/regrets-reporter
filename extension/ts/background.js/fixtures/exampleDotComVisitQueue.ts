@@ -1,4 +1,4 @@
-import { OpenWPMType, StudyPayloadEnvelope } from "../StudyPayloadPreprocessor";
+import { OpenWPMType, StudyPayloadEnvelope } from "../NavigationBatchPreprocessor";
 
 export const exampleDotComVisitQueue: StudyPayloadEnvelope[] = [
   {

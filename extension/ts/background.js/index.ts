@@ -85,7 +85,7 @@ class Feature {
 
   async startOpenWPMInstrumentation(config) {
     dataReceiver.activeTabDwellTimeMonitor.run();
-    dataReceiver.studyPayloadPreprocessor.run();
+    dataReceiver.navigationBatchPreprocessor.run();
     this.openwpmCrawlId = config["crawl_id"];
     if (config["navigation_instrument"]) {
       this.navigationInstrument = new NavigationInstrument(dataReceiver);
@@ -113,8 +113,8 @@ class Feature {
     if (dataReceiver.activeTabDwellTimeMonitor) {
       dataReceiver.activeTabDwellTimeMonitor.cleanup();
     }
-    if (dataReceiver.studyPayloadPreprocessor) {
-      dataReceiver.studyPayloadPreprocessor.cleanup();
+    if (dataReceiver.navigationBatchPreprocessor) {
+      dataReceiver.navigationBatchPreprocessor.cleanup();
     }
   }
 
@@ -123,8 +123,8 @@ class Feature {
     if (dataReceiver.activeTabDwellTimeMonitor) {
       dataReceiver.activeTabDwellTimeMonitor.run();
     }
-    if (dataReceiver.studyPayloadPreprocessor) {
-      dataReceiver.studyPayloadPreprocessor.run();
+    if (dataReceiver.navigationBatchPreprocessor) {
+      dataReceiver.navigationBatchPreprocessor.run();
     }
   }
 
@@ -147,8 +147,8 @@ class Feature {
     if (dataReceiver.activeTabDwellTimeMonitor) {
       dataReceiver.activeTabDwellTimeMonitor.cleanup();
     }
-    if (dataReceiver.studyPayloadPreprocessor) {
-      dataReceiver.studyPayloadPreprocessor.cleanup();
+    if (dataReceiver.navigationBatchPreprocessor) {
+      dataReceiver.navigationBatchPreprocessor.cleanup();
     }
   }
 }

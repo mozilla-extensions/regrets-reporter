@@ -2,26 +2,26 @@ import { assert } from "chai";
 import {
   NavigationBatch,
   StudyPayloadEnvelope,
-  StudyPayloadPreprocessor,
-} from "./StudyPayloadPreprocessor";
+  NavigationBatchPreprocessor,
+} from "./NavigationBatchPreprocessor";
 import { parseIsoDateTimeString } from "./dateUtils";
 import { addSeconds } from "date-fns";
 import { openwpmTestPagesCanvasFingerprintingQueue } from "./fixtures/openwpmTestPagesCanvasFingerprintingQueue";
 import { exampleDotComVisitQueue } from "./fixtures/exampleDotComVisitQueue";
 import { exampleDotComVisitFollowedByMoreInformationLinkClickQueue } from "./fixtures/exampleDotComVisitFollowedByMoreInformationLinkClickQueue";
 
-describe("StudyPayloadPreprocessor", function() {
+describe("NavigationBatchPreprocessor", function() {
   it("should exist", function() {
-    const studyPayloadPreprocessor = new StudyPayloadPreprocessor();
-    assert.isNotEmpty(studyPayloadPreprocessor);
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    assert.isNotEmpty(navigationBatchPreprocessor);
   });
 
   describe("Example.com visit", function() {
-    const studyPayloadPreprocessor = new StudyPayloadPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     exampleDotComVisitQueue.map(
       (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (studyPayloadPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          studyPayloadPreprocessor.queueForProcessing(studyPayloadEnvelope);
+        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
+          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
         }
       },
     );
@@ -34,10 +34,10 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Queue processing 5 seconds after the visit", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 5);
       it("should not yield any navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           0,
         );
       });
@@ -46,18 +46,18 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Queue processing 20 seconds after the visit", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 20);
       it("should yield relevant navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
           0,
         );
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           1,
         );
         const firstNavigationBatch: NavigationBatch =
-          studyPayloadPreprocessor.navigationBatchSendQueue[0];
+          navigationBatchPreprocessor.navigationBatchSendQueue[0];
         assert.equal(firstNavigationBatch.childEnvelopes.length, 4);
         assert.equal(firstNavigationBatch.httpRequestCount, 2);
         assert.equal(firstNavigationBatch.httpResponseCount, 2);
@@ -68,11 +68,11 @@ describe("StudyPayloadPreprocessor", function() {
   });
 
   describe("Example.com visit followed by 'More information' link click", function() {
-    const studyPayloadPreprocessor = new StudyPayloadPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     exampleDotComVisitFollowedByMoreInformationLinkClickQueue.map(
       (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (studyPayloadPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          studyPayloadPreprocessor.queueForProcessing(studyPayloadEnvelope);
+        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
+          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
         }
       },
     );
@@ -91,10 +91,10 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Queue processing 5 seconds after the first visit (around the time of the second visit)", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 5);
       it("should not yield any navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           0,
         );
       });
@@ -103,18 +103,18 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Subsequent queue processing 12 seconds after the visit (around 7 seconds after the second visit)", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 12);
       it("should yield relevant navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
           23,
         );
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           1,
         );
         const firstNavigationBatch: NavigationBatch =
-          studyPayloadPreprocessor.navigationBatchSendQueue[0];
+          navigationBatchPreprocessor.navigationBatchSendQueue[0];
         assert.equal(firstNavigationBatch.childEnvelopes.length, 4);
         const {
           httpRequestCount,
@@ -137,18 +137,18 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Subsequent queue processing 17 seconds after the visit (around 12 seconds after the second visit)", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 17);
       it("should yield relevant navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
           0,
         );
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           1,
         );
         const firstNavigationBatch: NavigationBatch =
-          studyPayloadPreprocessor.navigationBatchSendQueue[0];
+          navigationBatchPreprocessor.navigationBatchSendQueue[0];
         assert.equal(firstNavigationBatch.childEnvelopes.length, 22);
         const {
           httpRequestCount,
@@ -171,14 +171,14 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Subsequent queue processing 25 seconds after the visit (around 20 seconds after the second visit)", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 25);
       it("should not yield any navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
           0,
         );
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           0,
         );
       });
@@ -186,11 +186,11 @@ describe("StudyPayloadPreprocessor", function() {
   });
 
   describe("OpenWPM http://localtest.me:8000/test_pages/canvas_fingerprinting.html", function() {
-    const studyPayloadPreprocessor = new StudyPayloadPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     openwpmTestPagesCanvasFingerprintingQueue.map(
       (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (studyPayloadPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          studyPayloadPreprocessor.queueForProcessing(studyPayloadEnvelope);
+        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
+          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
         }
       },
     );
@@ -203,10 +203,10 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Queue processing 5 seconds after the visit", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 5);
       it("should not yield any navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           0,
         );
       });
@@ -215,18 +215,18 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Queue processing 20 seconds after the visit", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 20);
       it("should yield relevant navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
           0,
         );
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           1,
         );
         const firstNavigationBatch: NavigationBatch =
-          studyPayloadPreprocessor.navigationBatchSendQueue[0];
+          navigationBatchPreprocessor.navigationBatchSendQueue[0];
         assert.equal(firstNavigationBatch.childEnvelopes.length, 15);
         const {
           httpRequestCount,
@@ -256,11 +256,11 @@ describe("StudyPayloadPreprocessor", function() {
     largeOpenwpmTestPagesCanvasFingerprintingQueue[3].javascriptOperation.value = str300kb;
     largeOpenwpmTestPagesCanvasFingerprintingQueue[10].javascriptOperation.value = str300kb;
 
-    const studyPayloadPreprocessor = new StudyPayloadPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     largeOpenwpmTestPagesCanvasFingerprintingQueue.map(
       (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (studyPayloadPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          studyPayloadPreprocessor.queueForProcessing(studyPayloadEnvelope);
+        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
+          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
         }
       },
     );
@@ -273,10 +273,10 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Queue processing 5 seconds after the visit", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 5);
       it("should not yield any navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           0,
         );
       });
@@ -285,18 +285,18 @@ describe("StudyPayloadPreprocessor", function() {
     describe("Queue processing 20 seconds after the visit", function() {
       const nowDateTime = addSeconds(firstVisitDateTime, 20);
       it("should yield relevant navigation batches to send", async function() {
-        studyPayloadPreprocessor.navigationBatchSendQueue = [];
-        await studyPayloadPreprocessor.processQueue(nowDateTime);
+        navigationBatchPreprocessor.navigationBatchSendQueue = [];
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          studyPayloadPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
           0,
         );
         assert.equal(
-          studyPayloadPreprocessor.navigationBatchSendQueue.length,
+          navigationBatchPreprocessor.navigationBatchSendQueue.length,
           1,
         );
         const firstNavigationBatch: NavigationBatch =
-          studyPayloadPreprocessor.navigationBatchSendQueue[0];
+          navigationBatchPreprocessor.navigationBatchSendQueue[0];
         assert.equal(firstNavigationBatch.childEnvelopes.length, 15);
         const {
           httpRequestCount,

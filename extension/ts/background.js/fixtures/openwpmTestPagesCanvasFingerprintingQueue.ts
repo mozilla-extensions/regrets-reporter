@@ -1,4 +1,4 @@
-import { StudyPayloadEnvelope } from "../StudyPayloadPreprocessor";
+import { StudyPayloadEnvelope } from "../NavigationBatchPreprocessor";
 
 export const openwpmTestPagesCanvasFingerprintingQueue: StudyPayloadEnvelope[] = [
   {

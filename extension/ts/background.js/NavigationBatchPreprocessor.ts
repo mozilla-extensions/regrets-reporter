@@ -171,7 +171,7 @@ const removeItemFromArray = (ar, el) => {
   ar.splice(ar.indexOf(el), 1);
 };
 
-export class StudyPayloadPreprocessor {
+export class NavigationBatchPreprocessor {
   public studyPayloadEnvelopeProcessQueue: StudyPayloadEnvelope[] = [];
   public navigationBatchSendQueue: NavigationBatch[] = [];
   public queueForProcessing(studyPayloadEnvelope: StudyPayloadEnvelope) {

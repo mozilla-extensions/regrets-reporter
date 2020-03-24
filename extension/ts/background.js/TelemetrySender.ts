@@ -4,10 +4,10 @@ import {
   OpenWPMType,
   StudyPayloadEnvelope,
   studyPayloadEnvelopeFromOpenWpmTypeAndPayload,
-  StudyPayloadPreprocessor,
+  NavigationBatchPreprocessor,
   StudyTelemetryPacket,
   TrimmedNavigationBatch,
-} from "./StudyPayloadPreprocessor";
+} from "./NavigationBatchPreprocessor";
 import { escapeString } from "@openwpm/webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
 
@@ -35,10 +35,10 @@ export interface StringifiedStudyTelemetryPacket {
 }
 
 export class TelemetrySender {
-  private studyPayloadPreprocessor: StudyPayloadPreprocessor;
-  constructor(studyPayloadPreprocessor: StudyPayloadPreprocessor) {
-    studyPayloadPreprocessor.setTelemetrySender(this);
-    this.studyPayloadPreprocessor = studyPayloadPreprocessor;
+  private navigationBatchPreprocessor: NavigationBatchPreprocessor;
+  constructor(navigationBatchPreprocessor: NavigationBatchPreprocessor) {
+    navigationBatchPreprocessor.setTelemetrySender(this);
+    this.navigationBatchPreprocessor = navigationBatchPreprocessor;
   }
 
   async submitOpenWPMPayload(
@@ -63,8 +63,8 @@ export class TelemetrySender {
   private async queueOrSend(studyPayloadEnvelope: StudyPayloadEnvelope) {
     // Any http or javascript packet with tabId is sent for batching by corresponding navigation
     // or dropped (if no corresponding navigation showed up)
-    if (this.studyPayloadPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-      this.studyPayloadPreprocessor.queueForProcessing(studyPayloadEnvelope);
+    if (this.navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
+      this.navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
       return;
     }
 
