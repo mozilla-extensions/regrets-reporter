@@ -4,7 +4,7 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    feature: "./ts/feature.js/index.ts",
+    background: "./ts/background.js/index.ts",
     content: "./ts/content.js/index.ts",
     report: "./ts/report.js/index.tsx",
   },

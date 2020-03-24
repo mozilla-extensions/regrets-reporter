@@ -1,7 +1,7 @@
 dist/*
 node_modules/
 src/content.js
-src/feature.js
+src/background.js
 src/report.js
 .env
 test/results/coverage

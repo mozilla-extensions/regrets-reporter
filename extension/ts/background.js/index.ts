@@ -21,7 +21,7 @@ class Feature {
 
   constructor() {}
 
-  async configure() {
+  async init() {
     const feature = this;
 
     // TODO: "Client ID"
@@ -154,4 +154,10 @@ class Feature {
 }
 
 // make an instance of the feature class available to background.js
-(window as any).feature = new Feature();
+const feature = (window as any).feature = new Feature();
+
+// init the feature on every extension load
+async function onEveryExtensionLoad() {
+  await feature.init();
+}
+onEveryExtensionLoad();

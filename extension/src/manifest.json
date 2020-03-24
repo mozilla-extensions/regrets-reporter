@@ -12,7 +12,7 @@
   },
   "default_locale": "en-US",
   "background": {
-    "scripts": ["feature.js", "background.js"]
+    "scripts": ["background.js"]
   },
   "content_scripts": [],
   "permissions": [
