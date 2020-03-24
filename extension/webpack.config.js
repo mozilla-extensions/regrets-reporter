@@ -21,6 +21,17 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.svg/,
+        use: {
+          loader: "svg-url-loader",
+          options: {},
+        },
+      },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {
         enforce: "pre",

@@ -1,4 +1,11 @@
 import React, { MouseEvent } from "react";
+import "photon-colors/photon-colors.css";
+import "./photon-components-web/index.css";
+import "./photon-components-web/attributes";
+import Input from "./photon-components-web/photon-components/Input";
+import Radio from "./photon-components-web/photon-components/Radio";
+import Checkbox from "./photon-components-web/photon-components/Checkbox";
+import Link from "./photon-components-web/photon-components/Link";
 
 export interface ReportRegretFormProps {}
 
@@ -32,7 +39,9 @@ export class ReportRegretForm extends React.Component<
               height="32"
             />
           </div>
-          <div className="text-section-header">Report a "YouTube Regret" to Mozilla</div>
+          <div className="text-section-header">
+            Report a "YouTube Regret" to Mozilla
+          </div>
         </header>
 
         {/*
@@ -73,7 +82,7 @@ export class ReportRegretForm extends React.Component<
           </div>
         </div>
 
-        <div className="panel-section-separator"></div>
+        <div className="panel-section-separator" />
 
         <div className="px-0">
           <div className="flex -mx-0">
@@ -113,65 +122,39 @@ export class ReportRegretForm extends React.Component<
                     </p>
                     <ul className="list-none">
                       <li className="mb-2">
-                        <label className="radio__label">
-                          <input
-                            type="radio"
-                            className="radio"
-                            name="user_supplied_regret_category"
-                            value="conspiracy-theory"
-                          />
-                          <span className="radio__label__text">
-                            Conspiracy theory
-                          </span>
-                        </label>
+                        <Radio
+                          name="user_supplied_regret_category"
+                          value="conspiracy-theory"
+                          label="Conspiracy theory"
+                        />
                       </li>
                       <li className="mb-2">
-                        <label className="radio__label">
-                          <input
-                            type="radio"
-                            className="radio"
-                            name="user_supplied_regret_category"
-                            value="hate-speech"
-                          />
-                          <span className="radio__label__text">
-                            Hate speech
-                          </span>
-                        </label>
+                        <Radio
+                          name="user_supplied_regret_category"
+                          value="hate-speech"
+                          label="Hate speech"
+                        />
                       </li>
                       <li className="mb-2">
-                        <label className="radio__label">
-                          <input
-                            type="radio"
-                            className="radio"
-                            name="user_supplied_regret_category"
-                            value="misinformation"
-                          />
-                          <span className="radio__label__text">
-                            Misinformation
-                          </span>
-                        </label>
+                        <Radio
+                          name="user_supplied_regret_category"
+                          value="misinformation"
+                          label="Misinformation"
+                        />
                       </li>
                       <li className="mb-2">
-                        <label className="radio__label">
-                          <input
-                            type="radio"
-                            className="radio"
-                            name="user_supplied_regret_category"
-                            value="violence"
-                          />
-                          <span className="radio__label__text">Violence</span>
-                        </label>
+                        <Radio
+                          name="user_supplied_regret_category"
+                          value="violence"
+                          label="Violence"
+                        />
                       </li>
                       <li className="mb-2">
-                        <label className="radio__label">
-                          <input
-                            type="radio"
-                            className="radio"
-                            name="user_supplied_regret_category"
-                            value="other"
-                          />
-                          <span className="radio__label__text">Other</span>
-                        </label>
+                        <Radio
+                          name="user_supplied_regret_category"
+                          value="other"
+                          label="Other"
+                        />
                       </li>
                     </ul>
                   </div>
@@ -200,12 +183,10 @@ export class ReportRegretForm extends React.Component<
                     >
                       Comment (optional)
                     </label>
-                    <input
-                      type="text"
+                    <Input
                       className="input__field w-full"
                       id="user_supplied_comment"
                       name="user_supplied_comment"
-                      value=""
                       placeholder="This is a placeholder"
                     />
                   </div>
@@ -215,52 +196,45 @@ export class ReportRegretForm extends React.Component<
           </div>
         </div>
 
-        <div className="panel-section-separator"></div>
+        <div className="panel-section-separator" />
 
         <div className="panel-section panel-section-formElements">
           <div className="panel-formElements-item mb-6">
             <span>
-              <label className="checkbox__label">
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  onClick={() => {
-                    this.setState({
-                      includeWatchHistory: !this.state.includeWatchHistory,
-                    });
-                  }}
-                  checked={this.state.includeWatchHistory}
-                />
-                <span className="checkbox__label__text">
-                  Include recent watch history in the report (helps researchers
-                  figure out why you were recommended this video)
-                </span>
-              </label>
+              <Checkbox
+                label="Include recent watch history in the report (helps researchers figure out why you were recommended this video)"
+                onClick={() => {
+                  this.setState({
+                    includeWatchHistory: !this.state.includeWatchHistory,
+                  });
+                }}
+                checked={this.state.includeWatchHistory}
+              />
             </span>
           </div>
         </div>
 
-        <div className="panel-section-separator"></div>
+        <div className="panel-section-separator" />
 
         <div className="panel-section panel-section-formElements">
           <span>
             Your report is shared with Mozilla according to our{" "}
-            <a
-              className="link inline"
+            <Link
+              className="inline"
               target="_blank"
               href="https://www.mozilla.org/en-US/privacy/"
             >
               Privacy Policy
-            </a>
+            </Link>
             .<br />
             Click{" "}
-            <a
-              className="link inline"
+            <Link
+              className="inline"
               target="_blank"
               href="https://foundation.mozilla.org/en/campaigns/youtube-regrets/"
             >
               here to learn more
-            </a>{" "}
+            </Link>{" "}
             about the YouTube Regrets research and the specific data that is
             shared.
             {/*
