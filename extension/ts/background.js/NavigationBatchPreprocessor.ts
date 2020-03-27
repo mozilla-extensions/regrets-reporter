@@ -7,7 +7,6 @@ import {
   Navigation,
 } from "@openwpm/webext-instrumentation";
 import { CapturedContent, LogEntry } from "./dataReceiver";
-import { TelemetrySender } from "./TelemetrySender";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./dateUtils";
 
 declare namespace browser.alarms {
@@ -105,16 +104,6 @@ export interface StudyPayloadEnvelope {
   tabActiveDwellTime?: number;
 }
 
-/**
- * Additional fields are relevant at the study telemetry packet level
- * since we drop the `payload` attribute if the calculatedPingSize
- * exceeds a certain threshold
- */
-export interface StudyTelemetryPacket extends StudyPayloadEnvelope {
-  calculatedPingSize: string;
-  originalCalculatedPingSize: string;
-}
-
 export const batchableOpenWpmPayloadFromStudyPayloadEnvelope = (
   studyPayloadEnvelope: StudyPayloadEnvelope,
 ): BatchableOpenWPMPayload => {
@@ -171,12 +160,49 @@ const removeItemFromArray = (ar, el) => {
   ar.splice(ar.indexOf(el), 1);
 };
 
+/**
+ * Groups incoming payloads by navigation.
+ * The strange implementation of the processing is mainly
+ * due to the flexible ordering of the incoming payloads,
+ * eg payloads related to a specific navigation may arrive before
+ * the corresponding navigation.
+ */
 export class NavigationBatchPreprocessor {
   public studyPayloadEnvelopeProcessQueue: StudyPayloadEnvelope[] = [];
-  public navigationBatchSendQueue: NavigationBatch[] = [];
+  public navigationBatchesByNavigationUuid: {
+    [navigationUuid: string]: NavigationBatch;
+  } = {};
+
+  async submitOpenWPMPayload(
+    type: OpenWPMType,
+    payload: any,
+    tabActiveDwellTime: number = null,
+  ) {
+    console.log({ type, payload });
+    const studyPayloadEnvelope: StudyPayloadEnvelope = {
+      ...studyPayloadEnvelopeFromOpenWpmTypeAndPayload(type, payload),
+      tabActiveDwellTime,
+    };
+    return this.queueOrIgnore(studyPayloadEnvelope);
+  }
+
+  private async queueOrIgnore(studyPayloadEnvelope: StudyPayloadEnvelope) {
+    // Any http or javascript packet with window, tab and frame ids are
+    // sent for batching by corresponding navigation
+    // or dropped (if no corresponding navigation showed up)
+    if (this.shouldBeBatched(studyPayloadEnvelope)) {
+      this.queueForProcessing(studyPayloadEnvelope);
+      return;
+    }
+
+    // Ignoring non-batchable payloads currently
+    // return this.foo(studyPayloadEnvelope);
+  }
+
   public queueForProcessing(studyPayloadEnvelope: StudyPayloadEnvelope) {
     this.studyPayloadEnvelopeProcessQueue.push(studyPayloadEnvelope);
   }
+
   public shouldBeBatched(studyPayloadEnvelope: StudyPayloadEnvelope) {
     return (
       this.batchableOpenWpmType(studyPayloadEnvelope.type) &&
@@ -185,6 +211,7 @@ export class NavigationBatchPreprocessor {
       )
     );
   }
+
   private batchableOpenWpmType(type: OpenWPMType) {
     return [
       "navigations",
@@ -194,6 +221,7 @@ export class NavigationBatchPreprocessor {
       "javascript",
     ].includes(type);
   }
+
   private canBeMatchedToWebNavigationFrame(payload: BatchableOpenWPMPayload) {
     return (
       payload.extension_session_uuid &&
@@ -203,43 +231,23 @@ export class NavigationBatchPreprocessor {
     );
   }
 
-  private telemetrySender: TelemetrySender;
-  public setTelemetrySender(value: TelemetrySender) {
-    this.telemetrySender = value;
-  }
-
   private alarmName: string;
 
   public async run() {
     this.alarmName = `${browser.runtime.id}:queueProcessorAlarm`;
     const alarmListener = async _alarm => {
       console.info(
-        `Processing ${this.studyPayloadEnvelopeProcessQueue.length} study payloads to batch and send grouped by navigation`,
+        `Processing ${this.studyPayloadEnvelopeProcessQueue.length} study payloads to group by navigation`,
       );
       await this.processQueue();
-      if (this.telemetrySender) {
-        await this.sendQueuedNavigationBatches();
-      }
     };
     browser.alarms.onAlarm.addListener(alarmListener);
     browser.alarms.create(this.alarmName, {
       periodInMinutes: 10 / 60, // every 10 seconds
     });
-  }
 
-  public async sendQueuedNavigationBatches() {
-    const navigationBatchSendQueue = this.navigationBatchSendQueue;
-    console.info(
-      `Sending the ${navigationBatchSendQueue.length} navigation batches that are old enough`,
-    );
-    navigationBatchSendQueue.map(async (navigationBatch: NavigationBatch) => {
-      const studyPayloadEnvelope: StudyPayloadEnvelope = {
-        type: "navigation_batches",
-        navigationBatch,
-      };
-      await this.telemetrySender.sendStudyPayloadEnvelope(studyPayloadEnvelope);
-      removeItemFromArray(this.navigationBatchSendQueue, navigationBatch);
-    });
+    // TODO: Also process on demand...
+    // await this.processQueue();
   }
 
   public async cleanup() {
@@ -247,7 +255,7 @@ export class NavigationBatchPreprocessor {
       await browser.alarms.clear(this.alarmName);
     }
     this.studyPayloadEnvelopeProcessQueue = [];
-    this.navigationBatchSendQueue = [];
+    this.navigationBatchesByNavigationUuid = {};
   }
 
   /**
@@ -256,7 +264,7 @@ export class NavigationBatchPreprocessor {
    * @param nowDateTime
    */
   public async processQueue(nowDateTime: Date = new Date()) {
-    const navigationAgeThresholdInSeconds: number = 10;
+    const navigationAgeThresholdInSeconds: number = 60 * 60 * 5;
     const orphanAgeThresholdInSeconds: number = 25;
 
     // Flush current queue for processing (we will later put back
@@ -272,7 +280,7 @@ export class NavigationBatchPreprocessor {
     );
 
     // ... that are more than navigationAgeThresholdInSeconds seconds old
-    const navigationIsOldEnoughToBeSent = (navigation: Navigation) => {
+    const navigationIsOldEnoughToBePurged = (navigation: Navigation) => {
       return !isoDateTimeStringsWithinFutureSecondThreshold(
         navigation.committed_time_stamp,
         nowDateTime.toISOString(),
@@ -314,9 +322,9 @@ export class NavigationBatchPreprocessor {
       (webNavigationStudyPayloadEnvelope: StudyPayloadEnvelope) => {
         const navigation: Navigation =
           webNavigationStudyPayloadEnvelope.navigation;
-        const send = navigationIsOldEnoughToBeSent(navigation);
+        const purge = navigationIsOldEnoughToBePurged(navigation);
 
-        // console.log("navigation, send", navigation, send);
+        console.log({ navigation, purge });
 
         const navigationBatch: NavigationBatch = {
           navigationEnvelope: webNavigationStudyPayloadEnvelope,
@@ -327,14 +335,16 @@ export class NavigationBatchPreprocessor {
           javascriptOperationCount: 0,
         };
 
-        // Remove navigation envelope from the processing queue
+        // Remove navigation envelope from this run's processing queue
         removeItemFromArray(
           studyPayloadEnvelopeProcessQueue,
           webNavigationStudyPayloadEnvelope,
         );
 
-        // Mark for reprocessing if it is not going to be sent now
-        if (!send) {
+        // ... but be sure to re-add it afterwards to ensure that the navigation
+        // stays available for processing of future payloads (until the
+        // navigation is old enough to be purged / ignored)
+        if (!purge) {
           reprocessingQueue.push(webNavigationStudyPayloadEnvelope);
         }
 
@@ -423,29 +433,58 @@ export class NavigationBatchPreprocessor {
           },
         );
 
-        // console.log("studyPayloadEnvelopesAssignedToThisNavigation.length", studyPayloadEnvelopesAssignedToThisNavigation.length,);
+        console.log(
+          "studyPayloadEnvelopesAssignedToThisNavigation.length",
+          studyPayloadEnvelopesAssignedToThisNavigation.length,
+        );
 
-        if (send) {
-          this.navigationBatchSendQueue.push(navigationBatch);
+        if (purge) {
+          // Remove from navigationBatchesByNavigationUuid
+          delete this.navigationBatchesByNavigationUuid[navigation.uuid];
         } else {
-          // Mark unsent items for reprocessing
-          studyPayloadEnvelopesAssignedToThisNavigation.map(
-            (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-              reprocessingQueue.push(studyPayloadEnvelope);
-            },
-          );
+          // Update navigationBatchesByNavigationUuid
+          if (this.navigationBatchesByNavigationUuid[navigation.uuid]) {
+            const existingNavigationBatch = this
+              .navigationBatchesByNavigationUuid[navigation.uuid];
+            this.navigationBatchesByNavigationUuid[navigation.uuid] = {
+              ...existingNavigationBatch,
+              childEnvelopes: existingNavigationBatch.childEnvelopes.concat(
+                navigationBatch.childEnvelopes,
+              ),
+              httpRequestCount:
+                existingNavigationBatch.httpRequestCount +
+                navigationBatch.httpRequestCount,
+              httpResponseCount:
+                existingNavigationBatch.httpResponseCount +
+                navigationBatch.httpResponseCount,
+              httpRedirectCount:
+                existingNavigationBatch.httpRedirectCount +
+                navigationBatch.httpRedirectCount,
+              javascriptOperationCount:
+                existingNavigationBatch.javascriptOperationCount +
+                navigationBatch.javascriptOperationCount,
+            };
+          } else {
+            this.navigationBatchesByNavigationUuid[
+              navigation.uuid
+            ] = navigationBatch;
+          }
         }
       },
     );
 
-    // Restore unsent items to the queue
+    console.log(
+      "this.navigationBatchesByNavigationUuid",
+      this.navigationBatchesByNavigationUuid,
+    );
 
+    // Restore relevant items to the processing queue
     reprocessingQueue.reverse().map(studyPayloadEnvelope => {
       this.studyPayloadEnvelopeProcessQueue.unshift(studyPayloadEnvelope);
     });
 
     // Drop only old orphaned items (assumption: whose navigation batches have already
-    // been sent and thus not sorted into a queued navigation event above)
+    // been purged and thus not sorted into a queued navigation event above)
 
     const childIsOldEnoughToBeAnOrphan = (
       payload: BatchableChildOpenWPMPayload,
