@@ -88,6 +88,7 @@ class Feature {
     dataReceiver.navigationBatchPreprocessor.run();
     this.openwpmCrawlId = config["crawl_id"];
     if (config["navigation_instrument"]) {
+      dataReceiver.logDebug("Navigation instrumentation enabled");
       this.navigationInstrument = new NavigationInstrument(dataReceiver);
       this.navigationInstrument.run(config["crawl_id"]);
     }
@@ -154,7 +155,7 @@ class Feature {
 }
 
 // make an instance of the feature class available to background.js
-const feature = (window as any).feature = new Feature();
+const feature = ((window as any).feature = new Feature());
 
 // init the feature on every extension load
 async function onEveryExtensionLoad() {

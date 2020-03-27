@@ -48,7 +48,10 @@ export const logInfo = async function(msg) {
   const level = "info";
   const logEntry: LogEntry = { level, msg };
   console.log(`OpenWPM INFO log message: ${msg}`);
-  await navigationBatchPreprocessor.submitOpenWPMPayload("openwpm_log", logEntry);
+  await navigationBatchPreprocessor.submitOpenWPMPayload(
+    "openwpm_log",
+    logEntry,
+  );
 };
 
 export const logWarn = async function(msg) {
@@ -61,7 +64,10 @@ export const logWarn = async function(msg) {
   const level = "warn";
   const logEntry: LogEntry = { level, msg };
   console.warn(`OpenWPM WARN log message: ${msg}`);
-  await navigationBatchPreprocessor.submitOpenWPMPayload("openwpm_log", logEntry);
+  await navigationBatchPreprocessor.submitOpenWPMPayload(
+    "openwpm_log",
+    logEntry,
+  );
 };
 
 export const logError = async function(msg) {
@@ -74,7 +80,10 @@ export const logError = async function(msg) {
   const level = "error";
   const logEntry: LogEntry = { level, msg };
   console.error(`OpenWPM ERROR log message: ${msg}`);
-  await navigationBatchPreprocessor.submitOpenWPMPayload("openwpm_log", logEntry);
+  await navigationBatchPreprocessor.submitOpenWPMPayload(
+    "openwpm_log",
+    logEntry,
+  );
 };
 
 export const logCritical = async function(msg) {
@@ -87,7 +96,10 @@ export const logCritical = async function(msg) {
   const level = "critical";
   const logEntry: LogEntry = { level, msg };
   console.error(`OpenWPM CRITICAL log message: ${msg}`);
-  await navigationBatchPreprocessor.submitOpenWPMPayload("openwpm_log", logEntry);
+  await navigationBatchPreprocessor.submitOpenWPMPayload(
+    "openwpm_log",
+    logEntry,
+  );
 };
 
 export const saveRecord = async function(instrument, record) {

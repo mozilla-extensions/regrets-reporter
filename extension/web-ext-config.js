@@ -13,8 +13,9 @@ const defaultConfig = {
     firefox: process.env.FIREFOX_BINARY || "firefoxdeveloperedition",
     browserConsole: true,
     startUrl: [
-      "about:debugging#/runtime/this-firefox",
+      "about:devtools-toolbox?type=extension&id=youtube-regrets-reporter-extension%40mozilla.org",
       "https://www.youtube.com/watch?v=g4mHPeMGTJM",
+      "about:debugging#/runtime/this-firefox",
     ],
     pref: ["browser.ctrlTab.recentlyUsedOrder=false"],
   },
