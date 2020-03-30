@@ -324,7 +324,7 @@ export class NavigationBatchPreprocessor {
           webNavigationStudyPayloadEnvelope.navigation;
         const purge = navigationIsOldEnoughToBePurged(navigation);
 
-        console.log({ navigation, purge });
+        // console.log({ navigation, purge });
 
         const navigationBatch: NavigationBatch = {
           navigationEnvelope: webNavigationStudyPayloadEnvelope,
@@ -433,10 +433,7 @@ export class NavigationBatchPreprocessor {
           },
         );
 
-        console.log(
-          "studyPayloadEnvelopesAssignedToThisNavigation.length",
-          studyPayloadEnvelopesAssignedToThisNavigation.length,
-        );
+        // console.log("studyPayloadEnvelopesAssignedToThisNavigation.length", studyPayloadEnvelopesAssignedToThisNavigation.length);
 
         if (purge) {
           // Remove from navigationBatchesByNavigationUuid

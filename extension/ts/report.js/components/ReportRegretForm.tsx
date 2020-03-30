@@ -203,7 +203,8 @@ export class ReportRegretForm extends React.Component<
             <span>
               <Checkbox
                 label="Include recent watch history in the report (helps researchers figure out why you were recommended this video)"
-                onClick={() => {
+                onChange={ch => {
+                  console.log({ ch });
                   this.setState({
                     includeWatchHistory: !this.state.includeWatchHistory,
                   });
