@@ -77,7 +77,7 @@ class Feature {
       cookie_instrument: false,
       js_instrument: false,
       http_instrument: true,
-      save_content: false,
+      save_content: "main_frame,xmlhttprequest",
       http_instrument_resource_types: "main_frame,xmlhttprequest",
       http_instrument_urls:
         "*://*.youtube.com/*|*://*.youtu.be/*|*://*.youtube-nocookie.com/*",
