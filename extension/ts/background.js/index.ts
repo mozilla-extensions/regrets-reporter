@@ -78,6 +78,9 @@ class Feature {
       js_instrument: false,
       http_instrument: true,
       save_content: false,
+      http_instrument_resource_types: "main_frame,xmlhttprequest",
+      http_instrument_urls:
+        "*://*.youtube.com/*|*://*.youtu.be/*|*://*.youtube-nocookie.com/*",
       crawl_id: 0,
     };
     await this.startOpenWPMInstrumentation(openwpmConfig);
@@ -105,7 +108,12 @@ class Feature {
     if (config["http_instrument"]) {
       dataReceiver.logDebug("HTTP Instrumentation enabled");
       this.httpInstrument = new HttpInstrument(dataReceiver);
-      this.httpInstrument.run(config["crawl_id"], config["save_content"]);
+      this.httpInstrument.run(
+        config["crawl_id"],
+        config["save_content"],
+        config["http_instrument_resource_types"],
+        config["http_instrument_urls"],
+      );
     }
   }
 
