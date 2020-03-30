@@ -39,13 +39,13 @@ module.exports = function(config) {
     files: [
       "node_modules/sinon/pkg/sinon.js",
       "node_modules/sinon-chrome/bundle/sinon-chrome.min.js",
-      "background.js/index.ts",
-      "background.js/*.spec.ts",
-      "test/unit/*.spec.js",
+      "ts/**/*.spec.ts",
+      // "ts/**/index.ts",
+      // "test/unit/*.spec.js",
     ],
     webpack: webpackConfig,
     preprocessors: {
-      "background.js/*.ts": ["webpack"],
+      "ts/**/*.ts": ["webpack"],
       "src/**/*.js": ["babel"],
     },
     plugins: [
