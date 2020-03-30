@@ -74,7 +74,9 @@
     "yamljs": "^0.3.0"
   },
   "engines": {
-    "node": ">=8.11.1"
+    "npm": "please-use-yarn",
+    "yarn": ">=1.21.1",
+    "node": ">=10.18.0"
   },
   "keywords": [
     "firefox",
