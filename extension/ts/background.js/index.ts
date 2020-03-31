@@ -12,6 +12,17 @@ import {
   NavigationInstrument,
 } from "@openwpm/webext-instrumentation";
 
+const triggerClientDownloadOfData = async (data, filename) => {
+  const json = JSON.stringify(data);
+  const blob = new Blob([json], {
+    type: "application/json;charset=utf-8",
+  });
+  await browser.downloads.download({
+    url: URL.createObjectURL(blob),
+    filename,
+  });
+};
+
 class Feature {
   private navigationInstrument;
   private cookieInstrument;
@@ -42,15 +53,7 @@ class Feature {
     const exportSeenTelementry = async () => {
       console.debug("Exporting seen events");
       const { seenEvents } = await browser.storage.local.get("seenEvents");
-      const json = JSON.stringify(seenEvents);
-      const blob = new Blob([json], {
-        type: "application/json;charset=utf-8",
-      });
-      console.debug("foo");
-      await browser.downloads.download({
-        url: URL.createObjectURL(blob),
-        filename: "seenEvents.json",
-      });
+      await triggerClientDownloadOfData(seenEvents, "seenEvents.json");
     };
 
     browser.browserAction.onClicked.addListener(exportSeenTelementry);
@@ -165,8 +168,10 @@ class Feature {
 // make an instance of the feature class available to the extension background context
 const feature = ((window as any).feature = new Feature());
 
-// make the dataReceiver singleton available to the extension background context
+// make the dataReceiver singleton and triggerClientDownloadOfData available to
+// the extension background context so that we as developers can collect fixture data
 (window as any).dataReceiver = dataReceiver;
+(window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
 
 // init the feature on every extension load
 async function onEveryExtensionLoad() {
