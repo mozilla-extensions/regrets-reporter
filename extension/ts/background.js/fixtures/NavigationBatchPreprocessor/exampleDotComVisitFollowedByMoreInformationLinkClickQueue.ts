@@ -1,4 +1,4 @@
-import { OpenWPMType } from "../NavigationBatchPreprocessor";
+import { OpenWPMType } from "../../NavigationBatchPreprocessor";
 
 export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
   {

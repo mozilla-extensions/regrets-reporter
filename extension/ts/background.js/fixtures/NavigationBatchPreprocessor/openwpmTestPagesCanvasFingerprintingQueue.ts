@@ -1,4 +1,4 @@
-import { OpenWpmPayloadEnvelope } from "../NavigationBatchPreprocessor";
+import { OpenWpmPayloadEnvelope } from "../../NavigationBatchPreprocessor";
 
 export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[] = [
   {

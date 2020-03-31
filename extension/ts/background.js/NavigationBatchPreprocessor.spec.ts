@@ -6,9 +6,9 @@ import {
 } from "./NavigationBatchPreprocessor";
 import { parseIsoDateTimeString } from "./dateUtils";
 import { addSeconds } from "date-fns";
-import { openwpmTestPagesCanvasFingerprintingQueue } from "./fixtures/openwpmTestPagesCanvasFingerprintingQueue";
-import { exampleDotComVisitQueue } from "./fixtures/exampleDotComVisitQueue";
-import { exampleDotComVisitFollowedByMoreInformationLinkClickQueue } from "./fixtures/exampleDotComVisitFollowedByMoreInformationLinkClickQueue";
+import { openwpmTestPagesCanvasFingerprintingQueue } from "./fixtures/NavigationBatchPreprocessor/openwpmTestPagesCanvasFingerprintingQueue";
+import { exampleDotComVisitQueue } from "./fixtures/NavigationBatchPreprocessor/exampleDotComVisitQueue";
+import { exampleDotComVisitFollowedByMoreInformationLinkClickQueue } from "./fixtures/NavigationBatchPreprocessor/exampleDotComVisitFollowedByMoreInformationLinkClickQueue";
 
 describe("NavigationBatchPreprocessor", function() {
   it("should exist", function() {

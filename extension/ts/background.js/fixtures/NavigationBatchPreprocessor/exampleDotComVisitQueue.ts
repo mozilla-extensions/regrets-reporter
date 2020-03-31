@@ -1,7 +1,7 @@
 import {
   OpenWPMType,
   OpenWpmPayloadEnvelope,
-} from "../NavigationBatchPreprocessor";
+} from "../../NavigationBatchPreprocessor";
 
 export const exampleDotComVisitQueue: OpenWpmPayloadEnvelope[] = [
   {
