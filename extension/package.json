@@ -98,6 +98,7 @@
     "lint:tslint": "tslint src/**/*.ts",
     "lint:web-ext-lint": "web-ext lint",
     "postformat": "npm run docformat && npm run eslint-fix && fixpack",
+    "postinstall": "cd node_modules/@openwpm/webext-instrumentation && npm install",
     "prebuild": "npm-run-all webext-instrumentation:submodule-rsync webext-instrumentation:build",
     "prestart": "node ./ensure_minimum_node_version.js && npm run build",
     "pretest": "npm run prestart",
