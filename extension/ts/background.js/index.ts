@@ -162,8 +162,11 @@ class Feature {
   }
 }
 
-// make an instance of the feature class available to background.js
+// make an instance of the feature class available to the extension background context
 const feature = ((window as any).feature = new Feature());
+
+// make the dataReceiver singleton available to the extension background context
+(window as any).dataReceiver = dataReceiver;
 
 // init the feature on every extension load
 async function onEveryExtensionLoad() {
