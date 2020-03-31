@@ -6,6 +6,8 @@ import Input from "./photon-components-web/photon-components/Input";
 import Radio from "./photon-components-web/photon-components/Radio";
 import Checkbox from "./photon-components-web/photon-components/Checkbox";
 import Link from "./photon-components-web/photon-components/Link";
+import { browser, Runtime } from "webextension-polyfill-ts";
+import Port = Runtime.Port;
 
 export interface ReportRegretFormProps {}
 
@@ -18,8 +20,29 @@ export class ReportRegretForm extends React.Component<
   ReportRegretFormState
 > {
   public state = {
+    loading: true,
+    ytThumbUrl: null,
     includeWatchHistory: true,
   };
+
+  private backgroundContextPort: Port;
+
+  componentDidMount(): void {
+    console.log("Connecting to the background script");
+    this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
+      name: "port-from-report-form",
+    });
+
+    // When we have received a report, update state that summarizes the report
+    this.backgroundContextPort.onMessage.addListener(m => {
+      // TODO
+    });
+
+    // Send a request to gather the report data
+    this.backgroundContextPort.postMessage({
+    });
+  }
+
   cancel(event: MouseEvent) {
     event.preventDefault();
     window.close();
@@ -28,6 +51,7 @@ export class ReportRegretForm extends React.Component<
     event.preventDefault();
     console.log("TODO");
   }
+
   render() {
     return (
       <form>

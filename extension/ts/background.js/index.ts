@@ -1,5 +1,4 @@
-/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(feature)" }]*/
-/* global getOpenwpmConfig */
+/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
 ("use strict");
 
@@ -23,21 +22,37 @@ const triggerClientDownloadOfData = async (data, filename) => {
   });
 };
 
-class Feature {
+class ExtensionGlue {
   private navigationInstrument;
   private cookieInstrument;
   private jsInstrument;
   private httpInstrument;
   private openwpmCrawlId;
+  private contentScriptPortListener;
 
   constructor() {}
 
   async init() {
     const feature = this;
 
-    // TODO: "Client ID"
     // For A1: A unique identifier of the user or browser such as telemetry client_id is sent with each report.
+    // TODO
+    const userUuid = "foo";
 
+    // During prototype phase, we have a browser action button that allows for downloading the reported data
+    const exportReportedRegrets = async () => {
+      console.debug("Exporting reported regrets");
+      const { reportedRegrets } = await browser.storage.local.get(
+        "reportedRegrets",
+      );
+      await triggerClientDownloadOfData(
+        reportedRegrets,
+        `reportedRegrets-userUuid=${userUuid}.json`,
+      );
+    };
+    browser.browserAction.onClicked.addListener(exportReportedRegrets);
+
+    // Only show report-regret page action on YouTube watch pages
     browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (
         tab.url.match(
@@ -50,31 +65,35 @@ class Feature {
       }
     });
 
-    const exportSeenTelementry = async () => {
-      console.debug("Exporting seen events");
-      const { seenEvents } = await browser.storage.local.get("seenEvents");
-      await triggerClientDownloadOfData(seenEvents, "seenEvents.json");
+    // Set up a connection / listener for content scripts to be able to query collected web traffic data
+    let portFromContentScript;
+    this.contentScriptPortListener = p => {
+      portFromContentScript = p;
+      portFromContentScript.postMessage({
+      });
+      portFromContentScript.onMessage.addListener(function(m) {
+        const regretEvent = { regret: "foo" };
+
+        const { seenEvents } = await browser.storage.local.get("seenEvents");
+        if (seenEvents) {
+          seenEvents.push(regretEvent);
+          await browser.storage.local.set({ seenEvents });
+        } else {
+          await browser.storage.local.set({ seenEvents: [regretEvent] });
+        }
+        console.log("Regret reported");
+      });
     };
+    browser.runtime.onConnect.addListener(this.contentScriptPortListener);
 
-    browser.browserAction.onClicked.addListener(exportSeenTelementry);
-
-    // tmp code
-    const reportRegret = async () => {
-      const regretEvent = { regret: "foo" };
-
-      const { seenEvents } = await browser.storage.local.get("seenEvents");
-      if (seenEvents) {
-        seenEvents.push(regretEvent);
-        await browser.storage.local.set({ seenEvents });
-      } else {
-        await browser.storage.local.set({ seenEvents: [regretEvent] });
-      }
-      console.log("Regret reported");
+    // Show report regret form and trigger a report-related data collection when page action is clicked
+    const showReportRegretForm = async () => {
+      // dataReceiver.navigationBatchPreprocessor.processQueue();
+      // reportSummarizer ...
     };
+    browser.pageAction.onClicked.addListener(showReportRegretForm);
 
-    browser.pageAction.onClicked.addListener(reportRegret);
-
-    // Start OpenWPM instrumentation
+    // Start OpenWPM instrumentation (monitors navigations and http content)
     const openwpmConfig = {
       navigation_instrument: true,
       cookie_instrument: false,
@@ -144,6 +163,9 @@ class Feature {
    * Called at end of study, and if the user disables the study or it gets uninstalled by other means.
    */
   async cleanup() {
+    if (this.contentScriptPortListener) {
+      browser.runtime.onMessage.removeListener(this.contentScriptPortListener);
+    }
     if (this.navigationInstrument) {
       await this.navigationInstrument.cleanup();
     }
@@ -160,21 +182,21 @@ class Feature {
       dataReceiver.activeTabDwellTimeMonitor.cleanup();
     }
     if (dataReceiver.navigationBatchPreprocessor) {
-      dataReceiver.navigationBatchPreprocessor.cleanup();
+      await dataReceiver.navigationBatchPreprocessor.cleanup();
     }
   }
 }
 
-// make an instance of the feature class available to the extension background context
-const feature = ((window as any).feature = new Feature());
+// make an instance of the ExtensionGlue class available to the extension background context
+const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 
 // make the dataReceiver singleton and triggerClientDownloadOfData available to
 // the extension background context so that we as developers can collect fixture data
 (window as any).dataReceiver = dataReceiver;
 (window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
 
-// init the feature on every extension load
+// init the extension glue on every extension load
 async function onEveryExtensionLoad() {
-  await feature.init();
+  await extensionGlue.init();
 }
-onEveryExtensionLoad();
+onEveryExtensionLoad().then();
