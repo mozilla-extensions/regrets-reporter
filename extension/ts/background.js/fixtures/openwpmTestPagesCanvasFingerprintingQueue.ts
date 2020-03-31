@@ -1,6 +1,6 @@
-import { StudyPayloadEnvelope } from "../NavigationBatchPreprocessor";
+import { OpenWpmPayloadEnvelope } from "../NavigationBatchPreprocessor";
 
-export const openwpmTestPagesCanvasFingerprintingQueue: StudyPayloadEnvelope[] = [
+export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[] = [
   {
     type: "navigations",
     navigation: {

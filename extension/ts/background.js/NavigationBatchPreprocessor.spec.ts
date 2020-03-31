@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import {
   NavigationBatch,
-  StudyPayloadEnvelope,
+  OpenWpmPayloadEnvelope,
   NavigationBatchPreprocessor,
 } from "./NavigationBatchPreprocessor";
 import { parseIsoDateTimeString } from "./dateUtils";
@@ -19,9 +19,13 @@ describe("NavigationBatchPreprocessor", function() {
   describe("Example.com visit", function() {
     const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     exampleDotComVisitQueue.map(
-      (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
+      (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+        if (
+          navigationBatchPreprocessor.shouldBeBatched(openWpmPayloadEnvelope)
+        ) {
+          navigationBatchPreprocessor.queueForProcessing(
+            openWpmPayloadEnvelope,
+          );
         }
       },
     );
@@ -37,7 +41,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           1,
         );
         const navigationUuids = Object.keys(
@@ -62,7 +66,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           0,
         );
         const navigationUuids = Object.keys(
@@ -76,9 +80,13 @@ describe("NavigationBatchPreprocessor", function() {
   describe("Example.com visit followed by 'More information' link click", function() {
     const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     exampleDotComVisitFollowedByMoreInformationLinkClickQueue.map(
-      (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
+      (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+        if (
+          navigationBatchPreprocessor.shouldBeBatched(openWpmPayloadEnvelope)
+        ) {
+          navigationBatchPreprocessor.queueForProcessing(
+            openWpmPayloadEnvelope,
+          );
         }
       },
     );
@@ -100,7 +108,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           2,
         );
         const navigationUuids = Object.keys(
@@ -145,7 +153,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           0,
         );
         const navigationUuids = Object.keys(
@@ -159,9 +167,13 @@ describe("NavigationBatchPreprocessor", function() {
   describe("OpenWPM http://localtest.me:8000/test_pages/canvas_fingerprinting.html", function() {
     const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     openwpmTestPagesCanvasFingerprintingQueue.map(
-      (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
+      (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+        if (
+          navigationBatchPreprocessor.shouldBeBatched(openWpmPayloadEnvelope)
+        ) {
+          navigationBatchPreprocessor.queueForProcessing(
+            openWpmPayloadEnvelope,
+          );
         }
       },
     );
@@ -177,7 +189,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           1,
         );
         const navigationUuids = Object.keys(
@@ -213,7 +225,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           0,
         );
         const navigationUuids = Object.keys(
@@ -235,9 +247,13 @@ describe("NavigationBatchPreprocessor", function() {
 
     const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
     largeOpenwpmTestPagesCanvasFingerprintingQueue.map(
-      (studyPayloadEnvelope: StudyPayloadEnvelope) => {
-        if (navigationBatchPreprocessor.shouldBeBatched(studyPayloadEnvelope)) {
-          navigationBatchPreprocessor.queueForProcessing(studyPayloadEnvelope);
+      (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+        if (
+          navigationBatchPreprocessor.shouldBeBatched(openWpmPayloadEnvelope)
+        ) {
+          navigationBatchPreprocessor.queueForProcessing(
+            openWpmPayloadEnvelope,
+          );
         }
       },
     );
@@ -253,7 +269,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           1,
         );
         const navigationUuids = Object.keys(
@@ -289,7 +305,7 @@ describe("NavigationBatchPreprocessor", function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
         assert.equal(
-          navigationBatchPreprocessor.studyPayloadEnvelopeProcessQueue.length,
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           0,
         );
         const navigationUuids = Object.keys(

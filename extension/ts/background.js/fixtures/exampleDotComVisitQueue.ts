@@ -1,9 +1,9 @@
 import {
   OpenWPMType,
-  StudyPayloadEnvelope,
+  OpenWpmPayloadEnvelope,
 } from "../NavigationBatchPreprocessor";
 
-export const exampleDotComVisitQueue: StudyPayloadEnvelope[] = [
+export const exampleDotComVisitQueue: OpenWpmPayloadEnvelope[] = [
   {
     type: "http_requests" as OpenWPMType,
     httpRequest: {
