@@ -14,6 +14,9 @@ export interface ReportRegretFormProps {}
 export interface ReportRegretFormState {
   loading: boolean;
   ytThumbUrl: string | null;
+  reportData: any;
+  userSuppliedRegretCategory: string;
+  userSuppliedOptionalComment: string;
   includeWatchHistory: boolean;
 }
 
@@ -24,6 +27,9 @@ export class ReportRegretForm extends React.Component<
   public state = {
     loading: true,
     ytThumbUrl: null,
+    reportData: null,
+    userSuppliedRegretCategory: "",
+    userSuppliedOptionalComment: "",
     includeWatchHistory: true,
   };
 
@@ -44,7 +50,9 @@ export class ReportRegretForm extends React.Component<
     this.backgroundContextPort.onMessage.addListener(m => {
       if (m.reportData) {
         console.log({ m });
+        const { reportData } = m;
         this.setState({
+          reportData,
           ytThumbUrl: "./images/yt_sample_thumb.jpg",
           loading: false,
         });
@@ -52,17 +60,35 @@ export class ReportRegretForm extends React.Component<
     });
   }
 
+  inspectReportContents(event: MouseEvent) {
+    event.preventDefault();
+    // TODO: Open the report in a new tab/window via a data url
+  }
+
   cancel(event: MouseEvent) {
     event.preventDefault();
     window.close();
   }
 
-  async report(event: MouseEvent) {
+  report = async (event: MouseEvent) => {
     event.preventDefault();
     this.backgroundContextPort.postMessage({
-      reportedRegret: { regret: "foo" },
+      reportedRegret: {
+        reportData: this.state.reportData,
+        userSuppliedRegretCategory: this.state.userSuppliedRegretCategory,
+        userSuppliedOptionalComment: this.state.userSuppliedOptionalComment,
+        includeWatchHistory: this.state.includeWatchHistory,
+      },
     });
-  }
+    window.close();
+  };
+
+  handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
+    console.log({ changeEvent });
+    this.setState({
+      userSuppliedRegretCategory: changeEvent.target.value,
+    });
+  };
 
   render() {
     return (
@@ -164,6 +190,13 @@ export class ReportRegretForm extends React.Component<
                           name="user_supplied_regret_category"
                           value="conspiracy-theory"
                           label="Conspiracy theory"
+                          checked={
+                            this.state.userSuppliedRegretCategory ===
+                            "conspiracy-theory"
+                          }
+                          onChange={
+                            this.handleUserSuppliedRegretCategoryOptionChange
+                          }
                         />
                       </li>
                       <li className="mb-2">
@@ -171,6 +204,13 @@ export class ReportRegretForm extends React.Component<
                           name="user_supplied_regret_category"
                           value="hate-speech"
                           label="Hate speech"
+                          checked={
+                            this.state.userSuppliedRegretCategory ===
+                            "hate-speech"
+                          }
+                          onChange={
+                            this.handleUserSuppliedRegretCategoryOptionChange
+                          }
                         />
                       </li>
                       <li className="mb-2">
@@ -178,6 +218,13 @@ export class ReportRegretForm extends React.Component<
                           name="user_supplied_regret_category"
                           value="misinformation"
                           label="Misinformation"
+                          checked={
+                            this.state.userSuppliedRegretCategory ===
+                            "misinformation"
+                          }
+                          onChange={
+                            this.handleUserSuppliedRegretCategoryOptionChange
+                          }
                         />
                       </li>
                       <li className="mb-2">
@@ -185,6 +232,12 @@ export class ReportRegretForm extends React.Component<
                           name="user_supplied_regret_category"
                           value="violence"
                           label="Violence"
+                          checked={
+                            this.state.userSuppliedRegretCategory === "violence"
+                          }
+                          onChange={
+                            this.handleUserSuppliedRegretCategoryOptionChange
+                          }
                         />
                       </li>
                       <li className="mb-2">
@@ -192,6 +245,12 @@ export class ReportRegretForm extends React.Component<
                           name="user_supplied_regret_category"
                           value="other"
                           label="Other"
+                          checked={
+                            this.state.userSuppliedRegretCategory === "other"
+                          }
+                          onChange={
+                            this.handleUserSuppliedRegretCategoryOptionChange
+                          }
                         />
                       </li>
                     </ul>
@@ -225,7 +284,13 @@ export class ReportRegretForm extends React.Component<
                       className="input__field w-full"
                       id="user_supplied_comment"
                       name="user_supplied_comment"
-                      placeholder="This is a placeholder"
+                      placeholder=""
+                      value={this.state.userSuppliedOptionalComment}
+                      onChange={changeEvent => {
+                        this.setState({
+                          userSuppliedOptionalComment: changeEvent.target.value,
+                        });
+                      }}
                     />
                   </div>
                 </div>
@@ -241,8 +306,7 @@ export class ReportRegretForm extends React.Component<
             <span>
               <Checkbox
                 label="Include recent watch history in the report (helps researchers figure out why you were recommended this video)"
-                onChange={ch => {
-                  console.log({ ch });
+                onChange={() => {
                   this.setState({
                     includeWatchHistory: !this.state.includeWatchHistory,
                   });
