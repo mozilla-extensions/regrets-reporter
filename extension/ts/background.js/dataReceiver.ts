@@ -1,6 +1,7 @@
 import { humanFileSize } from "./humanFileSize";
 import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
+import { HttpResponse } from "@openwpm/webext-instrumentation";
 
 // Export active dwell time monitor singleton
 // (used to annotate received tab-relevant data packets)
@@ -18,8 +19,14 @@ export interface LogEntry {
 }
 
 export interface CapturedContent {
-  content: string;
-  contentHash: string;
+  decoded_content: string;
+  content_hash: string;
+  extension_session_uuid: string;
+  window_id: number;
+  tab_id: number;
+  frame_id: number;
+  event_ordinal: number;
+  time_stamp: string;
 }
 
 const privateBrowsingActive = async () => {
@@ -127,7 +134,11 @@ export const saveRecord = async function(instrument, record) {
   );
 };
 
-export const saveContent = async function(content, contentHash) {
+export const saveContent = async function(
+  content,
+  contentHash,
+  httpResponse: HttpResponse,
+) {
   if (!active) {
     return;
   }
@@ -139,9 +150,22 @@ export const saveContent = async function(content, contentHash) {
       content.length,
     )} received. Hash: ${contentHash}`,
   );
+  /**
+   * To make life easier for us, we decode the captured content and
+   * add properties that allow the captured content batched by navigation.
+   *
+   * (Captured content comes as a separate "bare" payloads rather than attached to the http response payloads,
+   * which only references them via the content hash. This allows for easy de-duplication at the storage level.)
+   */
   const capturedContent: CapturedContent = {
-    content,
-    contentHash,
+    decoded_content: new TextDecoder("utf-8").decode(content),
+    content_hash: contentHash,
+    extension_session_uuid: httpResponse.extension_session_uuid,
+    window_id: httpResponse.window_id,
+    tab_id: httpResponse.tab_id,
+    frame_id: httpResponse.frame_id,
+    event_ordinal: httpResponse.event_ordinal,
+    time_stamp: httpResponse.time_stamp,
   };
   await navigationBatchPreprocessor.submitOpenWPMPayload(
     "openwpm_captured_content",
