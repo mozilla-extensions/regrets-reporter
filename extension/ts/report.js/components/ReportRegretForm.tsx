@@ -12,6 +12,8 @@ import Port = Runtime.Port;
 export interface ReportRegretFormProps {}
 
 export interface ReportRegretFormState {
+  loading: boolean;
+  ytThumbUrl: string | null;
   includeWatchHistory: boolean;
 }
 
@@ -28,18 +30,25 @@ export class ReportRegretForm extends React.Component<
   private backgroundContextPort: Port;
 
   componentDidMount(): void {
-    console.log("Connecting to the background script");
+    // console.log("Connecting to the background script");
     this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
       name: "port-from-report-form",
     });
 
-    // When we have received a report, update state that summarizes the report
-    this.backgroundContextPort.onMessage.addListener(m => {
-      // TODO
-    });
-
     // Send a request to gather the report data
     this.backgroundContextPort.postMessage({
+      requestReportData: true,
+    });
+
+    // When we have received report data, update state that summarizes it
+    this.backgroundContextPort.onMessage.addListener(m => {
+      if (m.reportData) {
+        console.log({ m });
+        this.setState({
+          ytThumbUrl: "./images/yt_sample_thumb.jpg",
+          loading: false,
+        });
+      }
     });
   }
 
@@ -47,9 +56,12 @@ export class ReportRegretForm extends React.Component<
     event.preventDefault();
     window.close();
   }
-  report(event: MouseEvent) {
+
+  async report(event: MouseEvent) {
     event.preventDefault();
-    console.log("TODO");
+    this.backgroundContextPort.postMessage({
+      reportedRegret: { regret: "foo" },
+    });
   }
 
   render() {
@@ -113,24 +125,26 @@ export class ReportRegretForm extends React.Component<
             <div className="w-1/2 px-0">
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
-                  <div className="flex-1 mr-1">
-                    <div>
-                      <img
-                        className="w-full"
-                        src="./images/yt_sample_thumb.jpg"
-                        alt=""
-                      />
+                  {!this.state.loading && (
+                    <div className="flex-1 mr-1">
+                      <div>
+                        <img
+                          className="w-full"
+                          src={this.state.ytThumbUrl}
+                          alt=""
+                        />
+                      </div>
+                      <div className="mb-0 mt-1">
+                        <h4 className="text-sm font-medium">
+                          Commit editor settings to version control? - Fun Fun
+                          Function
+                        </h4>
+                        <p className="mt-1 font-hairline text-xs text-grey-darker">
+                          5.3K views · 4 days ago
+                        </p>
+                      </div>
                     </div>
-                    <div className="mb-0 mt-1">
-                      <h4 className="text-sm font-medium">
-                        Commit editor settings to version control? - Fun Fun
-                        Function
-                      </h4>
-                      <p className="mt-1 font-hairline text-xs text-grey-darker">
-                        5.3K views · 4 days ago
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

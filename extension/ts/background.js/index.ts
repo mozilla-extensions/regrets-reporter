@@ -33,8 +33,6 @@ class ExtensionGlue {
   constructor() {}
 
   async init() {
-    const feature = this;
-
     // For A1: A unique identifier of the user or browser such as telemetry client_id is sent with each report.
     // TODO
     const userUuid = "foo";
@@ -68,30 +66,36 @@ class ExtensionGlue {
     // Set up a connection / listener for content scripts to be able to query collected web traffic data
     let portFromContentScript;
     this.contentScriptPortListener = p => {
+      // console.log("contentScriptPortListener set up");
       portFromContentScript = p;
-      portFromContentScript.postMessage({
-      });
-      portFromContentScript.onMessage.addListener(function(m) {
-        const regretEvent = { regret: "foo" };
-
-        const { seenEvents } = await browser.storage.local.get("seenEvents");
-        if (seenEvents) {
-          seenEvents.push(regretEvent);
-          await browser.storage.local.set({ seenEvents });
-        } else {
-          await browser.storage.local.set({ seenEvents: [regretEvent] });
+      portFromContentScript.onMessage.addListener(async function(m) {
+        if (m.reportedRegret) {
+          const { reportedRegret } = m;
+          const { reportedRegrets } = await browser.storage.local.get(
+            "reportedRegrets",
+          );
+          // Store the reported regret
+          if (reportedRegrets) {
+            reportedRegrets.push(reportedRegret);
+            await browser.storage.local.set({ reportedRegrets });
+          } else {
+            await browser.storage.local.set({
+              reportedRegrets: [reportedRegret],
+            });
+          }
+          console.log("Reported regret stored");
         }
-        console.log("Regret reported");
+        // The report form has triggered a report-related data collection
+        if (m.requestReportData) {
+          await dataReceiver.navigationBatchPreprocessor.processQueue();
+          // TODO: reportSummarizer ...
+          portFromContentScript.postMessage({
+            reportData: "foobar",
+          });
+        }
       });
     };
     browser.runtime.onConnect.addListener(this.contentScriptPortListener);
-
-    // Show report regret form and trigger a report-related data collection when page action is clicked
-    const showReportRegretForm = async () => {
-      // dataReceiver.navigationBatchPreprocessor.processQueue();
-      // reportSummarizer ...
-    };
-    browser.pageAction.onClicked.addListener(showReportRegretForm);
 
     // Start OpenWPM instrumentation (monitors navigations and http content)
     const openwpmConfig = {
