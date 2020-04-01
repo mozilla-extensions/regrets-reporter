@@ -11,6 +11,7 @@ import {
   NavigationInstrument,
 } from "@openwpm/webext-instrumentation";
 import { ReportSummarizer } from "./ReportSummarizer";
+import { extensionInstallationUuid } from "./extensionInstallationUuid";
 import { triggerClientDownloadOfData } from "./triggerClientDownloadOfData";
 const reportSummarizer = new ReportSummarizer();
 
@@ -25,10 +26,6 @@ class ExtensionGlue {
   constructor() {}
 
   async init() {
-    // For A1: A unique identifier of the user or browser such as telemetry client_id is sent with each report.
-    // TODO
-    const userUuid = "foo";
-
     // During prototype phase, we have a browser action button that allows for downloading the reported data
     const exportReportedRegrets = async () => {
       console.debug("Exporting reported regrets");
@@ -37,7 +34,7 @@ class ExtensionGlue {
       );
       await triggerClientDownloadOfData(
         reportedRegrets,
-        `reportedRegrets-userUuid=${userUuid}.json`,
+        `reportedRegrets-userUuid=${extensionInstallationUuid()}.json`,
       );
     };
     browser.browserAction.onClicked.addListener(exportReportedRegrets);

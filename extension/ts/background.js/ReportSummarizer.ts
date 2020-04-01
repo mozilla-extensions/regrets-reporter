@@ -1,4 +1,5 @@
 import { NavigationBatch } from "./NavigationBatchPreprocessor";
+import { extensionInstallationUuid } from "./extensionInstallationUuid";
 
 type YouTubeNavigationLinkCategory =
   | "up_next_auto_play"
@@ -29,7 +30,7 @@ export interface YouTubeNavigation {
   tab_id: number;
   frame_id: number;
   client_timestamp: string;
-  installation_uuid: string;
+  extension_installation_uuid: string;
   event_uuid: string;
 }
 
@@ -93,7 +94,7 @@ export class ReportSummarizer {
         client_timestamp:
           topFrameNavigationBatch.navigationEnvelope.navigation
             .committed_time_stamp,
-        installation_uuid: "foo",
+        extension_installation_uuid: extensionInstallationUuid(),
         event_uuid: topFrameNavigationBatch.navigationEnvelope.navigation.uuid,
       };
       return youTubeNavigation;
