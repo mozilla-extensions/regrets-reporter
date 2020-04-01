@@ -8,16 +8,16 @@ describe("ReportSummarizer", function() {
     assert.isObject(reportSummarizer);
   });
 
-  describe("youtubeVisit10hOfSilenceVideo", async function() {
+  describe("Visiting YouTube", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-      youtubeVisitAndStartPlaying10hOfSilenceVideo,
-    );
 
-    describe("foo", function() {
+    describe("fixture: youtubeVisit10hOfSilenceVideo", async function() {
+      const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+        youtubeVisitAndStartPlaying10hOfSilenceVideo,
+      );
+
       it("should have found one youtube navigation", async function() {
-        console.log({ youTubeNavigations });
-        assert.isTrue(false);
+        assert.equal(youTubeNavigations.length, 1);
       });
     });
   });
