@@ -10,6 +10,8 @@ import {
   HttpInstrument,
   NavigationInstrument,
 } from "@openwpm/webext-instrumentation";
+import { ReportSummarizer } from "./ReportSummarizer";
+const reportSummarizer = new ReportSummarizer();
 
 const triggerClientDownloadOfData = async (data, filename) => {
   const json = JSON.stringify(data);
@@ -88,9 +90,12 @@ class ExtensionGlue {
         // The report form has triggered a report-related data collection
         if (m.requestReportData) {
           await dataReceiver.navigationBatchPreprocessor.processQueue();
-          // TODO: reportSummarizer ...
+          const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+            dataReceiver.navigationBatchPreprocessor
+              .navigationBatchesByNavigationUuid,
+          );
           portFromContentScript.postMessage({
-            reportData: "foobar",
+            reportData: { youTubeNavigation: youTubeNavigations[0] },
           });
         }
       });

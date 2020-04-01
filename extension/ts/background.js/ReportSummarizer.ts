@@ -8,7 +8,7 @@ type YouTubeNavigationLinkCategory =
 type FailedStringAttribute = "<failed>";
 type FailedIntegerAttribute = -1;
 
-interface YouTubeNavigation {
+export interface YouTubeNavigation {
   video_id: string | FailedStringAttribute;
   video_title: string | FailedStringAttribute;
   video_description: string | FailedStringAttribute;
@@ -137,8 +137,7 @@ export class ReportSummarizer {
     try {
       video_posting_date =
         ytInitialData.contents.twoColumnWatchNextResults.results.results
-          .contents[0].videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
-          .shortViewCount.simpleText;
+          .contents[0].videoPrimaryInfoRenderer.dateText.simpleText;
     } catch (err) {
       video_posting_date = "";
     }
@@ -157,7 +156,8 @@ export class ReportSummarizer {
     try {
       view_count_at_navigation_short =
         ytInitialData.contents.twoColumnWatchNextResults.results.results
-          .contents[0].videoPrimaryInfoRenderer.dateText.simpleText;
+          .contents[0].videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
+          .shortViewCount.simpleText;
     } catch (err) {
       view_count_at_navigation_short = "<failed>";
     }

@@ -8,12 +8,21 @@ import Checkbox from "./photon-components-web/photon-components/Checkbox";
 import Link from "./photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
+import { YouTubeNavigation } from "../../background.js/ReportSummarizer";
 
 export interface ReportRegretFormProps {}
 
+interface VideoMetadata {
+  thumb_url: string;
+  title: string;
+  description: string;
+  posting_date: string;
+  view_count_short: string;
+}
+
 export interface ReportRegretFormState {
   loading: boolean;
-  ytThumbUrl: string | null;
+  videoMetadata: null | VideoMetadata;
   reportData: any;
   userSuppliedRegretCategory: string;
   userSuppliedOptionalComment: string;
@@ -26,7 +35,7 @@ export class ReportRegretForm extends React.Component<
 > {
   public state = {
     loading: true,
-    ytThumbUrl: null,
+    videoMetadata: null,
     reportData: null,
     userSuppliedRegretCategory: "",
     userSuppliedOptionalComment: "",
@@ -47,17 +56,27 @@ export class ReportRegretForm extends React.Component<
     });
 
     // When we have received report data, update state that summarizes it
-    this.backgroundContextPort.onMessage.addListener(m => {
-      if (m.reportData) {
-        console.log({ m });
-        const { reportData } = m;
-        this.setState({
-          reportData,
-          ytThumbUrl: "./images/yt_sample_thumb.jpg",
-          loading: false,
-        });
-      }
-    });
+    this.backgroundContextPort.onMessage.addListener(
+      (m: { reportData: { youTubeNavigation: YouTubeNavigation } }) => {
+        if (m.reportData) {
+          console.log({ m });
+          const { reportData } = m;
+          const videoMetadata: VideoMetadata = {
+            thumb_url: `https://img.youtube.com/vi/${reportData.youTubeNavigation.video_id}/mqdefault.jpg`,
+            title: reportData.youTubeNavigation.video_title,
+            description: reportData.youTubeNavigation.video_description,
+            posting_date: reportData.youTubeNavigation.video_posting_date,
+            view_count_short:
+              reportData.youTubeNavigation.view_count_at_navigation_short,
+          };
+          this.setState({
+            reportData,
+            videoMetadata,
+            loading: false,
+          });
+        }
+      },
+    );
   }
 
   inspectReportContents(event: MouseEvent) {
@@ -151,22 +170,22 @@ export class ReportRegretForm extends React.Component<
             <div className="w-1/2 px-0">
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
-                  {!this.state.loading && (
+                  {!this.state.loading && this.state.videoMetadata && (
                     <div className="flex-1 mr-1">
                       <div>
                         <img
                           className="w-full"
-                          src={this.state.ytThumbUrl}
+                          src={this.state.videoMetadata.thumb_url}
                           alt=""
                         />
                       </div>
                       <div className="mb-0 mt-1">
                         <h4 className="text-sm font-medium">
-                          Commit editor settings to version control? - Fun Fun
-                          Function
+                          {this.state.videoMetadata.title}
                         </h4>
                         <p className="mt-1 font-hairline text-xs text-grey-darker">
-                          5.3K views · 4 days ago
+                          {this.state.videoMetadata.view_count_short} ·{" "}
+                          {this.state.videoMetadata.posting_date}
                         </p>
                       </div>
                     </div>
