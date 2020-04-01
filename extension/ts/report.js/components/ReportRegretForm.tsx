@@ -363,7 +363,7 @@ export class ReportRegretForm extends React.Component<
             <a
               className="link inline"
               target="_blank"
-              href="./report_regret.html"
+              href="./report-regret.html"
             >
               Debug
             </a>
