@@ -9,6 +9,12 @@ import Link from "../components/photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import { YouTubeNavigation } from "../background.js/ReportSummarizer";
+import LikertScale from "likert-react";
+import {
+  MdSentimentDissatisfied,
+  MdSentimentNeutral,
+  MdSentimentVeryDissatisfied,
+} from "react-icons/all";
 import { DisplayError } from "../components/DisplayError";
 
 export interface ReportRegretFormProps {}
@@ -27,6 +33,7 @@ export interface ReportRegretFormState {
   reportData: any;
   userSuppliedRegretCategory: string;
   userSuppliedOptionalComment: string;
+  userSuppliedSeverity: null | number;
   // includeWatchHistory: boolean;
   error: boolean;
 }
@@ -41,6 +48,7 @@ export class ReportRegretForm extends React.Component<
     reportData: null,
     userSuppliedRegretCategory: "",
     userSuppliedOptionalComment: "",
+    userSuppliedSeverity: null,
     // includeWatchHistory: true,
     error: false,
   };
@@ -109,6 +117,7 @@ export class ReportRegretForm extends React.Component<
         reportData: this.state.reportData,
         userSuppliedRegretCategory: this.state.userSuppliedRegretCategory,
         userSuppliedOptionalComment: this.state.userSuppliedOptionalComment,
+        userSuppliedSeverity: this.state.userSuppliedSeverity,
         // includeWatchHistory: this.state.includeWatchHistory,
       },
     });
@@ -195,7 +204,7 @@ export class ReportRegretForm extends React.Component<
 
         <div className="panel-section-separator" />
 
-        <div className="px-0">
+        <div className="px-0 mb-8">
           <div className="flex -mx-0">
             <div className="w-1/2 px-0">
               <div className="panel-section panel-section-formElements">
@@ -303,19 +312,34 @@ export class ReportRegretForm extends React.Component<
                     </ul>
                   </div>
                 </div>
-                {/*
-                <div class="panel-formElements-item">
-                  <label for="category">Category:</label>
-                  <select id="category">
-                    <option value="" selected="selected">Choose</option>
-                    <option value="conspiracy-theory">Conspiracy theory</option>
-                    <option value="hate-speech">Hate speech</option>
-                    <option value="misinformation">Misinformation</option>
-                    <option value="violence">Violence</option>
-                  </select>
+              </div>
+            </div>
+          </div>
+          <div className="flex -mx-0">
+            <div className="w-1/2 px-0">
+              <div className="panel-section panel-section-formElements">
+                <div className="panel-formElements-item">
+                  <div className="w-full">
+                    <span>
+                      <LikertScale
+                        reviews={[{ question: "How severe is your regret?" }]}
+                        icons={[
+                          <MdSentimentNeutral key="3" />,
+                          <MdSentimentDissatisfied key="2" />,
+                          <MdSentimentVeryDissatisfied key="1" />,
+                        ]}
+                        onClick={(q, n) =>
+                          this.setState({userSuppliedSeverity: n})
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
-                */}
-                <div className="panel-formElements-item mb-8">
+              </div>
+            </div>
+            <div className="w-1/2 px-0">
+              <div className="panel-section panel-section-formElements">
+                <div className="panel-formElements-item">
                   <div className="w-full">
                     {/*
                     <label for="user_supplied_comment" class="input__label mb-3" style="text-align: left;">How were your recommendations affected?</label>

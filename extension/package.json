@@ -8,10 +8,12 @@
     "classnames": "^2.2.6",
     "date-fns": "^2.0.0-alpha.25",
     "idb": "^2.0.4",
+    "likert-react": "^0.0.0-beta6",
     "photon-colors": "^3.3.1",
     "photon-icons": "^4.0.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-icons": "^3.9.0"
   },
   "devDependencies": {
     "@peculiar/webcrypto": "^1.0.26",
