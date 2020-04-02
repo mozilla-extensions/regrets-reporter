@@ -40,7 +40,7 @@ class ExtensionGlue {
     browser.browserAction.onClicked.addListener(exportReportedRegrets);
 
     // Only show report-regret page action on YouTube watch pages
-    browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    const showPageActionOnWatchPagesOnly = (tabId, changeInfo, tab) => {
       if (
         tab.url.match(
           /:\/\/[^\/]*\.?(youtube.com|youtu.be|youtube-nocookies.com)\/watch/,
@@ -50,7 +50,17 @@ class ExtensionGlue {
       } else {
         browser.pageAction.hide(tab.id);
       }
+    };
+    browser.tabs.onUpdated.addListener(showPageActionOnWatchPagesOnly);
+
+    // Make the page action show on watch pages also in case extension is loaded/reloaded while on one
+    const activeTabs = await browser.tabs.query({
+      active: true,
     });
+    if (activeTabs.length > 0) {
+      const currentTab = activeTabs[0];
+      showPageActionOnWatchPagesOnly(currentTab.id, null, currentTab);
+    }
 
     // Set up a connection / listener for content scripts to be able to query collected web traffic data
     let portFromContentScript;
