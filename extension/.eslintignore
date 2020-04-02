@@ -2,9 +2,9 @@
 test/results/coverage/
 dist/
 package-lock.json
-src/content.js
 src/background.js
 src/report.js
+src/consent-form.js
 # don't lint third party resources
 src/popup/photon-components-web.css
 src/popup/tailwind.min.css

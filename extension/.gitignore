@@ -1,8 +1,8 @@
 dist/*
 node_modules/
-src/content.js
 src/background.js
 src/report.js
+src/consent-form.js
 .env
 test/results/coverage
 /firefox-*

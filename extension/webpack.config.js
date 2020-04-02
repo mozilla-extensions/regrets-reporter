@@ -6,6 +6,7 @@ module.exports = {
   entry: {
     background: "./ts/background.js/index.ts",
     report: "./ts/report.js/index.tsx",
+    "consent-form": "./ts/consent-form.js/index.tsx",
   },
   output: {
     path: path.resolve(__dirname, "src"),
