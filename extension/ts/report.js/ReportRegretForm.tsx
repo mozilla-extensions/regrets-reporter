@@ -9,6 +9,7 @@ import Link from "../components/photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import { YouTubeNavigation } from "../background.js/ReportSummarizer";
+import { DisplayError } from "../components/DisplayError";
 
 export interface ReportRegretFormProps {}
 
@@ -27,6 +28,7 @@ export interface ReportRegretFormState {
   userSuppliedRegretCategory: string;
   userSuppliedOptionalComment: string;
   // includeWatchHistory: boolean;
+  error: boolean;
 }
 
 export class ReportRegretForm extends React.Component<
@@ -40,6 +42,7 @@ export class ReportRegretForm extends React.Component<
     userSuppliedRegretCategory: "",
     userSuppliedOptionalComment: "",
     // includeWatchHistory: true,
+    error: false,
   };
 
   private backgroundContextPort: Port;
@@ -57,10 +60,20 @@ export class ReportRegretForm extends React.Component<
 
     // When we have received report data, update state that summarizes it
     this.backgroundContextPort.onMessage.addListener(
-      (m: { reportData: { youTubeNavigation: YouTubeNavigation } }) => {
+      async (m: { reportData: { youTubeNavigation: YouTubeNavigation } }) => {
         if (m.reportData) {
-          console.log({ m });
           const { reportData } = m;
+          console.log({ reportData });
+          if (!reportData || !reportData.youTubeNavigation) {
+            await this.setState({
+              reportData,
+              loading: false,
+              error: true,
+            });
+            throw new Error(
+              "The report data was not available at the time of initiating the regret form",
+            );
+          }
           const videoMetadata: VideoMetadata = {
             thumb_url: `https://img.youtube.com/vi/${reportData.youTubeNavigation.video_id}/mqdefault.jpg`,
             title: reportData.youTubeNavigation.video_title,
@@ -110,6 +123,9 @@ export class ReportRegretForm extends React.Component<
   };
 
   render() {
+    if (this.state.error) {
+      return <DisplayError />;
+    }
     if (this.state.loading) {
       return (
         <header className="panel-section panel-section-header">
