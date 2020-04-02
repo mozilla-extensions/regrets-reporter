@@ -110,6 +110,20 @@ export class ReportRegretForm extends React.Component<
   };
 
   render() {
+    if (this.state.loading) {
+      return (
+        <header className="panel-section panel-section-header">
+          <div className="icon-section-header">
+            <img
+              src="../icons/green-extensionsicon.svg"
+              width="32"
+              height="32"
+            />
+          </div>
+          <div className="text-section-header text-nowrap">Loading ...</div>
+        </header>
+      );
+    }
     return (
       <form>
         <header className="panel-section panel-section-header">
@@ -170,26 +184,24 @@ export class ReportRegretForm extends React.Component<
             <div className="w-1/2 px-0">
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
-                  {!this.state.loading && this.state.videoMetadata && (
-                    <div className="flex-1 mr-1">
-                      <div>
-                        <img
-                          className="w-full"
-                          src={this.state.videoMetadata.thumb_url}
-                          alt=""
-                        />
-                      </div>
-                      <div className="mb-0 mt-1">
-                        <h4 className="text-sm font-medium">
-                          {this.state.videoMetadata.title}
-                        </h4>
-                        <p className="mt-1 font-hairline text-xs text-grey-darker">
-                          {this.state.videoMetadata.view_count_short} ·{" "}
-                          {this.state.videoMetadata.posting_date}
-                        </p>
-                      </div>
+                  <div className="flex-1 mr-1">
+                    <div>
+                      <img
+                        className="w-full"
+                        src={this.state.videoMetadata.thumb_url}
+                        alt=""
+                      />
                     </div>
-                  )}
+                    <div className="mb-0 mt-1">
+                      <h4 className="text-sm font-medium">
+                        {this.state.videoMetadata.title}
+                      </h4>
+                      <p className="mt-1 font-hairline text-xs text-grey-darker">
+                        {this.state.videoMetadata.view_count_short} ·{" "}
+                        {this.state.videoMetadata.posting_date}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
