@@ -1,7 +1,8 @@
 import React, { MouseEvent } from "react";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
-import { ConsentStatus } from "../background.js/getConsentStatus";
+import { ConsentStatus } from "../background.js/consentStatus";
+import { EnrollButton } from "./EnrollButton";
 
 export interface ConsentFormProps {}
 
@@ -34,14 +35,16 @@ export class ConsentForm extends React.Component<
     });
 
     // When we have received consent status, update state to reflect it
-    this.backgroundContextPort.onMessage.addListener(m => {
-      if (m.consentStatus) {
+    this.backgroundContextPort.onMessage.addListener(
+      (m: { consentStatus: ConsentStatus }) => {
         console.log({ m });
+        const { consentStatus } = m;
         this.setState({
           loading: false,
+          consentStatus,
         });
-      }
-    });
+      },
+    );
   }
 
   cancel(event: MouseEvent) {
@@ -49,11 +52,19 @@ export class ConsentForm extends React.Component<
     window.close();
   }
 
+  onEnroll = async () => {
+    const consentStatus = "given";
+    this.setState({
+      loading: false,
+      consentStatus,
+    });
+    this.backgroundContextPort.postMessage({
+      updatedConsentStatus: consentStatus,
+    });
+  };
+
   report = async (event: MouseEvent) => {
     event.preventDefault();
-    this.backgroundContextPort.postMessage({
-      reportedRegret: {},
-    });
     window.close();
   };
 
@@ -98,7 +109,11 @@ export class ConsentForm extends React.Component<
             <p>
               <strong>Participation in the study is strictly voluntary.</strong>
             </p>
-            <button className="enroll-button">Enroll in the study</button>
+            <EnrollButton
+              loading={this.state.loading}
+              consentStatus={this.state.consentStatus}
+              onEnroll={this.onEnroll}
+            />
           </section>
           <section className="program-instructions">
             <h2 className="program-header">What Will Happen Next</h2>
@@ -215,7 +230,11 @@ export class ConsentForm extends React.Component<
               By participating in this study, you will help us to make better
               decisions on your behalf and shape the future of the Internet!
             </p>
-            <button className="enroll-button">Enroll in the study</button>
+            <EnrollButton
+              loading={this.state.loading}
+              consentStatus={this.state.consentStatus}
+              onEnroll={this.onEnroll}
+            />
           </section>
         </div>
         <footer className="footer">

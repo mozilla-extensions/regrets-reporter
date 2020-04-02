@@ -47,7 +47,7 @@ export class ReportRegretForm extends React.Component<
   componentDidMount(): void {
     // console.log("Connecting to the background script");
     this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
-      name: "port-from-report-form",
+      name: "port-from-report-regret-form",
     });
 
     // Send a request to gather the report data

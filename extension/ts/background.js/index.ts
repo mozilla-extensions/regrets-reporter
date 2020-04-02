@@ -1,5 +1,7 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
+import { getConsentStatus, setConsentStatus } from "./consentStatus";
+
 ("use strict");
 
 import { browser } from "webextension-polyfill-ts";
@@ -25,7 +27,42 @@ class ExtensionGlue {
 
   constructor() {}
 
-  async init() {
+  async askForConsent() {
+    // Set up a connection / listener for the consent-form script to be able to query consent status
+    let portFromContentScript;
+    this.contentScriptPortListener = p => {
+      if (p.name !== "port-from-consent-form") {
+        return;
+      }
+      console.log("Connected to consent-form script");
+      portFromContentScript = p;
+      portFromContentScript.onMessage.addListener(async function(m) {
+        console.log({ m });
+        if (m.requestConsentStatus) {
+          portFromContentScript.postMessage({
+            consentStatus: await getConsentStatus(),
+          });
+        }
+        if (m.updatedConsentStatus) {
+          await setConsentStatus(m.updatedConsentStatus);
+          const consentGiven = (await getConsentStatus()) === "given";
+          if (consentGiven) {
+            console.log("Enrolled. Starting study");
+            await extensionGlue.start();
+          }
+        }
+      });
+    };
+    browser.runtime.onConnect.addListener(this.contentScriptPortListener);
+
+    // Open consent form
+    const consentFormUrl = browser.runtime.getURL(
+      `consent-form/consent-form.html`,
+    );
+    await browser.tabs.create({ url: consentFormUrl });
+  }
+
+  async start() {
     // During prototype phase, we have a browser action button that allows for downloading the reported data
     const exportReportedRegrets = async () => {
       console.debug("Exporting reported regrets");
@@ -65,7 +102,9 @@ class ExtensionGlue {
     // Set up a connection / listener for content scripts to be able to query collected web traffic data
     let portFromContentScript;
     this.contentScriptPortListener = p => {
-      // console.log("contentScriptPortListener set up");
+      if (p.name !== "port-from-report-regret-form") {
+        return;
+      }
       portFromContentScript = p;
       portFromContentScript.onMessage.addListener(async function(m) {
         if (m.reportedRegret) {
@@ -203,6 +242,11 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 
 // init the extension glue on every extension load
 async function onEveryExtensionLoad() {
-  await extensionGlue.init();
+  const consentGiven = (await getConsentStatus()) === "given";
+  if (consentGiven) {
+    await extensionGlue.start();
+  } else {
+    await extensionGlue.askForConsent();
+  }
 }
 onEveryExtensionLoad().then();
