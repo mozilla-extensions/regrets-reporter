@@ -4,7 +4,7 @@ import "../components/photon-components-web/index.css";
 import "../components/photon-components-web/attributes";
 import Input from "../components/photon-components-web/photon-components/Input";
 import Radio from "../components/photon-components-web/photon-components/Radio";
-import Checkbox from "../components/photon-components-web/photon-components/Checkbox";
+// import Checkbox from "../components/photon-components-web/photon-components/Checkbox";
 import Link from "../components/photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
@@ -26,7 +26,7 @@ export interface ReportRegretFormState {
   reportData: any;
   userSuppliedRegretCategory: string;
   userSuppliedOptionalComment: string;
-  includeWatchHistory: boolean;
+  // includeWatchHistory: boolean;
 }
 
 export class ReportRegretForm extends React.Component<
@@ -39,7 +39,7 @@ export class ReportRegretForm extends React.Component<
     reportData: null,
     userSuppliedRegretCategory: "",
     userSuppliedOptionalComment: "",
-    includeWatchHistory: true,
+    // includeWatchHistory: true,
   };
 
   private backgroundContextPort: Port;
@@ -96,7 +96,7 @@ export class ReportRegretForm extends React.Component<
         reportData: this.state.reportData,
         userSuppliedRegretCategory: this.state.userSuppliedRegretCategory,
         userSuppliedOptionalComment: this.state.userSuppliedOptionalComment,
-        includeWatchHistory: this.state.includeWatchHistory,
+        // includeWatchHistory: this.state.includeWatchHistory,
       },
     });
     window.close();
