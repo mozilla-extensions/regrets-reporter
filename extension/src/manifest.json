@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "manifest_version": 2,
   "hidden": false,
+  "incognito": "not_allowed",
   "applications": {
     "gecko": {
       "id": "youtube-regrets-reporter-extension@mozilla.org",
