@@ -1,5 +1,4 @@
 import { NavigationBatch } from "./NavigationBatchPreprocessor";
-import { extensionInstallationUuid } from "./extensionInstallationUuid";
 
 type YouTubeNavigationLinkCategory =
   | "up_next_auto_play"
