@@ -1,14 +1,14 @@
 import React, { MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
-import "./photon-components-web/index.css";
-import "./photon-components-web/attributes";
-import Input from "./photon-components-web/photon-components/Input";
-import Radio from "./photon-components-web/photon-components/Radio";
-import Checkbox from "./photon-components-web/photon-components/Checkbox";
-import Link from "./photon-components-web/photon-components/Link";
+import "../components/photon-components-web/index.css";
+import "../components/photon-components-web/attributes";
+import Input from "../components/photon-components-web/photon-components/Input";
+import Radio from "../components/photon-components-web/photon-components/Radio";
+import Checkbox from "../components/photon-components-web/photon-components/Checkbox";
+import Link from "../components/photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
-import { YouTubeNavigation } from "../../background.js/ReportSummarizer";
+import { YouTubeNavigation } from "../background.js/ReportSummarizer";
 
 export interface ReportRegretFormProps {}
 
@@ -318,6 +318,7 @@ export class ReportRegretForm extends React.Component<
           </div>
         </div>
 
+        {/*
         <div className="panel-section-separator" />
 
         <div className="panel-section panel-section-formElements">
@@ -335,6 +336,7 @@ export class ReportRegretForm extends React.Component<
             </span>
           </div>
         </div>
+        */}
 
         <div className="panel-section-separator" />
 
@@ -359,7 +361,6 @@ export class ReportRegretForm extends React.Component<
             </Link>{" "}
             about the YouTube Regrets research and the specific data that is
             shared.
-            {/*
             <a
               className="link inline"
               target="_blank"
@@ -367,7 +368,6 @@ export class ReportRegretForm extends React.Component<
             >
               Debug
             </a>
-            */}
           </span>
         </div>
 
