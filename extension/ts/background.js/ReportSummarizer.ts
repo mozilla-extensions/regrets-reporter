@@ -35,9 +35,12 @@ export interface YouTubeNavigation {
 }
 
 export class ReportSummarizer {
-  async navigationBatchesByUuidToYouTubeNavigations(navigationBatchesByUuid: {
-    [navigationUuid: string]: NavigationBatch;
-  }): Promise<YouTubeNavigation[]> {
+  async navigationBatchesByUuidToYouTubeNavigations(
+    navigationBatchesByUuid: {
+      [navigationUuid: string]: NavigationBatch;
+    },
+    extension_installation_uuid: string,
+  ): Promise<YouTubeNavigation[]> {
     // Only consider navigations in the top/main frame (no subframes)
     const topFrameNavUuids = Object.keys(navigationBatchesByUuid).filter(
       navUuid =>
@@ -94,7 +97,7 @@ export class ReportSummarizer {
         client_timestamp:
           topFrameNavigationBatch.navigationEnvelope.navigation
             .committed_time_stamp,
-        extension_installation_uuid: extensionInstallationUuid(),
+        extension_installation_uuid,
         event_uuid: topFrameNavigationBatch.navigationEnvelope.navigation.uuid,
       };
       return youTubeNavigation;

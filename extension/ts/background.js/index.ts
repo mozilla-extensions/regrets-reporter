@@ -71,7 +71,7 @@ class ExtensionGlue {
       );
       await triggerClientDownloadOfData(
         reportedRegrets,
-        `reportedRegrets-userUuid=${extensionInstallationUuid()}.json`,
+        `reportedRegrets-userUuid=${await extensionInstallationUuid()}.json`,
       );
     };
     browser.browserAction.onClicked.addListener(exportReportedRegrets);
@@ -129,6 +129,7 @@ class ExtensionGlue {
           const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
             dataReceiver.navigationBatchPreprocessor
               .navigationBatchesByNavigationUuid,
+            await extensionInstallationUuid(),
           );
           portFromContentScript.postMessage({
             reportData: { youTubeNavigation: youTubeNavigations[0] },

@@ -14,6 +14,7 @@ describe("ReportSummarizer", function() {
     describe("fixture: youtubeVisit10hOfSilenceVideo", async function() {
       const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
         youtubeVisitAndStartPlaying10hOfSilenceVideo,
+        "placeholder_extensionInstallationUuid",
       );
 
       it("should have found one youtube navigation", async function() {
