@@ -197,13 +197,11 @@ export class ReportRegretForm extends React.Component<
         </div>
         */}
 
-        <div className="panel-section panel-section-formElements">
+        <div className="panel-section panel-section-formElements pb-0">
           <div className="panel-formElements-item">
-            <strong>I regret watching this video:</strong>
+            <h2 className="font-bold">I regret watching this video:</h2>
           </div>
         </div>
-
-        <div className="panel-section-separator" />
 
         <div className="px-0">
           <div className="flex -mx-0">
