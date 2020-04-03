@@ -2,6 +2,7 @@ import React, { MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
 import "../components/photon-components-web/index.css";
 import "../components/photon-components-web/attributes";
+import "../components/tailwind.css";
 import Input from "../components/photon-components-web/photon-components/Input";
 import Radio from "../components/photon-components-web/photon-components/Radio";
 // import Checkbox from "../components/photon-components-web/photon-components/Checkbox";

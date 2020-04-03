@@ -1,19 +1,19 @@
 @tailwind base;
 
-h1 {
+.consent-form h1 {
   @apply text-5xl font-bold;
 }
-h2 {
+.consent-form h2 {
   @apply text-4xl font-bold mb-6;
 }
-p {
+.consent-form p {
   @apply my-5;
 }
-ul {
+.consent-form ul {
   list-style-type: disc;
   padding-left: theme("padding.8");
 }
-ol {
+.consent-form ol {
   list-style-type: decimal;
   padding-left: theme("padding.8");
 }
