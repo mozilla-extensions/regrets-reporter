@@ -16,6 +16,7 @@ import {
   MdSentimentVeryDissatisfied,
 } from "react-icons/all";
 import { DisplayError } from "../components/DisplayError";
+import TextArea from "../components/photon-components-web/photon-components/TextArea";
 
 export interface ReportRegretFormProps {}
 
@@ -204,7 +205,7 @@ export class ReportRegretForm extends React.Component<
 
         <div className="panel-section-separator" />
 
-        <div className="px-0 mb-8">
+        <div className="px-0">
           <div className="flex -mx-0">
             <div className="w-1/2 px-0">
               <div className="panel-section panel-section-formElements">
@@ -234,8 +235,8 @@ export class ReportRegretForm extends React.Component<
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item mb-6">
                   <div>
-                    <p>
-                      <span className="input__label mb-3">
+                    <p className="mb-3">
+                      <span className="input__label">
                         Why do you regret watching the video?
                         {/*How were your recommendations affected?*/}
                       </span>
@@ -329,7 +330,7 @@ export class ReportRegretForm extends React.Component<
                           <MdSentimentVeryDissatisfied key="1" />,
                         ]}
                         onClick={(q, n) =>
-                          this.setState({userSuppliedSeverity: n})
+                          this.setState({ userSuppliedSeverity: n })
                         }
                       />
                     </span>
@@ -341,18 +342,35 @@ export class ReportRegretForm extends React.Component<
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="w-full">
-                    {/*
+                    <p className="mb-3">
+                      {/*
                     <label for="user_supplied_comment" class="input__label mb-3" style="text-align: left;">How were your recommendations affected?</label>
                     */}
-                    <label
-                      htmlFor="user_supplied_comment"
-                      className="input__label mb-3 align-left"
-                      style={{ textAlign: "left" }}
-                    >
-                      Comment (optional)
-                    </label>
+                      <label
+                        htmlFor="user_supplied_comment"
+                        className="input__label mb-3 align-left"
+                        style={{ textAlign: "left" }}
+                      >
+                        Comment (optional)
+                      </label>
+                    </p>
+                    {/*
                     <Input
                       className="input__field w-full"
+                      id="user_supplied_comment"
+                      name="user_supplied_comment"
+                      placeholder=""
+                      value={this.state.userSuppliedOptionalComment}
+                      onChange={changeEvent => {
+                        this.setState({
+                          userSuppliedOptionalComment: changeEvent.target.value,
+                        });
+                      }}
+                    />
+                    */}
+                    <TextArea
+                      className="textarea__field w-full form-textarea mt-1 block w-full"
+                      rows={3}
                       id="user_supplied_comment"
                       name="user_supplied_comment"
                       placeholder=""
