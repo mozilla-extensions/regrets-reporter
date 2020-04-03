@@ -3,6 +3,10 @@ import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import { ConsentStatus } from "../background.js/consentStatus";
 import { EnrollButton } from "./EnrollButton";
+import "photon-colors/photon-colors.css";
+import "../components/photon-components-web/index.css";
+import "../components/photon-components-web/attributes";
+import "../components/tailwind.css";
 
 export interface ConsentFormProps {}
 
@@ -86,7 +90,10 @@ export class ConsentForm extends React.Component<
         <div className="banner">
           <div className="layout-wrapper">
             <div className="icon-container">
-              <img className="icon" src="./img/green-extensionsicon.svg" />
+              <img
+                className="icon h-16 m-4 mb-8"
+                src="./img/green-extensionsicon.svg"
+              />
             </div>
             <h1 className="banner-text">
               Introducing Mozilla's YouTube Regrets Pilot Study
@@ -238,7 +245,7 @@ export class ConsentForm extends React.Component<
           </section>
         </div>
         <footer className="footer">
-          <img className="mozilla-logo" src="./img/mozilla.svg" />
+          <img className="mozilla-logo m-auto" src="./img/mozilla.svg" />
         </footer>
       </div>
     );

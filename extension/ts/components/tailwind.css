@@ -1,0 +1,22 @@
+@tailwind base;
+
+h1 {
+  @apply text-5xl font-bold;
+}
+h2 {
+  @apply text-4xl font-bold mb-6;
+}
+p {
+  @apply my-5;
+}
+ul {
+  list-style-type: disc;
+  padding-left: theme("padding.8");
+}
+ol {
+  list-style-type: decimal;
+  padding-left: theme("padding.8");
+}
+
+@tailwind components;
+@tailwind utilities;
