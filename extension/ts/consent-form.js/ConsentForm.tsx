@@ -2,7 +2,7 @@ import React, { MouseEvent } from "react";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import { ConsentStatus } from "../background.js/consentStatus";
-import { EnrollButton } from "./EnrollButton";
+import { EnrollFlowButton } from "./EnrollFlowButton";
 import "photon-colors/photon-colors.css";
 import "../components/photon-components-web/index.css";
 import "../components/photon-components-web/attributes";
@@ -116,7 +116,7 @@ export class ConsentForm extends React.Component<
             <p>
               <strong>Participation in the study is strictly voluntary.</strong>
             </p>
-            <EnrollButton
+            <EnrollFlowButton
               loading={this.state.loading}
               consentStatus={this.state.consentStatus}
               onEnroll={this.onEnroll}
@@ -246,7 +246,7 @@ export class ConsentForm extends React.Component<
               By participating in this study, you will help us to make better
               decisions on your behalf and shape the future of the Internet!
             </p>
-            <EnrollButton
+            <EnrollFlowButton
               loading={this.state.loading}
               consentStatus={this.state.consentStatus}
               onEnroll={this.onEnroll}

@@ -22,21 +22,21 @@ const customStyles = {
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement("#app");
 
-export interface EnrollButtonProps {
+export interface EnrollFlowButtonProps {
   loading: boolean;
   consentStatus: ConsentStatus;
   onEnroll: () => void;
 }
 
-export interface EnrollButtonState {
+export interface EnrollFlowButtonState {
   modalIsOpen: boolean;
   userPartOfMarginilizedGroup: null | "yes" | "no" | "prefer-not-to-answer";
   userOver18: null | "yes" | "no";
 }
 
-export class EnrollButton extends React.Component<
-  EnrollButtonProps,
-  EnrollButtonState
+export class EnrollFlowButton extends React.Component<
+  EnrollFlowButtonProps,
+  EnrollFlowButtonState
 > {
   public state = {
     loading: true,
