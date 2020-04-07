@@ -17,7 +17,7 @@ import {
   MdSentimentVeryDissatisfied,
 } from "react-icons/all";
 import { DisplayError } from "../components/DisplayError";
-import TextArea from "../components/photon-components-web/photon-components/TextArea";
+// import TextArea from "../components/photon-components-web/photon-components/TextArea";
 
 export interface ReportRegretFormProps {}
 
@@ -35,7 +35,7 @@ export interface ReportRegretFormState {
   reportData: any;
   userSuppliedRegretCategory: string;
   userSuppliedOtherRegretCategory: string;
-  userSuppliedOptionalComment: string;
+  // userSuppliedOptionalComment: string;
   userSuppliedSeverity: null | number;
   // includeWatchHistory: boolean;
   error: boolean;
@@ -51,7 +51,7 @@ export class ReportRegretForm extends React.Component<
     reportData: null,
     userSuppliedRegretCategory: "",
     userSuppliedOtherRegretCategory: "",
-    userSuppliedOptionalComment: "",
+    // userSuppliedOptionalComment: "",
     userSuppliedSeverity: null,
     // includeWatchHistory: true,
     error: false,
@@ -122,7 +122,7 @@ export class ReportRegretForm extends React.Component<
         userSuppliedRegretCategory: this.state.userSuppliedRegretCategory,
         userSuppliedOtherRegretCategory: this.state
           .userSuppliedOtherRegretCategory,
-        userSuppliedOptionalComment: this.state.userSuppliedOptionalComment,
+        // userSuppliedOptionalComment: this.state.userSuppliedOptionalComment,
         userSuppliedSeverity: this.state.userSuppliedSeverity,
         // includeWatchHistory: this.state.includeWatchHistory,
       },
@@ -361,10 +361,8 @@ export class ReportRegretForm extends React.Component<
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="w-full">
+                    {/*
                     <p className="mb-3">
-                      {/*
-                    <label for="user_supplied_comment" class="input__label mb-3" style="text-align: left;">How were your recommendations affected?</label>
-                    */}
                       <label
                         htmlFor="user_supplied_comment"
                         className="input__label mb-3 align-left"
@@ -373,20 +371,6 @@ export class ReportRegretForm extends React.Component<
                         Comment (optional)
                       </label>
                     </p>
-                    {/*
-                    <Input
-                      className="input__field w-full"
-                      id="user_supplied_comment"
-                      name="user_supplied_comment"
-                      placeholder=""
-                      value={this.state.userSuppliedOptionalComment}
-                      onChange={changeEvent => {
-                        this.setState({
-                          userSuppliedOptionalComment: changeEvent.target.value,
-                        });
-                      }}
-                    />
-                    */}
                     <TextArea
                       className="textarea__field w-full form-textarea mt-1 block w-full"
                       rows={3}
@@ -400,6 +384,7 @@ export class ReportRegretForm extends React.Component<
                         });
                       }}
                     />
+                    */}
                   </div>
                 </div>
               </div>
