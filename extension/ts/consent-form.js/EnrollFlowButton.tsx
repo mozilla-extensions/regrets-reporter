@@ -145,7 +145,7 @@ export class EnrollFlowButton extends React.Component<
               </>
             )) || (
               <>
-                <h2>Thank you! One last question...</h2>
+                <h2>Great! Only one question left:</h2>
 
                 <div>
                   <p>

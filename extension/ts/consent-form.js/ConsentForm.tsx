@@ -135,15 +135,17 @@ export class ConsentForm extends React.Component<
             )}
             <ol className="consent-form-list">
               <li>
-                A message will be sent to Mozilla to note that you are
-                (anonymously) willing to participate in the study.
+                A message{" "}
+                {(this.state.consentStatus && "has been") || "will be"} sent to
+                Mozilla to note that you are (anonymously) willing to
+                participate in the study.
               </li>
               <li>
                 Periodically, aggregated information about your YouTube browsing
-                behavior is sent to Mozilla.
+                behavior will be sent to Mozilla.
               </li>
               <li>
-                Whenever you{" "}
+                Continue using Firefox as you normally would, and whenever you{" "}
                 <strong>regret watching a specific YouTube video</strong>, you
                 should follow the steps below to report it to our researchers.
               </li>
