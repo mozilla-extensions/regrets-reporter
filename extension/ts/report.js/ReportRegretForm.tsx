@@ -258,11 +258,11 @@ export class ReportRegretForm extends React.Component<
                       <li className="mb-2">
                         <Radio
                           name="user_supplied_regret_category"
-                          value="hate-speech"
-                          label="Hate speech"
+                          value="hateful-content"
+                          label="Hateful content"
                           checked={
                             this.state.userSuppliedRegretCategory ===
-                            "hate-speech"
+                            "hateful-content"
                           }
                           onChange={
                             this.handleUserSuppliedRegretCategoryOptionChange
