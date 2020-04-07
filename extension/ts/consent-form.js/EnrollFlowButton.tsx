@@ -32,6 +32,7 @@ export interface EnrollFlowButtonState {
   modalIsOpen: boolean;
   userPartOfMarginilizedGroup: null | "yes" | "no" | "prefer-not-to-answer";
   userOver18: null | "yes" | "no";
+  userOver18Confirmed: boolean;
 }
 
 export class EnrollFlowButton extends React.Component<
@@ -44,6 +45,12 @@ export class EnrollFlowButton extends React.Component<
     consentStatus: null,
     userPartOfMarginilizedGroup: null,
     userOver18: null,
+    userOver18Confirmed: false,
+  };
+
+  onContinue = async (event: MouseEvent) => {
+    event.preventDefault();
+    this.setState({ userOver18Confirmed: true });
   };
 
   onEnroll = async (event: MouseEvent) => {
@@ -100,83 +107,103 @@ export class EnrollFlowButton extends React.Component<
             style={customStyles}
             contentLabel="Example Modal"
           >
-            <h2>First, a few questions</h2>
+            {(!this.state.userOver18Confirmed && (
+              <>
+                <h2>Study qualification</h2>
 
-            <div>
-              <p>
-                Do you consider yourself to be part of a marginalized group?
-              </p>
-              <ul className="list-none">
-                <li className="mb-2">
-                  <Radio
-                    name="user_over_18"
-                    value="yes"
-                    label="Yes"
-                    checked={this.state.userPartOfMarginilizedGroup === "yes"}
-                    onChange={
-                      this.handleUserPartOfMarginilizedGroupOptionChange
-                    }
-                  />
-                </li>
-                <li className="mb-2">
-                  <Radio
-                    name="user_over_18"
-                    value="no"
-                    label="No"
-                    checked={this.state.userPartOfMarginilizedGroup === "no"}
-                    onChange={
-                      this.handleUserPartOfMarginilizedGroupOptionChange
-                    }
-                  />
-                </li>
-                <li className="mb-2">
-                  <Radio
-                    name="user_over_18"
-                    value="prefer-not-to-answer"
-                    label="I prefer not answer"
-                    checked={
-                      this.state.userPartOfMarginilizedGroup ===
-                      "prefer-not-to-answer"
-                    }
-                    onChange={
-                      this.handleUserPartOfMarginilizedGroupOptionChange
-                    }
-                  />
-                </li>
-              </ul>
-            </div>
+                <div>
+                  <p>Are you over 18 years old?</p>
+                  <ul className="list-none">
+                    <li className="mb-2">
+                      <Radio
+                        name="userOver18"
+                        value="yes"
+                        label="Yes"
+                        checked={this.state.userOver18 === "yes"}
+                        onChange={this.handleUserOver18OptionChange}
+                      />
+                    </li>
+                    <li className="mb-2">
+                      <Radio
+                        name="userOver18"
+                        value="no"
+                        label="No"
+                        checked={this.state.userOver18 === "no"}
+                        onChange={this.handleUserOver18OptionChange}
+                      />
+                    </li>
+                  </ul>
+                </div>
 
-            <div>
-              <p>Are you over 18 years old?</p>
-              <ul className="list-none">
-                <li className="mb-2">
-                  <Radio
-                    name="user_over_18"
-                    value="yes"
-                    label="Yes"
-                    checked={this.state.userOver18 === "yes"}
-                    onChange={this.handleUserOver18OptionChange}
-                  />
-                </li>
-                <li className="mb-2">
-                  <Radio
-                    name="user_over_18"
-                    value="no"
-                    label="No"
-                    checked={this.state.userOver18 === "no"}
-                    onChange={this.handleUserOver18OptionChange}
-                  />
-                </li>
-              </ul>
-            </div>
+                <Button
+                  className="enroll-button h-20 btn rounded-lg items-center"
+                  disabled={this.state.userOver18 !== "yes"}
+                  onClick={this.onContinue}
+                >
+                  Continue
+                </Button>
+              </>
+            )) || (
+              <>
+                <h2>Thank you! One last question...</h2>
 
-            <Button
-              className="enroll-button h-20 btn rounded-lg items-center"
-              disabled={this.state.userOver18 !== "yes"}
-              onClick={this.onEnroll}
-            >
-              Enroll in the study
-            </Button>
+                <div>
+                  <p>
+                    Do you consider yourself to be part of a marginalized group?
+                  </p>
+                  <ul className="list-none">
+                    <li className="mb-2">
+                      <Radio
+                        name="userPartOfMarginilizedGroup"
+                        value="yes"
+                        label="Yes"
+                        checked={
+                          this.state.userPartOfMarginilizedGroup === "yes"
+                        }
+                        onChange={
+                          this.handleUserPartOfMarginilizedGroupOptionChange
+                        }
+                      />
+                    </li>
+                    <li className="mb-2">
+                      <Radio
+                        name="userPartOfMarginilizedGroup"
+                        value="no"
+                        label="No"
+                        checked={
+                          this.state.userPartOfMarginilizedGroup === "no"
+                        }
+                        onChange={
+                          this.handleUserPartOfMarginilizedGroupOptionChange
+                        }
+                      />
+                    </li>
+                    <li className="mb-2">
+                      <Radio
+                        name="userPartOfMarginilizedGroup"
+                        value="prefer-not-to-answer"
+                        label="I prefer not answer"
+                        checked={
+                          this.state.userPartOfMarginilizedGroup ===
+                          "prefer-not-to-answer"
+                        }
+                        onChange={
+                          this.handleUserPartOfMarginilizedGroupOptionChange
+                        }
+                      />
+                    </li>
+                  </ul>
+                </div>
+
+                <Button
+                  className="enroll-button h-20 btn rounded-lg items-center"
+                  disabled={this.state.userPartOfMarginilizedGroup === null}
+                  onClick={this.onEnroll}
+                >
+                  Enroll in the study
+                </Button>
+              </>
+            )}
           </Modal>
         </div>
       )) || (
@@ -185,7 +212,7 @@ export class EnrollFlowButton extends React.Component<
           <br />
           Welcome!
           <br />
-          <small>(Feel free to close this window)</small>
+          <small>Now, please read the Next Steps below.</small>
         </button>
       )
     );
