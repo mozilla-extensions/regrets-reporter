@@ -1,6 +1,6 @@
 import { NavigationBatch } from "../../NavigationBatchPreprocessor";
 
-export const youtubeVisitAndStartPlaying10hOfSilenceVideo: {
+export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: {
   [navigationUuid: string]: NavigationBatch;
 } = {
   "f6b41e9b-a6ef-45fe-9401-e9ac31ed2cd6": {

@@ -1,25 +1,39 @@
 import { assert } from "chai";
 import { ReportSummarizer } from "./ReportSummarizer";
-import { youtubeVisitAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitAndStartPlaying10hOfSilenceVideo";
+import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo";
+import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 
 describe("ReportSummarizer", function() {
-  it("should exist", function() {
+  it("should exist", async function() {
     const reportSummarizer = new ReportSummarizer();
     assert.isObject(reportSummarizer);
   });
 
-  describe("Visiting YouTube", async function() {
+  it("fixture: youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo", async function() {
     const reportSummarizer = new ReportSummarizer();
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo,
+      "placeholder_extensionInstallationUuid",
+    );
 
-    describe("fixture: youtubeVisit10hOfSilenceVideo", async function() {
-      const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-        youtubeVisitAndStartPlaying10hOfSilenceVideo,
-        "placeholder_extensionInstallationUuid",
-      );
+    assert.equal(
+      youTubeNavigations.length,
+      1,
+      "should have found one youtube navigation",
+    );
+  });
 
-      it("should have found one youtube navigation", async function() {
-        assert.equal(youTubeNavigations.length, 1);
-      });
-    });
+  it("fixture: youtubeVisitWatchPageAndNavigateToFirstUpNext", async function() {
+    const reportSummarizer = new ReportSummarizer();
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      youtubeVisitWatchPageAndNavigateToFirstUpNext,
+      "placeholder_extensionInstallationUuid",
+    );
+
+    assert.equal(
+      youTubeNavigations.length,
+      2,
+      "should have found two youtube navigations",
+    );
   });
 });
