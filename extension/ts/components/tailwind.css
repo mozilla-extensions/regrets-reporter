@@ -7,15 +7,21 @@
   @apply text-4xl font-bold mb-6;
 }
 .consent-form p {
-  @apply my-5;
+  @apply my-6;
 }
-.consent-form ul {
+.consent-form ul.consent-form-list {
   list-style-type: disc;
-  padding-left: theme("padding.8");
+  padding-left: theme("padding.16");
 }
-.consent-form ol {
+.consent-form ul.consent-form-list li {
+  padding-left: theme("padding.4");
+}
+.consent-form ol.consent-form-list {
   list-style-type: decimal;
-  padding-left: theme("padding.8");
+  padding-left: theme("padding.16");
+}
+.consent-form ol.consent-form-list li {
+  padding-left: theme("padding.4");
 }
 
 @tailwind components;

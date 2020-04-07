@@ -123,35 +123,44 @@ export class ConsentForm extends React.Component<
             />
           </section>
           <section className="program-instructions">
-            <h2 className="program-header">What Will Happen Next</h2>
-            <p>
-              <strong>If you agree</strong> to participate:
-            </p>
-            <ol>
+            {(this.state.consentStatus && (
+              <h2 className="program-header">Next Steps</h2>
+            )) || (
+              <>
+                <h2 className="program-header">What Will Happen Next</h2>
+                <p>
+                  <strong>If you agree</strong> to participate:
+                </p>
+              </>
+            )}
+            <ol className="consent-form-list">
               <li>
-                A message will be sent to Mozilla to note that you are willing
-                to participate in the study. Continue using Firefox as you
-                normally would.
+                A message will be sent to Mozilla to note that you are
+                (anonymously) willing to participate in the study.
               </li>
               <li>
-                The study add-on will collect varying information about your
-                YouTube browsing behavior, possibly including what YouTube pages
-                you visit and how you interact with them.
-              </li>
-              <li>
-                Periodically, we will send aggregated information about your
-                YouTube browsing behavior to Mozilla.
+                Periodically, aggregated information about your YouTube browsing
+                behavior is sent to Mozilla.
               </li>
               <li>
                 Whenever you{" "}
                 <strong>regret watching a specific YouTube video</strong>, you
                 should follow the steps below to report it to our researchers.
               </li>
+              <li>
+                The report will include information about your YouTube browsing
+                behavior up to 5 hours prior to initiating the report. This
+                includes what kind of YouTube pages you have visited and how you
+                interacted with them.The report will include information about
+                your YouTube browsing behavior up to 5 hours prior to initiating
+                the report. This includes what kind of YouTube pages you have
+                visited and how you interacted with them.
+              </li>
             </ol>
           </section>
           <section className="program-instructions">
             <h2 className="program-header">Reporting a "YouTube Regret":</h2>
-            <ol>
+            <ol className="consent-form-list">
               <li>
                 Click the [icon description] icon in the browser bar:
                 <br />
@@ -169,7 +178,7 @@ export class ConsentForm extends React.Component<
             <h2 className="program-header">Leaving the study</h2>
             <p>Users are welcome to opt out of the study at any point.</p>
             <p>To stop participating in the study:</p>
-            <ol>
+            <ol className="consent-form-list">
               <li>
                 Type <code>about:addons</code> into the location bar and press{" "}
                 <code>Enter</code>.
