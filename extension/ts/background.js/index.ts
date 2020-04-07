@@ -27,7 +27,7 @@ class ExtensionGlue {
 
   constructor() {}
 
-  async askForConsent() {
+  async init() {
     // Set up a connection / listener for the consent-form script to be able to query consent status
     let portFromContentScript;
     this.contentScriptPortListener = p => {
@@ -37,7 +37,7 @@ class ExtensionGlue {
       console.log("Connected to consent-form script");
       portFromContentScript = p;
       portFromContentScript.onMessage.addListener(async function(m) {
-        console.log({ m });
+        console.log("Message from consent-form script:", { m });
         if (m.requestConsentStatus) {
           portFromContentScript.postMessage({
             consentStatus: await getConsentStatus(),
@@ -54,7 +54,9 @@ class ExtensionGlue {
       });
     };
     browser.runtime.onConnect.addListener(this.contentScriptPortListener);
+  }
 
+  async askForConsent() {
     // Open consent form
     const consentFormUrl = browser.runtime.getURL(
       `consent-form/consent-form.html`,
@@ -107,6 +109,7 @@ class ExtensionGlue {
       }
       portFromContentScript = p;
       portFromContentScript.onMessage.addListener(async function(m) {
+        console.log("Message from report-regret-form script:", { m });
         if (m.reportedRegret) {
           const { reportedRegret } = m;
           const { reportedRegrets } = await browser.storage.local.get(
@@ -244,6 +247,7 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 // init the extension glue on every extension load
 async function onEveryExtensionLoad() {
   const consentGiven = (await getConsentStatus()) === "given";
+  await extensionGlue.init();
   if (consentGiven) {
     await extensionGlue.start();
   } else {

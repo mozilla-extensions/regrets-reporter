@@ -211,8 +211,6 @@ export class EnrollFlowButton extends React.Component<
           You've enrolled.
           <br />
           Welcome!
-          <br />
-          <small>Now, please read the Next Steps below.</small>
         </button>
       )
     );

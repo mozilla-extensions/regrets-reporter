@@ -424,7 +424,7 @@ export class ReportRegretForm extends React.Component<
             <Link
               className="inline"
               target="_blank"
-              href="https://foundation.mozilla.org/en/campaigns/youtube-regrets/"
+              href={browser.runtime.getURL(`consent-form/consent-form.html`)}
             >
               here to learn more
             </Link>{" "}
