@@ -340,27 +340,6 @@ export class ReportRegretForm extends React.Component<
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="w-full">
-                    <span>
-                      <LikertScale
-                        reviews={[{ question: "How severe is your regret?" }]}
-                        icons={[
-                          <MdSentimentNeutral key="3" />,
-                          <MdSentimentDissatisfied key="2" />,
-                          <MdSentimentVeryDissatisfied key="1" />,
-                        ]}
-                        onClick={(q, n) =>
-                          this.setState({ userSuppliedSeverity: n })
-                        }
-                      />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-1/2 px-0">
-              <div className="panel-section panel-section-formElements">
-                <div className="panel-formElements-item">
-                  <div className="w-full">
                     {/*
                     <p className="mb-3">
                       <label
@@ -385,6 +364,27 @@ export class ReportRegretForm extends React.Component<
                       }}
                     />
                     */}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-1/2 px-0">
+              <div className="panel-section panel-section-formElements">
+                <div className="panel-formElements-item">
+                  <div className="w-full">
+                    <span>
+                      <LikertScale
+                        reviews={[{ question: "How severe is your regret?" }]}
+                        icons={[
+                          <MdSentimentNeutral key="3" />,
+                          <MdSentimentDissatisfied key="2" />,
+                          <MdSentimentVeryDissatisfied key="1" />,
+                        ]}
+                        onClick={(q, n) =>
+                          this.setState({ userSuppliedSeverity: n })
+                        }
+                      />
+                    </span>
                   </div>
                 </div>
               </div>
