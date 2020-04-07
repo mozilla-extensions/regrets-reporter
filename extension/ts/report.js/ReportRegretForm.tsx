@@ -34,6 +34,7 @@ export interface ReportRegretFormState {
   videoMetadata: null | VideoMetadata;
   reportData: any;
   userSuppliedRegretCategory: string;
+  userSuppliedOtherRegretCategory: string;
   userSuppliedOptionalComment: string;
   userSuppliedSeverity: null | number;
   // includeWatchHistory: boolean;
@@ -49,6 +50,7 @@ export class ReportRegretForm extends React.Component<
     videoMetadata: null,
     reportData: null,
     userSuppliedRegretCategory: "",
+    userSuppliedOtherRegretCategory: "",
     userSuppliedOptionalComment: "",
     userSuppliedSeverity: null,
     // includeWatchHistory: true,
@@ -118,6 +120,8 @@ export class ReportRegretForm extends React.Component<
       reportedRegret: {
         reportData: this.state.reportData,
         userSuppliedRegretCategory: this.state.userSuppliedRegretCategory,
+        userSuppliedOtherRegretCategory: this.state
+          .userSuppliedOtherRegretCategory,
         userSuppliedOptionalComment: this.state.userSuppliedOptionalComment,
         userSuppliedSeverity: this.state.userSuppliedSeverity,
         // includeWatchHistory: this.state.includeWatchHistory,
@@ -300,13 +304,29 @@ export class ReportRegretForm extends React.Component<
                         <Radio
                           name="user_supplied_regret_category"
                           value="other"
-                          label="Other"
+                          label="Other: "
                           checked={
                             this.state.userSuppliedRegretCategory === "other"
                           }
                           onChange={
                             this.handleUserSuppliedRegretCategoryOptionChange
                           }
+                        />
+                        <Input
+                          className="input__field w-full my-3"
+                          id="user_supplied_other_regret_category"
+                          name="user_supplied_other_regret_category"
+                          placeholder=""
+                          disabled={
+                            this.state.userSuppliedRegretCategory !== "other"
+                          }
+                          value={this.state.userSuppliedOtherRegretCategory}
+                          onChange={changeEvent => {
+                            this.setState({
+                              userSuppliedOtherRegretCategory:
+                                changeEvent.target.value,
+                            });
+                          }}
                         />
                       </li>
                     </ul>

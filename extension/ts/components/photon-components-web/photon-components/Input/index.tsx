@@ -64,7 +64,10 @@ class Input extends React.Component<InputProps, InputState> {
           onChange={this.handleOnChange}
           {...{ type, value, ...props }}
         />
-        {hasContent && !isPassword && this.renderClearButton()}
+        {hasContent &&
+          !isPassword &&
+          !this.props.disabled &&
+          this.renderClearButton()}
         {isPassword && this.renderPasswordVisibilityButton()}
       </label>
     );
