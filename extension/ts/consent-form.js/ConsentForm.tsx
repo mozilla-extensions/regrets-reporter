@@ -82,25 +82,25 @@ export class ConsentForm extends React.Component<
   render() {
     return (
       <div className="page-container">
-        <header className="header">
-          <div className="layout-wrapper">
+        <header>
+          <div className="layout-wrapper p-12 m-auto">
             <img className="wordmark" src="./img/mozilla.svg" alt="Mozilla" />
           </div>
         </header>
         <div className="banner">
-          <div className="layout-wrapper">
-            <div className="icon-container">
+          <div className="layout-wrapper px-12 m-auto">
+            <div className="icon-container hidden md:block">
               <img
                 className="icon h-16 m-4 mb-8"
                 src="./img/green-extensionsicon.svg"
               />
             </div>
-            <h1 className="banner-text">
-              Introducing Mozilla's YouTube Regrets Pilot Study
-            </h1>
+            <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
+              Mozilla's YouTube Regrets Study
+            </div>
           </div>
         </div>
-        <div className="layout-wrapper">
+        <div className="layout-wrapper px-12 m-auto">
           <section className="program-description">
             <p className="callout">
               Mozilla wants to get better insights into YouTube's problem with

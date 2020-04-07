@@ -55,13 +55,8 @@ a {
   height: 70px;
 }
 
-.header {
-  margin: 20px 0 10px;
-}
-
 .layout-wrapper {
-  width: 1000px;
-  margin: 0 auto;
+  max-width: 1000px;
 }
 
 .banner {
