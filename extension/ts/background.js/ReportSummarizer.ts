@@ -1,4 +1,7 @@
-import { NavigationBatch } from "./NavigationBatchPreprocessor";
+import {
+  NavigationBatch,
+  TrimmedNavigationBatch,
+} from "./NavigationBatchPreprocessor";
 
 type YouTubeNavigationLinkCategory =
   | "up_next_auto_play"
@@ -34,6 +37,21 @@ export interface YouTubeNavigation {
 }
 
 export class ReportSummarizer {
+  async trimNavigationBatch(
+    navigationBatch: NavigationBatch,
+  ): Promise<TrimmedNavigationBatch> {
+    const trimmedNavigationBatch = {
+      ...navigationBatch,
+      trimmedHttpRequestCount: -1,
+      trimmedHttpResponseCount: -1,
+      trimmedHttpRedirectCount: -1,
+      trimmedJavascriptOperationCount: -1,
+      trimmedCapturedContentCount: -1,
+    };
+    console.log({ trimmedNavigationBatch });
+    return trimmedNavigationBatch;
+  }
+
   async navigationBatchesByUuidToYouTubeNavigations(
     navigationBatchesByUuid: {
       [navigationUuid: string]: NavigationBatch;

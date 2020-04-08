@@ -174,9 +174,16 @@ const removeItemFromArray = (ar, el) => {
  * the corresponding navigation.
  */
 export class NavigationBatchPreprocessor {
+  /**
+   * Optional hook that allows for inspection and/or modification of navigation batches
+   * at the end of the processing flow.
+   */
+  public processedNavigationBatchTrimmer: (
+    NavigationBatch,
+  ) => Promise<TrimmedNavigationBatch>;
   public openWpmPayloadEnvelopeProcessQueue: OpenWpmPayloadEnvelope[] = [];
   public navigationBatchesByNavigationUuid: {
-    [navigationUuid: string]: NavigationBatch;
+    [navigationUuid: string]: NavigationBatch | TrimmedNavigationBatch;
   } = {};
 
   async submitOpenWPMPayload(
@@ -451,10 +458,11 @@ export class NavigationBatchPreprocessor {
           delete this.navigationBatchesByNavigationUuid[navigation.uuid];
         } else {
           // Update navigationBatchesByNavigationUuid
+          let updatedNavigationBatch;
           if (this.navigationBatchesByNavigationUuid[navigation.uuid]) {
             const existingNavigationBatch = this
               .navigationBatchesByNavigationUuid[navigation.uuid];
-            this.navigationBatchesByNavigationUuid[navigation.uuid] = {
+            updatedNavigationBatch = {
               ...existingNavigationBatch,
               childEnvelopes: existingNavigationBatch.childEnvelopes.concat(
                 navigationBatch.childEnvelopes,
@@ -476,10 +484,16 @@ export class NavigationBatchPreprocessor {
                 navigationBatch.capturedContentCount,
             };
           } else {
-            this.navigationBatchesByNavigationUuid[
-              navigation.uuid
-            ] = navigationBatch;
+            updatedNavigationBatch = navigationBatch;
           }
+          if (this.processedNavigationBatchTrimmer) {
+            updatedNavigationBatch = this.processedNavigationBatchTrimmer(
+              updatedNavigationBatch,
+            );
+          }
+          this.navigationBatchesByNavigationUuid[
+            navigation.uuid
+          ] = updatedNavigationBatch;
         }
       },
     );

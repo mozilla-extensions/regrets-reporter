@@ -15,7 +15,13 @@ import {
 import { ReportSummarizer } from "./ReportSummarizer";
 import { extensionInstallationUuid } from "./extensionInstallationUuid";
 import { triggerClientDownloadOfData } from "./triggerClientDownloadOfData";
+import {
+  NavigationBatch,
+  TrimmedNavigationBatch,
+} from "./NavigationBatchPreprocessor";
+import { YouTubeUsageStatisticsMonitor } from "./YouTubeUsageStatistics";
 const reportSummarizer = new ReportSummarizer();
+const youTubeUsageStatisticsMonitor = new YouTubeUsageStatisticsMonitor();
 
 class ExtensionGlue {
   private navigationInstrument;
@@ -142,6 +148,18 @@ class ExtensionGlue {
     };
     browser.runtime.onConnect.addListener(this.contentScriptPortListener);
 
+    // Add hooks to the navigation batch preprocessor
+    dataReceiver.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
+      navigationBatch: TrimmedNavigationBatch,
+    ): Promise<TrimmedNavigationBatch> => {
+      // Keep track of aggregated statistics
+      youTubeUsageStatisticsMonitor.seenNavigationBatch(navigationBatch);
+
+      // trim away irrelevant parts of the batch (decreases memory usage)
+      // TODO
+      return reportSummarizer.trimNavigationBatch(navigationBatch);
+    };
+
     // Start OpenWPM instrumentation (monitors navigations and http content)
     const openwpmConfig = {
       navigation_instrument: true,
@@ -155,6 +173,10 @@ class ExtensionGlue {
       crawl_id: 0,
     };
     await this.startOpenWPMInstrumentation(openwpmConfig);
+
+    // Periodic submission of YouTube usage statistics
+    // TODO
+    // youTubeUsageStatisticsMonitor
   }
 
   async startOpenWPMInstrumentation(config) {
