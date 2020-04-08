@@ -6,7 +6,7 @@ import {
   JavascriptOperation,
   Navigation,
 } from "@openwpm/webext-instrumentation";
-import { CapturedContent, LogEntry } from "./dataReceiver";
+import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./dateUtils";
 
 declare namespace browser.alarms {
@@ -73,14 +73,6 @@ type OpenWPMPayload =
   | JavascriptOperation
   | JavascriptCookieRecord
   | LogEntry
-  | CapturedContent;
-
-type BatchableOpenWPMPayload =
-  | Navigation
-  | HttpRequest
-  | HttpResponse
-  | HttpRedirect
-  | JavascriptOperation
   | CapturedContent;
 
 type BatchableChildOpenWPMPayload =

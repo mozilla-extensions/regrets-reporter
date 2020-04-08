@@ -5,7 +5,6 @@ import { getConsentStatus, setConsentStatus } from "./consentStatus";
 ("use strict");
 
 import { browser } from "webextension-polyfill-ts";
-import * as dataReceiver from "./dataReceiver";
 import {
   CookieInstrument,
   JavascriptInstrument,
@@ -20,6 +19,8 @@ import {
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
 import { YouTubeUsageStatisticsMonitor } from "./YouTubeUsageStatistics";
+import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
+const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const youTubeUsageStatisticsMonitor = new YouTubeUsageStatisticsMonitor();
 
@@ -134,12 +135,13 @@ class ExtensionGlue {
         }
         // The report form has triggered a report-related data collection
         if (m.requestReportData) {
-          await dataReceiver.navigationBatchPreprocessor.processQueue();
+          await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
           const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-            dataReceiver.navigationBatchPreprocessor
+            openWpmPacketHandler.navigationBatchPreprocessor
               .navigationBatchesByNavigationUuid,
             await extensionInstallationUuid(),
           );
+          console.log({ youTubeNavigations });
           portFromContentScript.postMessage({
             reportData: { youTubeNavigation: youTubeNavigations[0] },
           });
@@ -148,8 +150,11 @@ class ExtensionGlue {
     };
     browser.runtime.onConnect.addListener(this.contentScriptPortListener);
 
+    // Set up the active tab dwell time monitor
+    openWpmPacketHandler.activeTabDwellTimeMonitor.run();
+
     // Add hooks to the navigation batch preprocessor
-    dataReceiver.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
+    openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
       navigationBatch: TrimmedNavigationBatch,
     ): Promise<TrimmedNavigationBatch> => {
       // Keep track of aggregated statistics
@@ -159,6 +164,9 @@ class ExtensionGlue {
       // TODO
       return reportSummarizer.trimNavigationBatch(navigationBatch);
     };
+
+    // Start the navigation batch preprocessor
+    openWpmPacketHandler.navigationBatchPreprocessor.run();
 
     // Start OpenWPM instrumentation (monitors navigations and http content)
     const openwpmConfig = {
@@ -180,27 +188,27 @@ class ExtensionGlue {
   }
 
   async startOpenWPMInstrumentation(config) {
-    dataReceiver.activeTabDwellTimeMonitor.run();
-    dataReceiver.navigationBatchPreprocessor.run();
     this.openwpmCrawlId = config["crawl_id"];
     if (config["navigation_instrument"]) {
-      dataReceiver.logDebug("Navigation instrumentation enabled");
-      this.navigationInstrument = new NavigationInstrument(dataReceiver);
+      openWpmPacketHandler.logDebug("Navigation instrumentation enabled");
+      this.navigationInstrument = new NavigationInstrument(
+        openWpmPacketHandler,
+      );
       this.navigationInstrument.run(config["crawl_id"]);
     }
     if (config["cookie_instrument"]) {
-      dataReceiver.logDebug("Cookie instrumentation enabled");
-      this.cookieInstrument = new CookieInstrument(dataReceiver);
+      openWpmPacketHandler.logDebug("Cookie instrumentation enabled");
+      this.cookieInstrument = new CookieInstrument(openWpmPacketHandler);
       this.cookieInstrument.run(config["crawl_id"]);
     }
     if (config["js_instrument"]) {
-      dataReceiver.logDebug("Javascript instrumentation enabled");
-      this.jsInstrument = new JavascriptInstrument(dataReceiver);
+      openWpmPacketHandler.logDebug("Javascript instrumentation enabled");
+      this.jsInstrument = new JavascriptInstrument(openWpmPacketHandler);
       this.jsInstrument.run(config["crawl_id"]);
     }
     if (config["http_instrument"]) {
-      dataReceiver.logDebug("HTTP Instrumentation enabled");
-      this.httpInstrument = new HttpInstrument(dataReceiver);
+      openWpmPacketHandler.logDebug("HTTP Instrumentation enabled");
+      this.httpInstrument = new HttpInstrument(openWpmPacketHandler);
       this.httpInstrument.run(
         config["crawl_id"],
         config["save_content"],
@@ -211,22 +219,22 @@ class ExtensionGlue {
   }
 
   pause() {
-    dataReceiver.pause();
-    if (dataReceiver.activeTabDwellTimeMonitor) {
-      dataReceiver.activeTabDwellTimeMonitor.cleanup();
+    openWpmPacketHandler.pause();
+    if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
+      openWpmPacketHandler.activeTabDwellTimeMonitor.cleanup();
     }
-    if (dataReceiver.navigationBatchPreprocessor) {
-      dataReceiver.navigationBatchPreprocessor.cleanup();
+    if (openWpmPacketHandler.navigationBatchPreprocessor) {
+      openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
     }
   }
 
   resume() {
-    dataReceiver.resume();
-    if (dataReceiver.activeTabDwellTimeMonitor) {
-      dataReceiver.activeTabDwellTimeMonitor.run();
+    openWpmPacketHandler.resume();
+    if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
+      openWpmPacketHandler.activeTabDwellTimeMonitor.run();
     }
-    if (dataReceiver.navigationBatchPreprocessor) {
-      dataReceiver.navigationBatchPreprocessor.run();
+    if (openWpmPacketHandler.navigationBatchPreprocessor) {
+      openWpmPacketHandler.navigationBatchPreprocessor.run();
     }
   }
 
@@ -249,11 +257,11 @@ class ExtensionGlue {
     if (this.httpInstrument) {
       await this.httpInstrument.cleanup();
     }
-    if (dataReceiver.activeTabDwellTimeMonitor) {
-      dataReceiver.activeTabDwellTimeMonitor.cleanup();
+    if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
+      openWpmPacketHandler.activeTabDwellTimeMonitor.cleanup();
     }
-    if (dataReceiver.navigationBatchPreprocessor) {
-      await dataReceiver.navigationBatchPreprocessor.cleanup();
+    if (openWpmPacketHandler.navigationBatchPreprocessor) {
+      await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
     }
   }
 }
@@ -261,9 +269,9 @@ class ExtensionGlue {
 // make an instance of the ExtensionGlue class available to the extension background context
 const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 
-// make the dataReceiver singleton and triggerClientDownloadOfData available to
+// make the openWpmPacketHandler singleton and triggerClientDownloadOfData available to
 // the extension background context so that we as developers can collect fixture data
-(window as any).dataReceiver = dataReceiver;
+(window as any).openWpmPacketHandler = openWpmPacketHandler;
 (window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
 
 // init the extension glue on every extension load
