@@ -1,4 +1,4 @@
-import { humanFileSize } from "./humanFileSize";
+import { humanFileSize } from "./lib/humanFileSize";
 import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { HttpResponse } from "@openwpm/webext-instrumentation";
@@ -41,7 +41,7 @@ export class OpenWpmPacketHandler {
     this.navigationBatchPreprocessor = new NavigationBatchPreprocessor();
   }
 
-  logDebug = async function(msg) {
+  logDebug = async msg => {
     if (!this.active) {
       return;
     }
@@ -51,7 +51,7 @@ export class OpenWpmPacketHandler {
     console.debug(`OpenWPM DEBUG log message: ${msg}`);
   };
 
-  logInfo = async function(msg) {
+  logInfo = async msg => {
     if (!this.active) {
       return;
     }
@@ -67,7 +67,7 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  logWarn = async function(msg) {
+  logWarn = async msg => {
     if (!this.active) {
       return;
     }
@@ -83,7 +83,7 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  logError = async function(msg) {
+  logError = async msg => {
     if (!this.active) {
       return;
     }
@@ -99,7 +99,7 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  logCritical = async function(msg) {
+  logCritical = async msg => {
     if (!this.active) {
       return;
     }
@@ -115,7 +115,7 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  saveRecord = async function(instrument, record) {
+  saveRecord = async (instrument, record) => {
     if (!this.active) {
       return;
     }
@@ -140,11 +140,7 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  saveContent = async function(
-    content,
-    contentHash,
-    httpResponse: HttpResponse,
-  ) {
+  saveContent = async (content, contentHash, httpResponse: HttpResponse) => {
     if (!this.active) {
       return;
     }
@@ -182,11 +178,11 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  pause = function() {
+  pause = () => {
     this.active = false;
   };
 
-  resume = function() {
+  resume = () => {
     this.active = true;
   };
 }

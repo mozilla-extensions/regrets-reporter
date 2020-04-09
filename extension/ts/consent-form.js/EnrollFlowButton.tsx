@@ -1,5 +1,5 @@
 import React, { MouseEvent } from "react";
-import { ConsentStatus } from "../background.js/consentStatus";
+import { ConsentStatus } from "../background.js/lib/consentStatus";
 import Modal from "react-modal";
 import Radio from "../components/photon-components-web/photon-components/Radio";
 import Button from "../components/photon-components-web/photon-components/Button";

@@ -1,7 +1,7 @@
 import React, { MouseEvent } from "react";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
-import { ConsentStatus } from "../background.js/consentStatus";
+import { ConsentStatus } from "../background.js/lib/consentStatus";
 import { EnrollFlowButton } from "./EnrollFlowButton";
 import "photon-colors/photon-colors.css";
 import "../components/photon-components-web/index.css";

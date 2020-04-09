@@ -1,9 +1,6 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
-import { getConsentStatus, setConsentStatus } from "./consentStatus";
-
-("use strict");
-
+import { getConsentStatus, setConsentStatus } from "./lib/consentStatus";
 import { browser } from "webextension-polyfill-ts";
 import {
   CookieInstrument,
@@ -12,12 +9,9 @@ import {
   NavigationInstrument,
 } from "@openwpm/webext-instrumentation";
 import { ReportSummarizer } from "./ReportSummarizer";
-import { extensionInstallationUuid } from "./extensionInstallationUuid";
-import { triggerClientDownloadOfData } from "./triggerClientDownloadOfData";
-import {
-  NavigationBatch,
-  TrimmedNavigationBatch,
-} from "./NavigationBatchPreprocessor";
+import { extensionInstallationUuid } from "./lib/extensionInstallationUuid";
+import { triggerClientDownloadOfData } from "./lib/triggerClientDownloadOfData";
+import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
 import { YouTubeUsageStatisticsMonitor } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
@@ -166,7 +160,7 @@ class ExtensionGlue {
     };
 
     // Start the navigation batch preprocessor
-    openWpmPacketHandler.navigationBatchPreprocessor.run();
+    await openWpmPacketHandler.navigationBatchPreprocessor.run();
 
     // Start OpenWPM instrumentation (monitors navigations and http content)
     const openwpmConfig = {
@@ -190,24 +184,24 @@ class ExtensionGlue {
   async startOpenWPMInstrumentation(config) {
     this.openwpmCrawlId = config["crawl_id"];
     if (config["navigation_instrument"]) {
-      openWpmPacketHandler.logDebug("Navigation instrumentation enabled");
+      await openWpmPacketHandler.logDebug("Navigation instrumentation enabled");
       this.navigationInstrument = new NavigationInstrument(
         openWpmPacketHandler,
       );
       this.navigationInstrument.run(config["crawl_id"]);
     }
     if (config["cookie_instrument"]) {
-      openWpmPacketHandler.logDebug("Cookie instrumentation enabled");
+      await openWpmPacketHandler.logDebug("Cookie instrumentation enabled");
       this.cookieInstrument = new CookieInstrument(openWpmPacketHandler);
       this.cookieInstrument.run(config["crawl_id"]);
     }
     if (config["js_instrument"]) {
-      openWpmPacketHandler.logDebug("Javascript instrumentation enabled");
+      await openWpmPacketHandler.logDebug("Javascript instrumentation enabled");
       this.jsInstrument = new JavascriptInstrument(openWpmPacketHandler);
       this.jsInstrument.run(config["crawl_id"]);
     }
     if (config["http_instrument"]) {
-      openWpmPacketHandler.logDebug("HTTP Instrumentation enabled");
+      await openWpmPacketHandler.logDebug("HTTP Instrumentation enabled");
       this.httpInstrument = new HttpInstrument(openWpmPacketHandler);
       this.httpInstrument.run(
         config["crawl_id"],

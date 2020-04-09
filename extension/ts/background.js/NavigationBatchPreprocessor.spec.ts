@@ -4,7 +4,7 @@ import {
   OpenWpmPayloadEnvelope,
   NavigationBatchPreprocessor,
 } from "./NavigationBatchPreprocessor";
-import { parseIsoDateTimeString } from "./dateUtils";
+import { parseIsoDateTimeString } from "./lib/dateUtils";
 import { addSeconds } from "date-fns";
 import { openwpmTestPagesCanvasFingerprintingQueue } from "./fixtures/NavigationBatchPreprocessor/openwpmTestPagesCanvasFingerprintingQueue";
 import { exampleDotComVisitQueue } from "./fixtures/NavigationBatchPreprocessor/exampleDotComVisitQueue";

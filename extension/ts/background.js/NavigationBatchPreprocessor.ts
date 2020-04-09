@@ -7,7 +7,7 @@ import {
   Navigation,
 } from "@openwpm/webext-instrumentation";
 import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
-import { isoDateTimeStringsWithinFutureSecondThreshold } from "./dateUtils";
+import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
 
 declare namespace browser.alarms {
   function create(
