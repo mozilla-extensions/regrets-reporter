@@ -37,9 +37,9 @@ export interface YouTubeNavigation {
 }
 
 export class ReportSummarizer {
-  async trimNavigationBatch(
+  trimNavigationBatch(
     navigationBatch: NavigationBatch,
-  ): Promise<TrimmedNavigationBatch> {
+  ): TrimmedNavigationBatch {
     const trimmedNavigationBatch = {
       ...navigationBatch,
       trimmedHttpRequestCount: -1,

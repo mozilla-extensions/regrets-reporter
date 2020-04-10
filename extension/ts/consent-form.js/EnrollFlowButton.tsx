@@ -66,7 +66,6 @@ export class EnrollFlowButton extends React.Component<
   };
 
   handleUserOver18OptionChange = changeEvent => {
-    console.log("changeEvent.target.value", changeEvent.target.value);
     this.setState({
       userOver18: changeEvent.target.value,
     });

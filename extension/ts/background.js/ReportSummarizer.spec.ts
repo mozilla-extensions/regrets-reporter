@@ -7,14 +7,14 @@ import {
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
 
-const trimNavigationBatches = async (
+const trimNavigationBatches = (
   reportSummarizer: ReportSummarizer,
   navigationBatchesByUuid: {
     [navigationUuid: string]: NavigationBatch;
   },
-): Promise<{
+): {
   [navigationUuid: string]: TrimmedNavigationBatch;
-}> => {
+} => {
   const navUuids = Object.keys(navigationBatchesByUuid);
   const trimmedNavigationBatchesByUuid: {
     [navigationUuid: string]: TrimmedNavigationBatch;
@@ -22,9 +22,7 @@ const trimNavigationBatches = async (
   for (const navUuid of navUuids) {
     trimmedNavigationBatchesByUuid[
       navUuid
-    ] = await reportSummarizer.trimNavigationBatch(
-      navigationBatchesByUuid[navUuid],
-    );
+    ] = reportSummarizer.trimNavigationBatch(navigationBatchesByUuid[navUuid]);
   }
   return trimmedNavigationBatchesByUuid;
 };
@@ -39,7 +37,7 @@ describe("ReportSummarizer", function() {
     const reportSummarizer = new ReportSummarizer();
     const trimmedNavigationBatchesByUuid: {
       [navigationUuid: string]: TrimmedNavigationBatch;
-    } = await trimNavigationBatches(
+    } = trimNavigationBatches(
       reportSummarizer,
       youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo,
     );

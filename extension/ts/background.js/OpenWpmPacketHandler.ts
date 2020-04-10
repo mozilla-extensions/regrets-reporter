@@ -2,6 +2,7 @@ import { humanFileSize } from "./lib/humanFileSize";
 import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { HttpResponse } from "@openwpm/webext-instrumentation";
+import { browser } from "webextension-polyfill-ts";
 
 export interface LogEntry {
   level: string;

@@ -148,9 +148,9 @@ class ExtensionGlue {
     openWpmPacketHandler.activeTabDwellTimeMonitor.run();
 
     // Add hooks to the navigation batch preprocessor
-    openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
+    openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = (
       navigationBatch: TrimmedNavigationBatch,
-    ): Promise<TrimmedNavigationBatch> => {
+    ): TrimmedNavigationBatch => {
       // Keep track of aggregated statistics
       youTubeUsageStatisticsMonitor.seenNavigationBatch(navigationBatch);
 

@@ -172,7 +172,7 @@ export class NavigationBatchPreprocessor {
    */
   public processedNavigationBatchTrimmer: (
     NavigationBatch,
-  ) => Promise<TrimmedNavigationBatch>;
+  ) => TrimmedNavigationBatch;
   public openWpmPayloadEnvelopeProcessQueue: OpenWpmPayloadEnvelope[] = [];
   public navigationBatchesByNavigationUuid: {
     [navigationUuid: string]: NavigationBatch | TrimmedNavigationBatch;
