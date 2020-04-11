@@ -126,7 +126,19 @@ export class OpenWpmPacketHandler {
     ) {
       return;
     }
-    console.info(`OpenWPM ${instrument} instrumentation package received`);
+
+    const accepted = this.acceptPacket(instrument, record);
+    console.info(
+      `OpenWPM ${instrument} instrumentation package received and ${
+        accepted ? "accepted" : "rejected"
+      }`,
+    );
+
+    // Only keep relevant packages
+    if (!accepted) {
+      return;
+    }
+
     // Annotate tab active dwell time
     let tabActiveDwellTime;
     if (record.tab_id > 0) {
@@ -154,8 +166,10 @@ export class OpenWpmPacketHandler {
       )} received. Hash: ${contentHash}`,
     );
     // Only keep relevant packages
-    console.log("Keep this captured content?", { httpResponse });
-    // TODO
+    if (!this.acceptPacket("http_responses", httpResponse)) {
+      console.info(`OpenWPM saved content dropped`);
+      return;
+    }
     /**
      * To make life easier for us, we decode the captured content and
      * add properties that allow the captured content batched by navigation.
@@ -177,6 +191,58 @@ export class OpenWpmPacketHandler {
       "openwpm_captured_content",
       capturedContent,
     );
+  };
+
+  /**
+   * For filtering operations that can't be set up via configuration.
+   *
+   * @param instrument
+   * @param record
+   */
+  acceptPacket = (instrument, record) => {
+    if (instrument === "navigations") {
+      return record.frame_id === 0;
+    }
+    if (instrument === "http_responses" || instrument === "http_requests") {
+      if (
+        record.url.indexOf("https://www.youtube.com/comment_service_ajax") === 0
+      ) {
+        return false;
+      }
+      if (
+        record.url.indexOf("https://www.youtube.com/youtubei/v1/log_event") ===
+        0
+      ) {
+        return false;
+      }
+      if (record.url.indexOf("https://www.youtube.com/get_video_info") === 0) {
+        return false;
+      }
+      if (
+        record.url.indexOf("https://www.youtube.com/get_midroll_info") === 0
+      ) {
+        return false;
+      }
+      if (record.url.indexOf("https://www.youtube.com/api/stats") === 0) {
+        return false;
+      }
+      if (
+        record.url.indexOf("https://www.youtube.com/youtubei/v1/guide") === 0
+      ) {
+        return false;
+      }
+      if (record.url.indexOf("https://www.youtube.com/watch") === 0) {
+        return true;
+      }
+      if (record.url.indexOf("https://www.youtube.com/results?search") === 0) {
+        return true;
+      }
+      if (record.url.indexOf("https://www.youtube.com/results?search") === 0) {
+        return true;
+      }
+    }
+    console.log("TODO Keep this packet?", { instrument, record });
+    return false;
   };
 
   pause = () => {
