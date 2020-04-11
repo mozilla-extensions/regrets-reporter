@@ -52,43 +52,83 @@ export class ReportSummarizer {
       trimmedJavascriptOperationCount: -1,
       trimmedCapturedContentCount: -1,
     };
-    console.log({ trimmedNavigationBatch });
+    // console.log({ trimmedNavigationBatch });
+
+    // Remove bulky non-essential parts of navigation batches
+    // TODO
+
     return trimmedNavigationBatch;
   }
 
   async navigationBatchesByUuidToYouTubeNavigations(
     navigationBatchesByUuid: {
-      [navigationUuid: string]: NavigationBatch;
+      [navigationUuid: string]: TrimmedNavigationBatch;
     },
     extension_installation_uuid: string,
   ): Promise<YouTubeNavigation[]> {
     // Only consider navigations in the top/main frame (no subframes)
+    // (this should already be taken care of by the filtering in OpenWpmPacketHandler
+    // but keeping for clarity's sake)
     const topFrameNavUuids = Object.keys(navigationBatchesByUuid).filter(
       navUuid =>
         navigationBatchesByUuid[navUuid].navigationEnvelope.navigation
           .frame_id === 0,
     );
-    return topFrameNavUuids.map(topFrameNavUuid => {
+    console.log("topFrameNavUuids.length", topFrameNavUuids.length);
+    const youTubeNavigations: YouTubeNavigation[] = [];
+
+    for (const topFrameNavUuid of topFrameNavUuids) {
       const topFrameNavigationBatch = navigationBatchesByUuid[topFrameNavUuid];
 
       // Order child envelopes by event ordinals = the order they were emitted
       // TODO
 
-      // Find the main_frame http_response (first http response of the navigation batch)
-      // TODO: Handle subsequent pushState-based navigations
-      const httpResponseEnvelope = topFrameNavigationBatch.childEnvelopes.find(
-        childEnvelope =>
-          childEnvelope.type === "http_responses" &&
-          childEnvelope.httpResponse.frame_id === 0,
-      );
+      // Check what kind of page was visited and run the appropriate extraction methods
+      if (
+        topFrameNavigationBatch.navigationEnvelope.navigation.url.indexOf(
+          "https://www.youtube.com/watch",
+        ) === 0
+      ) {
+        youTubeNavigations.push(
+          ...this.extractYouTubeNavigationsFromWatchPageNavigationBatch(
+            topFrameNavigationBatch,
+            extension_installation_uuid,
+          ),
+        );
+      } else {
+        throw new Error("TODO: Support non-watch-page navigations");
+      }
+    }
 
+    return youTubeNavigations;
+  }
+
+  extractYouTubeNavigationsFromWatchPageNavigationBatch(
+    topFrameNavigationBatch: TrimmedNavigationBatch,
+    extension_installation_uuid: string,
+  ): YouTubeNavigation[] {
+    const youTubeNavigations: YouTubeNavigation[] = [];
+
+    // Check for a main_frame watch page http request
+
+    // Check for subsequent xhr watch page http requests
+
+    // Find the main_frame http_responses
+    // TODO: Handle subsequent pushState-based navigations
+    const topFrameHttpResponseEnvelopes = topFrameNavigationBatch.childEnvelopes.filter(
+      childEnvelope =>
+        childEnvelope.type === "http_responses" &&
+        childEnvelope.httpResponse.frame_id === 0,
+    );
+
+    for (const topFrameHttpResponseEnvelope of topFrameHttpResponseEnvelopes) {
       // ... and the corresponding captured content
       const capturedContentEnvelope = topFrameNavigationBatch.childEnvelopes.find(
         childEnvelope =>
           childEnvelope.type === "openwpm_captured_content" &&
           childEnvelope.capturedContent.frame_id === 0 &&
           childEnvelope.capturedContent.content_hash ===
-            httpResponseEnvelope.httpResponse.content_hash,
+            topFrameHttpResponseEnvelope.httpResponse.content_hash,
       );
 
       let videoMetadata: VideoMetadata;
@@ -121,8 +161,9 @@ export class ReportSummarizer {
         extension_installation_uuid,
         event_uuid: topFrameNavigationBatch.navigationEnvelope.navigation.uuid,
       };
-      return youTubeNavigation;
-    });
+      youTubeNavigations.push(youTubeNavigation);
+    }
+    return youTubeNavigations;
   }
 
   extractVideoMetadataFromCapturedContent(

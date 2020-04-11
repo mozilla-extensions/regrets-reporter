@@ -167,15 +167,26 @@ const removeItemFromArray = (ar, el) => {
  */
 export class NavigationBatchPreprocessor {
   /**
-   * Optional hook that allows for inspection and/or modification of navigation batches
-   * at the end of the processing flow.
+   * Optionally overrided hook that allows for inspection and/or modification of
+   * navigation batches at the end of the processing flow.
    */
   public processedNavigationBatchTrimmer: (
     NavigationBatch,
-  ) => TrimmedNavigationBatch;
+  ) => TrimmedNavigationBatch = (
+    navigationBatch: TrimmedNavigationBatch,
+  ): TrimmedNavigationBatch => {
+    return {
+      ...navigationBatch,
+      trimmedHttpRequestCount: -1,
+      trimmedHttpResponseCount: -1,
+      trimmedHttpRedirectCount: -1,
+      trimmedJavascriptOperationCount: -1,
+      trimmedCapturedContentCount: -1,
+    };
+  };
   public openWpmPayloadEnvelopeProcessQueue: OpenWpmPayloadEnvelope[] = [];
   public navigationBatchesByNavigationUuid: {
-    [navigationUuid: string]: NavigationBatch | TrimmedNavigationBatch;
+    [navigationUuid: string]: TrimmedNavigationBatch;
   } = {};
 
   async submitOpenWPMPayload(
@@ -478,11 +489,9 @@ export class NavigationBatchPreprocessor {
           } else {
             updatedNavigationBatch = navigationBatch;
           }
-          if (this.processedNavigationBatchTrimmer) {
-            updatedNavigationBatch = this.processedNavigationBatchTrimmer(
-              updatedNavigationBatch,
-            );
-          }
+          updatedNavigationBatch = this.processedNavigationBatchTrimmer(
+            updatedNavigationBatch,
+          );
           this.navigationBatchesByNavigationUuid[
             navigation.uuid
           ] = updatedNavigationBatch;
