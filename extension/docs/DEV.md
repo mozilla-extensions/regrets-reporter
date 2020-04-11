@@ -30,7 +30,8 @@ await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 
 ```javascript
 await triggerClientDownloadOfData(
-  openWpmPacketHandler.navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue,
+  openWpmPacketHandler.navigationBatchPreprocessor
+    .openWpmPayloadEnvelopeProcessQueue,
   "navigationBatchPreprocessorFixture.json"
 );
 ```
@@ -50,7 +51,8 @@ await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 ```javascript
 await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
 await triggerClientDownloadOfData(
-  openWpmPacketHandler.navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+  openWpmPacketHandler.navigationBatchPreprocessor
+    .navigationBatchesByNavigationUuid,
   "reportSummarizerFixture.json"
 );
 ```
