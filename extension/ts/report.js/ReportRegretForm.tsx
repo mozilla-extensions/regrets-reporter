@@ -87,12 +87,15 @@ export class ReportRegretForm extends React.Component<
             );
           }
           const videoMetadata: VideoMetadata = {
-            thumb_url: `https://img.youtube.com/vi/${reportData.youTubeNavigation.video_id}/mqdefault.jpg`,
-            title: reportData.youTubeNavigation.video_title,
-            description: reportData.youTubeNavigation.video_description,
-            posting_date: reportData.youTubeNavigation.video_posting_date,
+            thumb_url: `https://img.youtube.com/vi/${reportData.youTubeNavigation.video_metadata.video_id}/mqdefault.jpg`,
+            title: reportData.youTubeNavigation.video_metadata.video_title,
+            description:
+              reportData.youTubeNavigation.video_metadata.video_description,
+            posting_date:
+              reportData.youTubeNavigation.video_metadata.video_posting_date,
             view_count_short:
-              reportData.youTubeNavigation.view_count_at_navigation_short,
+              reportData.youTubeNavigation.video_metadata
+                .view_count_at_navigation_short,
           };
           this.setState({
             reportData,

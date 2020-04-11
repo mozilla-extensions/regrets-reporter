@@ -11,21 +11,25 @@ type YouTubeNavigationLinkCategory =
 type FailedStringAttribute = "<failed>";
 type FailedIntegerAttribute = -1;
 
-export interface YouTubeNavigation {
+export interface VideoMetadata {
   video_id: string | FailedStringAttribute;
   video_title: string | FailedStringAttribute;
   video_description: string | FailedStringAttribute;
   video_posting_date: string | FailedStringAttribute;
   view_count_at_navigation: number | FailedIntegerAttribute;
   view_count_at_navigation_short: string | FailedStringAttribute;
-  tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
-  referrer: undefined | string | FailedStringAttribute;
-  navigation_transition_type: string;
   outgoing_video_ids_by_category: {
     [category in YouTubeNavigationLinkCategory]:
       | string[]
       | FailedStringAttribute;
   };
+}
+
+export interface YouTubeNavigation {
+  video_metadata: undefined | VideoMetadata;
+  tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
+  referrer: undefined | string | FailedStringAttribute;
+  navigation_transition_type: string;
   parent_youtube_navigations: YouTubeNavigation[];
   how_the_video_page_likely_was_reached: YouTubeNavigationLinkCategory | "foo";
   window_id: number;
@@ -87,7 +91,7 @@ export class ReportSummarizer {
             httpResponseEnvelope.httpResponse.content_hash,
       );
 
-      let videoMetadata;
+      let videoMetadata: VideoMetadata;
       if (capturedContentEnvelope) {
         // Extract video metadata from the captured content
         videoMetadata = this.extractVideoMetadataFromCapturedContent(
@@ -98,7 +102,7 @@ export class ReportSummarizer {
       }
 
       const youTubeNavigation: YouTubeNavigation = {
-        ...videoMetadata,
+        video_metadata: videoMetadata,
         tab_active_dwell_time_at_navigation:
           topFrameNavigationBatch.navigationEnvelope.tabActiveDwellTime,
         referrer: document ? document.referrer : "<failed>",
@@ -121,7 +125,9 @@ export class ReportSummarizer {
     });
   }
 
-  extractVideoMetadataFromCapturedContent(capturedContentEnvelope) {
+  extractVideoMetadataFromCapturedContent(
+    capturedContentEnvelope,
+  ): VideoMetadata {
     const htmlContent = capturedContentEnvelope.capturedContent.decoded_content;
     const matchArray = htmlContent.match(
       /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
@@ -225,7 +231,7 @@ export class ReportSummarizer {
     };
   }
 
-  extractVideoMetadataFromNothing() {
+  extractVideoMetadataFromNothing(): VideoMetadata {
     let video_id;
     try {
     } catch (err) {
