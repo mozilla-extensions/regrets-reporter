@@ -238,7 +238,7 @@ export class ReportRegretForm extends React.Component<
               </div>
             </div>
             <div className="w-1/2 px-0">
-              <div className="panel-section panel-section-formElements">
+              <div className="pb-0 panel-section panel-section-formElements">
                 <div className="panel-formElements-item mb-6">
                   <div>
                     <p className="mb-3">
@@ -248,61 +248,57 @@ export class ReportRegretForm extends React.Component<
                       </span>
                     </p>
                     <ul className="list-none">
-                      <li className="mb-2">
-                        <Radio
-                          name="user_supplied_regret_category"
-                          value="conspiracy-theory"
-                          label="Conspiracy theory"
-                          checked={
-                            this.state.userSuppliedRegretCategory ===
-                            "conspiracy-theory"
-                          }
-                          onChange={
-                            this.handleUserSuppliedRegretCategoryOptionChange
-                          }
-                        />
-                      </li>
-                      <li className="mb-2">
-                        <Radio
-                          name="user_supplied_regret_category"
-                          value="hateful-content"
-                          label="Hateful content"
-                          checked={
-                            this.state.userSuppliedRegretCategory ===
-                            "hateful-content"
-                          }
-                          onChange={
-                            this.handleUserSuppliedRegretCategoryOptionChange
-                          }
-                        />
-                      </li>
-                      <li className="mb-2">
-                        <Radio
-                          name="user_supplied_regret_category"
-                          value="misinformation"
-                          label="Misinformation"
-                          checked={
-                            this.state.userSuppliedRegretCategory ===
-                            "misinformation"
-                          }
-                          onChange={
-                            this.handleUserSuppliedRegretCategoryOptionChange
-                          }
-                        />
-                      </li>
-                      <li className="mb-2">
-                        <Radio
-                          name="user_supplied_regret_category"
-                          value="violence"
-                          label="Violence"
-                          checked={
-                            this.state.userSuppliedRegretCategory === "violence"
-                          }
-                          onChange={
-                            this.handleUserSuppliedRegretCategoryOptionChange
-                          }
-                        />
-                      </li>
+                      {[
+                        {
+                          value: "racist-sexist-homo-trans-phobic-content",
+                          label:
+                            "Racist, sexist, or homophobic/transphobic content",
+                        },
+                        {
+                          value: "sexual-content",
+                          label: "Sexual content",
+                        },
+                        {
+                          value: "extreme-ideological-content-content",
+                          label: "Extreme ideological content",
+                        },
+                        {
+                          value: "violence-disturbing-content",
+                          label: "Violence/disturbing content",
+                        },
+                        {
+                          value: "conspiracy-theories",
+                          label: "Conspiracy theories",
+                        },
+                        {
+                          value: "not-appropriate-for-my-age-group",
+                          label:
+                            "Not appropriate for my age group (eg. kids content)",
+                        },
+                        {
+                          value: "bad-music",
+                          label: "Bad music",
+                        },
+                        {
+                          value: "slanderous-content",
+                          label: "Slanderous content",
+                        },
+                      ].map(item => (
+                        <li key={item.value} className="mb-2">
+                          <Radio
+                            name="user_supplied_regret_category"
+                            value={item.value}
+                            label={item.label}
+                            checked={
+                              this.state.userSuppliedRegretCategory ===
+                              item.value
+                            }
+                            onChange={
+                              this.handleUserSuppliedRegretCategoryOptionChange
+                            }
+                          />
+                        </li>
+                      ))}
                       <li className="mb-2">
                         <Radio
                           name="user_supplied_regret_category"
@@ -340,7 +336,7 @@ export class ReportRegretForm extends React.Component<
           </div>
           <div className="flex -mx-0">
             <div className="w-1/2 px-0">
-              <div className="panel-section panel-section-formElements">
+              <div className="pt-0 panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="w-full">
                     {/*
@@ -372,7 +368,7 @@ export class ReportRegretForm extends React.Component<
               </div>
             </div>
             <div className="w-1/2 px-0">
-              <div className="panel-section panel-section-formElements">
+              <div className="pt-0 panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="w-full">
                     <span>
