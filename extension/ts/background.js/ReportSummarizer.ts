@@ -1,5 +1,6 @@
 import {
   NavigationBatch,
+  OpenWpmPayloadEnvelope,
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
 
@@ -18,11 +19,13 @@ export interface VideoMetadata {
   video_posting_date: string | FailedStringAttribute;
   view_count_at_navigation: number | FailedIntegerAttribute;
   view_count_at_navigation_short: string | FailedStringAttribute;
+  /*
   outgoing_video_ids_by_category: {
     [category in YouTubeNavigationLinkCategory]:
       | string[]
       | FailedStringAttribute;
   };
+  */
 }
 
 export interface YouTubeNavigation {
@@ -74,7 +77,6 @@ export class ReportSummarizer {
         navigationBatchesByUuid[navUuid].navigationEnvelope.navigation
           .frame_id === 0,
     );
-    console.log("topFrameNavUuids.length", topFrameNavUuids.length);
     const youTubeNavigations: YouTubeNavigation[] = [];
 
     for (const topFrameNavUuid of topFrameNavUuids) {
@@ -114,7 +116,6 @@ export class ReportSummarizer {
     // Check for subsequent xhr watch page http requests
 
     // Find the main_frame http_responses
-    // TODO: Handle subsequent pushState-based navigations
     const topFrameHttpResponseEnvelopes = topFrameNavigationBatch.childEnvelopes.filter(
       childEnvelope =>
         childEnvelope.type === "http_responses" &&
@@ -122,6 +123,20 @@ export class ReportSummarizer {
     );
 
     for (const topFrameHttpResponseEnvelope of topFrameHttpResponseEnvelopes) {
+      // console.log({ topFrameHttpResponseEnvelope });
+
+      // The corresponding http request(s)
+      const httpRequestEnvelope = topFrameNavigationBatch.childEnvelopes
+        .slice()
+        .reverse()
+        .find(
+          childEnvelope =>
+            childEnvelope.type === "http_requests" &&
+            childEnvelope.httpRequest.request_id ===
+              topFrameHttpResponseEnvelope.httpResponse.request_id,
+        );
+      // console.log({ httpRequestEnvelope });
+
       // ... and the corresponding captured content
       const capturedContentEnvelope = topFrameNavigationBatch.childEnvelopes.find(
         childEnvelope =>
@@ -135,6 +150,7 @@ export class ReportSummarizer {
       if (capturedContentEnvelope) {
         // Extract video metadata from the captured content
         videoMetadata = this.extractVideoMetadataFromCapturedContent(
+          httpRequestEnvelope,
           capturedContentEnvelope,
         );
       } else {
@@ -145,7 +161,7 @@ export class ReportSummarizer {
         video_metadata: videoMetadata,
         tab_active_dwell_time_at_navigation:
           topFrameNavigationBatch.navigationEnvelope.tabActiveDwellTime,
-        referrer: document ? document.referrer : "<failed>",
+        referrer: httpRequestEnvelope.httpRequest.referrer,
         navigation_transition_type:
           topFrameNavigationBatch.navigationEnvelope.navigation.transition_type,
         parent_youtube_navigations: [],
@@ -167,19 +183,38 @@ export class ReportSummarizer {
   }
 
   extractVideoMetadataFromCapturedContent(
-    capturedContentEnvelope,
+    httpRequestEnvelope: OpenWpmPayloadEnvelope,
+    capturedContentEnvelope: OpenWpmPayloadEnvelope,
   ): VideoMetadata {
-    const htmlContent = capturedContentEnvelope.capturedContent.decoded_content;
-    const matchArray = htmlContent.match(
-      /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
-    );
-    const ytInitialData = JSON.parse(matchArray[1]);
+    let ytInitialData;
+
+    if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
+      // Handle ordinary full page loads
+      const htmlContent =
+        capturedContentEnvelope.capturedContent.decoded_content;
+      const matchArray = htmlContent.match(
+        /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
+      );
+      if (!matchArray) {
+        console.error("No MATCH", { matchArray });
+      }
+      ytInitialData = JSON.parse(matchArray[1]);
+    } else {
+      // Handle subsequent pushState-based loads
+      const jsonContent =
+        capturedContentEnvelope.capturedContent.decoded_content;
+      const xhrResponse = JSON.parse(jsonContent);
+      ytInitialData = xhrResponse[3].response;
+    }
+
     // console.log({ ytInitialData });
 
     let video_id;
     try {
       video_id = ytInitialData.currentVideoEndpoint.watchEndpoint.videoId;
     } catch (err) {
+      console.error("video_id", err.message);
+      console.error(ytInitialData.currentVideoEndpoint.watchEndpoint);
       video_id = "<failed>";
     }
 
@@ -189,6 +224,7 @@ export class ReportSummarizer {
         ytInitialData.contents.twoColumnWatchNextResults.results.results
           .contents[0].videoPrimaryInfoRenderer.title.runs[0].text;
     } catch (err) {
+      console.error("video_title", err.message);
       video_title = "<failed>";
     }
 
@@ -198,6 +234,7 @@ export class ReportSummarizer {
         ytInitialData.contents.twoColumnWatchNextResults.results.results
           .contents[1].videoSecondaryInfoRenderer.description.runs[0].text;
     } catch (err) {
+      console.error("video_description", err.message);
       video_description = "<failed>";
     }
 
@@ -207,6 +244,7 @@ export class ReportSummarizer {
         ytInitialData.contents.twoColumnWatchNextResults.results.results
           .contents[0].videoPrimaryInfoRenderer.dateText.simpleText;
     } catch (err) {
+      console.error("video_posting_date", err.message);
       video_posting_date = "";
     }
 
@@ -217,6 +255,7 @@ export class ReportSummarizer {
         "",
       );
     } catch (err) {
+      console.error("view_count_at_navigation", err.message);
       view_count_at_navigation = -1;
     }
 
@@ -227,15 +266,18 @@ export class ReportSummarizer {
           .contents[0].videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
           .shortViewCount.simpleText;
     } catch (err) {
+      console.error("view_count_at_navigation_short", err.message);
       view_count_at_navigation_short = "<failed>";
     }
 
+    /*
     let up_next_auto_play;
     try {
       up_next_auto_play = ytInitialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results[0].compactAutoplayRenderer.contents.map(
         el => el.compactVideoRenderer.videoId,
       );
     } catch (err) {
+      console.error("up_next_auto_play", err.message);
       up_next_auto_play = "<failed>";
     }
 
@@ -243,19 +285,32 @@ export class ReportSummarizer {
     try {
       watch_next_column = ytInitialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results
         .slice(1)
-        .map(el => el.compactVideoRenderer.videoId);
+        .map(el => {
+          console.log({el});
+          // TODO: Support compactRadioRenderer
+          return el.compactVideoRenderer.videoId;
+        });
     } catch (err) {
+      console.error("watch_next_column", err.message);
+      console.debug(ytInitialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults);
       watch_next_column = "<failed>";
     }
 
     let watch_next_end_screen;
     try {
       watch_next_end_screen = ytInitialData.playerOverlays.playerOverlayRenderer.endScreen.watchNextEndScreenRenderer.results.map(
-        el => el.endScreenVideoRenderer.videoId,
+        el => {
+          console.log({el});
+          // TODO: Support endScreenPlaylistRenderer
+          return el.endScreenVideoRenderer.videoId
+        },
       );
     } catch (err) {
+      console.error("watch_next_end_screen", err.message);
+      console.info(ytInitialData.playerOverlays.playerOverlayRenderer.endScreen.watchNextEndScreenRenderer);
       watch_next_end_screen = "<failed>";
     }
+    */
 
     return {
       video_id,
@@ -264,11 +319,13 @@ export class ReportSummarizer {
       video_posting_date,
       view_count_at_navigation,
       view_count_at_navigation_short,
+      /*
       outgoing_video_ids_by_category: {
         up_next_auto_play,
         watch_next_column,
         watch_next_end_screen,
       },
+      */
     };
   }
 
@@ -334,11 +391,13 @@ export class ReportSummarizer {
       video_posting_date,
       view_count_at_navigation,
       view_count_at_navigation_short,
+      /*
       outgoing_video_ids_by_category: {
         up_next_auto_play,
         watch_next_column,
         watch_next_end_screen,
       },
+      */
     };
   }
 }

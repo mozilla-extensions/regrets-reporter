@@ -135,9 +135,10 @@ class ExtensionGlue {
               .navigationBatchesByNavigationUuid,
             await extensionInstallationUuid(),
           );
-          console.log({ youTubeNavigations });
+          const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
+          console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
           portFromContentScript.postMessage({
-            reportData: { youTubeNavigation: youTubeNavigations[0] },
+            reportData: { youTubeNavigation: mostRecentYouTubeNavigation },
           });
         }
       });
