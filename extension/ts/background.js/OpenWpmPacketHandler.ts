@@ -204,41 +204,28 @@ export class OpenWpmPacketHandler {
       return record.frame_id === 0;
     }
     if (instrument === "http_responses" || instrument === "http_requests") {
-      if (
-        record.url.indexOf("https://www.youtube.com/comment_service_ajax") === 0
-      ) {
-        return false;
+      const mayNotStartWiths = [
+        "https://www.youtube.com/comment_service_ajax",
+        "https://www.youtube.com/youtubei/v1/log_event",
+        "https://www.youtube.com/get_video_info",
+        "https://www.youtube.com/get_midroll_info",
+        "https://www.youtube.com/api/stats",
+        "https://www.youtube.com/youtubei/v1/guide",
+        "https://www.youtube.com/youtubei/v1/feedback",
+      ];
+      for (const mayNotStartWith of mayNotStartWiths) {
+        if (record.url.indexOf(mayNotStartWith) === 0) {
+          return false;
+        }
       }
-      if (
-        record.url.indexOf("https://www.youtube.com/youtubei/v1/log_event") ===
-        0
-      ) {
-        return false;
-      }
-      if (record.url.indexOf("https://www.youtube.com/get_video_info") === 0) {
-        return false;
-      }
-      if (
-        record.url.indexOf("https://www.youtube.com/get_midroll_info") === 0
-      ) {
-        return false;
-      }
-      if (record.url.indexOf("https://www.youtube.com/api/stats") === 0) {
-        return false;
-      }
-      if (
-        record.url.indexOf("https://www.youtube.com/youtubei/v1/guide") === 0
-      ) {
-        return false;
-      }
-      if (record.url.indexOf("https://www.youtube.com/watch") === 0) {
-        return true;
-      }
-      if (record.url.indexOf("https://www.youtube.com/results?search") === 0) {
-        return true;
-      }
-      if (record.url.indexOf("https://www.youtube.com/results?search") === 0) {
-        return true;
+      const shouldStartWiths = [
+        "https://www.youtube.com/watch",
+        "https://www.youtube.com/results?search",
+      ];
+      for (const shouldStartWith of shouldStartWiths) {
+        if (record.url.indexOf(shouldStartWith) === 0) {
+          return true;
+        }
       }
     }
     console.log("TODO Keep this packet?", { instrument, record });
