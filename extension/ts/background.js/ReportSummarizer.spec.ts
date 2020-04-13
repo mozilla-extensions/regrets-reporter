@@ -35,5 +35,18 @@ describe("ReportSummarizer", function() {
       2,
       "should have found two youtube navigations",
     );
+
+    console.dir({ youTubeNavigations }, { depth: 5 });
+
+    assert.equal(
+      youTubeNavigations[0].how_the_video_page_likely_was_reached,
+      "page_reload",
+    );
+    assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
+    assert.equal(
+      youTubeNavigations[1].how_the_video_page_likely_was_reached,
+      "watch_next_column",
+    );
+    assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
   });
 });

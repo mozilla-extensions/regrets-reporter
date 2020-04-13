@@ -4,7 +4,7 @@ import {
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
 
-type YouTubeNavigationLinkCategory =
+type YouTubeNavigationLinkPosition =
   | "up_next_auto_play"
   | "watch_next_column"
   | "watch_next_end_screen";
@@ -19,22 +19,25 @@ export interface VideoMetadata {
   video_posting_date: string | FailedStringAttribute;
   view_count_at_navigation: number | FailedIntegerAttribute;
   view_count_at_navigation_short: string | FailedStringAttribute;
-  /*
   outgoing_video_ids_by_category: {
-    [category in YouTubeNavigationLinkCategory]:
+    [position in YouTubeNavigationLinkPosition]:
       | string[]
       | FailedStringAttribute;
   };
-  */
 }
 
 export interface YouTubeNavigation {
   video_metadata: undefined | VideoMetadata;
   tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
+  url: undefined | string | FailedStringAttribute;
   referrer: undefined | string | FailedStringAttribute;
   navigation_transition_type: string;
   parent_youtube_navigations: YouTubeNavigation[];
-  how_the_video_page_likely_was_reached: YouTubeNavigationLinkCategory | "foo";
+  how_the_video_page_likely_was_reached:
+    | YouTubeNavigationLinkPosition
+    | "direct_navigation"
+    | "page_reload"
+    | FailedStringAttribute;
   window_id: number;
   tab_id: number;
   frame_id: number;
@@ -157,15 +160,26 @@ export class ReportSummarizer {
         videoMetadata = this.extractVideoMetadataFromNothing();
       }
 
+      const url = httpRequestEnvelope.httpRequest.url;
+      const referrer = httpRequestEnvelope.httpRequest.referrer;
+      const navigation_transition_type =
+        topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;
+      const how_the_video_page_likely_was_reached =
+        referrer === ""
+          ? navigation_transition_type === "reload"
+            ? "page_reload"
+            : "direct_navigation"
+          : "<failed>";
+
       const youTubeNavigation: YouTubeNavigation = {
         video_metadata: videoMetadata,
         tab_active_dwell_time_at_navigation:
           topFrameNavigationBatch.navigationEnvelope.tabActiveDwellTime,
-        referrer: httpRequestEnvelope.httpRequest.referrer,
-        navigation_transition_type:
-          topFrameNavigationBatch.navigationEnvelope.navigation.transition_type,
+        url,
+        referrer,
+        navigation_transition_type,
         parent_youtube_navigations: [],
-        how_the_video_page_likely_was_reached: "foo",
+        how_the_video_page_likely_was_reached,
         window_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.window_id,
         tab_id: topFrameNavigationBatch.navigationEnvelope.navigation.tab_id,
@@ -270,7 +284,6 @@ export class ReportSummarizer {
       view_count_at_navigation_short = "<failed>";
     }
 
-    /*
     let up_next_auto_play;
     try {
       up_next_auto_play = ytInitialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results[0].compactAutoplayRenderer.contents.map(
@@ -286,13 +299,23 @@ export class ReportSummarizer {
       watch_next_column = ytInitialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results
         .slice(1)
         .map(el => {
-          console.log({el});
-          // TODO: Support compactRadioRenderer
-          return el.compactVideoRenderer.videoId;
+          if (el.compactVideoRenderer) {
+            return el.compactVideoRenderer.videoId;
+          }
+          if (el.compactRadioRenderer) {
+            return new URL(el.compactRadioRenderer.shareUrl).searchParams.get(
+              "v",
+            );
+          }
+          console.error("watch_next_column unhandled el:");
+          console.dir({ el });
         });
     } catch (err) {
       console.error("watch_next_column", err.message);
-      console.debug(ytInitialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults);
+      console.debug(
+        ytInitialData.contents.twoColumnWatchNextResults.secondaryResults
+          .secondaryResults,
+      );
       watch_next_column = "<failed>";
     }
 
@@ -300,17 +323,25 @@ export class ReportSummarizer {
     try {
       watch_next_end_screen = ytInitialData.playerOverlays.playerOverlayRenderer.endScreen.watchNextEndScreenRenderer.results.map(
         el => {
-          console.log({el});
-          // TODO: Support endScreenPlaylistRenderer
-          return el.endScreenVideoRenderer.videoId
+          if (el.endScreenVideoRenderer) {
+            return el.endScreenVideoRenderer.videoId;
+          }
+          if (el.endScreenPlaylistRenderer) {
+            return el.endScreenPlaylistRenderer.navigationEndpoint.watchEndpoint
+              .videoId;
+          }
+          console.error("watch_next_end_screen unhandled el:");
+          console.dir({ el });
         },
       );
     } catch (err) {
       console.error("watch_next_end_screen", err.message);
-      console.info(ytInitialData.playerOverlays.playerOverlayRenderer.endScreen.watchNextEndScreenRenderer);
+      console.info(
+        ytInitialData.playerOverlays.playerOverlayRenderer.endScreen
+          .watchNextEndScreenRenderer,
+      );
       watch_next_end_screen = "<failed>";
     }
-    */
 
     return {
       video_id,
@@ -319,13 +350,11 @@ export class ReportSummarizer {
       video_posting_date,
       view_count_at_navigation,
       view_count_at_navigation_short,
-      /*
       outgoing_video_ids_by_category: {
         up_next_auto_play,
         watch_next_column,
         watch_next_end_screen,
       },
-      */
     };
   }
 
@@ -391,13 +420,11 @@ export class ReportSummarizer {
       video_posting_date,
       view_count_at_navigation,
       view_count_at_navigation_short,
-      /*
       outgoing_video_ids_by_category: {
         up_next_auto_play,
         watch_next_column,
         watch_next_end_screen,
       },
-      */
     };
   }
 }
