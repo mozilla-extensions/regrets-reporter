@@ -15,16 +15,11 @@ import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
 import { YouTubeUsageStatistics } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
 import { setUserSuppliedDemographics } from "./lib/userSuppliedDemographics";
-import { makeUUID } from "./lib/uuid";
+import { DataSharer } from "./DataSharer";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const youTubeUsageStatistics = new YouTubeUsageStatistics();
-
-export interface EventMetadata {
-  client_timestamp: string;
-  extension_installation_uuid: string;
-  event_uuid: string;
-}
+const dataSharer = new DataSharer();
 
 class ExtensionGlue {
   private navigationInstrument;
@@ -80,17 +75,15 @@ class ExtensionGlue {
 
   async start() {
     // During prototype phase, we have a browser action button that allows for downloading the reported data
-    const exportReportedRegrets = async () => {
-      console.debug("Exporting reported regrets");
-      const { reportedRegrets } = await browser.storage.local.get(
-        "reportedRegrets",
-      );
+    const exportSharedData = async () => {
+      console.debug("Exporting shared data");
+      const sharedData = await dataSharer.export();
       await triggerClientDownloadOfData(
-        reportedRegrets,
-        `reportedRegrets-userUuid=${await extensionInstallationUuid()}.json`,
+        sharedData,
+        `sharedData-userUuid=${await extensionInstallationUuid()}-${new Date().toISOString()}.json`,
       );
     };
-    browser.browserAction.onClicked.addListener(exportReportedRegrets);
+    browser.browserAction.onClicked.addListener(exportSharedData);
 
     // Only show report-regret page action on YouTube watch pages
     const showPageActionOnWatchPagesOnly = (tabId, changeInfo, tab) => {
@@ -126,19 +119,9 @@ class ExtensionGlue {
         console.log("Message from report-regret-form script:", { m });
         if (m.reportedRegret) {
           const { reportedRegret } = m;
-          const { reportedRegrets } = await browser.storage.local.get(
-            "reportedRegrets",
-          );
-          // Store the reported regret
-          if (reportedRegrets) {
-            reportedRegrets.push(reportedRegret);
-            await browser.storage.local.set({ reportedRegrets });
-          } else {
-            await browser.storage.local.set({
-              reportedRegrets: [reportedRegret],
-            });
-          }
-          console.log("Reported regret stored");
+          // Share the reported regret
+          dataSharer.share({ reportedRegret });
+          console.log("Reported regret shared");
         }
         // The report form has triggered a report-related data collection
         if (m.requestReportData) {
@@ -146,12 +129,9 @@ class ExtensionGlue {
           const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
             openWpmPacketHandler.navigationBatchPreprocessor
               .navigationBatchesByNavigationUuid,
-            await extensionInstallationUuid(),
           );
           const regretReport = await reportSummarizer.regretReportFromYouTubeNavigations(
             youTubeNavigations,
-            await extensionInstallationUuid(),
-            makeUUID,
           );
           portFromContentScript.postMessage({
             reportData: { regretReport },

@@ -3,9 +3,6 @@ import { ReportSummarizer } from "./ReportSummarizer";
 import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo";
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 
-const extension_installation_uuid = "placeholder_extensionInstallationUuid";
-const fakeUUID = () => "12345678-abcd-1234-efgh-1234abcd1234";
-
 describe("ReportSummarizer", function() {
   it("should exist", async function() {
     const reportSummarizer = new ReportSummarizer();
@@ -16,7 +13,6 @@ describe("ReportSummarizer", function() {
     const reportSummarizer = new ReportSummarizer();
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo,
-      extension_installation_uuid,
     );
 
     assert.equal(
@@ -30,7 +26,6 @@ describe("ReportSummarizer", function() {
     const reportSummarizer = new ReportSummarizer();
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       youtubeVisitWatchPageAndNavigateToFirstUpNext,
-      extension_installation_uuid,
     );
 
     assert.equal(
@@ -54,8 +49,6 @@ describe("ReportSummarizer", function() {
 
     const regretReport1 = await reportSummarizer.regretReportFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
-      extension_installation_uuid,
-      fakeUUID,
     );
     assert.deepEqual(regretReport1, {
       amount_of_regret_reports_since_consent_was_given: -1,
@@ -71,17 +64,10 @@ describe("ReportSummarizer", function() {
       user_supplied_regret_category: "",
       user_supplied_other_regret_category: "",
       user_supplied_severity: -1,
-      event_metadata: {
-        client_timestamp: "",
-        extension_installation_uuid: "",
-        event_uuid: "",
-      },
     });
 
     const regretReport2 = await reportSummarizer.regretReportFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
-      extension_installation_uuid,
-      fakeUUID,
     );
     assert.deepEqual(regretReport2, {
       amount_of_regret_reports_since_consent_was_given: -1,
@@ -97,11 +83,6 @@ describe("ReportSummarizer", function() {
       user_supplied_regret_category: "",
       user_supplied_other_regret_category: "",
       user_supplied_severity: -1,
-      event_metadata: {
-        client_timestamp: "",
-        extension_installation_uuid: "",
-        event_uuid: "",
-      },
     });
   });
 });

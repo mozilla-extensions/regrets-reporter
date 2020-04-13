@@ -3,7 +3,6 @@ import {
   OpenWpmPayloadEnvelope,
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
-import { EventMetadata } from "./index";
 
 type YouTubeNavigationLinkPosition =
   | "up_next_auto_play"
@@ -49,7 +48,6 @@ export interface YouTubeNavigation {
   window_id: number;
   tab_id: number;
   frame_id: number;
-  event_metadata: EventMetadata;
 }
 
 export interface RegretReport {
@@ -59,7 +57,6 @@ export interface RegretReport {
   user_supplied_regret_category: string;
   user_supplied_other_regret_category: string;
   user_supplied_severity: null | number;
-  event_metadata: EventMetadata;
 }
 
 export class ReportSummarizer {
@@ -82,12 +79,9 @@ export class ReportSummarizer {
     return trimmedNavigationBatch;
   }
 
-  async navigationBatchesByUuidToYouTubeNavigations(
-    navigationBatchesByUuid: {
-      [navigationUuid: string]: TrimmedNavigationBatch;
-    },
-    extension_installation_uuid: string,
-  ): Promise<YouTubeNavigation[]> {
+  async navigationBatchesByUuidToYouTubeNavigations(navigationBatchesByUuid: {
+    [navigationUuid: string]: TrimmedNavigationBatch;
+  }): Promise<YouTubeNavigation[]> {
     // Only consider navigations in the top/main frame (no subframes)
     // (this should already be taken care of by the filtering in OpenWpmPacketHandler
     // but keeping for clarity's sake)
@@ -113,7 +107,6 @@ export class ReportSummarizer {
         youTubeNavigations.push(
           ...this.extractYouTubeNavigationsFromWatchPageNavigationBatch(
             topFrameNavigationBatch,
-            extension_installation_uuid,
           ),
         );
       } else {
@@ -126,7 +119,6 @@ export class ReportSummarizer {
 
   extractYouTubeNavigationsFromWatchPageNavigationBatch(
     topFrameNavigationBatch: TrimmedNavigationBatch,
-    extension_installation_uuid: string,
   ): YouTubeNavigation[] {
     const youTubeNavigations: YouTubeNavigation[] = [];
 
@@ -202,6 +194,7 @@ export class ReportSummarizer {
         tab_id: topFrameNavigationBatch.navigationEnvelope.navigation.tab_id,
         frame_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.frame_id,
+        /*
         event_metadata: {
           client_timestamp:
             topFrameNavigationBatch.navigationEnvelope.navigation
@@ -210,6 +203,7 @@ export class ReportSummarizer {
           event_uuid:
             topFrameNavigationBatch.navigationEnvelope.navigation.uuid,
         },
+        */
       };
       youTubeNavigations.push(youTubeNavigation);
     }
@@ -454,8 +448,6 @@ export class ReportSummarizer {
 
   async regretReportFromYouTubeNavigations(
     youTubeNavigations: YouTubeNavigation[],
-    extension_installation_uuid: string,
-    makeUUID: () => string,
   ): Promise<RegretReport> {
     const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
     console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
@@ -473,11 +465,6 @@ export class ReportSummarizer {
       user_supplied_regret_category: "",
       user_supplied_other_regret_category: "",
       user_supplied_severity: -1,
-      event_metadata: {
-        client_timestamp: "",
-        extension_installation_uuid: "",
-        event_uuid: makeUUID(),
-      },
     };
   }
 }

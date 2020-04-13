@@ -7,9 +7,6 @@ import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixture
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 import { NavigationBatch } from "./NavigationBatchPreprocessor";
 
-const extension_installation_uuid = "placeholder_extensionInstallationUuid";
-const fakeUUID = () => "52cba568-949c-4d5b-88c8-4fbb674452fc";
-
 const summarizeUpdate = (
   navigationBatchesByUuid: {
     [navigationUuid: string]: NavigationBatch;
@@ -22,10 +19,7 @@ const summarizeUpdate = (
       navigationBatchesByUuid[navUuid],
     );
   }
-  return youTubeUsageStatistics.summarizeUpdate(
-    extension_installation_uuid,
-    fakeUUID,
-  );
+  return youTubeUsageStatistics.summarizeUpdate();
 };
 
 describe("YouTubeUsageStatistics", function() {
@@ -47,11 +41,6 @@ describe("YouTubeUsageStatistics", function() {
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
       amount_of_time_with_an_active_youtube_tab: -1,
       amount_of_youtube_video_play_time_in_seconds: -1,
-      event_metadata: {
-        client_timestamp: new Date().toISOString(),
-        extension_installation_uuid,
-        event_uuid: fakeUUID(),
-      },
     });
   });
 
@@ -68,11 +57,6 @@ describe("YouTubeUsageStatistics", function() {
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
       amount_of_time_with_an_active_youtube_tab: -1,
       amount_of_youtube_video_play_time_in_seconds: -1,
-      event_metadata: {
-        client_timestamp: new Date().toISOString(),
-        extension_installation_uuid,
-        event_uuid: fakeUUID(),
-      },
     });
   });
 });

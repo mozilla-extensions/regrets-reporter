@@ -1,6 +1,4 @@
 import { NavigationBatch } from "./NavigationBatchPreprocessor";
-import { EventMetadata } from "./index";
-import { makeUUID } from "./lib/uuid";
 
 export interface YouTubeUsageStatisticsUpdate {
   amount_of_days_of_at_least_one_youtube_visit: number;
@@ -8,7 +6,6 @@ export interface YouTubeUsageStatisticsUpdate {
   amount_of_youtube_videos_played_on_youtube_watch_pages: number;
   amount_of_time_with_an_active_youtube_tab: number;
   amount_of_youtube_video_play_time_in_seconds: number;
-  event_metadata: EventMetadata;
 }
 
 interface YouTubeUsageStatisticsRegistry {
@@ -33,22 +30,13 @@ export class YouTubeUsageStatistics {
     // TODO
   };
 
-  summarizeUpdate = (
-    extension_installation_uuid,
-    makeUUID,
-  ): YouTubeUsageStatisticsUpdate => {
-    // TODO: include getUserSuppliedDemographics
+  summarizeUpdate = (): YouTubeUsageStatisticsUpdate => {
     return {
       amount_of_days_of_at_least_one_youtube_visit: -1,
       amount_of_youtube_youtube_watch_pages_loaded: -1,
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
       amount_of_time_with_an_active_youtube_tab: -1,
       amount_of_youtube_video_play_time_in_seconds: -1,
-      event_metadata: {
-        client_timestamp: new Date().toISOString(),
-        extension_installation_uuid,
-        event_uuid: makeUUID(),
-      },
     };
   };
 }
