@@ -36,11 +36,13 @@ describe("YouTubeUsageStatistics", function() {
     );
 
     assert.deepEqual(summarizedUpdate, {
-      amount_of_days_of_at_least_one_youtube_visit: -1,
-      amount_of_youtube_youtube_watch_pages_loaded: -1,
+      amount_of_days_of_at_least_one_youtube_visit: 1,
+      /*
+      amount_of_youtube_youtube_watch_pages_loaded: 1,
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
       amount_of_time_with_an_active_youtube_tab: -1,
       amount_of_youtube_video_play_time_in_seconds: -1,
+       */
     });
   });
 
@@ -52,11 +54,13 @@ describe("YouTubeUsageStatistics", function() {
     );
 
     assert.deepEqual(summarizedUpdate, {
-      amount_of_days_of_at_least_one_youtube_visit: -1,
-      amount_of_youtube_youtube_watch_pages_loaded: -1,
+      amount_of_days_of_at_least_one_youtube_visit: 1,
+      /*
+      amount_of_youtube_youtube_watch_pages_loaded: 2,
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
       amount_of_time_with_an_active_youtube_tab: -1,
       amount_of_youtube_video_play_time_in_seconds: -1,
+       */
     });
   });
 });
