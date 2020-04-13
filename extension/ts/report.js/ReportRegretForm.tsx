@@ -10,7 +10,7 @@ import { Radio } from "../components/photon-components-web/photon-components/Rad
 import { Link } from "../components/photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
-import { YouTubeNavigation } from "../background.js/ReportSummarizer";
+import { RegretReport } from "../background.js/ReportSummarizer";
 import * as LikertScale from "likert-react";
 import {
   MdSentimentDissatisfied,
@@ -22,17 +22,9 @@ import { DisplayError } from "../components/DisplayError";
 
 export interface ReportRegretFormProps {}
 
-interface VideoMetadata {
-  thumb_url: string;
-  title: string;
-  description: string;
-  posting_date: string;
-  view_count_short: string;
-}
-
 export interface ReportRegretFormState {
   loading: boolean;
-  videoMetadata: null | VideoMetadata;
+  videoThumbUrl: null | string;
   reportData: any;
   userSuppliedRegretCategory: string;
   userSuppliedOtherRegretCategory: string;
@@ -48,7 +40,7 @@ export class ReportRegretForm extends Component<
 > {
   public state = {
     loading: true,
-    videoMetadata: null,
+    videoThumbUrl: null,
     reportData: null,
     userSuppliedRegretCategory: "",
     userSuppliedOtherRegretCategory: "",
@@ -73,11 +65,11 @@ export class ReportRegretForm extends Component<
 
     // When we have received report data, update state that summarizes it
     this.backgroundContextPort.onMessage.addListener(
-      async (m: { reportData: { youTubeNavigation: YouTubeNavigation } }) => {
+      async (m: { reportData: { regretReport: RegretReport } }) => {
         if (m.reportData) {
           const { reportData } = m;
           console.log({ reportData });
-          if (!reportData || !reportData.youTubeNavigation) {
+          if (!reportData || !reportData.regretReport) {
             await this.setState({
               reportData,
               loading: false,
@@ -87,20 +79,10 @@ export class ReportRegretForm extends Component<
               "The report data was not available at the time of initiating the regret form",
             );
           }
-          const videoMetadata: VideoMetadata = {
-            thumb_url: `https://img.youtube.com/vi/${reportData.youTubeNavigation.video_metadata.video_id}/mqdefault.jpg`,
-            title: reportData.youTubeNavigation.video_metadata.video_title,
-            description:
-              reportData.youTubeNavigation.video_metadata.video_description,
-            posting_date:
-              reportData.youTubeNavigation.video_metadata.video_posting_date,
-            view_count_short:
-              reportData.youTubeNavigation.video_metadata
-                .view_count_at_navigation_short,
-          };
+          const videoThumbUrl = `https://img.youtube.com/vi/${reportData.regretReport.regretted_youtube_navigation_brief_video_metadata.video_id}/mqdefault.jpg`;
           this.setState({
             reportData,
-            videoMetadata,
+            videoThumbUrl,
             loading: false,
           });
         }
@@ -221,17 +203,30 @@ export class ReportRegretForm extends Component<
                     <div>
                       <img
                         className="w-full"
-                        src={this.state.videoMetadata.thumb_url}
+                        src={this.state.videoThumbUrl}
                         alt=""
                       />
                     </div>
                     <div className="mb-0 mt-1">
                       <h4 className="text-sm font-medium">
-                        {this.state.videoMetadata.title}
+                        {
+                          this.state.reportData.regretReport
+                            .regretted_youtube_navigation_brief_video_metadata
+                            .video_title
+                        }
                       </h4>
                       <p className="mt-1 font-hairline text-xs text-grey-darker">
-                        {this.state.videoMetadata.view_count_short} ·{" "}
-                        {this.state.videoMetadata.posting_date}
+                        {
+                          this.state.reportData.regretReport
+                            .regretted_youtube_navigation_brief_video_metadata
+                            .view_count_at_navigation_short
+                        }{" "}
+                        ·{" "}
+                        {
+                          this.state.reportData.regretReport
+                            .regretted_youtube_navigation_brief_video_metadata
+                            .video_posting_date
+                        }
                       </p>
                     </div>
                   </div>

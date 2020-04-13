@@ -12,12 +12,19 @@ import { ReportSummarizer } from "./ReportSummarizer";
 import { extensionInstallationUuid } from "./lib/extensionInstallationUuid";
 import { triggerClientDownloadOfData } from "./lib/triggerClientDownloadOfData";
 import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
-import { YouTubeUsageStatisticsMonitor } from "./YouTubeUsageStatistics";
+import { YouTubeUsageStatistics } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
 import { setUserSuppliedDemographics } from "./lib/userSuppliedDemographics";
+import { makeUUID } from "./lib/uuid";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
-const youTubeUsageStatisticsMonitor = new YouTubeUsageStatisticsMonitor();
+const youTubeUsageStatistics = new YouTubeUsageStatistics();
+
+export interface EventMetadata {
+  client_timestamp: string;
+  extension_installation_uuid: string;
+  event_uuid: string;
+}
 
 class ExtensionGlue {
   private navigationInstrument;
@@ -141,10 +148,13 @@ class ExtensionGlue {
               .navigationBatchesByNavigationUuid,
             await extensionInstallationUuid(),
           );
-          const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
-          console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
+          const regretReport = await reportSummarizer.regretReportFromYouTubeNavigations(
+            youTubeNavigations,
+            await extensionInstallationUuid(),
+            makeUUID,
+          );
           portFromContentScript.postMessage({
-            reportData: { youTubeNavigation: mostRecentYouTubeNavigation },
+            reportData: { regretReport },
           });
         }
       });
@@ -159,7 +169,7 @@ class ExtensionGlue {
       navigationBatch: TrimmedNavigationBatch,
     ): TrimmedNavigationBatch => {
       // Keep track of aggregated statistics
-      youTubeUsageStatisticsMonitor.seenNavigationBatch(navigationBatch);
+      youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
 
       // trim away irrelevant parts of the batch (decreases memory usage)
       // TODO
@@ -185,7 +195,7 @@ class ExtensionGlue {
 
     // Periodic submission of YouTube usage statistics
     // TODO
-    // youTubeUsageStatisticsMonitor
+    // youTubeUsageStatistics
   }
 
   async startOpenWPMInstrumentation(config) {

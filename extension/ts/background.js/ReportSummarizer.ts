@@ -3,11 +3,18 @@ import {
   OpenWpmPayloadEnvelope,
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
+import { EventMetadata } from "./index";
 
 type YouTubeNavigationLinkPosition =
   | "up_next_auto_play"
   | "watch_next_column"
   | "watch_next_end_screen";
+
+type YouTubeNavigationReachType =
+  | YouTubeNavigationLinkPosition
+  | "direct_navigation"
+  | "page_reload"
+  | FailedStringAttribute;
 
 type FailedStringAttribute = "<failed>";
 type FailedIntegerAttribute = -1;
@@ -19,31 +26,40 @@ export interface VideoMetadata {
   video_posting_date: string | FailedStringAttribute;
   view_count_at_navigation: number | FailedIntegerAttribute;
   view_count_at_navigation_short: string | FailedStringAttribute;
-  outgoing_video_ids_by_category: {
-    [position in YouTubeNavigationLinkPosition]:
-      | string[]
-      | FailedStringAttribute;
-  };
+}
+
+export type OutgoingVideoIdsByCategory = {
+  [position in YouTubeNavigationLinkPosition]: string[] | FailedStringAttribute;
+};
+
+export interface VideoPageMetadata {
+  video_metadata: VideoMetadata;
+  outgoing_video_ids_by_category: OutgoingVideoIdsByCategory;
 }
 
 export interface YouTubeNavigation {
   video_metadata: undefined | VideoMetadata;
+  outgoing_video_ids_by_category: OutgoingVideoIdsByCategory;
   tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
   url: undefined | string | FailedStringAttribute;
   referrer: undefined | string | FailedStringAttribute;
   navigation_transition_type: string;
   parent_youtube_navigations: YouTubeNavigation[];
-  how_the_video_page_likely_was_reached:
-    | YouTubeNavigationLinkPosition
-    | "direct_navigation"
-    | "page_reload"
-    | FailedStringAttribute;
+  how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[];
   window_id: number;
   tab_id: number;
   frame_id: number;
-  client_timestamp: string;
-  extension_installation_uuid: string;
-  event_uuid: string;
+  event_metadata: EventMetadata;
+}
+
+export interface RegretReport {
+  amount_of_regret_reports_since_consent_was_given: number;
+  regretted_youtube_navigation_brief_video_metadata: VideoMetadata;
+  how_this_and_recent_youtube_navigations_were_reached: YouTubeNavigationReachType[][];
+  user_supplied_regret_category: string;
+  user_supplied_other_regret_category: string;
+  user_supplied_severity: null | number;
+  event_metadata: EventMetadata;
 }
 
 export class ReportSummarizer {
@@ -149,57 +165,61 @@ export class ReportSummarizer {
             topFrameHttpResponseEnvelope.httpResponse.content_hash,
       );
 
-      let videoMetadata: VideoMetadata;
+      let videoPageMetadata: VideoPageMetadata;
       if (capturedContentEnvelope) {
         // Extract video metadata from the captured content
-        videoMetadata = this.extractVideoMetadataFromCapturedContent(
+        videoPageMetadata = this.extractVideoPageMetadataFromCapturedContent(
           httpRequestEnvelope,
           capturedContentEnvelope,
         );
       } else {
-        videoMetadata = this.extractVideoMetadataFromNothing();
+        videoPageMetadata = this.extractVideoPageMetadataFromNothing();
       }
 
       const url = httpRequestEnvelope.httpRequest.url;
       const referrer = httpRequestEnvelope.httpRequest.referrer;
       const navigation_transition_type =
         topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;
-      const how_the_video_page_likely_was_reached =
+      const how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[] = [
         referrer === ""
           ? navigation_transition_type === "reload"
             ? "page_reload"
             : "direct_navigation"
-          : "<failed>";
+          : "<failed>",
+      ];
 
       const youTubeNavigation: YouTubeNavigation = {
-        video_metadata: videoMetadata,
+        ...videoPageMetadata,
         tab_active_dwell_time_at_navigation:
           topFrameNavigationBatch.navigationEnvelope.tabActiveDwellTime,
         url,
         referrer,
         navigation_transition_type,
         parent_youtube_navigations: [],
-        how_the_video_page_likely_was_reached,
+        how_the_youtube_navigation_likely_was_reached,
         window_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.window_id,
         tab_id: topFrameNavigationBatch.navigationEnvelope.navigation.tab_id,
         frame_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.frame_id,
-        client_timestamp:
-          topFrameNavigationBatch.navigationEnvelope.navigation
-            .committed_time_stamp,
-        extension_installation_uuid,
-        event_uuid: topFrameNavigationBatch.navigationEnvelope.navigation.uuid,
+        event_metadata: {
+          client_timestamp:
+            topFrameNavigationBatch.navigationEnvelope.navigation
+              .committed_time_stamp,
+          extension_installation_uuid,
+          event_uuid:
+            topFrameNavigationBatch.navigationEnvelope.navigation.uuid,
+        },
       };
       youTubeNavigations.push(youTubeNavigation);
     }
     return youTubeNavigations;
   }
 
-  extractVideoMetadataFromCapturedContent(
+  extractVideoPageMetadataFromCapturedContent(
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
-  ): VideoMetadata {
+  ): VideoPageMetadata {
     let ytInitialData;
 
     if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
@@ -344,12 +364,14 @@ export class ReportSummarizer {
     }
 
     return {
-      video_id,
-      video_title,
-      video_description,
-      video_posting_date,
-      view_count_at_navigation,
-      view_count_at_navigation_short,
+      video_metadata: {
+        video_id,
+        video_title,
+        video_description,
+        video_posting_date,
+        view_count_at_navigation,
+        view_count_at_navigation_short,
+      },
       outgoing_video_ids_by_category: {
         up_next_auto_play,
         watch_next_column,
@@ -358,7 +380,7 @@ export class ReportSummarizer {
     };
   }
 
-  extractVideoMetadataFromNothing(): VideoMetadata {
+  extractVideoPageMetadataFromNothing(): VideoPageMetadata {
     let video_id;
     try {
     } catch (err) {
@@ -414,16 +436,47 @@ export class ReportSummarizer {
     }
 
     return {
-      video_id,
-      video_title,
-      video_description,
-      video_posting_date,
-      view_count_at_navigation,
-      view_count_at_navigation_short,
+      video_metadata: {
+        video_id,
+        video_title,
+        video_description,
+        video_posting_date,
+        view_count_at_navigation,
+        view_count_at_navigation_short,
+      },
       outgoing_video_ids_by_category: {
         up_next_auto_play,
         watch_next_column,
         watch_next_end_screen,
+      },
+    };
+  }
+
+  async regretReportFromYouTubeNavigations(
+    youTubeNavigations: YouTubeNavigation[],
+    extension_installation_uuid: string,
+    makeUUID: () => string,
+  ): Promise<RegretReport> {
+    const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
+    console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
+    return {
+      amount_of_regret_reports_since_consent_was_given: -1,
+      regretted_youtube_navigation_brief_video_metadata: {
+        video_id: "foo",
+        video_title: "foo",
+        video_description: "",
+        video_posting_date: "",
+        view_count_at_navigation: -1,
+        view_count_at_navigation_short: "",
+      },
+      how_this_and_recent_youtube_navigations_were_reached: [],
+      user_supplied_regret_category: "",
+      user_supplied_other_regret_category: "",
+      user_supplied_severity: -1,
+      event_metadata: {
+        client_timestamp: "",
+        extension_installation_uuid: "",
+        event_uuid: makeUUID(),
       },
     };
   }
