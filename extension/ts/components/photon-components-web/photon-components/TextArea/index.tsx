@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import classNames from "classnames";
 
 import "./index.css";
@@ -18,7 +18,7 @@ export interface TextAreaState {
   value: string;
 }
 
-class TextArea extends React.Component<TextAreaProps, TextAreaState> {
+export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
   constructor(props) {
     super(props);
     const { type = "text", defaultValue = "", value = "" } = props;

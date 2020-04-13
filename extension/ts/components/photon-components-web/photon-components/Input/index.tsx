@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import classNames from "classnames";
 
 import "./index.css";
@@ -18,7 +18,7 @@ export interface InputState {
   value: string;
 }
 
-class Input extends React.Component<InputProps, InputState> {
+export class Input extends React.Component<InputProps, InputState> {
   constructor(props) {
     super(props);
     const { type = "text", defaultValue = "", value = "" } = props;

@@ -1,4 +1,5 @@
-import React, { MouseEvent } from "react";
+import * as React from "react";
+import { Component, MouseEvent } from "react";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import { ConsentStatus } from "../background.js/lib/consentStatus";
@@ -16,10 +17,7 @@ export interface ConsentFormState {
   userPartOfMarginilizedGroup: null | boolean;
 }
 
-export class ConsentForm extends React.Component<
-  ConsentFormProps,
-  ConsentFormState
-> {
+export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
   public state = {
     loading: true,
     consentStatus: null,

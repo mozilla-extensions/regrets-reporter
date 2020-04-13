@@ -1,23 +1,24 @@
-import React, { MouseEvent } from "react";
+import * as React from "react";
+import { Component, MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
 import "../components/photon-components-web/index.css";
 import "../components/photon-components-web/attributes";
 import "../components/tailwind.css";
-import Input from "../components/photon-components-web/photon-components/Input";
-import Radio from "../components/photon-components-web/photon-components/Radio";
-// import Checkbox from "../components/photon-components-web/photon-components/Checkbox";
-import Link from "../components/photon-components-web/photon-components/Link";
+import { Input } from "../components/photon-components-web/photon-components/Input";
+import { Radio } from "../components/photon-components-web/photon-components/Radio";
+// import { Checkbox } from "../components/photon-components-web/photon-components/Checkbox";
+import { Link } from "../components/photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import { YouTubeNavigation } from "../background.js/ReportSummarizer";
-import LikertScale from "likert-react";
+import * as LikertScale from "likert-react";
 import {
   MdSentimentDissatisfied,
   MdSentimentNeutral,
   MdSentimentVeryDissatisfied,
 } from "react-icons/all";
 import { DisplayError } from "../components/DisplayError";
-// import TextArea from "../components/photon-components-web/photon-components/TextArea";
+// import { TextArea } from "../components/photon-components-web/photon-components/TextArea";
 
 export interface ReportRegretFormProps {}
 
@@ -41,7 +42,7 @@ export interface ReportRegretFormState {
   error: boolean;
 }
 
-export class ReportRegretForm extends React.Component<
+export class ReportRegretForm extends Component<
   ReportRegretFormProps,
   ReportRegretFormState
 > {

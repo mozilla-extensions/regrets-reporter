@@ -1,8 +1,9 @@
-import React from "react";
+import * as React from "react";
+import { HTMLProps } from "react";
 
 import "./index.css";
 
-export interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
+export interface ButtonProps extends HTMLProps<HTMLButtonElement> {
   type?: string;
   photonSize?: string;
 }

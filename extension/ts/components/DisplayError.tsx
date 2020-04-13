@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 export class DisplayError extends React.Component<{}, {}> {
   constructor(props) {

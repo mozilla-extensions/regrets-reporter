@@ -1,8 +1,9 @@
-import React, { MouseEvent } from "react";
+import * as React from "react";
+import { Component, MouseEvent } from "react";
 import { ConsentStatus } from "../background.js/lib/consentStatus";
-import Modal from "react-modal";
-import Radio from "../components/photon-components-web/photon-components/Radio";
-import Button from "../components/photon-components-web/photon-components/Button";
+import * as Modal from "react-modal";
+import { Radio } from "../components/photon-components-web/photon-components/Radio";
+import { Button } from "../components/photon-components-web/photon-components/Button";
 
 const customStyles = {
   overlay: {
@@ -35,7 +36,7 @@ export interface EnrollFlowButtonState {
   userOver18Confirmed: boolean;
 }
 
-export class EnrollFlowButton extends React.Component<
+export class EnrollFlowButton extends Component<
   EnrollFlowButtonProps,
   EnrollFlowButtonState
 > {
