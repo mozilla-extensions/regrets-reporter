@@ -26,7 +26,7 @@ Modal.setAppElement("#app");
 export interface EnrollFlowButtonProps {
   loading: boolean;
   consentStatus: ConsentStatus;
-  onEnroll: () => void;
+  onEnroll: ({ userOver18, userPartOfMarginilizedGroup }) => void;
 }
 
 export interface EnrollFlowButtonState {
@@ -57,7 +57,8 @@ export class EnrollFlowButton extends Component<
   onEnroll = async (event: MouseEvent) => {
     event.preventDefault();
     this.closeModal();
-    this.props.onEnroll();
+    const { userOver18, userPartOfMarginilizedGroup } = this.state;
+    this.props.onEnroll({ userOver18, userPartOfMarginilizedGroup });
   };
 
   handleUserPartOfMarginilizedGroupOptionChange = changeEvent => {

@@ -14,14 +14,12 @@ export interface ConsentFormProps {}
 export interface ConsentFormState {
   loading: boolean;
   consentStatus: ConsentStatus;
-  userPartOfMarginilizedGroup: null | boolean;
 }
 
 export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
   public state = {
     loading: true,
     consentStatus: null,
-    userPartOfMarginilizedGroup: null,
   };
 
   private backgroundContextPort: Port;
@@ -54,7 +52,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
     window.close();
   }
 
-  onEnroll = async () => {
+  onEnroll = async ({ userOver18, userPartOfMarginilizedGroup }) => {
     const consentStatus = "given";
     this.setState({
       loading: false,
@@ -62,19 +60,14 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
     });
     this.backgroundContextPort.postMessage({
       updatedConsentStatus: consentStatus,
+      userOver18,
+      userPartOfMarginilizedGroup,
     });
   };
 
   report = async (event: MouseEvent) => {
     event.preventDefault();
     window.close();
-  };
-
-  handleUserPartOfMarginilizedGroupOptionChange = changeEvent => {
-    console.log({ changeEvent });
-    this.setState({
-      userPartOfMarginilizedGroup: changeEvent.target.value,
-    });
   };
 
   render() {

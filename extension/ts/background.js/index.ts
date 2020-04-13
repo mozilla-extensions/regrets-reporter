@@ -14,6 +14,7 @@ import { triggerClientDownloadOfData } from "./lib/triggerClientDownloadOfData";
 import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
 import { YouTubeUsageStatisticsMonitor } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
+import { setUserSuppliedDemographics } from "./lib/userSuppliedDemographics";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const youTubeUsageStatisticsMonitor = new YouTubeUsageStatisticsMonitor();
@@ -45,7 +46,12 @@ class ExtensionGlue {
           });
         }
         if (m.updatedConsentStatus) {
+          const { userOver18, userPartOfMarginilizedGroup } = m;
           await setConsentStatus(m.updatedConsentStatus);
+          await setUserSuppliedDemographics({
+            userOver18,
+            userPartOfMarginilizedGroup,
+          });
           const consentGiven = (await getConsentStatus()) === "given";
           if (consentGiven) {
             console.log("Enrolled. Starting study");
