@@ -47,39 +47,44 @@ describe("ReportSummarizer", function() {
     );
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
-    const regretReport1 = await reportSummarizer.regretReportFromYouTubeNavigations(
+    const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
     );
     assert.deepEqual(regretReport1, {
-      amount_of_regret_reports_since_consent_was_given: -1,
-      regretted_youtube_navigation_brief_video_metadata: {
-        video_id: "foo",
-        video_title: "foo",
-        video_description: "",
-        video_posting_date: "",
-        view_count_at_navigation: -1,
-        view_count_at_navigation_short: "",
+      report_data: {
+        amount_of_regret_reports_since_consent_was_given: -1,
+        regretted_youtube_navigation_brief_video_metadata: {
+          video_id: "foo",
+          video_title: "foo",
+          video_description: "",
+          video_posting_date: "",
+          view_count_at_navigation: -1,
+          view_count_at_navigation_short: "",
+        },
+        how_this_and_recent_youtube_navigations_were_reached: [],
       },
-      how_this_and_recent_youtube_navigations_were_reached: [],
       user_supplied_regret_category: "",
       user_supplied_other_regret_category: "",
       user_supplied_severity: -1,
     });
 
-    const regretReport2 = await reportSummarizer.regretReportFromYouTubeNavigations(
+    const regretReport2 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
     );
     assert.deepEqual(regretReport2, {
-      amount_of_regret_reports_since_consent_was_given: -1,
-      regretted_youtube_navigation_brief_video_metadata: {
-        video_id: "foo",
-        video_title: "foo",
-        video_description: "",
-        video_posting_date: "",
-        view_count_at_navigation: -1,
-        view_count_at_navigation_short: "",
+      report_data: {
+        amount_of_regret_reports_since_consent_was_given: -1,
+        regretted_youtube_navigation_brief_video_metadata: {
+          video_id: "foo",
+          video_title: "foo",
+          video_description: "",
+          video_posting_date: "",
+          view_count_at_navigation: -1,
+          view_count_at_navigation_short: "",
+        },
+        how_this_and_recent_youtube_navigations_were_reached: [],
       },
-      how_this_and_recent_youtube_navigations_were_reached: [],
+
       user_supplied_regret_category: "",
       user_supplied_other_regret_category: "",
       user_supplied_severity: -1,

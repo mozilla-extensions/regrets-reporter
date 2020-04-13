@@ -1,6 +1,7 @@
 import { NavigationBatch } from "./NavigationBatchPreprocessor";
 import { parseIsoDateTimeString } from "./lib/dateUtils";
 import { format } from "date-fns";
+import { DataSharer } from "./DataSharer";
 
 export interface YouTubeUsageStatisticsUpdate {
   amount_of_days_of_at_least_one_youtube_visit: number;
@@ -61,4 +62,30 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
        */
     };
   };
+
+  private alarmName: string;
+
+  public async run(dataSharer: DataSharer) {
+    this.alarmName = `${browser.runtime.id}:youTubeUsageStatisticsAlarm`;
+    const summarizeAndShareStatistics = async () => {
+      console.info(`Summarizing and sharing youTubeUsageStatisticsUpdate`);
+      const youTubeUsageStatisticsUpdate = this.summarizeUpdate();
+      await dataSharer.share({ youTubeUsageStatisticsUpdate });
+    };
+    const alarmListener = async _alarm => {
+      summarizeAndShareStatistics();
+    };
+    browser.alarms.onAlarm.addListener(alarmListener);
+    browser.alarms.create(this.alarmName, {
+      periodInMinutes: 24 * 60, // every 24 hours
+    });
+    // Execute the first summary immediately
+    await summarizeAndShareStatistics();
+  }
+
+  public async cleanup() {
+    if (this.alarmName) {
+      await browser.alarms.clear(this.alarmName);
+    }
+  }
 }

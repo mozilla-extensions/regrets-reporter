@@ -6,6 +6,7 @@ import { browser } from "webextension-polyfill-ts";
 import { RegretReport } from "./ReportSummarizer";
 import { extensionInstallationUuid } from "./lib/extensionInstallationUuid";
 import { makeUUID } from "./lib/uuid";
+import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
 
 export interface SharedDataEventMetadata {
   client_timestamp: string;
@@ -14,17 +15,9 @@ export interface SharedDataEventMetadata {
   user_supplied_demographics: UserSuppliedDemographics;
 }
 
-export interface ReportedRegret {
-  reportData: {
-    regretReport: RegretReport;
-  };
-  userSuppliedRegretCategory: string;
-  userSuppliedOtherRegretCategory: string;
-  userSuppliedSeverity: null | number;
-}
-
 export interface SharedData {
-  reportedRegret: undefined | ReportedRegret;
+  regretReport?: RegretReport;
+  youTubeUsageStatisticsUpdate?: YouTubeUsageStatisticsUpdate;
 }
 
 export interface AnnotatedSharedData extends SharedData {

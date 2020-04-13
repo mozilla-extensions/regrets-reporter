@@ -15,6 +15,11 @@ type YouTubeNavigationReachType =
   | "page_reload"
   | FailedStringAttribute;
 
+type YouTubeNavigationUrlType =
+  | "search_results"
+  | "watch_page"
+  | "channel_page";
+
 type FailedStringAttribute = "<failed>";
 type FailedIntegerAttribute = -1;
 
@@ -50,10 +55,14 @@ export interface YouTubeNavigation {
   frame_id: number;
 }
 
-export interface RegretReport {
+export interface RegretReportData {
   amount_of_regret_reports_since_consent_was_given: number;
   regretted_youtube_navigation_brief_video_metadata: VideoMetadata;
   how_this_and_recent_youtube_navigations_were_reached: YouTubeNavigationReachType[][];
+}
+
+export interface RegretReport {
+  report_data: RegretReportData;
   user_supplied_regret_category: string;
   user_supplied_other_regret_category: string;
   user_supplied_severity: null | number;
@@ -446,22 +455,24 @@ export class ReportSummarizer {
     };
   }
 
-  async regretReportFromYouTubeNavigations(
+  async regretReportDataFromYouTubeNavigations(
     youTubeNavigations: YouTubeNavigation[],
   ): Promise<RegretReport> {
     const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
     console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
     return {
-      amount_of_regret_reports_since_consent_was_given: -1,
-      regretted_youtube_navigation_brief_video_metadata: {
-        video_id: "foo",
-        video_title: "foo",
-        video_description: "",
-        video_posting_date: "",
-        view_count_at_navigation: -1,
-        view_count_at_navigation_short: "",
+      report_data: {
+        amount_of_regret_reports_since_consent_was_given: -1,
+        regretted_youtube_navigation_brief_video_metadata: {
+          video_id: "foo",
+          video_title: "foo",
+          video_description: "",
+          video_posting_date: "",
+          view_count_at_navigation: -1,
+          view_count_at_navigation_short: "",
+        },
+        how_this_and_recent_youtube_navigations_were_reached: [],
       },
-      how_this_and_recent_youtube_navigations_were_reached: [],
       user_supplied_regret_category: "",
       user_supplied_other_regret_category: "",
       user_supplied_severity: -1,

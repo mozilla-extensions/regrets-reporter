@@ -80,7 +80,7 @@ class ExtensionGlue {
       const sharedData = await dataSharer.export();
       await triggerClientDownloadOfData(
         sharedData,
-        `sharedData-userUuid=${await extensionInstallationUuid()}-${new Date().toISOString()}.json`,
+        `youTubeRegretsReporter-sharedData-userUuid=${await extensionInstallationUuid()}.json`,
       );
     };
     browser.browserAction.onClicked.addListener(exportSharedData);
@@ -117,24 +117,24 @@ class ExtensionGlue {
       portFromContentScript = p;
       portFromContentScript.onMessage.addListener(async function(m) {
         console.log("Message from report-regret-form script:", { m });
-        if (m.reportedRegret) {
-          const { reportedRegret } = m;
+        if (m.regretReport) {
+          const { regretReport } = m;
           // Share the reported regret
-          dataSharer.share({ reportedRegret });
+          dataSharer.share({ regretReport });
           console.log("Reported regret shared");
         }
         // The report form has triggered a report-related data collection
-        if (m.requestReportData) {
+        if (m.requestRegretReportData) {
           await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
           const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
             openWpmPacketHandler.navigationBatchPreprocessor
               .navigationBatchesByNavigationUuid,
           );
-          const regretReport = await reportSummarizer.regretReportFromYouTubeNavigations(
+          const regretReportData = await reportSummarizer.regretReportDataFromYouTubeNavigations(
             youTubeNavigations,
           );
           portFromContentScript.postMessage({
-            reportData: { regretReport },
+            reportData: { regretReportData },
           });
         }
       });
@@ -174,8 +174,7 @@ class ExtensionGlue {
     await this.startOpenWPMInstrumentation(openwpmConfig);
 
     // Periodic submission of YouTube usage statistics
-    // TODO
-    // youTubeUsageStatistics
+    await youTubeUsageStatistics.run(dataSharer);
   }
 
   async startOpenWPMInstrumentation(config) {
@@ -253,6 +252,9 @@ class ExtensionGlue {
     }
     if (openWpmPacketHandler.navigationBatchPreprocessor) {
       await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
+    }
+    if (openWpmPacketHandler.navigationBatchPreprocessor) {
+      await youTubeUsageStatistics.cleanup();
     }
   }
 }
