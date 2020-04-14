@@ -26,12 +26,12 @@ Modal.setAppElement("#app");
 export interface EnrollFlowButtonProps {
   loading: boolean;
   consentStatus: ConsentStatus;
-  onEnroll: ({ userOver18, userPartOfMarginilizedGroup }) => void;
+  onEnroll: ({ userOver18, userPartOfMarginalizedGroup }) => void;
 }
 
 export interface EnrollFlowButtonState {
   modalIsOpen: boolean;
-  userPartOfMarginilizedGroup: null | "yes" | "no" | "prefer-not-to-answer";
+  userPartOfMarginalizedGroup: null | "yes" | "no" | "prefer-not-to-answer";
   userOver18: null | "yes" | "no";
   userOver18Confirmed: boolean;
 }
@@ -44,7 +44,7 @@ export class EnrollFlowButton extends Component<
     loading: true,
     modalIsOpen: false,
     consentStatus: null,
-    userPartOfMarginilizedGroup: null,
+    userPartOfMarginalizedGroup: null,
     userOver18: null,
     userOver18Confirmed: false,
   };
@@ -57,13 +57,13 @@ export class EnrollFlowButton extends Component<
   onEnroll = async (event: MouseEvent) => {
     event.preventDefault();
     this.closeModal();
-    const { userOver18, userPartOfMarginilizedGroup } = this.state;
-    this.props.onEnroll({ userOver18, userPartOfMarginilizedGroup });
+    const { userOver18, userPartOfMarginalizedGroup } = this.state;
+    this.props.onEnroll({ userOver18, userPartOfMarginalizedGroup });
   };
 
-  handleUserPartOfMarginilizedGroupOptionChange = changeEvent => {
+  handleUserPartOfMarginalizedGroupOptionChange = changeEvent => {
     this.setState({
-      userPartOfMarginilizedGroup: changeEvent.target.value,
+      userPartOfMarginalizedGroup: changeEvent.target.value,
     });
   };
 
@@ -155,41 +155,41 @@ export class EnrollFlowButton extends Component<
                   <ul className="list-none">
                     <li className="mb-2">
                       <Radio
-                        name="userPartOfMarginilizedGroup"
+                        name="userPartOfMarginalizedGroup"
                         value="yes"
                         label="Yes"
                         checked={
-                          this.state.userPartOfMarginilizedGroup === "yes"
+                          this.state.userPartOfMarginalizedGroup === "yes"
                         }
                         onChange={
-                          this.handleUserPartOfMarginilizedGroupOptionChange
+                          this.handleUserPartOfMarginalizedGroupOptionChange
                         }
                       />
                     </li>
                     <li className="mb-2">
                       <Radio
-                        name="userPartOfMarginilizedGroup"
+                        name="userPartOfMarginalizedGroup"
                         value="no"
                         label="No"
                         checked={
-                          this.state.userPartOfMarginilizedGroup === "no"
+                          this.state.userPartOfMarginalizedGroup === "no"
                         }
                         onChange={
-                          this.handleUserPartOfMarginilizedGroupOptionChange
+                          this.handleUserPartOfMarginalizedGroupOptionChange
                         }
                       />
                     </li>
                     <li className="mb-2">
                       <Radio
-                        name="userPartOfMarginilizedGroup"
+                        name="userPartOfMarginalizedGroup"
                         value="prefer-not-to-answer"
                         label="I prefer not answer"
                         checked={
-                          this.state.userPartOfMarginilizedGroup ===
+                          this.state.userPartOfMarginalizedGroup ===
                           "prefer-not-to-answer"
                         }
                         onChange={
-                          this.handleUserPartOfMarginilizedGroupOptionChange
+                          this.handleUserPartOfMarginalizedGroupOptionChange
                         }
                       />
                     </li>
@@ -198,7 +198,7 @@ export class EnrollFlowButton extends Component<
 
                 <Button
                   className="enroll-button h-20 btn rounded-lg items-center"
-                  disabled={this.state.userPartOfMarginilizedGroup === null}
+                  disabled={this.state.userPartOfMarginalizedGroup === null}
                   onClick={this.onEnroll}
                 >
                   Enroll in the study

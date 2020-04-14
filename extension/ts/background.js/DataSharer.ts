@@ -1,7 +1,7 @@
 import { RegretReport } from "./ReportSummarizer";
 import { makeUUID } from "./lib/uuid";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
-import { Store, UserSuppliedDemographics } from "./Store";
+import { ConsentStatus, Store, UserSuppliedDemographics } from "./Store";
 
 export interface SharedDataEventMetadata {
   client_timestamp: string;
@@ -12,12 +12,16 @@ export interface SharedDataEventMetadata {
 }
 
 export interface SharedData {
-  regretReport?: RegretReport;
-  youTubeUsageStatisticsUpdate?: YouTubeUsageStatisticsUpdate;
+  regret_report?: RegretReport;
+  youtube_usage_statistics_update?: YouTubeUsageStatisticsUpdate;
+  data_sharing_consent_update?: {
+    consent_status: ConsentStatus;
+    consent_status_timestamp: string;
+  };
 }
 
 export interface AnnotatedSharedData extends SharedData {
-  eventMetadata: SharedDataEventMetadata;
+  event_metadata: SharedDataEventMetadata;
 }
 
 export class DataSharer {
@@ -35,7 +39,7 @@ export class DataSharer {
 
     const annotatedData: AnnotatedSharedData = {
       ...data,
-      eventMetadata: {
+      event_metadata: {
         client_timestamp: new Date().toISOString(),
         extension_installation_uuid: await this.store.extensionInstallationUuid(),
         event_uuid: makeUUID(),

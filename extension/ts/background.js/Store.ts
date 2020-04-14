@@ -9,8 +9,8 @@ export interface LocalStorageWrapper {
 }
 
 export interface UserSuppliedDemographics {
-  userPartOfMarginilizedGroup: null | "yes" | "no" | "prefer-not-to-answer";
-  userOver18: null | "yes" | "no";
+  user_part_of_marginalized_group: null | "yes" | "no" | "prefer-not-to-answer";
+  user_over_18: null | "yes" | "no";
 }
 
 export type ConsentStatus = null | "given" | "withdrawn";
@@ -35,13 +35,20 @@ export class Store implements LocalStorageWrapper {
   set = async (items: StorageAreaSetItemsType): Promise<void> => {};
 
   getConsentStatus = async (): Promise<ConsentStatus> => {
-    const { consentStatus } = await this.get("consentStatus");
+    const { consentStatus, consentStatusTimestamp } = await this.get(
+      "consentStatus",
+    );
     return consentStatus;
   };
 
+  getConsentStatusTimestamp = async (): Promise<string> => {
+    const { consentStatusTimestamp } = await this.get("consentStatusTimestamp");
+    return consentStatusTimestamp;
+  };
+
   setConsentStatus = async (consentStatus: ConsentStatus) => {
-    const consentChangeTimestamp = new Date().toISOString();
-    await this.set({ consentStatus, consentChangeTimestamp });
+    const consentStatusTimestamp = new Date().toISOString();
+    await this.set({ consentStatus, consentStatusTimestamp });
   };
 
   /**

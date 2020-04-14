@@ -86,7 +86,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     const summarizeAndShareStatistics = async () => {
       console.info(`Summarizing and sharing youTubeUsageStatisticsUpdate`);
       const youTubeUsageStatisticsUpdate = await this.summarizeUpdate();
-      await dataSharer.share({ youTubeUsageStatisticsUpdate });
+      await dataSharer.share({
+        youtube_usage_statistics_update: youTubeUsageStatisticsUpdate,
+      });
     };
     const alarmListener = async _alarm => {
       await summarizeAndShareStatistics();

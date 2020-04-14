@@ -48,18 +48,25 @@ class ExtensionGlue {
         if (m.requestConsentStatus) {
           portFromContentScript.postMessage({
             consentStatus: await store.getConsentStatus(),
+            consentStatusTimestamp: await store.getConsentStatusTimestamp(),
           });
         }
         if (m.updatedConsentStatus) {
-          const { userOver18, userPartOfMarginilizedGroup } = m;
+          const { userOver18, userPartOfMarginalizedGroup } = m;
           await store.setConsentStatus(m.updatedConsentStatus);
           await store.setUserSuppliedDemographics({
-            userOver18,
-            userPartOfMarginilizedGroup,
+            user_over_18: userOver18,
+            user_part_of_marginalized_group: userPartOfMarginalizedGroup,
           });
           const consentGiven = (await store.getConsentStatus()) === "given";
           if (consentGiven) {
             console.log("Enrolled. Starting study");
+            await dataSharer.share({
+              data_sharing_consent_update: {
+                consent_status: await store.getConsentStatus(),
+                consent_status_timestamp: await store.getConsentStatusTimestamp(),
+              },
+            });
             await extensionGlue.start();
           }
         }
@@ -123,7 +130,7 @@ class ExtensionGlue {
         if (m.regretReport) {
           const { regretReport } = m;
           // Share the reported regret
-          dataSharer.share({ regretReport });
+          dataSharer.share({ regret_report: regretReport });
           console.log("Reported regret shared");
         }
         // The report form has triggered a report-related data collection
