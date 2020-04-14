@@ -13,7 +13,7 @@ import {
   RegretReport,
   RegretReportData,
 } from "../background.js/ReportSummarizer";
-import * as LikertScale from "likert-react";
+import LikertScale from "likert-react";
 import {
   MdSentimentDissatisfied,
   MdSentimentNeutral,

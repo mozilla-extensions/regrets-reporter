@@ -6,7 +6,7 @@
     "target": "es6",
     "jsx": "react",
     "lib": ["es2017", "dom"],
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "allowJs": true
   }
 }
