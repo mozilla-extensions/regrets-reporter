@@ -9,6 +9,7 @@ export interface SharedDataEventMetadata {
   event_uuid: string;
   user_supplied_demographics: UserSuppliedDemographics;
   amount_of_regret_reports_since_consent_was_given: number;
+  extension_version: string;
 }
 
 export interface SharedData {
@@ -45,6 +46,7 @@ export class DataSharer {
         event_uuid: makeUUID(),
         user_supplied_demographics: await this.store.getUserSuppliedDemographics(),
         amount_of_regret_reports_since_consent_was_given,
+        extension_version: browser.runtime.getManifest().version,
       },
     };
 
