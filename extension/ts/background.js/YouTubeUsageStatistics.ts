@@ -91,6 +91,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       });
     };
     const alarmListener = async _alarm => {
+      if (_alarm.name !== this.alarmName) {
+        return false;
+      }
       await summarizeAndShareStatistics();
     };
     browser.alarms.onAlarm.addListener(alarmListener);

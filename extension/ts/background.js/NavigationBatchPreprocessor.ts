@@ -261,6 +261,9 @@ export class NavigationBatchPreprocessor {
   public async run() {
     this.alarmName = `${browser.runtime.id}:queueProcessorAlarm`;
     const alarmListener = async _alarm => {
+      if (_alarm.name !== this.alarmName) {
+        return false;
+      }
       console.info(
         `Processing ${this.openWpmPayloadEnvelopeProcessQueue.length} study payloads to group by navigation`,
       );
