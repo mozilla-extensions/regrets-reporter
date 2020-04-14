@@ -17,7 +17,7 @@ export interface SharedData {
 }
 
 export interface AnnotatedSharedData extends SharedData {
-  event_metadata: SharedDataEventMetadata;
+  eventMetadata: SharedDataEventMetadata;
 }
 
 export class DataSharer {
@@ -35,7 +35,7 @@ export class DataSharer {
 
     const annotatedData: AnnotatedSharedData = {
       ...data,
-      event_metadata: {
+      eventMetadata: {
         client_timestamp: new Date().toISOString(),
         extension_installation_uuid: await this.store.extensionInstallationUuid(),
         event_uuid: makeUUID(),

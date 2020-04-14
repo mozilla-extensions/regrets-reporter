@@ -286,9 +286,12 @@ export class ReportSummarizer {
 
     let view_count_at_navigation;
     try {
-      view_count_at_navigation = ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
-        /\D/g,
-        "",
+      view_count_at_navigation = parseInt(
+        ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
+          /\D/g,
+          "",
+        ),
+        10,
       );
     } catch (err) {
       console.error("view_count_at_navigation", err.message);
@@ -457,18 +460,17 @@ export class ReportSummarizer {
   async regretReportDataFromYouTubeNavigations(
     youTubeNavigations: YouTubeNavigation[],
   ): Promise<RegretReportData> {
+    if (youTubeNavigations.length === 0) {
+      throw new Error("No YouTube navigations captured yet");
+    }
     const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
     console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
     return {
-      regretted_youtube_navigation_video_metadata: {
-        video_id: "foo",
-        video_title: "foo",
-        video_description: "",
-        video_posting_date: "",
-        view_count_at_navigation: -1,
-        view_count_at_navigation_short: "",
-      },
-      how_this_and_recent_youtube_navigations_were_reached: [],
+      regretted_youtube_navigation_video_metadata:
+        mostRecentYouTubeNavigation.video_metadata,
+      how_this_and_recent_youtube_navigations_were_reached: mostRecentYouTubeNavigation.parent_youtube_navigations.map(
+        pyn => pyn.how_the_youtube_navigation_likely_was_reached,
+      ),
     };
   }
 }

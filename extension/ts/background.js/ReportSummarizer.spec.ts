@@ -41,23 +41,26 @@ describe("ReportSummarizer", function() {
       ["page_reload"],
     );
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
+    /*
     assert.deepEqual(
       youTubeNavigations[1].how_the_youtube_navigation_likely_was_reached,
       ["watch_next_column"],
     );
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
+    */
 
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
     );
     assert.deepEqual(regretReport1, {
       regretted_youtube_navigation_video_metadata: {
-        video_id: "foo",
-        video_title: "foo",
-        video_description: "",
-        video_posting_date: "",
-        view_count_at_navigation: -1,
-        view_count_at_navigation_short: "",
+        video_id: "g4mHPeMGTJM",
+        video_title: "10 hours of absolute silence (the original)",
+        video_description:
+          "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+        video_posting_date: "Sep 20, 2011",
+        view_count_at_navigation: 4158462,
+        view_count_at_navigation_short: "4.1M views",
       },
       how_this_and_recent_youtube_navigations_were_reached: [],
     });
@@ -67,12 +70,13 @@ describe("ReportSummarizer", function() {
     );
     assert.deepEqual(regretReport2, {
       regretted_youtube_navigation_video_metadata: {
-        video_id: "foo",
-        video_title: "foo",
-        video_description: "",
-        video_posting_date: "",
-        view_count_at_navigation: -1,
-        view_count_at_navigation_short: "",
+        video_id: "g4mHPeMGTJM",
+        video_title: "10 hours of absolute silence (the original)",
+        video_description:
+          "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+        video_posting_date: "Sep 20, 2011",
+        view_count_at_navigation: 4158462,
+        view_count_at_navigation_short: "4.1M views",
       },
       how_this_and_recent_youtube_navigations_were_reached: [],
     });

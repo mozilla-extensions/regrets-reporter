@@ -133,12 +133,19 @@ class ExtensionGlue {
             openWpmPacketHandler.navigationBatchPreprocessor
               .navigationBatchesByNavigationUuid,
           );
-          const regretReportData = await reportSummarizer.regretReportDataFromYouTubeNavigations(
-            youTubeNavigations,
-          );
-          portFromContentScript.postMessage({
-            regretReportData,
-          });
+          try {
+            const regretReportData = await reportSummarizer.regretReportDataFromYouTubeNavigations(
+              youTubeNavigations,
+            );
+            portFromContentScript.postMessage({
+              regretReportData,
+            });
+          } catch (error) {
+            console.error(error);
+            portFromContentScript.postMessage({
+              errorMessage: error.message,
+            });
+          }
         }
       });
     };

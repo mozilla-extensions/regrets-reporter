@@ -62,7 +62,10 @@ export class ReportRegretForm extends Component<
 
     // When we have received report data, update state that summarizes it
     this.backgroundContextPort.onMessage.addListener(
-      async (m: { regretReportData: RegretReportData }) => {
+      async (m: {
+        regretReportData?: RegretReportData;
+        errorMessage?: string;
+      }) => {
         if (m.regretReportData) {
           const { regretReportData } = m;
           console.log("Regret form received report data", { regretReportData });
@@ -74,13 +77,17 @@ export class ReportRegretForm extends Component<
           });
           return null;
         }
+        if (m.errorMessage) {
+          await this.setState({
+            loading: false,
+            error: true,
+          });
+          return;
+        }
         await this.setState({
           loading: false,
           error: true,
         });
-        throw new Error(
-          "The report data was not available at the time of initiating the regret form",
-        );
       },
     );
   }
@@ -239,8 +246,7 @@ export class ReportRegretForm extends Component<
                       {[
                         {
                           value: "racist-sexist-homo-trans-phobic-content",
-                          label:
-                            "Racist, sexist, or homophobic/transphobic content",
+                          label: "Racist, sexist, or homo/transphobic content",
                         },
                         {
                           value: "sexual-content",
@@ -260,8 +266,7 @@ export class ReportRegretForm extends Component<
                         },
                         {
                           value: "not-appropriate-for-my-age-group",
-                          label:
-                            "Not appropriate for my age group (eg. kids content)",
+                          label: "Not appropriate for my age group",
                         },
                         {
                           value: "bad-music",
