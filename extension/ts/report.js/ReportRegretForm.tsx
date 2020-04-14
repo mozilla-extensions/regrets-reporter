@@ -31,6 +31,7 @@ export interface ReportRegretFormState {
   userSuppliedOtherRegretCategory: string;
   userSuppliedSeverity: null | number;
   error: boolean;
+  reported: boolean;
 }
 
 export class ReportRegretForm extends Component<
@@ -45,6 +46,7 @@ export class ReportRegretForm extends Component<
     userSuppliedOtherRegretCategory: "",
     userSuppliedSeverity: null,
     error: false,
+    reported: false,
   };
 
   private backgroundContextPort: Port;
@@ -114,7 +116,10 @@ export class ReportRegretForm extends Component<
     this.backgroundContextPort.postMessage({
       regretReport,
     });
-    window.close();
+    this.setState({ reported: true });
+    setTimeout(() => {
+      window.close();
+    }, 2500);
   };
 
   handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
@@ -138,6 +143,20 @@ export class ReportRegretForm extends Component<
             />
           </div>
           <div className="text-section-header text-nowrap">Loading ...</div>
+        </header>
+      );
+    }
+    if (this.state.reported) {
+      return (
+        <header className="panel-section panel-section-header">
+          <div className="icon-section-header">
+            <img
+              src="../icons/green-extensionsicon.svg"
+              width="32"
+              height="32"
+            />
+          </div>
+          <div className="text-section-header text-nowrap">Thank you!</div>
         </header>
       );
     }
