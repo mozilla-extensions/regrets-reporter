@@ -135,12 +135,12 @@ class ExtensionGlue {
         }
         // The report form has triggered a report-related data collection
         if (m.requestRegretReportData) {
-          await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
-          const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-            openWpmPacketHandler.navigationBatchPreprocessor
-              .navigationBatchesByNavigationUuid,
-          );
           try {
+            await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
+            const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+              openWpmPacketHandler.navigationBatchPreprocessor
+                .navigationBatchesByNavigationUuid,
+            );
             const regretReportData = await reportSummarizer.regretReportDataFromYouTubeNavigations(
               youTubeNavigations,
             );
@@ -148,7 +148,10 @@ class ExtensionGlue {
               regretReportData,
             });
           } catch (error) {
-            console.error(error);
+            console.error(
+              "Error encountered during regret report data processing",
+              error,
+            );
             portFromContentScript.postMessage({
               errorMessage: error.message,
             });

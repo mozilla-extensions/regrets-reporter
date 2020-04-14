@@ -42,8 +42,8 @@ export interface VideoPageMetadata {
 }
 
 export interface YouTubeNavigation {
-  video_metadata: undefined | VideoMetadata;
-  outgoing_video_ids_by_category: OutgoingVideoIdsByCategory;
+  video_metadata?: VideoMetadata;
+  outgoing_video_ids_by_category?: OutgoingVideoIdsByCategory;
   tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
   url: undefined | string | FailedStringAttribute;
   referrer: undefined | string | FailedStringAttribute;
@@ -327,10 +327,17 @@ export class ReportSummarizer {
           if (el.compactVideoRenderer) {
             return el.compactVideoRenderer.videoId;
           }
+          if (el.compactPlaylistRenderer) {
+            return el.compactPlaylistRenderer.navigationEndpoint.watchEndpoint
+              .videoId;
+          }
           if (el.compactRadioRenderer) {
             return new URL(el.compactRadioRenderer.shareUrl).searchParams.get(
               "v",
             );
+          }
+          if (el.promotedSparklesWebRenderer) {
+            return "(ad)";
           }
           console.error("watch_next_column unhandled el:");
           console.dir({ el });

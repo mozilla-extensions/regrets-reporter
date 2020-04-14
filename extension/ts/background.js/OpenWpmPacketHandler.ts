@@ -212,6 +212,8 @@ export class OpenWpmPacketHandler {
         "https://www.youtube.com/api/stats",
         "https://www.youtube.com/youtubei/v1/guide",
         "https://www.youtube.com/youtubei/v1/feedback",
+        "https://www.youtube.com/youtubei/v1/related_ajax",
+        "https://www.youtube.com/error_204",
       ];
       for (const mayNotStartWith of mayNotStartWiths) {
         if (record.url.indexOf(mayNotStartWith) === 0) {
@@ -220,12 +222,16 @@ export class OpenWpmPacketHandler {
       }
       const shouldStartWiths = [
         "https://www.youtube.com/watch",
+        "https://www.youtube.com/channel",
         "https://www.youtube.com/results?search",
       ];
       for (const shouldStartWith of shouldStartWiths) {
         if (record.url.indexOf(shouldStartWith) === 0) {
           return true;
         }
+      }
+      if (record.url === "https://www.youtube.com/") {
+        return true;
       }
     }
     console.log("TODO Keep this packet?", { instrument, record });
