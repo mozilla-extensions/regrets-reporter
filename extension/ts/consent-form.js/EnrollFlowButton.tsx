@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
-import { ConsentStatus } from "../background.js/lib/consentStatus";
 import * as Modal from "react-modal";
 import { Radio } from "../components/photon-components-web/photon-components/Radio";
 import { Button } from "../components/photon-components-web/photon-components/Button";
+import { ConsentStatus } from "../background.js/Store";
 
 const customStyles = {
   overlay: {

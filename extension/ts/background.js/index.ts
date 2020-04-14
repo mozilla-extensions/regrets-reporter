@@ -1,6 +1,5 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
-import { getConsentStatus, setConsentStatus } from "./lib/consentStatus";
 import { browser } from "webextension-polyfill-ts";
 import {
   CookieInstrument,
@@ -9,17 +8,21 @@ import {
   NavigationInstrument,
 } from "@openwpm/webext-instrumentation";
 import { ReportSummarizer } from "./ReportSummarizer";
-import { extensionInstallationUuid } from "./lib/extensionInstallationUuid";
 import { triggerClientDownloadOfData } from "./lib/triggerClientDownloadOfData";
-import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
+import {
+  NavigationBatch,
+  TrimmedNavigationBatch,
+} from "./NavigationBatchPreprocessor";
 import { YouTubeUsageStatistics } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
-import { setUserSuppliedDemographics } from "./lib/userSuppliedDemographics";
 import { DataSharer } from "./DataSharer";
+import { Store } from "./Store";
+import { localStorageWrapper } from "./lib/localStorageWrapper";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
-const youTubeUsageStatistics = new YouTubeUsageStatistics();
-const dataSharer = new DataSharer();
+const store = new Store(localStorageWrapper);
+const youTubeUsageStatistics = new YouTubeUsageStatistics(store);
+const dataSharer = new DataSharer(store);
 
 class ExtensionGlue {
   private navigationInstrument;
@@ -44,17 +47,17 @@ class ExtensionGlue {
         console.log("Message from consent-form script:", { m });
         if (m.requestConsentStatus) {
           portFromContentScript.postMessage({
-            consentStatus: await getConsentStatus(),
+            consentStatus: await store.getConsentStatus(),
           });
         }
         if (m.updatedConsentStatus) {
           const { userOver18, userPartOfMarginilizedGroup } = m;
-          await setConsentStatus(m.updatedConsentStatus);
-          await setUserSuppliedDemographics({
+          await store.setConsentStatus(m.updatedConsentStatus);
+          await store.setUserSuppliedDemographics({
             userOver18,
             userPartOfMarginilizedGroup,
           });
-          const consentGiven = (await getConsentStatus()) === "given";
+          const consentGiven = (await store.getConsentStatus()) === "given";
           if (consentGiven) {
             console.log("Enrolled. Starting study");
             await extensionGlue.start();
@@ -80,7 +83,7 @@ class ExtensionGlue {
       const sharedData = await dataSharer.export();
       await triggerClientDownloadOfData(
         sharedData,
-        `youTubeRegretsReporter-sharedData-userUuid=${await extensionInstallationUuid()}.json`,
+        `youTubeRegretsReporter-sharedData-userUuid=${await store.extensionInstallationUuid()}.json`,
       );
     };
     browser.browserAction.onClicked.addListener(exportSharedData);
@@ -145,11 +148,11 @@ class ExtensionGlue {
     openWpmPacketHandler.activeTabDwellTimeMonitor.run();
 
     // Add hooks to the navigation batch preprocessor
-    openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = (
-      navigationBatch: TrimmedNavigationBatch,
-    ): TrimmedNavigationBatch => {
+    openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
+      navigationBatch: NavigationBatch,
+    ): Promise<TrimmedNavigationBatch> => {
       // Keep track of aggregated statistics
-      youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
+      await youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
 
       // trim away irrelevant parts of the batch (decreases memory usage)
       // TODO
@@ -269,7 +272,7 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 
 // init the extension glue on every extension load
 async function onEveryExtensionLoad() {
-  const consentGiven = (await getConsentStatus()) === "given";
+  const consentGiven = (await store.getConsentStatus()) === "given";
   await extensionGlue.init();
   if (consentGiven) {
     await extensionGlue.start();

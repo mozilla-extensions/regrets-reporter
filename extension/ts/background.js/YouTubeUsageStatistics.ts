@@ -2,6 +2,8 @@ import { NavigationBatch } from "./NavigationBatchPreprocessor";
 import { parseIsoDateTimeString } from "./lib/dateUtils";
 import { format } from "date-fns";
 import { DataSharer } from "./DataSharer";
+import { browser } from "webextension-polyfill-ts";
+import { Store } from "./Store";
 
 export interface YouTubeUsageStatisticsUpdate {
   amount_of_days_of_at_least_one_youtube_visit: number;
@@ -30,6 +32,7 @@ interface YouTubeUsageStatisticsRegistry {
 }
 
 export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
+  public store: Store;
   /*
   public amount_of_time_with_an_active_youtube_tab_by_date = {};
   public amount_of_youtube_video_play_time_in_seconds_by_date = {};
@@ -38,7 +41,13 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   */
   public dates_with_at_least_one_youtube_visit = [];
 
-  seenNavigationBatch = (navigationBatch: NavigationBatch): void => {
+  constructor(store) {
+    this.store = store;
+  }
+
+  seenNavigationBatch = async (
+    navigationBatch: NavigationBatch,
+  ): Promise<void> => {
     // console.log("seen TODO statistics", { navigationBatch });
     const dateTime = parseIsoDateTimeString(
       navigationBatch.navigationEnvelope.navigation.committed_time_stamp,
@@ -47,13 +56,19 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     if (!this.dates_with_at_least_one_youtube_visit.includes(dateYmd)) {
       this.dates_with_at_least_one_youtube_visit.push(dateYmd);
     }
-    // TODO persist
+    await this.store.set({
+      dates_with_at_least_one_youtube_visit: this
+        .dates_with_at_least_one_youtube_visit,
+    });
   };
 
-  summarizeUpdate = (): YouTubeUsageStatisticsUpdate => {
+  summarizeUpdate = async (): Promise<YouTubeUsageStatisticsUpdate> => {
+    const { dates_with_at_least_one_youtube_visit } = await this.store.get(
+      "dates_with_at_least_one_youtube_visit",
+    );
     return {
-      amount_of_days_of_at_least_one_youtube_visit: this
-        .dates_with_at_least_one_youtube_visit.length,
+      amount_of_days_of_at_least_one_youtube_visit:
+        dates_with_at_least_one_youtube_visit.length,
       /*
       amount_of_youtube_youtube_watch_pages_loaded: -1,
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
@@ -69,11 +84,11 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     this.alarmName = `${browser.runtime.id}:youTubeUsageStatisticsAlarm`;
     const summarizeAndShareStatistics = async () => {
       console.info(`Summarizing and sharing youTubeUsageStatisticsUpdate`);
-      const youTubeUsageStatisticsUpdate = this.summarizeUpdate();
+      const youTubeUsageStatisticsUpdate = await this.summarizeUpdate();
       await dataSharer.share({ youTubeUsageStatisticsUpdate });
     };
     const alarmListener = async _alarm => {
-      summarizeAndShareStatistics();
+      await summarizeAndShareStatistics();
     };
     browser.alarms.onAlarm.addListener(alarmListener);
     browser.alarms.create(this.alarmName, {

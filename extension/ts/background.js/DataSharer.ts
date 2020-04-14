@@ -1,12 +1,7 @@
-import {
-  getUserSuppliedDemographics,
-  UserSuppliedDemographics,
-} from "./lib/userSuppliedDemographics";
-import { browser } from "webextension-polyfill-ts";
 import { RegretReport } from "./ReportSummarizer";
-import { extensionInstallationUuid } from "./lib/extensionInstallationUuid";
 import { makeUUID } from "./lib/uuid";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
+import { Store, UserSuppliedDemographics } from "./Store";
 
 export interface SharedDataEventMetadata {
   client_timestamp: string;
@@ -26,36 +21,41 @@ export interface AnnotatedSharedData extends SharedData {
 }
 
 export class DataSharer {
+  public store: Store;
+  constructor(store) {
+    this.store = store;
+  }
+
   async share(data: SharedData) {
-    const { sharedData } = await browser.storage.local.get("sharedData");
+    const { sharedData } = await this.store.get("sharedData");
 
     const amount_of_regret_reports_since_consent_was_given = sharedData.filter(
-      $annotatedData => annotatedData.regretReport,
+      $annotatedData => $annotatedData.regretReport,
     ).length;
 
     const annotatedData: AnnotatedSharedData = {
       ...data,
       event_metadata: {
         client_timestamp: new Date().toISOString(),
-        extension_installation_uuid: await extensionInstallationUuid(),
+        extension_installation_uuid: await this.store.extensionInstallationUuid(),
         event_uuid: makeUUID(),
-        user_supplied_demographics: await getUserSuppliedDemographics(),
+        user_supplied_demographics: await this.store.getUserSuppliedDemographics(),
         amount_of_regret_reports_since_consent_was_given,
       },
     };
 
     if (sharedData) {
       sharedData.push(annotatedData);
-      await browser.storage.local.set({ sharedData });
+      await this.store.set({ sharedData });
     } else {
-      await browser.storage.local.set({
+      await this.store.set({
         sharedData: [annotatedData],
       });
     }
   }
 
   async export() {
-    const { sharedData } = await browser.storage.local.get("sharedData");
+    const { sharedData } = await this.store.get("sharedData");
     return sharedData;
   }
 }

@@ -6,31 +6,32 @@ import {
 import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo";
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 import { NavigationBatch } from "./NavigationBatchPreprocessor";
+import { mockLocalStorage } from "./lib/mockLocalStorage";
 
-const summarizeUpdate = (
+const summarizeUpdate = async (
   navigationBatchesByUuid: {
     [navigationUuid: string]: NavigationBatch;
   },
   youTubeUsageStatistics: YouTubeUsageStatistics,
-): YouTubeUsageStatisticsUpdate => {
+): Promise<YouTubeUsageStatisticsUpdate> => {
   const navUuids = Object.keys(navigationBatchesByUuid);
   for (const navUuid of navUuids) {
-    youTubeUsageStatistics.seenNavigationBatch(
+    await youTubeUsageStatistics.seenNavigationBatch(
       navigationBatchesByUuid[navUuid],
     );
   }
-  return youTubeUsageStatistics.summarizeUpdate();
+  return await youTubeUsageStatistics.summarizeUpdate();
 };
 
 describe("YouTubeUsageStatistics", function() {
   it("should exist", async function() {
-    const youTubeUsageStatistics = new YouTubeUsageStatistics();
+    const youTubeUsageStatistics = new YouTubeUsageStatistics(mockLocalStorage);
     assert.isObject(youTubeUsageStatistics);
   });
 
   it("fixture: youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo", async function() {
-    const youTubeUsageStatistics = new YouTubeUsageStatistics();
-    const summarizedUpdate = summarizeUpdate(
+    const youTubeUsageStatistics = new YouTubeUsageStatistics(mockLocalStorage);
+    const summarizedUpdate = await summarizeUpdate(
       youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo,
       youTubeUsageStatistics,
     );
@@ -47,8 +48,8 @@ describe("YouTubeUsageStatistics", function() {
   });
 
   it("fixture: youtubeVisitWatchPageAndNavigateToFirstUpNext", async function() {
-    const youTubeUsageStatistics = new YouTubeUsageStatistics();
-    const summarizedUpdate = summarizeUpdate(
+    const youTubeUsageStatistics = new YouTubeUsageStatistics(mockLocalStorage);
+    const summarizedUpdate = await summarizeUpdate(
       youtubeVisitWatchPageAndNavigateToFirstUpNext,
       youTubeUsageStatistics,
     );

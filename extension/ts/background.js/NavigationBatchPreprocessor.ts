@@ -171,10 +171,10 @@ export class NavigationBatchPreprocessor {
    * navigation batches at the end of the processing flow.
    */
   public processedNavigationBatchTrimmer: (
-    NavigationBatch,
-  ) => TrimmedNavigationBatch = (
+    navigationBatch: NavigationBatch,
+  ) => Promise<TrimmedNavigationBatch> = async (
     navigationBatch: TrimmedNavigationBatch,
-  ): TrimmedNavigationBatch => {
+  ): Promise<TrimmedNavigationBatch> => {
     return {
       ...navigationBatch,
       trimmedHttpRequestCount: -1,
@@ -335,168 +335,172 @@ export class NavigationBatchPreprocessor {
 
     // For each navigation...
     const reprocessingQueue: OpenWpmPayloadEnvelope[] = [];
-    webNavigationOpenWpmPayloadEnvelopes.map(
-      (webNavigationOpenWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
-        const navigation: Navigation =
-          webNavigationOpenWpmPayloadEnvelope.navigation;
-        const purge = navigationIsOldEnoughToBePurged(navigation);
+    await Promise.all(
+      webNavigationOpenWpmPayloadEnvelopes.map(
+        async (webNavigationOpenWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+          const navigation: Navigation =
+            webNavigationOpenWpmPayloadEnvelope.navigation;
+          const purge = navigationIsOldEnoughToBePurged(navigation);
 
-        // console.log({ navigation, purge });
+          // console.log({ navigation, purge });
 
-        const navigationBatch: NavigationBatch = {
-          navigationEnvelope: webNavigationOpenWpmPayloadEnvelope,
-          childEnvelopes: [],
-          httpRequestCount: 0,
-          httpResponseCount: 0,
-          httpRedirectCount: 0,
-          javascriptOperationCount: 0,
-          capturedContentCount: 0,
-        };
+          const navigationBatch: NavigationBatch = {
+            navigationEnvelope: webNavigationOpenWpmPayloadEnvelope,
+            childEnvelopes: [],
+            httpRequestCount: 0,
+            httpResponseCount: 0,
+            httpRedirectCount: 0,
+            javascriptOperationCount: 0,
+            capturedContentCount: 0,
+          };
 
-        // Remove navigation envelope from this run's processing queue
-        removeItemFromArray(
-          openWpmPayloadEnvelopeProcessQueue,
-          webNavigationOpenWpmPayloadEnvelope,
-        );
-
-        // ... but be sure to re-add it afterwards to ensure that the navigation
-        // stays available for processing of future payloads (until the
-        // navigation is old enough to be purged / ignored)
-        if (!purge) {
-          reprocessingQueue.push(webNavigationOpenWpmPayloadEnvelope);
-        }
-
-        // Find potential subsequent same-frame navigations
-        const subsequentNavigationsMatchingThisNavigationsFrame = openWpmPayloadEnvelopeProcessQueue.filter(
-          (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
-            switch (openWpmPayloadEnvelope.type) {
-              case "navigations":
-                return (
-                  sameFrame(openWpmPayloadEnvelope.navigation, navigation) &&
-                  withinNavigationEventOrdinalBounds(
-                    openWpmPayloadEnvelope.navigation
-                      .before_navigate_event_ordinal,
-                    navigation.before_navigate_event_ordinal,
-                    Number.MAX_SAFE_INTEGER,
-                  )
-                );
-            }
-            return false;
-          },
-        );
-
-        // console.log("subsequentNavigationsMatchingThisNavigationsFrame.length", subsequentNavigationsMatchingThisNavigationsFrame.length,);
-
-        // Assign matching children to this navigation
-        const fromEventOrdinal = navigation.before_navigate_event_ordinal;
-        const toEventOrdinal =
-          subsequentNavigationsMatchingThisNavigationsFrame.length === 0
-            ? Number.MAX_SAFE_INTEGER
-            : subsequentNavigationsMatchingThisNavigationsFrame[0].navigation
-                .before_navigate_event_ordinal;
-
-        // Only non-navigations can be assigned navigation parents
-        const childCandidates = openWpmPayloadEnvelopeProcessQueue.filter(
-          (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
-            return this.batchableChildOpenWpmType(openWpmPayloadEnvelope.type);
-          },
-        );
-
-        // console.log("childCandidates.length", childCandidates.length);
-
-        const openWpmPayloadEnvelopesAssignedToThisNavigation = childCandidates.filter(
-          (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
-            // Which are found in the same frame and navigation event ordinal bounds
-            const payload: BatchableChildOpenWPMPayload = batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope(
-              openWpmPayloadEnvelope,
-            ) as BatchableChildOpenWPMPayload;
-            const isSameFrame = sameFrame(payload, navigation);
-            const isWithinNavigationEventOrdinalBounds = withinNavigationEventOrdinalBounds(
-              payload.event_ordinal,
-              fromEventOrdinal,
-              toEventOrdinal,
-            );
-            const isWithinNavigationEventAgeThreshold = isoDateTimeStringsWithinFutureSecondThreshold(
-              navigation.committed_time_stamp,
-              payload.time_stamp,
-              navigationAgeThresholdInSeconds,
-            );
-            // console.log("openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold", openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold);
-            if (isSameFrame && isWithinNavigationEventOrdinalBounds) {
-              if (isWithinNavigationEventAgeThreshold) {
-                navigationBatch.childEnvelopes.push(openWpmPayloadEnvelope);
-                // Keep track of envelope counts by type
-                switch (openWpmPayloadEnvelope.type) {
-                  case "http_requests":
-                    navigationBatch.httpRequestCount++;
-                    break;
-                  case "http_responses":
-                    navigationBatch.httpResponseCount++;
-                    break;
-                  case "http_redirects":
-                    navigationBatch.httpRedirectCount++;
-                    break;
-                  case "javascript":
-                    navigationBatch.javascriptOperationCount++;
-                    break;
-                  case "openwpm_captured_content":
-                    navigationBatch.capturedContentCount++;
-                    break;
-                }
-              }
-              removeItemFromArray(
-                openWpmPayloadEnvelopeProcessQueue,
-                openWpmPayloadEnvelope,
-              );
-              return true;
-            }
-            return false;
-          },
-        );
-
-        // console.log("openWpmPayloadEnvelopesAssignedToThisNavigation.length", openWpmPayloadEnvelopesAssignedToThisNavigation.length);
-
-        if (purge) {
-          // Remove from navigationBatchesByNavigationUuid
-          delete this.navigationBatchesByNavigationUuid[navigation.uuid];
-        } else {
-          // Update navigationBatchesByNavigationUuid
-          let updatedNavigationBatch;
-          if (this.navigationBatchesByNavigationUuid[navigation.uuid]) {
-            const existingNavigationBatch = this
-              .navigationBatchesByNavigationUuid[navigation.uuid];
-            updatedNavigationBatch = {
-              ...existingNavigationBatch,
-              childEnvelopes: existingNavigationBatch.childEnvelopes.concat(
-                navigationBatch.childEnvelopes,
-              ),
-              httpRequestCount:
-                existingNavigationBatch.httpRequestCount +
-                navigationBatch.httpRequestCount,
-              httpResponseCount:
-                existingNavigationBatch.httpResponseCount +
-                navigationBatch.httpResponseCount,
-              httpRedirectCount:
-                existingNavigationBatch.httpRedirectCount +
-                navigationBatch.httpRedirectCount,
-              javascriptOperationCount:
-                existingNavigationBatch.javascriptOperationCount +
-                navigationBatch.javascriptOperationCount,
-              capturedContentCount:
-                existingNavigationBatch.capturedContentCount +
-                navigationBatch.capturedContentCount,
-            };
-          } else {
-            updatedNavigationBatch = navigationBatch;
-          }
-          updatedNavigationBatch = this.processedNavigationBatchTrimmer(
-            updatedNavigationBatch,
+          // Remove navigation envelope from this run's processing queue
+          removeItemFromArray(
+            openWpmPayloadEnvelopeProcessQueue,
+            webNavigationOpenWpmPayloadEnvelope,
           );
-          this.navigationBatchesByNavigationUuid[
-            navigation.uuid
-          ] = updatedNavigationBatch;
-        }
-      },
+
+          // ... but be sure to re-add it afterwards to ensure that the navigation
+          // stays available for processing of future payloads (until the
+          // navigation is old enough to be purged / ignored)
+          if (!purge) {
+            reprocessingQueue.push(webNavigationOpenWpmPayloadEnvelope);
+          }
+
+          // Find potential subsequent same-frame navigations
+          const subsequentNavigationsMatchingThisNavigationsFrame = openWpmPayloadEnvelopeProcessQueue.filter(
+            (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+              switch (openWpmPayloadEnvelope.type) {
+                case "navigations":
+                  return (
+                    sameFrame(openWpmPayloadEnvelope.navigation, navigation) &&
+                    withinNavigationEventOrdinalBounds(
+                      openWpmPayloadEnvelope.navigation
+                        .before_navigate_event_ordinal,
+                      navigation.before_navigate_event_ordinal,
+                      Number.MAX_SAFE_INTEGER,
+                    )
+                  );
+              }
+              return false;
+            },
+          );
+
+          // console.log("subsequentNavigationsMatchingThisNavigationsFrame.length", subsequentNavigationsMatchingThisNavigationsFrame.length,);
+
+          // Assign matching children to this navigation
+          const fromEventOrdinal = navigation.before_navigate_event_ordinal;
+          const toEventOrdinal =
+            subsequentNavigationsMatchingThisNavigationsFrame.length === 0
+              ? Number.MAX_SAFE_INTEGER
+              : subsequentNavigationsMatchingThisNavigationsFrame[0].navigation
+                  .before_navigate_event_ordinal;
+
+          // Only non-navigations can be assigned navigation parents
+          const childCandidates = openWpmPayloadEnvelopeProcessQueue.filter(
+            (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+              return this.batchableChildOpenWpmType(
+                openWpmPayloadEnvelope.type,
+              );
+            },
+          );
+
+          // console.log("childCandidates.length", childCandidates.length);
+
+          const openWpmPayloadEnvelopesAssignedToThisNavigation = childCandidates.filter(
+            (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+              // Which are found in the same frame and navigation event ordinal bounds
+              const payload: BatchableChildOpenWPMPayload = batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope(
+                openWpmPayloadEnvelope,
+              ) as BatchableChildOpenWPMPayload;
+              const isSameFrame = sameFrame(payload, navigation);
+              const isWithinNavigationEventOrdinalBounds = withinNavigationEventOrdinalBounds(
+                payload.event_ordinal,
+                fromEventOrdinal,
+                toEventOrdinal,
+              );
+              const isWithinNavigationEventAgeThreshold = isoDateTimeStringsWithinFutureSecondThreshold(
+                navigation.committed_time_stamp,
+                payload.time_stamp,
+                navigationAgeThresholdInSeconds,
+              );
+              // console.log("openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold", openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold);
+              if (isSameFrame && isWithinNavigationEventOrdinalBounds) {
+                if (isWithinNavigationEventAgeThreshold) {
+                  navigationBatch.childEnvelopes.push(openWpmPayloadEnvelope);
+                  // Keep track of envelope counts by type
+                  switch (openWpmPayloadEnvelope.type) {
+                    case "http_requests":
+                      navigationBatch.httpRequestCount++;
+                      break;
+                    case "http_responses":
+                      navigationBatch.httpResponseCount++;
+                      break;
+                    case "http_redirects":
+                      navigationBatch.httpRedirectCount++;
+                      break;
+                    case "javascript":
+                      navigationBatch.javascriptOperationCount++;
+                      break;
+                    case "openwpm_captured_content":
+                      navigationBatch.capturedContentCount++;
+                      break;
+                  }
+                }
+                removeItemFromArray(
+                  openWpmPayloadEnvelopeProcessQueue,
+                  openWpmPayloadEnvelope,
+                );
+                return true;
+              }
+              return false;
+            },
+          );
+
+          // console.log("openWpmPayloadEnvelopesAssignedToThisNavigation.length", openWpmPayloadEnvelopesAssignedToThisNavigation.length);
+
+          if (purge) {
+            // Remove from navigationBatchesByNavigationUuid
+            delete this.navigationBatchesByNavigationUuid[navigation.uuid];
+          } else {
+            // Update navigationBatchesByNavigationUuid
+            let updatedNavigationBatch;
+            if (this.navigationBatchesByNavigationUuid[navigation.uuid]) {
+              const existingNavigationBatch = this
+                .navigationBatchesByNavigationUuid[navigation.uuid];
+              updatedNavigationBatch = {
+                ...existingNavigationBatch,
+                childEnvelopes: existingNavigationBatch.childEnvelopes.concat(
+                  navigationBatch.childEnvelopes,
+                ),
+                httpRequestCount:
+                  existingNavigationBatch.httpRequestCount +
+                  navigationBatch.httpRequestCount,
+                httpResponseCount:
+                  existingNavigationBatch.httpResponseCount +
+                  navigationBatch.httpResponseCount,
+                httpRedirectCount:
+                  existingNavigationBatch.httpRedirectCount +
+                  navigationBatch.httpRedirectCount,
+                javascriptOperationCount:
+                  existingNavigationBatch.javascriptOperationCount +
+                  navigationBatch.javascriptOperationCount,
+                capturedContentCount:
+                  existingNavigationBatch.capturedContentCount +
+                  navigationBatch.capturedContentCount,
+              };
+            } else {
+              updatedNavigationBatch = navigationBatch;
+            }
+            updatedNavigationBatch = await this.processedNavigationBatchTrimmer(
+              updatedNavigationBatch,
+            );
+            this.navigationBatchesByNavigationUuid[
+              navigation.uuid
+            ] = updatedNavigationBatch;
+          }
+        },
+      ),
     );
 
     // console.log("this.navigationBatchesByNavigationUuid", this.navigationBatchesByNavigationUuid);
