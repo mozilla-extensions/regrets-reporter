@@ -5,6 +5,8 @@ import {
 } from "./NavigationBatchPreprocessor";
 
 type YouTubeNavigationLinkPosition =
+  | "search_results"
+  | "search_page_for_you_recommendations"
   | "up_next_auto_play"
   | "watch_next_column"
   | "watch_next_end_screen";
@@ -33,7 +35,9 @@ export interface VideoMetadata {
 }
 
 export type OutgoingVideoIdsByCategory = {
-  [position in YouTubeNavigationLinkPosition]: string[] | FailedStringAttribute;
+  [position in YouTubeNavigationLinkPosition]?:
+    | string[]
+    | FailedStringAttribute;
 };
 
 export interface VideoPageMetadata {
@@ -47,7 +51,6 @@ export interface YouTubeNavigation {
   tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
   url: undefined | string | FailedStringAttribute;
   referrer: undefined | string | FailedStringAttribute;
-  navigation_transition_type: string;
   parent_youtube_navigations: YouTubeNavigation[];
   how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[];
   window_id: number;
@@ -82,6 +85,29 @@ export class ReportSummarizer {
     // console.log({ trimmedNavigationBatch });
 
     // Remove bulky non-essential parts of navigation batches
+    /*
+    const jsonContent =
+      capturedContentEnvelope.capturedContent.decoded_content;
+    const xhrResponse = JSON.parse(jsonContent);
+    console.dir({xhrResponse}, {depth: 5});
+
+    { xhrResponse:
+   [ { rootVe: 3832, page: 'watch', csn: 'IJSVXvy6EbP57QTznJuQDg' },
+     { page: 'watch',
+       preconnect:
+        [ 'https://r8---sn-qo5-2vgl.googlevideo.com/generate_204',
+          'https://r8---sn-qo5-2vgl.googlevideo.com/generate_204?conn2' ] },
+     { page: 'watch',
+       player:
+        { args:
+           { cbrver: '76.0',
+             cbr: 'Firefox',
+             show_miniplayer_button: '1',
+             innertube_api_key: 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
+             use_miniplayer_ui: '1',
+             player_response: LONG
+    */
+
     // TODO
 
     return trimmedNavigationBatch;
@@ -107,32 +133,20 @@ export class ReportSummarizer {
       // TODO
 
       // Check what kind of page was visited and run the appropriate extraction methods
-      if (
-        topFrameNavigationBatch.navigationEnvelope.navigation.url.indexOf(
-          "https://www.youtube.com/watch",
-        ) === 0
-      ) {
-        youTubeNavigations.push(
-          ...this.extractYouTubeNavigationsFromWatchPageNavigationBatch(
-            topFrameNavigationBatch,
-          ),
-        );
-      } else {
-        throw new Error("TODO: Support non-watch-page navigations");
-      }
+      youTubeNavigations.push(
+        ...this.extractYouTubeNavigationsFromNavigationBatch(
+          topFrameNavigationBatch,
+        ),
+      );
     }
 
     return youTubeNavigations;
   }
 
-  extractYouTubeNavigationsFromWatchPageNavigationBatch(
+  extractYouTubeNavigationsFromNavigationBatch(
     topFrameNavigationBatch: TrimmedNavigationBatch,
   ): YouTubeNavigation[] {
     const youTubeNavigations: YouTubeNavigation[] = [];
-
-    // Check for a main_frame watch page http request
-
-    // Check for subsequent xhr watch page http requests
 
     // Find the main_frame http_responses
     const topFrameHttpResponseEnvelopes = topFrameNavigationBatch.childEnvelopes.filter(
@@ -141,7 +155,9 @@ export class ReportSummarizer {
         childEnvelope.httpResponse.frame_id === 0,
     );
 
+    let i = -1;
     for (const topFrameHttpResponseEnvelope of topFrameHttpResponseEnvelopes) {
+      i = i + 1;
       // console.log({ topFrameHttpResponseEnvelope });
 
       // The corresponding http request(s)
@@ -165,28 +181,59 @@ export class ReportSummarizer {
             topFrameHttpResponseEnvelope.httpResponse.content_hash,
       );
 
-      let videoPageMetadata: VideoPageMetadata;
-      if (capturedContentEnvelope) {
-        // Extract video metadata from the captured content
-        videoPageMetadata = this.extractVideoPageMetadataFromCapturedContent(
-          httpRequestEnvelope,
-          capturedContentEnvelope,
-        );
-      } else {
-        videoPageMetadata = this.extractVideoPageMetadataFromNothing();
-      }
-
       const url = httpRequestEnvelope.httpRequest.url;
       const referrer = httpRequestEnvelope.httpRequest.referrer;
+      const resource_type = httpRequestEnvelope.httpRequest.resource_type;
       const navigation_transition_type =
         topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;
-      const how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[] = [
-        referrer === ""
-          ? navigation_transition_type === "reload"
-            ? "page_reload"
-            : "direct_navigation"
-          : "<failed>",
-      ];
+      console.debug("* extractYouTubeNavigationsFromNavigationBatch debug:", {
+        url,
+        referrer,
+        navigation_transition_type,
+        resource_type,
+      });
+
+      // These do not correspond to actual user usage
+      if (url.indexOf("prefetch=1") > 0) {
+        continue;
+      }
+
+      const how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[] = [];
+      if (i === 0) {
+        if (navigation_transition_type === "typed") {
+          how_the_youtube_navigation_likely_was_reached.push(
+            "direct_navigation",
+          );
+        } else if (navigation_transition_type === "reload") {
+          how_the_youtube_navigation_likely_was_reached.push("page_reload");
+        }
+      } else {
+        // link
+      }
+
+      // Extract video metadata from the captured content if available
+      let videoPageMetadata: VideoPageMetadata = {
+        video_metadata: undefined,
+        outgoing_video_ids_by_category: {},
+      };
+      if (capturedContentEnvelope) {
+        // Check what kind of page was visited and run the appropriate extraction methods
+        if (url.indexOf("https://www.youtube.com/watch") === 0) {
+          videoPageMetadata = this.extractVideoPageMetadataFromCapturedWatchPageContent(
+            httpRequestEnvelope,
+            capturedContentEnvelope,
+          );
+        } else if (
+          url.indexOf("https://www.youtube.com/results?search_query=") === 0
+        ) {
+          videoPageMetadata = this.extractVideoPageMetadataFromCapturedSearchResultsPageContent(
+            httpRequestEnvelope,
+            capturedContentEnvelope,
+          );
+        } else {
+          console.warn("Unsupported navigation", { url });
+        }
+      }
 
       const youTubeNavigation: YouTubeNavigation = {
         ...videoPageMetadata,
@@ -194,7 +241,6 @@ export class ReportSummarizer {
           topFrameNavigationBatch.navigationEnvelope.tabActiveDwellTime,
         url,
         referrer,
-        navigation_transition_type,
         parent_youtube_navigations: [],
         how_the_youtube_navigation_likely_was_reached,
         window_id:
@@ -218,7 +264,7 @@ export class ReportSummarizer {
     return youTubeNavigations;
   }
 
-  extractVideoPageMetadataFromCapturedContent(
+  extractVideoPageMetadataFromCapturedWatchPageContent(
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
   ): VideoPageMetadata {
@@ -240,17 +286,29 @@ export class ReportSummarizer {
       const jsonContent =
         capturedContentEnvelope.capturedContent.decoded_content;
       const xhrResponse = JSON.parse(jsonContent);
-      ytInitialData = xhrResponse[3].response;
+      const xhrResponseItemWithYtInitialData = xhrResponse.find(
+        xhrResponseItem => {
+          return xhrResponseItem.response !== undefined;
+        },
+      );
+      if (!xhrResponseItemWithYtInitialData) {
+        console.error("No xhrResponseItemWithYtInitialData");
+        console.dir({ xhrResponse }, { depth: 4 });
+      }
+      ytInitialData = xhrResponseItemWithYtInitialData.response;
+      // console.dir({ ytInitialData }, {depth: 5});
     }
 
-    // console.log({ ytInitialData });
+    if (!ytInitialData) {
+      console.warn("ytInitialData is empty");
+    }
 
     let video_id;
     try {
       video_id = ytInitialData.currentVideoEndpoint.watchEndpoint.videoId;
     } catch (err) {
       console.error("video_id", err.message);
-      console.error(ytInitialData.currentVideoEndpoint.watchEndpoint);
+      // console.dir({ ytInitialData }, {depth: 5});
       video_id = "<failed>";
     }
 
@@ -344,10 +402,6 @@ export class ReportSummarizer {
         });
     } catch (err) {
       console.error("watch_next_column", err.message);
-      console.debug(
-        ytInitialData.contents.twoColumnWatchNextResults.secondaryResults
-          .secondaryResults,
-      );
       watch_next_column = "<failed>";
     }
 
@@ -368,10 +422,6 @@ export class ReportSummarizer {
       );
     } catch (err) {
       console.error("watch_next_end_screen", err.message);
-      console.info(
-        ytInitialData.playerOverlays.playerOverlayRenderer.endScreen
-          .watchNextEndScreenRenderer,
-      );
       watch_next_end_screen = "<failed>";
     }
 
@@ -392,74 +442,86 @@ export class ReportSummarizer {
     };
   }
 
-  extractVideoPageMetadataFromNothing(): VideoPageMetadata {
-    let video_id;
-    try {
-    } catch (err) {
-      video_id = "<failed>";
+  extractVideoPageMetadataFromCapturedSearchResultsPageContent(
+    httpRequestEnvelope: OpenWpmPayloadEnvelope,
+    capturedContentEnvelope: OpenWpmPayloadEnvelope,
+  ): VideoPageMetadata {
+    let ytInitialData;
+
+    if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
+      // Handle ordinary full page loads
+      const htmlContent =
+        capturedContentEnvelope.capturedContent.decoded_content;
+      const matchArray = htmlContent.match(
+        /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
+      );
+      if (!matchArray) {
+        console.error("No MATCH", { matchArray });
+      }
+      ytInitialData = JSON.parse(matchArray[1]);
+    } else {
+      // Handle subsequent pushState-based loads
+      const jsonContent =
+        capturedContentEnvelope.capturedContent.decoded_content;
+      const xhrResponse = JSON.parse(jsonContent);
+      // console.dir({ xhrResponse }, { depth: 5 });
+      ytInitialData = xhrResponse.find(
+        xhrResponseItem => xhrResponseItem.response,
+      );
     }
 
-    let video_title;
-    try {
-    } catch (err) {
-      video_title = "<failed>";
-    }
+    // console.log({ ytInitialData });
 
-    let video_description;
+    let search_results;
+    let search_page_for_you_recommendations;
     try {
+      // console.dir(ytInitialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents, { depth: 8 });
+      search_results = ytInitialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents.map(
+        el => {
+          if (el.videoRenderer) {
+            return el.videoRenderer.videoId;
+          }
+          if (el.playlistRenderer) {
+            return el.playlistRenderer.navigationEndpoint.watchEndpoint.videoId;
+          }
+          if (el.horizontalCardListRenderer) {
+            return "(related-searches)";
+          }
+          if (
+            el.shelfRenderer &&
+            el.shelfRenderer.title.simpleText === "For you"
+          ) {
+            try {
+              search_page_for_you_recommendations = el.shelfRenderer.content.verticalListRenderer.items.map(
+                el => {
+                  if (el.videoRenderer) {
+                    return el.videoRenderer.videoId;
+                  }
+                  console.error(
+                    "search_page_for_you_recommendations unhandled el:",
+                  );
+                  console.dir({ el }, { depth: 4 });
+                },
+              );
+            } catch (err) {
+              search_page_for_you_recommendations = "<failed>";
+            }
+            return "(for-you-recommendations)";
+          }
+          console.error("search_results unhandled el:");
+          console.dir({ el }, { depth: 4 });
+        },
+      );
     } catch (err) {
-      video_description = "<failed>";
-    }
-
-    let video_posting_date;
-    try {
-    } catch (err) {
-      video_posting_date = "";
-    }
-
-    let view_count_at_navigation;
-    try {
-    } catch (err) {
-      view_count_at_navigation = -1;
-    }
-
-    let view_count_at_navigation_short;
-    try {
-    } catch (err) {
-      view_count_at_navigation_short = "<failed>";
-    }
-
-    let up_next_auto_play;
-    try {
-    } catch (err) {
-      up_next_auto_play = "<failed>";
-    }
-
-    let watch_next_column;
-    try {
-    } catch (err) {
-      watch_next_column = "<failed>";
-    }
-
-    let watch_next_end_screen;
-    try {
-    } catch (err) {
-      watch_next_end_screen = "<failed>";
+      console.error("search_results", err.message);
+      search_results = "<failed>";
     }
 
     return {
-      video_metadata: {
-        video_id,
-        video_title,
-        video_description,
-        video_posting_date,
-        view_count_at_navigation,
-        view_count_at_navigation_short,
-      },
+      video_metadata: undefined,
       outgoing_video_ids_by_category: {
-        up_next_auto_play,
-        watch_next_column,
-        watch_next_end_screen,
+        search_results,
+        search_page_for_you_recommendations,
       },
     };
   }
@@ -471,7 +533,7 @@ export class ReportSummarizer {
       throw new Error("No YouTube navigations captured yet");
     }
     const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
-    console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
+    // console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
     return {
       regretted_youtube_navigation_video_metadata:
         mostRecentYouTubeNavigation.video_metadata,
