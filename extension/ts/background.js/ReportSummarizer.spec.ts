@@ -52,8 +52,7 @@ describe("ReportSummarizer", function() {
     );
     assert.deepEqual(regretReport1, {
       report_data: {
-        amount_of_regret_reports_since_consent_was_given: -1,
-        regretted_youtube_navigation_brief_video_metadata: {
+        regretted_youtube_navigation_video_metadata: {
           video_id: "foo",
           video_title: "foo",
           video_description: "",
@@ -73,8 +72,7 @@ describe("ReportSummarizer", function() {
     );
     assert.deepEqual(regretReport2, {
       report_data: {
-        amount_of_regret_reports_since_consent_was_given: -1,
-        regretted_youtube_navigation_brief_video_metadata: {
+        regretted_youtube_navigation_video_metadata: {
           video_id: "foo",
           video_title: "foo",
           video_description: "",
@@ -84,7 +82,6 @@ describe("ReportSummarizer", function() {
         },
         how_this_and_recent_youtube_navigations_were_reached: [],
       },
-
       user_supplied_regret_category: "",
       user_supplied_other_regret_category: "",
       user_supplied_severity: -1,

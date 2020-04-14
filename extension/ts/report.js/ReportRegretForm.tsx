@@ -6,11 +6,13 @@ import "../components/photon-components-web/attributes";
 import "../components/tailwind.css";
 import { Input } from "../components/photon-components-web/photon-components/Input";
 import { Radio } from "../components/photon-components-web/photon-components/Radio";
-// import { Checkbox } from "../components/photon-components-web/photon-components/Checkbox";
 import { Link } from "../components/photon-components-web/photon-components/Link";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
-import { RegretReport } from "../background.js/ReportSummarizer";
+import {
+  RegretReport,
+  RegretReportData,
+} from "../background.js/ReportSummarizer";
 import * as LikertScale from "likert-react";
 import {
   MdSentimentDissatisfied,
@@ -18,7 +20,6 @@ import {
   MdSentimentVeryDissatisfied,
 } from "react-icons/all";
 import { DisplayError } from "../components/DisplayError";
-// import { TextArea } from "../components/photon-components-web/photon-components/TextArea";
 
 export interface ReportRegretFormProps {}
 
@@ -42,9 +43,7 @@ export class ReportRegretForm extends Component<
     regretReportData: null,
     userSuppliedRegretCategory: "",
     userSuppliedOtherRegretCategory: "",
-    // userSuppliedOptionalComment: "",
     userSuppliedSeverity: null,
-    // includeWatchHistory: true,
     error: false,
   };
 
@@ -77,7 +76,7 @@ export class ReportRegretForm extends Component<
               "The report data was not available at the time of initiating the regret form",
             );
           }
-          const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.regretted_youtube_navigation_brief_video_metadata.video_id}/mqdefault.jpg`;
+          const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.regretted_youtube_navigation_video_metadata.video_id}/mqdefault.jpg`;
           this.setState({
             regretReportData,
             videoThumbUrl,
@@ -208,20 +207,20 @@ export class ReportRegretForm extends Component<
                       <h4 className="text-sm font-medium">
                         {
                           this.state.regretReportData
-                            .regretted_youtube_navigation_brief_video_metadata
+                            .regretted_youtube_navigation_video_metadata
                             .video_title
                         }
                       </h4>
                       <p className="mt-1 font-hairline text-xs text-grey-darker">
                         {
                           this.state.regretReportData
-                            .regretted_youtube_navigation_brief_video_metadata
+                            .regretted_youtube_navigation_video_metadata
                             .view_count_at_navigation_short
                         }{" "}
                         ·{" "}
                         {
                           this.state.regretReportData
-                            .regretted_youtube_navigation_brief_video_metadata
+                            .regretted_youtube_navigation_video_metadata
                             .video_posting_date
                         }
                       </p>
@@ -237,7 +236,6 @@ export class ReportRegretForm extends Component<
                     <p className="mb-3">
                       <span className="input__label">
                         Why do you regret watching the video?
-                        {/*How were your recommendations affected?*/}
                       </span>
                     </p>
                     <ul className="list-none">
@@ -384,26 +382,6 @@ export class ReportRegretForm extends Component<
           </div>
         </div>
 
-        {/*
-        <div className="panel-section-separator" />
-
-        <div className="panel-section panel-section-formElements">
-          <div className="panel-formElements-item mb-6">
-            <span>
-              <Checkbox
-                label="Include recent watch history in the report (helps researchers figure out why you were recommended this video)"
-                onChange={() => {
-                  this.setState({
-                    includeWatchHistory: !this.state.includeWatchHistory,
-                  });
-                }}
-                checked={this.state.includeWatchHistory}
-              />
-            </span>
-          </div>
-        </div>
-        */}
-
         <div className="panel-section-separator" />
 
         <div className="panel-section panel-section-formElements">
@@ -427,6 +405,7 @@ export class ReportRegretForm extends Component<
             </Link>{" "}
             about the YouTube Regrets research and the specific data that is
             shared.
+            {/*
             <a
               className="link inline"
               target="_blank"
@@ -434,6 +413,7 @@ export class ReportRegretForm extends Component<
             >
               Debug
             </a>
+            */}
           </span>
         </div>
 

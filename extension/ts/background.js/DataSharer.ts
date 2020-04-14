@@ -13,6 +13,7 @@ export interface SharedDataEventMetadata {
   extension_installation_uuid: string;
   event_uuid: string;
   user_supplied_demographics: UserSuppliedDemographics;
+  amount_of_regret_reports_since_consent_was_given: number;
 }
 
 export interface SharedData {
@@ -26,6 +27,12 @@ export interface AnnotatedSharedData extends SharedData {
 
 export class DataSharer {
   async share(data: SharedData) {
+    const { sharedData } = await browser.storage.local.get("sharedData");
+
+    const amount_of_regret_reports_since_consent_was_given = sharedData.filter(
+      $annotatedData => annotatedData.regretReport,
+    ).length;
+
     const annotatedData: AnnotatedSharedData = {
       ...data,
       event_metadata: {
@@ -33,10 +40,10 @@ export class DataSharer {
         extension_installation_uuid: await extensionInstallationUuid(),
         event_uuid: makeUUID(),
         user_supplied_demographics: await getUserSuppliedDemographics(),
+        amount_of_regret_reports_since_consent_was_given,
       },
     };
 
-    const { sharedData } = await browser.storage.local.get("sharedData");
     if (sharedData) {
       sharedData.push(annotatedData);
       await browser.storage.local.set({ sharedData });

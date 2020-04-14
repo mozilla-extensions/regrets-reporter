@@ -56,8 +56,7 @@ export interface YouTubeNavigation {
 }
 
 export interface RegretReportData {
-  amount_of_regret_reports_since_consent_was_given: number;
-  regretted_youtube_navigation_brief_video_metadata: VideoMetadata;
+  regretted_youtube_navigation_video_metadata: VideoMetadata;
   how_this_and_recent_youtube_navigations_were_reached: YouTubeNavigationReachType[][];
 }
 
@@ -462,8 +461,7 @@ export class ReportSummarizer {
     console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
     return {
       report_data: {
-        amount_of_regret_reports_since_consent_was_given: -1,
-        regretted_youtube_navigation_brief_video_metadata: {
+        regretted_youtube_navigation_video_metadata: {
           video_id: "foo",
           video_title: "foo",
           video_description: "",
