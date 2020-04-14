@@ -12,4 +12,10 @@ describe("DataSharer", function() {
     const dataSharer = new DataSharer(store);
     assert.isObject(dataSharer);
   });
+  it("before any shared data", async function() {
+    const store = new Store(mockLocalStorage);
+    const dataSharer = new DataSharer(store);
+    const exportedData = await dataSharer.export();
+    assert.deepEqual(exportedData, []);
+  });
 });

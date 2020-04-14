@@ -29,9 +29,9 @@ export class DataSharer {
   async share(data: SharedData) {
     const { sharedData } = await this.store.get("sharedData");
 
-    const amount_of_regret_reports_since_consent_was_given = sharedData.filter(
-      $annotatedData => $annotatedData.regretReport,
-    ).length;
+    const amount_of_regret_reports_since_consent_was_given = sharedData
+      ? sharedData.filter($annotatedData => $annotatedData.regretReport).length
+      : 0;
 
     const annotatedData: AnnotatedSharedData = {
       ...data,
@@ -56,6 +56,6 @@ export class DataSharer {
 
   async export() {
     const { sharedData } = await this.store.get("sharedData");
-    return sharedData;
+    return sharedData || [];
   }
 }

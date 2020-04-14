@@ -29,6 +29,21 @@ describe("YouTubeUsageStatistics", function() {
     assert.isObject(youTubeUsageStatistics);
   });
 
+  it("before any usage", async function() {
+    const youTubeUsageStatistics = new YouTubeUsageStatistics(mockLocalStorage);
+    const summarizedUpdate = await summarizeUpdate({}, youTubeUsageStatistics);
+
+    assert.deepEqual(summarizedUpdate, {
+      amount_of_days_of_at_least_one_youtube_visit: 0,
+      /*
+      amount_of_youtube_youtube_watch_pages_loaded: 0,
+      amount_of_youtube_videos_played_on_youtube_watch_pages: 0,
+      amount_of_time_with_an_active_youtube_tab: 0,
+      amount_of_youtube_video_play_time_in_seconds: 0,
+       */
+    });
+  });
+
   it("fixture: youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo", async function() {
     const youTubeUsageStatistics = new YouTubeUsageStatistics(mockLocalStorage);
     const summarizedUpdate = await summarizeUpdate(

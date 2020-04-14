@@ -67,8 +67,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       "dates_with_at_least_one_youtube_visit",
     );
     return {
-      amount_of_days_of_at_least_one_youtube_visit:
-        dates_with_at_least_one_youtube_visit.length,
+      amount_of_days_of_at_least_one_youtube_visit: dates_with_at_least_one_youtube_visit
+        ? dates_with_at_least_one_youtube_visit.length
+        : 0,
       /*
       amount_of_youtube_youtube_watch_pages_loaded: -1,
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
