@@ -137,7 +137,7 @@ class ExtensionGlue {
             youTubeNavigations,
           );
           portFromContentScript.postMessage({
-            reportData: { regretReportData },
+            regretReportData,
           });
         }
       });

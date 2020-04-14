@@ -51,40 +51,30 @@ describe("ReportSummarizer", function() {
       youTubeNavigations.slice(0, 1),
     );
     assert.deepEqual(regretReport1, {
-      report_data: {
-        regretted_youtube_navigation_video_metadata: {
-          video_id: "foo",
-          video_title: "foo",
-          video_description: "",
-          video_posting_date: "",
-          view_count_at_navigation: -1,
-          view_count_at_navigation_short: "",
-        },
-        how_this_and_recent_youtube_navigations_were_reached: [],
+      regretted_youtube_navigation_video_metadata: {
+        video_id: "foo",
+        video_title: "foo",
+        video_description: "",
+        video_posting_date: "",
+        view_count_at_navigation: -1,
+        view_count_at_navigation_short: "",
       },
-      user_supplied_regret_category: "",
-      user_supplied_other_regret_category: "",
-      user_supplied_severity: -1,
+      how_this_and_recent_youtube_navigations_were_reached: [],
     });
 
     const regretReport2 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
     );
     assert.deepEqual(regretReport2, {
-      report_data: {
-        regretted_youtube_navigation_video_metadata: {
-          video_id: "foo",
-          video_title: "foo",
-          video_description: "",
-          video_posting_date: "",
-          view_count_at_navigation: -1,
-          view_count_at_navigation_short: "",
-        },
-        how_this_and_recent_youtube_navigations_were_reached: [],
+      regretted_youtube_navigation_video_metadata: {
+        video_id: "foo",
+        video_title: "foo",
+        video_description: "",
+        video_posting_date: "",
+        view_count_at_navigation: -1,
+        view_count_at_navigation_short: "",
       },
-      user_supplied_regret_category: "",
-      user_supplied_other_regret_category: "",
-      user_supplied_severity: -1,
+      how_this_and_recent_youtube_navigations_were_reached: [],
     });
   });
 });

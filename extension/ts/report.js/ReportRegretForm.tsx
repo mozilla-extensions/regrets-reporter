@@ -26,7 +26,7 @@ export interface ReportRegretFormProps {}
 export interface ReportRegretFormState {
   loading: boolean;
   videoThumbUrl: null | string;
-  regretReportData: any;
+  regretReportData: null | RegretReportData;
   userSuppliedRegretCategory: string;
   userSuppliedOtherRegretCategory: string;
   userSuppliedSeverity: null | number;
@@ -65,24 +65,22 @@ export class ReportRegretForm extends Component<
       async (m: { regretReportData: RegretReportData }) => {
         if (m.regretReportData) {
           const { regretReportData } = m;
-          console.log({ regretReportData });
-          if (!regretReportData || !regretReportData) {
-            await this.setState({
-              regretReportData,
-              loading: false,
-              error: true,
-            });
-            throw new Error(
-              "The report data was not available at the time of initiating the regret form",
-            );
-          }
+          console.log("Regret form received report data", { regretReportData });
           const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.regretted_youtube_navigation_video_metadata.video_id}/mqdefault.jpg`;
-          this.setState({
-            regretReportData,
+          await this.setState({
             videoThumbUrl,
+            regretReportData,
             loading: false,
           });
+          return null;
         }
+        await this.setState({
+          loading: false,
+          error: true,
+        });
+        throw new Error(
+          "The report data was not available at the time of initiating the regret form",
+        );
       },
     );
   }
@@ -113,7 +111,6 @@ export class ReportRegretForm extends Component<
   };
 
   handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
-    console.log({ changeEvent });
     this.setState({
       userSuppliedRegretCategory: changeEvent.target.value,
     });
