@@ -9,6 +9,7 @@ import "../components/photon-components-web/attributes";
 import "../components/tailwind.css";
 import { ConsentStatus } from "../background.js/Store";
 import { ReportRegretInstructions } from "./ReportRegretInstructions";
+import { AboutTheStudy } from "./AboutTheStudy";
 
 export interface ConsentFormProps {}
 
@@ -88,32 +89,25 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
               />
             </div>
             <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
-              Mozilla's YouTube Regrets Study
+              {(!this.state.consentStatus &&
+                "Mozilla's YouTube Regrets Study") ||
+                "You have enrolled. Welcome!"}
             </div>
           </div>
         </div>
         <div className="layout-wrapper px-12 m-auto">
-          <section className="program-description">
-            <p className="callout">
-              Mozilla wants to get better insights into YouTube's problem with
-              harmful content and recommendations.
-            </p>
-            <p>
-              In order to achieve this, we need to collect and analyze data
-              about YouTube usage statistics. We would like to confirm that you
-              are willing to share this information with us. Data collection
-              will happen in the background while you use Firefox to browse
-              YouTube.
-            </p>
-            <p>
-              <strong>Participation in the study is strictly voluntary.</strong>
-            </p>
-            <EnrollFlowButton
-              loading={this.state.loading}
-              consentStatus={this.state.consentStatus}
-              onEnroll={this.onEnroll}
-            />
-          </section>
+          {!this.state.consentStatus && (
+            <>
+              <AboutTheStudy />
+              <section className="program-description">
+                <EnrollFlowButton
+                  loading={this.state.loading}
+                  consentStatus={this.state.consentStatus}
+                  onEnroll={this.onEnroll}
+                />
+              </section>
+            </>
+          )}
           <section className="program-instructions">
             {(this.state.consentStatus && (
               <h2 className="program-header">Next Steps</h2>
@@ -150,6 +144,14 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
             </ol>
           </section>
           <ReportRegretInstructions />
+          {this.state.consentStatus && (
+            <>
+              <section className="program-description">
+                <h2 className="program-header">About the study</h2>
+              </section>
+              <AboutTheStudy />
+            </>
+          )}
           <section className="program-leaving">
             <h2 className="program-header">Leaving the study</h2>
             <p>Users are welcome to opt out of the study at any point.</p>
