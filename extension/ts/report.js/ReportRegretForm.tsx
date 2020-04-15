@@ -291,14 +291,6 @@ export class ReportRegretForm extends Component<
                           value: "not-appropriate-for-my-age-group",
                           label: "Not appropriate for my age group",
                         },
-                        {
-                          value: "bad-music",
-                          label: "Bad music",
-                        },
-                        {
-                          value: "slanderous-content",
-                          label: "Slanderous content",
-                        },
                       ].map(item => (
                         <li key={item.value} className="mb-2">
                           <Radio
