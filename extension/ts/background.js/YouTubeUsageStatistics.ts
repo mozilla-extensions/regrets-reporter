@@ -8,7 +8,7 @@ import { Store } from "./Store";
 export interface YouTubeUsageStatisticsUpdate {
   amount_of_days_of_at_least_one_youtube_visit: number;
   /*
-  amount_of_youtube_youtube_watch_pages_loaded: number;
+  amount_of_youtube_watch_pages_loaded: number;
   amount_of_youtube_videos_played_on_youtube_watch_pages: number;
   amount_of_time_with_an_active_youtube_tab: number;
   amount_of_youtube_video_play_time_in_seconds: number;
@@ -18,7 +18,7 @@ export interface YouTubeUsageStatisticsUpdate {
 interface YouTubeUsageStatisticsRegistry {
   dates_with_at_least_one_youtube_visit: string[];
   /*
-  amount_of_youtube_youtube_watch_pages_loaded_by_date: {
+  amount_of_youtube_watch_pages_loaded_by_date: {
     [date: string]: number;
   };
   amount_of_youtube_videos_played_on_youtube_watch_pages_by_date: {
@@ -37,7 +37,7 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   public amount_of_time_with_an_active_youtube_tab_by_date = {};
   public amount_of_youtube_video_play_time_in_seconds_by_date = {};
   public amount_of_youtube_videos_played_on_youtube_watch_pages_by_date = {};
-  public amount_of_youtube_youtube_watch_pages_loaded_by_date = {};
+  public amount_of_youtube_watch_pages_loaded_by_date = {};
   */
   public dates_with_at_least_one_youtube_visit = [];
 
@@ -71,7 +71,7 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
         ? dates_with_at_least_one_youtube_visit.length
         : 0,
       /*
-      amount_of_youtube_youtube_watch_pages_loaded: -1,
+      amount_of_youtube_watch_pages_loaded: -1,
       amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
       amount_of_time_with_an_active_youtube_tab: -1,
       amount_of_youtube_video_play_time_in_seconds: -1,
