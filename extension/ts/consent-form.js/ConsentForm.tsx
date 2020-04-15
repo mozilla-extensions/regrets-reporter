@@ -8,6 +8,7 @@ import "../components/photon-components-web/index.css";
 import "../components/photon-components-web/attributes";
 import "../components/tailwind.css";
 import { ConsentStatus } from "../background.js/Store";
+import { ReportRegretInstructions } from "./ReportRegretInstructions";
 
 export interface ConsentFormProps {}
 
@@ -151,22 +152,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
               </li>
             </ol>
           </section>
-          <section className="program-instructions">
-            <h2 className="program-header">Reporting a "YouTube Regret":</h2>
-            <ol className="consent-form-list">
-              <li>
-                Click the [icon description] icon in the browser bar:
-                <br />
-                <img src="" />
-              </li>
-              <li>
-                Fill out the form:
-                <br />
-                <img src="" />
-              </li>
-              <li>Click “Report”</li>
-            </ol>
-          </section>
+          <ReportRegretInstructions />
           <section className="program-leaving">
             <h2 className="program-header">Leaving the study</h2>
             <p>Users are welcome to opt out of the study at any point.</p>
