@@ -145,10 +145,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
                 The report will include information about your YouTube browsing
                 behavior up to 5 hours prior to initiating the report. This
                 includes what kind of YouTube pages you have visited and how you
-                interacted with them.The report will include information about
-                your YouTube browsing behavior up to 5 hours prior to initiating
-                the report. This includes what kind of YouTube pages you have
-                visited and how you interacted with them.
+                interacted with them.
               </li>
             </ol>
           </section>

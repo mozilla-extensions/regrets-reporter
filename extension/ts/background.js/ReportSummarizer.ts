@@ -187,6 +187,7 @@ export class ReportSummarizer {
       const resource_type = httpRequestEnvelope.httpRequest.resource_type;
       const navigation_transition_type =
         topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;
+
       console.debug("* extractYouTubeNavigationsFromNavigationBatch debug:", {
         url,
         referrer,

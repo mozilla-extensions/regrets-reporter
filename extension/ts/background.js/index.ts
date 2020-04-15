@@ -25,11 +25,11 @@ const youTubeUsageStatistics = new YouTubeUsageStatistics(store);
 const dataSharer = new DataSharer(store);
 
 class ExtensionGlue {
-  private navigationInstrument;
-  private cookieInstrument;
-  private jsInstrument;
-  private httpInstrument;
-  private openwpmCrawlId;
+  private navigationInstrument: NavigationInstrument;
+  private cookieInstrument: CookieInstrument;
+  private jsInstrument: JavascriptInstrument;
+  private httpInstrument: HttpInstrument;
+  private openwpmCrawlId: string;
   private contentScriptPortListener;
 
   constructor() {}

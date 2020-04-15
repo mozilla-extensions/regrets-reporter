@@ -1,9 +1,5 @@
 import * as React from "react";
 import { Component } from "react";
-import "photon-colors/photon-colors.css";
-import "../components/photon-components-web/index.css";
-import "../components/photon-components-web/attributes";
-import "../components/tailwind.css";
 
 export interface ReportRegretInstructionsProps {}
 
