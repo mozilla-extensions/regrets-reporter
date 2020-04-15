@@ -68,6 +68,7 @@ export interface RegretReport {
   user_supplied_regret_category: string;
   user_supplied_other_regret_category: string;
   user_supplied_severity: null | number;
+  user_supplied_optional_comment: string;
 }
 
 export class ReportSummarizer {

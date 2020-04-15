@@ -7,6 +7,7 @@ import "../components/tailwind.css";
 import { Input } from "../components/photon-components-web/photon-components/Input";
 import { Radio } from "../components/photon-components-web/photon-components/Radio";
 import { Link } from "../components/photon-components-web/photon-components/Link";
+import { TextArea } from "../components/photon-components-web/photon-components/TextArea";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import {
@@ -30,6 +31,7 @@ export interface ReportRegretFormState {
   userSuppliedRegretCategory: string;
   userSuppliedOtherRegretCategory: string;
   userSuppliedSeverity: null | number;
+  userSuppliedOptionalComment: string;
   error: boolean;
   reported: boolean;
 }
@@ -45,6 +47,7 @@ export class ReportRegretForm extends Component<
     userSuppliedRegretCategory: "",
     userSuppliedOtherRegretCategory: "",
     userSuppliedSeverity: null,
+    userSuppliedOptionalComment: "",
     error: false,
     reported: false,
   };
@@ -112,6 +115,7 @@ export class ReportRegretForm extends Component<
       user_supplied_other_regret_category: this.state
         .userSuppliedOtherRegretCategory,
       user_supplied_severity: this.state.userSuppliedSeverity,
+      user_supplied_optional_comment: this.state.userSuppliedOptionalComment,
     };
     this.backgroundContextPort.postMessage({
       regretReport,
@@ -205,13 +209,13 @@ export class ReportRegretForm extends Component<
           </div>
 
         </div>
-        */}
 
         <div className="panel-section panel-section-formElements pb-0">
           <div className="panel-formElements-item">
             <h2 className="font-bold">I regret watching this video:</h2>
           </div>
         </div>
+        */}
 
         <div className="px-0">
           <div className="flex -mx-0">
@@ -351,38 +355,6 @@ export class ReportRegretForm extends Component<
               <div className="pt-0 panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="w-full">
-                    {/*
-                    <p className="mb-3">
-                      <label
-                        htmlFor="user_supplied_comment"
-                        className="input__label mb-3 align-left"
-                        style={{ textAlign: "left" }}
-                      >
-                        Comment (optional)
-                      </label>
-                    </p>
-                    <TextArea
-                      className="textarea__field w-full form-textarea mt-1 block w-full"
-                      rows={3}
-                      id="user_supplied_comment"
-                      name="user_supplied_comment"
-                      placeholder=""
-                      value={this.state.userSuppliedOptionalComment}
-                      onChange={changeEvent => {
-                        this.setState({
-                          userSuppliedOptionalComment: changeEvent.target.value,
-                        });
-                      }}
-                    />
-                    */}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-1/2 px-0">
-              <div className="pt-0 panel-section panel-section-formElements">
-                <div className="panel-formElements-item">
-                  <div className="w-full">
                     <span>
                       <LikertScale
                         reviews={[{ question: "How severe is your regret?" }]}
@@ -396,6 +368,37 @@ export class ReportRegretForm extends Component<
                         }
                       />
                     </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-1/2 px-0">
+              <div className="pt-0 panel-section panel-section-formElements">
+                <div className="panel-formElements-item">
+                  <div className="w-full">
+                    <p className="mb-3">
+                      <label
+                        htmlFor="user_supplied_comment"
+                        className="input__label mb-3 align-left"
+                        style={{ textAlign: "left" }}
+                      >
+                        Will you tell us more about why you regret watching the
+                        video? (Optional)
+                      </label>
+                    </p>
+                    <TextArea
+                      className="textarea__field w-full form-textarea mt-1 block w-full"
+                      rows={2}
+                      id="user_supplied_comment"
+                      name="user_supplied_comment"
+                      placeholder=""
+                      value={this.state.userSuppliedOptionalComment}
+                      onChange={changeEvent => {
+                        this.setState({
+                          userSuppliedOptionalComment: changeEvent.target.value,
+                        });
+                      }}
+                    />
                   </div>
                 </div>
               </div>
