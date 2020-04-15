@@ -1,5 +1,6 @@
 dist/*
 node_modules/
+src/*content-script.js
 src/background.js
 src/report.js
 src/consent-form.js

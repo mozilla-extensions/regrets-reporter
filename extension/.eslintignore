@@ -2,6 +2,7 @@
 test/results/coverage/
 dist/
 package-lock.json
+src/*content-script.js
 src/background.js
 src/report.js
 src/consent-form.js

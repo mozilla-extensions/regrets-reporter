@@ -6,6 +6,7 @@ import {
   JavascriptInstrument,
   HttpInstrument,
   NavigationInstrument,
+  UserInteractionInstrument,
 } from "@openwpm/webext-instrumentation";
 import { ReportSummarizer } from "./ReportSummarizer";
 import { triggerClientDownloadOfData } from "./lib/triggerClientDownloadOfData";
@@ -29,6 +30,7 @@ class ExtensionGlue {
   private cookieInstrument: CookieInstrument;
   private jsInstrument: JavascriptInstrument;
   private httpInstrument: HttpInstrument;
+  private userInteractionInstrument: UserInteractionInstrument;
   private openwpmCrawlId: string;
   private contentScriptPortListener;
 
@@ -189,6 +191,8 @@ class ExtensionGlue {
       http_instrument_resource_types: "main_frame,xmlhttprequest",
       http_instrument_urls:
         "*://*.youtube.com/*|*://*.youtu.be/*|*://*.youtube-nocookie.com/*",
+      user_interaction_instrument: true,
+      user_interaction_instrument_modules: "clicks",
       crawl_id: 0,
     };
     await this.startOpenWPMInstrumentation(openwpmConfig);
@@ -224,6 +228,29 @@ class ExtensionGlue {
         config["save_content"],
         config["http_instrument_resource_types"],
         config["http_instrument_urls"],
+      );
+    }
+    if (config["user_interaction_instrument"]) {
+      await openWpmPacketHandler.logDebug(
+        "Interaction Instrumentation enabled",
+      );
+      this.userInteractionInstrument = new UserInteractionInstrument(
+        openWpmPacketHandler,
+      );
+      this.userInteractionInstrument.run(config["crawl_id"]);
+      const registerContentScriptOptions = {
+        matches: [
+          "*://*.youtube.com/*",
+          "*://*.youtu.be/*",
+          "*://*.youtube-nocookie.com/*",
+        ],
+        allFrames: false,
+        matchAboutBlank: false,
+      };
+      await this.userInteractionInstrument.registerContentScript(
+        config["testing"],
+        config["user_interaction_instrument_modules"],
+        registerContentScriptOptions,
       );
     }
   }
@@ -266,6 +293,9 @@ class ExtensionGlue {
     }
     if (this.httpInstrument) {
       await this.httpInstrument.cleanup();
+    }
+    if (this.userInteractionInstrument) {
+      await this.userInteractionInstrument.cleanup();
     }
     if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
       openWpmPacketHandler.activeTabDwellTimeMonitor.cleanup();

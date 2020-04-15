@@ -4,6 +4,8 @@ const path = require("path");
 
 module.exports = {
   entry: {
+    "user-interaction-instrument-content-script":
+      "./ts/user-interaction-instrument-content-script.js/index.ts",
     background: "./ts/background.js/index.ts",
     report: "./ts/report.js/index.tsx",
     "consent-form": "./ts/consent-form.js/index.tsx",
