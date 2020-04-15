@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+**Contents**
+
+- [Developing this add-on](#developing-this-add-on)
+  - [Opening up specific add-on pages](#opening-up-specific-add-on-pages)
+  - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
+    - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
+    - [ReportSummarizer](#reportsummarizer)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Developing this add-on
 
 ## Opening up specific add-on pages
