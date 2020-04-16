@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
-import "../components/photon-components-web/index.css";
-import "../components/photon-components-web/attributes";
-import "../components/tailwind.css";
-import { Input } from "../components/photon-components-web/photon-components/Input";
-import { Radio } from "../components/photon-components-web/photon-components/Radio";
-import { Link } from "../components/photon-components-web/photon-components/Link";
-import { TextArea } from "../components/photon-components-web/photon-components/TextArea";
+import "../shared-react-resources/photon-components-web/index.css";
+import "../shared-react-resources/photon-components-web/attributes";
+import "../shared-react-resources/tailwind.css";
+import { Input } from "../shared-react-resources/photon-components-web/photon-components/Input";
+import { Radio } from "../shared-react-resources/photon-components-web/photon-components/Radio";
+import { Link } from "../shared-react-resources/photon-components-web/photon-components/Link";
+import { TextArea } from "../shared-react-resources/photon-components-web/photon-components/TextArea";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import {
@@ -20,7 +20,7 @@ import {
   MdSentimentNeutral,
   MdSentimentVeryDissatisfied,
 } from "react-icons/all";
-import { DisplayError } from "../components/DisplayError";
+import { DisplayError } from "../shared-react-resources/DisplayError";
 
 export interface ReportRegretFormProps {}
 
