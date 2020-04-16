@@ -27,7 +27,7 @@ export class ReportRegretInstructions extends Component<
             Fill out the form:
             <br />
             <img
-              className="instruction-form my-6 max-w-xl"
+              className="instruction-form my-6 w-full max-w-xl"
               src="./img/instruction-form.png"
               alt="Image of report regret form"
             />

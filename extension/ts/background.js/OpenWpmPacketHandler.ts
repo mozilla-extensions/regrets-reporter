@@ -214,6 +214,7 @@ export class OpenWpmPacketHandler {
         "https://www.youtube.com/youtubei/v1/feedback",
         "https://www.youtube.com/youtubei/v1/related_ajax",
         "https://www.youtube.com/error_204",
+        "https://www.youtube.com/notifications_ajax",
       ];
       for (const mayNotStartWith of mayNotStartWiths) {
         if (record.url.indexOf(mayNotStartWith) === 0) {

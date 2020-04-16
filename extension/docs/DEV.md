@@ -49,6 +49,8 @@ await triggerClientDownloadOfData(
 );
 ```
 
+Restart the browser before collecting data for a new fixture.
+
 ### ReportSummarizer
 
 1. Clear the current set of collected navigations:
@@ -69,3 +71,5 @@ await triggerClientDownloadOfData(
   "reportSummarizerFixture.json"
 );
 ```
+
+Restart the browser before collecting data for a new fixture.
