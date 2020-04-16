@@ -41,16 +41,14 @@ describe("ReportSummarizer", function() {
 
     assert.deepEqual(
       youTubeNavigations[0].how_the_youtube_navigation_likely_was_reached,
-      ["page_reload"],
+      ["direct_navigation"],
     );
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
-    /*
     assert.deepEqual(
       youTubeNavigations[1].how_the_youtube_navigation_likely_was_reached,
       ["watch_next_column"],
     );
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
-    */
 
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
@@ -62,10 +60,12 @@ describe("ReportSummarizer", function() {
         video_description:
           "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
         video_posting_date: "Sep 20, 2011",
-        view_count_at_navigation: 4158462,
+        view_count_at_navigation: 4173534,
         view_count_at_navigation_short: "4.1M views",
       },
-      how_this_and_recent_youtube_navigations_were_reached: [],
+      how_this_and_recent_youtube_navigations_likely_were_reached: [
+        ["direct_navigation"],
+      ],
     });
 
     const regretReport2 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
@@ -73,18 +73,21 @@ describe("ReportSummarizer", function() {
     );
     assert.deepEqual(regretReport2, {
       regretted_youtube_navigation_video_metadata: {
-        video_description: "24 hours of nothing",
-        video_id: "yh9DSyWI2ks",
-        video_posting_date: "Sep 12, 2016",
-        video_title: "24 hours of nothing",
-        view_count_at_navigation: 1359093,
-        view_count_at_navigation_short: "1.3M views",
+        video_description: "http://billwurtz.com",
+        video_id: "xuCn8ux2gbs",
+        video_posting_date: "May 10, 2017",
+        video_title: "history of the entire world, i guess",
+        view_count_at_navigation: 86023815,
+        view_count_at_navigation_short: "86M views",
       },
-      how_this_and_recent_youtube_navigations_were_reached: [],
+      how_this_and_recent_youtube_navigations_likely_were_reached: [
+        ["watch_next_column"],
+        ["direct_navigation"],
+      ],
     });
   });
 
-  it("fixture: youtubeVisitMainPageAndBrowseAround", async function() {
+  it.skip("fixture: youtubeVisitMainPageAndBrowseAround", async function() {
     const reportSummarizer = new ReportSummarizer();
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       youtubeVisitMainPageAndBrowseAround,
@@ -103,13 +106,11 @@ describe("ReportSummarizer", function() {
       ["direct_navigation"],
     );
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
-    /*
     assert.deepEqual(
       youTubeNavigations[1].how_the_youtube_navigation_likely_was_reached,
       ["watch_next_column"],
     );
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
-    */
 
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
@@ -124,7 +125,9 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 265681,
         view_count_at_navigation_short: "265K views",
       },
-      how_this_and_recent_youtube_navigations_were_reached: [],
+      how_this_and_recent_youtube_navigations_likely_were_reached: [
+        ["direct_navigation"],
+      ],
     });
 
     const regretReport2 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
@@ -132,7 +135,10 @@ describe("ReportSummarizer", function() {
     );
     assert.deepEqual(regretReport2, {
       regretted_youtube_navigation_video_metadata: undefined,
-      how_this_and_recent_youtube_navigations_were_reached: [],
+      how_this_and_recent_youtube_navigations_likely_were_reached: [
+        ["search_action"],
+        ["direct_navigation"],
+      ],
     });
   });
 });
