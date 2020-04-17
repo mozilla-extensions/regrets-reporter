@@ -312,13 +312,12 @@ export class ReportRegretForm extends Component<
                               youtubeVisitMetadata: YoutubeVisitMetadata,
                               index: number,
                             ) => (
-                              <>
+                              <React.Fragment key={index}>
                                 {index === 0 &&
                                   youtubeVisitMetadata.referrer_url_type !==
                                     "empty" && (
                                     <li
                                       className="inline"
-                                      key={`referrer-url-type-${index}`}
                                     >
                                       {
                                         youTubeNavigationUrlTypeLabels[
@@ -329,7 +328,6 @@ export class ReportRegretForm extends Component<
                                   )}
                                 <li
                                   className="inline"
-                                  key={`reach-type-${index}`}
                                 >
                                   {
                                     youTubeNavigationReachTypeLabels[
@@ -339,7 +337,6 @@ export class ReportRegretForm extends Component<
                                 </li>
                                 <li
                                   className="inline"
-                                  key={`url-type-${index}`}
                                 >
                                   {index ===
                                   this.state.regretReportData
@@ -350,7 +347,7 @@ export class ReportRegretForm extends Component<
                                         youtubeVisitMetadata.url_type
                                       ]}
                                 </li>
-                              </>
+                              </React.Fragment>
                             ),
                           )}
                       </ul>
