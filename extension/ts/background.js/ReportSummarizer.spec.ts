@@ -42,14 +42,14 @@ describe("ReportSummarizer", function() {
 
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
-      url_type: "other_page",
+      url_type: "watch_page",
       referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "watch_next_column",
-      url_type: "other_page",
-      referrer_url_type: "other_page",
+      url_type: "watch_page",
+      referrer_url_type: "watch_page",
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -69,7 +69,7 @@ describe("ReportSummarizer", function() {
       youtube_browsing_history_metadata: [
         {
           reach_type: "direct_navigation",
-          url_type: "other_page",
+          url_type: "watch_page",
           referrer_url_type: "empty",
         },
       ],
@@ -90,12 +90,12 @@ describe("ReportSummarizer", function() {
       youtube_browsing_history_metadata: [
         {
           reach_type: "watch_next_column",
-          url_type: "other_page",
-          referrer_url_type: "other_page",
+          url_type: "watch_page",
+          referrer_url_type: "watch_page",
         },
         {
           reach_type: "direct_navigation",
-          url_type: "other_page",
+          url_type: "watch_page",
           referrer_url_type: "empty",
         },
       ],
@@ -118,14 +118,14 @@ describe("ReportSummarizer", function() {
 
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
-      url_type: "other_page",
+      url_type: "watch_page",
       referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "watch_next_end_screen",
-      url_type: "other_page",
-      referrer_url_type: "other_page",
+      url_type: "watch_page",
+      referrer_url_type: "watch_page",
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -145,7 +145,7 @@ describe("ReportSummarizer", function() {
       youtube_browsing_history_metadata: [
         {
           reach_type: "direct_navigation",
-          url_type: "other_page",
+          url_type: "watch_page",
           referrer_url_type: "empty",
         },
       ],
@@ -167,12 +167,12 @@ describe("ReportSummarizer", function() {
       youtube_browsing_history_metadata: [
         {
           reach_type: "watch_next_end_screen",
-          url_type: "other_page",
-          referrer_url_type: "other_page",
+          url_type: "watch_page",
+          referrer_url_type: "watch_page",
         },
         {
           reach_type: "direct_navigation",
-          url_type: "other_page",
+          url_type: "watch_page",
           referrer_url_type: "empty",
         },
       ],
@@ -195,14 +195,14 @@ describe("ReportSummarizer", function() {
 
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
-      url_type: "other_page",
+      url_type: "watch_page",
       referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "watch_next_column",
-      url_type: "other_page",
-      referrer_url_type: "other_page",
+      url_type: "watch_page",
+      referrer_url_type: "watch_page",
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -222,7 +222,7 @@ describe("ReportSummarizer", function() {
       youtube_browsing_history_metadata: [
         {
           reach_type: "direct_navigation",
-          url_type: "other_page",
+          url_type: "watch_page",
           referrer_url_type: "empty",
         },
       ],
@@ -236,12 +236,12 @@ describe("ReportSummarizer", function() {
       youtube_browsing_history_metadata: [
         {
           reach_type: "search_action",
-          url_type: "other_page",
-          referrer_url_type: "other_page",
+          url_type: "watch_page",
+          referrer_url_type: "watch_page",
         },
         {
           reach_type: "direct_navigation",
-          url_type: "other_page",
+          url_type: "watch_page",
           referrer_url_type: "empty",
         },
       ],

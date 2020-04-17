@@ -47,6 +47,8 @@ const youTubeNavigationUrlTypeLabels: {
   watch_page: "Video Page",
   channel_page: "Channel Page",
   other_page: "Other Page",
+  youtube_main_page: "YouTube.com",
+  misc_xhr: "Misc XHR Request",
   not_a_youtube_page: "Somewhere outside of YouTube",
   empty: "(Empty)",
   "<failed>": "(Unknown Page)",

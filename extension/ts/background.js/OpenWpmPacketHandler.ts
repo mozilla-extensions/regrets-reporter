@@ -3,6 +3,7 @@ import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { HttpResponse } from "@openwpm/webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
+import { classifyYouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
 
 export interface LogEntry {
   level: string;
@@ -204,34 +205,16 @@ export class OpenWpmPacketHandler {
       return record.frame_id === 0;
     }
     if (instrument === "http_responses" || instrument === "http_requests") {
-      const mayNotStartWiths = [
-        "https://www.youtube.com/comment_service_ajax",
-        "https://www.youtube.com/youtubei/v1/log_event",
-        "https://www.youtube.com/get_video_info",
-        "https://www.youtube.com/get_midroll_info",
-        "https://www.youtube.com/api/stats",
-        "https://www.youtube.com/youtubei/v1/guide",
-        "https://www.youtube.com/youtubei/v1/feedback",
-        "https://www.youtube.com/youtubei/v1/related_ajax",
-        "https://www.youtube.com/error_204",
-        "https://www.youtube.com/notifications_ajax",
-      ];
-      for (const mayNotStartWith of mayNotStartWiths) {
-        if (record.url.indexOf(mayNotStartWith) === 0) {
-          return false;
-        }
+      const urlType = classifyYouTubeNavigationUrlType(record.url);
+      if (urlType === "misc_xhr") {
+        return false;
       }
-      const shouldStartWiths = [
-        "https://www.youtube.com/watch",
-        "https://www.youtube.com/channel",
-        "https://www.youtube.com/results?search",
-      ];
-      for (const shouldStartWith of shouldStartWiths) {
-        if (record.url.indexOf(shouldStartWith) === 0) {
-          return true;
-        }
+      if (
+        ["watch_page", "channel_page", "search_results_page"].includes(urlType)
+      ) {
+        return true;
       }
-      if (record.url === "https://www.youtube.com/") {
+      if (urlType === "youtube_main_page") {
         return true;
       }
     }
