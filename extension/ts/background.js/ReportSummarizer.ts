@@ -12,7 +12,7 @@ type YouTubeNavigationLinkPosition =
   | "watch_next_end_screen";
 // | "up_next_auto_play"
 
-type YouTubeNavigationReachType =
+export type YouTubeNavigationReachType =
   | YouTubeNavigationLinkPosition
   | "search_action"
   | "direct_navigation"

@@ -13,6 +13,7 @@ import Port = Runtime.Port;
 import {
   RegretReport,
   RegretReportData,
+  YouTubeNavigationReachType,
 } from "../background.js/ReportSummarizer";
 import LikertScale from "likert-react";
 import {
@@ -21,6 +22,21 @@ import {
   MdSentimentVeryDissatisfied,
 } from "react-icons/all";
 import { DisplayError } from "../shared-react-resources/DisplayError";
+
+const youTubeNavigationReachTypeLabels: {
+  [k in YouTubeNavigationReachType]: string;
+} = {
+  search_results: "Search results",
+  search_page_for_you_recommendations: "Search page recommendations",
+  watch_next_column: "Watch next sidebar",
+  watch_next_end_screen: "Watch next end screen",
+  search_action: "Search action",
+  direct_navigation: "Direct visit",
+  page_reload: "Page reload",
+  without_clicking_at_all: "Auto-play without any interaction",
+  without_clicking_neither_up_next_nor_end_screen: "Auto-play",
+  "<failed>": "Unknown",
+};
 
 export interface ReportRegretFormProps {}
 
@@ -230,15 +246,15 @@ export class ReportRegretForm extends Component<
                         alt=""
                       />
                     </div>
-                    <div className="mb-0 mt-1">
-                      <h4 className="text-sm font-medium">
+                    <div className="mb-6 mt-1">
+                      <h4 className="text-md font-medium">
                         {
                           this.state.regretReportData
                             .regretted_youtube_navigation_video_metadata
                             .video_title
                         }
                       </h4>
-                      <p className="mt-1 font-hairline text-xs text-grey-darker">
+                      <p className="mt-1 font-hairline text-sm text-grey-darker">
                         {
                           this.state.regretReportData
                             .regretted_youtube_navigation_video_metadata
@@ -251,6 +267,32 @@ export class ReportRegretForm extends Component<
                             .video_posting_date
                         }
                       </p>
+                    </div>
+                    <div>
+                      <label className="label-bold">
+                        How you arrived at this video:
+                      </label>
+                      <ul className="list-breadcrumb my-2">
+                        {this.state.regretReportData.how_this_and_recent_youtube_navigations_likely_were_reached
+                          .slice()
+                          .reverse()
+                          .map(
+                            (
+                              youTubeNavigationReachTypes: YouTubeNavigationReachType[],
+                            ) => (
+                              <li className="inline">
+                                {youTubeNavigationReachTypes
+                                  .map(
+                                    youTubeNavigationReachType =>
+                                      youTubeNavigationReachTypeLabels[
+                                        youTubeNavigationReachType
+                                      ],
+                                  )
+                                  .join(" or ")}
+                              </li>
+                            ),
+                          )}
+                      </ul>
                     </div>
                   </div>
                 </div>
