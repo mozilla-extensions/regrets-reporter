@@ -513,17 +513,22 @@ export class ReportRegretForm extends Component<
             >
               Privacy Policy
             </Link>
-            .<br />
-            Click{" "}
+            . <br/>
+            More information: {" "}
             <Link
               className="inline"
               target="_blank"
               href={browser.runtime.getURL(`consent-form/consent-form.html`)}
             >
-              here to learn more
+              The YouTube Regrets study
+            </Link>{" | "}
+            <Link
+              className="inline"
+              target="_blank"
+              href={"about:blank"}
+            >
+              Submit Feedback
             </Link>{" "}
-            about the YouTube Regrets research and the specific data that is
-            shared.
             {/*
             <a
               className="link inline"
