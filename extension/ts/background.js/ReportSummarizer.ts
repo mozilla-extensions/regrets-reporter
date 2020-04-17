@@ -60,6 +60,7 @@ export interface YouTubeNavigation {
   window_id: number;
   tab_id: number;
   frame_id: number;
+  event_ordinal: number;
 }
 
 export interface RegretReportData {
@@ -161,6 +162,12 @@ export class ReportSummarizer {
         childEnvelope.httpResponse.frame_id === 0,
     );
 
+    const clickEventEnvelopes = topFrameNavigationBatch.childEnvelopes.filter(
+      childEnvelope =>
+        childEnvelope.type === "user_interactions" &&
+        childEnvelope.userInteraction.frame_id === 0,
+    );
+
     let i = -1;
     for (const topFrameHttpResponseEnvelope of topFrameHttpResponseEnvelopes) {
       i = i + 1;
@@ -192,13 +199,9 @@ export class ReportSummarizer {
       const resource_type = httpRequestEnvelope.httpRequest.resource_type;
       const navigation_transition_type =
         topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;
+      const event_ordinal = httpRequestEnvelope.httpRequest.event_ordinal;
 
-      console.debug("* extractYouTubeNavigationsFromNavigationBatch debug:", {
-        url,
-        referrer,
-        navigation_transition_type,
-        resource_type,
-      });
+      // console.debug("* extractYouTubeNavigationsFromNavigationBatch debug:", {url, referrer, navigation_transition_type, resource_type});
 
       // These do not correspond to actual user usage
       if (url.indexOf("prefetch=1") > 0) {
@@ -230,6 +233,7 @@ export class ReportSummarizer {
       }
 
       let parent_youtube_navigations;
+      let parentYouTubeNavigation;
 
       const how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[] = [];
       if (i === 0) {
@@ -243,57 +247,99 @@ export class ReportSummarizer {
 
         // TODO: Check referrer, timing and other transition types
         parent_youtube_navigations = youTubeNavigations.slice(0, 5);
+        parentYouTubeNavigation = parent_youtube_navigations.slice().pop();
       } else {
         // TODO: Only consider those within the same tab
         parent_youtube_navigations = youTubeNavigations.slice(0, 5);
+        parentYouTubeNavigation = parent_youtube_navigations.slice().pop();
+
+        // console.dir({parentYouTubeNavigation}, {depth: 5});
+        // console.dir({clickEventEnvelopes}, {depth: 5});
 
         // click events leading up to the subsequent youtube navigation
-        const clickEventEnvelopes = topFrameNavigationBatch.childEnvelopes.filter(
+        const firstRelevantEventOrdinal = parentYouTubeNavigation.event_ordinal;
+        const lastRelevantEventOrdinal =
+          topFrameHttpResponseEnvelope.httpResponse.event_ordinal;
+        // const lastRelevantEventOrdinal = nextTopFrameHttpResponseEnvelopes ? nextTopFrameHttpResponseEnvelopes.httpResponse.event_ordinal : Number.MAX_SAFE_INTEGER;
+
+        // console.log({firstRelevantEventOrdinal,lastRelevantEventOrdinal });
+
+        const clickEventEnvelopesForParentYouTubeNavigation = clickEventEnvelopes.filter(
           childEnvelope =>
-            childEnvelope.type === "user_interactions" &&
-            childEnvelope.userInteraction.frame_id === 0,
+            childEnvelope.userInteraction.event_ordinal >
+              firstRelevantEventOrdinal &&
+            childEnvelope.userInteraction.event_ordinal <
+              lastRelevantEventOrdinal,
         );
-        let clickedWithinRelated;
-        clickEventEnvelopes.map(clickEventEnvelope => {
-          const composedPath = JSON.parse(
-            clickEventEnvelope.userInteraction.composed_path,
-          );
-          console.dir({ composedPath }, { depth: 5 });
-          clickedWithinRelated = !!composedPath.find(
-            (eventTarget: OpenWPMObjectifiedEventTarget) =>
-              eventTarget.xpath === "//*[@id='related']",
-          );
-          console.log({ clickedWithinRelated });
-        });
+        // console.dir({clickEventEnvelopesForParentYouTubeNavigation}, {depth: 5});
+        let clickedWithinRelated = false;
+        let clickedEndScreenUpNextAutoplayButton = false;
+        let clickedEndScreenCancelUpNextAutoplayButton = false;
+        clickEventEnvelopesForParentYouTubeNavigation.map(
+          clickEventEnvelope => {
+            const composedPath = JSON.parse(
+              clickEventEnvelope.userInteraction.composed_path,
+            );
+            // console.dir({ composedPath }, { depth: 5 });
+            if (
+              !!composedPath.find(
+                (eventTarget: OpenWPMObjectifiedEventTarget) =>
+                  eventTarget.xpath === "//*[@id='related']",
+              )
+            ) {
+              clickedWithinRelated = true;
+            }
+            if (
+              !!composedPath.find(
+                (eventTarget: OpenWPMObjectifiedEventTarget) =>
+                  eventTarget.xpath.indexOf("//*[@id='movie_player']") === 0 &&
+                  eventTarget.outerHTMLWithoutInnerHTML.indexOf(
+                    "ytp-upnext-autoplay-icon",
+                  ) > 0,
+              )
+            ) {
+              clickedEndScreenUpNextAutoplayButton = true;
+            }
+            if (
+              !!composedPath.find(
+                (eventTarget: OpenWPMObjectifiedEventTarget) =>
+                  eventTarget.xpath.indexOf("//*[@id='movie_player']") === 0 &&
+                  eventTarget.outerHTMLWithoutInnerHTML.indexOf(
+                    "ytp-upnext-cancel-button",
+                  ) > 0,
+              )
+            ) {
+              clickedEndScreenCancelUpNextAutoplayButton = true;
+            }
+          },
+        );
 
-        // TODO:
-        const clickedWithinEndScreen = false;
+        // console.log({clickedWithinRelated, clickedEndScreenUpNextAutoplayButton, clickedEndScreenCancelUpNextAutoplayButton});
 
-        if (clickEventEnvelopes.length === 0) {
+        if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
           how_the_youtube_navigation_likely_was_reached.push(
             "without_clicking_at_all",
           );
-        } else if (!clickedWithinRelated && !clickedWithinEndScreen) {
+        } else if (
+          !clickedWithinRelated &&
+          !clickedEndScreenUpNextAutoplayButton &&
+          !clickedEndScreenCancelUpNextAutoplayButton
+        ) {
           how_the_youtube_navigation_likely_was_reached.push(
             "without_clicking_neither_up_next_nor_end_screen",
           );
         } else {
-          const parentYouTubeNavigation = parent_youtube_navigations
-            .slice()
-            .pop();
-          console.debug({ referrer });
+          // console.debug({ referrer });
+
+          /*
           const parentYouTubeNavigationOutgoingLinkCategories = Object.keys(
             parentYouTubeNavigation.outgoing_video_ids_by_category,
           );
           console.log({ parentYouTubeNavigationOutgoingLinkCategories });
+          */
 
-          console.log(
-            "youtubePageMetadata.video_metadata.video_id",
-            youtubePageMetadata.video_metadata.video_id,
-          );
-          console.dir(parentYouTubeNavigation.outgoing_video_ids_by_category, {
-            depth: 5,
-          });
+          // console.log("youtubePageMetadata.video_metadata.video_id", youtubePageMetadata.video_metadata.video_id);
+          // console.dir(parentYouTubeNavigation.outgoing_video_ids_by_category, {depth: 5});
 
           let parentWatchNextColumnIncludesThisVideoId;
           if (
@@ -323,7 +369,7 @@ export class ReportSummarizer {
             );
           }
           if (
-            clickedWithinEndScreen &&
+            clickedEndScreenUpNextAutoplayButton &&
             parentWatchNextEndScreenIncludesThisVideoId
           ) {
             how_the_youtube_navigation_likely_was_reached.push(
@@ -346,6 +392,7 @@ export class ReportSummarizer {
         tab_id: topFrameNavigationBatch.navigationEnvelope.navigation.tab_id,
         frame_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.frame_id,
+        event_ordinal,
         /*
         event_metadata: {
           client_timestamp:
