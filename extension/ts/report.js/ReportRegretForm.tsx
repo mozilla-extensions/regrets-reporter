@@ -154,16 +154,18 @@ export class ReportRegretForm extends Component<
     }
     if (this.state.loading) {
       return (
-        <header className="panel-section panel-section-header">
-          <div className="icon-section-header">
-            <img
-              src="../icons/green-extensionsicon.svg"
-              width="32"
-              height="32"
-            />
-          </div>
-          <div className="text-section-header text-nowrap">Loading ...</div>
-        </header>
+        <>
+          <header className="panel-section panel-section-header">
+            <div className="icon-section-header">
+              <img
+                src="../icons/green-extensionsicon.svg"
+                width="32"
+                height="32"
+              />
+            </div>
+            <div className="text-section-header text-nowrap">Loading ...</div>
+          </header>
+        </>
       );
     }
     if (this.state.reported) {
@@ -279,8 +281,9 @@ export class ReportRegretForm extends Component<
                           .map(
                             (
                               youTubeNavigationReachTypes: YouTubeNavigationReachType[],
+                              index: number,
                             ) => (
-                              <li className="inline">
+                              <li className="inline" key={index}>
                                 {youTubeNavigationReachTypes
                                   .map(
                                     youTubeNavigationReachType =>
@@ -303,7 +306,7 @@ export class ReportRegretForm extends Component<
                 <div className="panel-formElements-item mb-6">
                   <div>
                     <p className="mb-3">
-                      <span className="input__label">
+                      <span className="label-bold">
                         Why do you regret watching the video?
                       </span>
                     </p>
@@ -395,7 +398,7 @@ export class ReportRegretForm extends Component<
           <div className="flex -mx-0">
             <div className="w-1/2 px-0">
               <div className="pt-0 panel-section panel-section-formElements">
-                <div className="panel-formElements-item">
+                <div className="">
                   <div className="w-full">
                     <span>
                       <LikertScale
@@ -416,24 +419,16 @@ export class ReportRegretForm extends Component<
             </div>
             <div className="w-1/2 px-0">
               <div className="pt-0 panel-section panel-section-formElements">
-                <div className="panel-formElements-item">
+                <div className="">
                   <div className="w-full">
-                    <p className="mb-3">
-                      <label
-                        htmlFor="user_supplied_comment"
-                        className="input__label mb-3 align-left"
-                        style={{ textAlign: "left" }}
-                      >
-                        Will you tell us more about why you regret watching the
-                        video? (Optional)
-                      </label>
-                    </p>
                     <TextArea
                       className="textarea__field w-full form-textarea mt-1 block w-full"
                       rows={2}
                       id="user_supplied_comment"
                       name="user_supplied_comment"
                       placeholder=""
+                      label="Will you tell us more about why you regret watching the
+                        video? (Optional)"
                       value={this.state.userSuppliedOptionalComment}
                       onChange={changeEvent => {
                         this.setState({
