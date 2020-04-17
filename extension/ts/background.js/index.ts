@@ -315,6 +315,7 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 // make the openWpmPacketHandler singleton and triggerClientDownloadOfData available to
 // the extension background context so that we as developers can collect fixture data
 (window as any).openWpmPacketHandler = openWpmPacketHandler;
+(window as any).reportSummarizer = reportSummarizer;
 (window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
 
 // init the extension glue on every extension load

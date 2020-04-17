@@ -5,6 +5,7 @@
 
 - [Developing this add-on](#developing-this-add-on)
   - [Opening up specific add-on pages](#opening-up-specific-add-on-pages)
+  - [Checking current report data](#checking-current-report-data)
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
@@ -23,6 +24,16 @@ browser.runtime.getURL(`popup/report-regret.html`);
 
 ```javascript
 browser.runtime.getURL(`consent-form/consent-form.html`);
+```
+
+## Checking current report data
+
+```javascript
+await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
+await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+  openWpmPacketHandler.navigationBatchPreprocessor
+    .navigationBatchesByNavigationUuid
+);
 ```
 
 ## Collecting traffic data for test fixtures

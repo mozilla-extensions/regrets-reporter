@@ -27,7 +27,9 @@ export class DisplayError extends React.Component<{}, {}> {
           </div>
         </header>
         <div className="panel-section panel-section-formElements">
-          <span className="text-center">Try reloading the page and try again</span>
+          <span className="text-center">
+            Try reloading the page and try again
+          </span>
         </div>
         <footer className="panel-section panel-section-footer">
           <div onClick={this.cancel} className="panel-section-footer-button">

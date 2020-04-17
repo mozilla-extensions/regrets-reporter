@@ -30,7 +30,7 @@ const youTubeNavigationReachTypeLabels: {
 } = {
   search_results: "Search results",
   search_page_for_you_recommendations: "Search page recommendations",
-  watch_next_column: "Watch next sidebar",
+  watch_next_column: "Up next sidebar",
   watch_next_end_screen: "Watch next end screen",
   search_action: "Search action",
   direct_navigation: "Direct visit",
