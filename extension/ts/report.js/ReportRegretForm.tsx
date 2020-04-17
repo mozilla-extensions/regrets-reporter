@@ -14,6 +14,7 @@ import {
   RegretReport,
   RegretReportData,
   YouTubeNavigationReachType,
+  YoutubeVisitMetadata,
 } from "../background.js/ReportSummarizer";
 import LikertScale from "likert-react";
 import {
@@ -22,6 +23,7 @@ import {
   MdSentimentVeryDissatisfied,
 } from "react-icons/all";
 import { DisplayError } from "../shared-react-resources/DisplayError";
+import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 
 const youTubeNavigationReachTypeLabels: {
   [k in YouTubeNavigationReachType]: string;
@@ -36,6 +38,18 @@ const youTubeNavigationReachTypeLabels: {
   without_clicking_at_all: "Auto-play without any interaction",
   without_clicking_neither_up_next_nor_end_screen: "Auto-play",
   "<failed>": "Unknown",
+};
+
+const youTubeNavigationUrlTypeLabels: {
+  [k in YouTubeNavigationUrlType]: string;
+} = {
+  search_results_page: "Search Results",
+  watch_page: "Video Page",
+  channel_page: "Channel Page",
+  other_page: "Other Page",
+  not_a_youtube_page: "Somewhere outside of YouTube",
+  empty: "(Empty)",
+  "<failed>": "(Unknown Page)",
 };
 
 export interface ReportRegretFormProps {}
@@ -249,8 +263,8 @@ export class ReportRegretForm extends Component<
         */}
 
         <div className="px-0">
-          <div className="flex -mx-0">
-            <div className="w-1/2 px-0">
+          <div className="grid grid-cols-5 gap-4 -mx-0">
+            <div className="col-span-2 px-0">
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="flex-1 mr-1">
@@ -261,15 +275,15 @@ export class ReportRegretForm extends Component<
                         alt=""
                       />
                     </div>
-                    <div className="mb-6 mt-1">
-                      <h4 className="text-md font-medium">
+                    <div className="mb-4 mt-1">
+                      <h4 className="text-md font-medium text-sm overflow-y-auto h-5">
                         {
                           this.state.regretReportData
                             .regretted_youtube_navigation_video_metadata
                             .video_title
                         }
                       </h4>
-                      <p className="mt-1 font-hairline text-sm text-grey-darker">
+                      <p className="mt-1 font-hairline text-sm text-grey-darker text-sm overflow-y-auto h-5">
                         {
                           this.state.regretReportData
                             .regretted_youtube_navigation_video_metadata
@@ -287,25 +301,54 @@ export class ReportRegretForm extends Component<
                       <label className="label-bold">
                         How you arrived at this video:
                       </label>
-                      <ul className="list-breadcrumb my-2">
-                        {this.state.regretReportData.how_this_and_recent_youtube_navigations_likely_were_reached
+                      <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-14">
+                        {this.state.regretReportData.youtube_browsing_history_metadata
                           .slice()
                           .reverse()
                           .map(
                             (
-                              youTubeNavigationReachTypes: YouTubeNavigationReachType[],
+                              youtubeVisitMetadata: YoutubeVisitMetadata,
                               index: number,
                             ) => (
-                              <li className="inline" key={index}>
-                                {youTubeNavigationReachTypes
-                                  .map(
-                                    youTubeNavigationReachType =>
-                                      youTubeNavigationReachTypeLabels[
-                                        youTubeNavigationReachType
-                                      ],
-                                  )
-                                  .join(" or ")}
-                              </li>
+                              <>
+                                {index === 0 &&
+                                  youtubeVisitMetadata.referrer_url_type !==
+                                    "empty" && (
+                                    <li
+                                      className="inline"
+                                      key={`referrer-url-type-${index}`}
+                                    >
+                                      {
+                                        youTubeNavigationUrlTypeLabels[
+                                          youtubeVisitMetadata.referrer_url_type
+                                        ]
+                                      }
+                                    </li>
+                                  )}
+                                <li
+                                  className="inline"
+                                  key={`reach-type-${index}`}
+                                >
+                                  {
+                                    youTubeNavigationReachTypeLabels[
+                                      youtubeVisitMetadata.reach_type
+                                    ]
+                                  }
+                                </li>
+                                <li
+                                  className="inline"
+                                  key={`url-type-${index}`}
+                                >
+                                  {index ===
+                                  this.state.regretReportData
+                                    .youtube_browsing_history_metadata.length -
+                                    1
+                                    ? "This Video"
+                                    : youTubeNavigationUrlTypeLabels[
+                                        youtubeVisitMetadata.url_type
+                                      ]}
+                                </li>
+                              </>
                             ),
                           )}
                       </ul>
@@ -314,7 +357,7 @@ export class ReportRegretForm extends Component<
                 </div>
               </div>
             </div>
-            <div className="w-1/2 px-0">
+            <div className="col-span-3 px-0">
               <div className="pb-0 panel-section panel-section-formElements">
                 <div className="panel-formElements-item mb-6">
                   <div>
@@ -408,8 +451,8 @@ export class ReportRegretForm extends Component<
               </div>
             </div>
           </div>
-          <div className="flex -mx-0">
-            <div className="w-1/2 px-0">
+          <div className="grid grid-cols-5 gap-4 -mx-0">
+            <div className="col-span-2 px-0">
               <div className="pt-0 panel-section panel-section-formElements">
                 <div className="">
                   <div className="w-full">
@@ -430,7 +473,7 @@ export class ReportRegretForm extends Component<
                 </div>
               </div>
             </div>
-            <div className="w-1/2 px-0">
+            <div className="col-span-3 px-0">
               <div className="pt-0 panel-section panel-section-formElements">
                 <div className="">
                   <div className="w-full">

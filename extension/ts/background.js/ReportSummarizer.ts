@@ -202,7 +202,7 @@ export class ReportSummarizer {
       const url = httpRequestEnvelope.httpRequest.url;
       const referrer_url = httpRequestEnvelope.httpRequest.referrer;
       const url_type = classifyYouTubeNavigationUrlType(url);
-      const referrer_url_type = classifyYouTubeNavigationUrlType(url);
+      const referrer_url_type = classifyYouTubeNavigationUrlType(referrer_url);
       // const resource_type = httpRequestEnvelope.httpRequest.resource_type;
       const navigation_transition_type =
         topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;

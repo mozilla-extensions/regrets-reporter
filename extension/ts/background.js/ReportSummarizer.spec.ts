@@ -1,13 +1,9 @@
 import { assert } from "chai";
-import {
-  ReportSummarizer,
-  YouTubeNavigationReachType,
-} from "./ReportSummarizer";
+import { ReportSummarizer } from "./ReportSummarizer";
 import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo";
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 import { youtubeVisitMainPageAndBrowseAround } from "./fixtures/ReportSummarizer/youtubeVisitMainPageAndBrowseAround";
 import { youtubeVisitWatchPageAndInteractWithEndScreens } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndInteractWithEndScreens";
-import { YouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
 
 describe("ReportSummarizer", function() {
   it("should exist", async function() {
@@ -47,7 +43,7 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "other_page",
-      referrer_url_type: "other_page",
+      referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
@@ -74,7 +70,7 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "other_page",
-          referrer_url_type: "other_page",
+          referrer_url_type: "empty",
         },
       ],
     });
@@ -100,7 +96,7 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "other_page",
-          referrer_url_type: "other_page",
+          referrer_url_type: "empty",
         },
       ],
     });
@@ -123,7 +119,7 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "other_page",
-      referrer_url_type: "other_page",
+      referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
@@ -150,7 +146,7 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "other_page",
-          referrer_url_type: "other_page",
+          referrer_url_type: "empty",
         },
       ],
     });
@@ -177,7 +173,7 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "other_page",
-          referrer_url_type: "other_page",
+          referrer_url_type: "empty",
         },
       ],
     });
@@ -198,9 +194,9 @@ describe("ReportSummarizer", function() {
     // console.dir({ youTubeNavigations }, { depth: 5 });
 
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
-      reach_type: "watch_next_column",
+      reach_type: "direct_navigation",
       url_type: "other_page",
-      referrer_url_type: "other_page",
+      referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
@@ -227,7 +223,7 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "other_page",
-          referrer_url_type: "other_page",
+          referrer_url_type: "empty",
         },
       ],
     });
@@ -246,7 +242,7 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "other_page",
-          referrer_url_type: "other_page",
+          referrer_url_type: "empty",
         },
       ],
     });
