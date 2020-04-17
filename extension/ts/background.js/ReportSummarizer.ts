@@ -4,6 +4,10 @@ import {
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
 import { OpenWPMObjectifiedEventTarget } from "@openwpm/webext-instrumentation";
+import {
+  classifyYouTubeNavigationUrlType,
+  YouTubeNavigationUrlType,
+} from "./lib/youTubeNavigationUrlType";
 
 type YouTubeNavigationLinkPosition =
   | "search_results"
@@ -20,11 +24,6 @@ export type YouTubeNavigationReachType =
   | "without_clicking_at_all"
   | "without_clicking_neither_up_next_nor_end_screen"
   | FailedStringAttribute;
-
-type YouTubeNavigationUrlType =
-  | "search_results"
-  | "watch_page"
-  | "channel_page";
 
 type FailedStringAttribute = "<failed>";
 type FailedIntegerAttribute = -1;
@@ -49,14 +48,20 @@ export interface YoutubePageMetadata {
   outgoing_video_ids_by_category: OutgoingVideoIdsByCategory;
 }
 
+export interface YoutubeVisitMetadata {
+  reach_type: YouTubeNavigationReachType;
+  url_type: YouTubeNavigationUrlType;
+  referrer_url_type: YouTubeNavigationUrlType;
+}
+
 export interface YouTubeNavigation {
   video_metadata?: VideoMetadata;
   outgoing_video_ids_by_category?: OutgoingVideoIdsByCategory;
   tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
   url: undefined | string | FailedStringAttribute;
-  referrer: undefined | string | FailedStringAttribute;
+  referrer_url: undefined | string | FailedStringAttribute;
   parent_youtube_navigations: YouTubeNavigation[];
-  how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[];
+  youtube_visit_metadata: YoutubeVisitMetadata;
   window_id: number;
   tab_id: number;
   frame_id: number;
@@ -65,7 +70,7 @@ export interface YouTubeNavigation {
 
 export interface RegretReportData {
   regretted_youtube_navigation_video_metadata: VideoMetadata;
-  how_this_and_recent_youtube_navigations_likely_were_reached: YouTubeNavigationReachType[][];
+  youtube_browsing_history_metadata: YoutubeVisitMetadata[];
 }
 
 export interface RegretReport {
@@ -195,13 +200,15 @@ export class ReportSummarizer {
       );
 
       const url = httpRequestEnvelope.httpRequest.url;
-      const referrer = httpRequestEnvelope.httpRequest.referrer;
-      const resource_type = httpRequestEnvelope.httpRequest.resource_type;
+      const referrer_url = httpRequestEnvelope.httpRequest.referrer;
+      const url_type = classifyYouTubeNavigationUrlType(url);
+      const referrer_url_type = classifyYouTubeNavigationUrlType(url);
+      // const resource_type = httpRequestEnvelope.httpRequest.resource_type;
       const navigation_transition_type =
         topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;
       const event_ordinal = httpRequestEnvelope.httpRequest.event_ordinal;
 
-      // console.debug("* extractYouTubeNavigationsFromNavigationBatch debug:", {url, referrer, navigation_transition_type, resource_type});
+      // console.debug("* extractYouTubeNavigationsFromNavigationBatch debug:", {url, referrer_url, navigation_transition_type, resource_type});
 
       // These do not correspond to actual user usage
       if (url.indexOf("prefetch=1") > 0) {
@@ -235,17 +242,15 @@ export class ReportSummarizer {
       let parent_youtube_navigations;
       let parentYouTubeNavigation;
 
-      const how_the_youtube_navigation_likely_was_reached: YouTubeNavigationReachType[] = [];
+      let reach_type: YouTubeNavigationReachType;
       if (i === 0) {
         if (navigation_transition_type === "typed") {
-          how_the_youtube_navigation_likely_was_reached.push(
-            "direct_navigation",
-          );
+          reach_type = "direct_navigation";
         } else if (navigation_transition_type === "reload") {
-          how_the_youtube_navigation_likely_was_reached.push("page_reload");
+          reach_type = "page_reload";
         }
 
-        // TODO: Check referrer, timing and other transition types
+        // TODO: Check referrer_url, timing and other transition types
         parent_youtube_navigations = youTubeNavigations.slice(0, 5);
         parentYouTubeNavigation = parent_youtube_navigations.slice().pop();
       } else {
@@ -317,19 +322,15 @@ export class ReportSummarizer {
         // console.log({clickedWithinRelated, clickedEndScreenUpNextAutoplayButton, clickedEndScreenCancelUpNextAutoplayButton});
 
         if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
-          how_the_youtube_navigation_likely_was_reached.push(
-            "without_clicking_at_all",
-          );
+          reach_type = "without_clicking_at_all";
         } else if (
           !clickedWithinRelated &&
           !clickedEndScreenUpNextAutoplayButton &&
           !clickedEndScreenCancelUpNextAutoplayButton
         ) {
-          how_the_youtube_navigation_likely_was_reached.push(
-            "without_clicking_neither_up_next_nor_end_screen",
-          );
+          reach_type = "without_clicking_neither_up_next_nor_end_screen";
         } else {
-          // console.debug({ referrer });
+          // console.debug({ referrer_url });
 
           /*
           const parentYouTubeNavigationOutgoingLinkCategories = Object.keys(
@@ -354,9 +355,7 @@ export class ReportSummarizer {
             clickedWithinRelated &&
             parentWatchNextColumnIncludesThisVideoId
           ) {
-            how_the_youtube_navigation_likely_was_reached.push(
-              "watch_next_column",
-            );
+            reach_type = "watch_next_column";
           }
 
           let parentWatchNextEndScreenIncludesThisVideoId;
@@ -372,9 +371,7 @@ export class ReportSummarizer {
             clickedEndScreenUpNextAutoplayButton &&
             parentWatchNextEndScreenIncludesThisVideoId
           ) {
-            how_the_youtube_navigation_likely_was_reached.push(
-              "watch_next_end_screen",
-            );
+            reach_type = "watch_next_end_screen";
           }
         }
       }
@@ -384,9 +381,13 @@ export class ReportSummarizer {
         tab_active_dwell_time_at_navigation:
           topFrameNavigationBatch.navigationEnvelope.tabActiveDwellTime,
         url,
-        referrer,
+        referrer_url,
         parent_youtube_navigations,
-        how_the_youtube_navigation_likely_was_reached,
+        youtube_visit_metadata: {
+          url_type,
+          referrer_url_type,
+          reach_type,
+        },
         window_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.window_id,
         tab_id: topFrameNavigationBatch.navigationEnvelope.navigation.tab_id,
@@ -693,18 +694,18 @@ export class ReportSummarizer {
     }
     const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
     // console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
-    const how_this_and_recent_youtube_navigations_likely_were_reached = [
-      mostRecentYouTubeNavigation.how_the_youtube_navigation_likely_was_reached,
+    const youtube_browsing_history_metadata = [
+      mostRecentYouTubeNavigation.youtube_visit_metadata,
     ];
-    how_this_and_recent_youtube_navigations_likely_were_reached.push(
+    youtube_browsing_history_metadata.push(
       ...mostRecentYouTubeNavigation.parent_youtube_navigations.map(
-        pyn => pyn.how_the_youtube_navigation_likely_was_reached,
+        pyn => pyn.youtube_visit_metadata,
       ),
     );
     return {
       regretted_youtube_navigation_video_metadata:
         mostRecentYouTubeNavigation.video_metadata,
-      how_this_and_recent_youtube_navigations_likely_were_reached,
+      youtube_browsing_history_metadata,
     };
   }
 }

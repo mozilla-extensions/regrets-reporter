@@ -1,9 +1,13 @@
 import { assert } from "chai";
-import { ReportSummarizer } from "./ReportSummarizer";
+import {
+  ReportSummarizer,
+  YouTubeNavigationReachType,
+} from "./ReportSummarizer";
 import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo";
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 import { youtubeVisitMainPageAndBrowseAround } from "./fixtures/ReportSummarizer/youtubeVisitMainPageAndBrowseAround";
 import { youtubeVisitWatchPageAndInteractWithEndScreens } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndInteractWithEndScreens";
+import { YouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
 
 describe("ReportSummarizer", function() {
   it("should exist", async function() {
@@ -40,15 +44,17 @@ describe("ReportSummarizer", function() {
 
     // console.dir({ youTubeNavigations }, { depth: 5 });
 
-    assert.deepEqual(
-      youTubeNavigations[0].how_the_youtube_navigation_likely_was_reached,
-      ["direct_navigation"],
-    );
+    assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
+      reach_type: "direct_navigation",
+      url_type: "other_page",
+      referrer_url_type: "other_page",
+    });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
-    assert.deepEqual(
-      youTubeNavigations[1].how_the_youtube_navigation_likely_was_reached,
-      ["watch_next_column"],
-    );
+    assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
+      reach_type: "watch_next_column",
+      url_type: "other_page",
+      referrer_url_type: "other_page",
+    });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
@@ -64,8 +70,12 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 4173534,
         view_count_at_navigation_short: "4.1M views",
       },
-      how_this_and_recent_youtube_navigations_likely_were_reached: [
-        ["direct_navigation"],
+      youtube_browsing_history_metadata: [
+        {
+          reach_type: "direct_navigation",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
       ],
     });
 
@@ -81,9 +91,17 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 86023815,
         view_count_at_navigation_short: "86M views",
       },
-      how_this_and_recent_youtube_navigations_likely_were_reached: [
-        ["watch_next_column"],
-        ["direct_navigation"],
+      youtube_browsing_history_metadata: [
+        {
+          reach_type: "watch_next_column",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
+        {
+          reach_type: "direct_navigation",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
       ],
     });
   });
@@ -102,15 +120,17 @@ describe("ReportSummarizer", function() {
 
     // console.dir({ youTubeNavigations }, { depth: 5 });
 
-    assert.deepEqual(
-      youTubeNavigations[0].how_the_youtube_navigation_likely_was_reached,
-      ["direct_navigation"],
-    );
+    assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
+      reach_type: "direct_navigation",
+      url_type: "other_page",
+      referrer_url_type: "other_page",
+    });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
-    assert.deepEqual(
-      youTubeNavigations[1].how_the_youtube_navigation_likely_was_reached,
-      ["watch_next_end_screen"],
-    );
+    assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
+      reach_type: "watch_next_end_screen",
+      url_type: "other_page",
+      referrer_url_type: "other_page",
+    });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
@@ -126,8 +146,12 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 339321,
         view_count_at_navigation_short: "339K views",
       },
-      how_this_and_recent_youtube_navigations_likely_were_reached: [
-        ["direct_navigation"],
+      youtube_browsing_history_metadata: [
+        {
+          reach_type: "direct_navigation",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
       ],
     });
 
@@ -144,9 +168,17 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 2423769,
         view_count_at_navigation_short: "2.4M views",
       },
-      how_this_and_recent_youtube_navigations_likely_were_reached: [
-        ["watch_next_end_screen"],
-        ["direct_navigation"],
+      youtube_browsing_history_metadata: [
+        {
+          reach_type: "watch_next_end_screen",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
+        {
+          reach_type: "direct_navigation",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
       ],
     });
   });
@@ -165,15 +197,17 @@ describe("ReportSummarizer", function() {
 
     // console.dir({ youTubeNavigations }, { depth: 5 });
 
-    assert.deepEqual(
-      youTubeNavigations[0].how_the_youtube_navigation_likely_was_reached,
-      ["direct_navigation"],
-    );
+    assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
+      reach_type: "watch_next_column",
+      url_type: "other_page",
+      referrer_url_type: "other_page",
+    });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
-    assert.deepEqual(
-      youTubeNavigations[1].how_the_youtube_navigation_likely_was_reached,
-      ["watch_next_column"],
-    );
+    assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
+      reach_type: "watch_next_column",
+      url_type: "other_page",
+      referrer_url_type: "other_page",
+    });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
@@ -189,8 +223,12 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 265681,
         view_count_at_navigation_short: "265K views",
       },
-      how_this_and_recent_youtube_navigations_likely_were_reached: [
-        ["direct_navigation"],
+      youtube_browsing_history_metadata: [
+        {
+          reach_type: "direct_navigation",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
       ],
     });
 
@@ -199,9 +237,17 @@ describe("ReportSummarizer", function() {
     );
     assert.deepEqual(regretReport2, {
       regretted_youtube_navigation_video_metadata: undefined,
-      how_this_and_recent_youtube_navigations_likely_were_reached: [
-        ["search_action"],
-        ["direct_navigation"],
+      youtube_browsing_history_metadata: [
+        {
+          reach_type: "search_action",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
+        {
+          reach_type: "direct_navigation",
+          url_type: "other_page",
+          referrer_url_type: "other_page",
+        },
       ],
     });
   });
