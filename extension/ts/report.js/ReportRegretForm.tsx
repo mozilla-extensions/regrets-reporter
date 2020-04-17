@@ -170,16 +170,29 @@ export class ReportRegretForm extends Component<
     }
     if (this.state.reported) {
       return (
-        <header className="panel-section panel-section-header">
-          <div className="icon-section-header">
-            <img
-              src="../icons/green-extensionsicon.svg"
-              width="32"
-              height="32"
-            />
-          </div>
-          <div className="text-section-header text-nowrap">Thank you!</div>
-        </header>
+        <>
+          <header className="panel-section panel-section-header">
+            <div className="icon-section-header">
+              <img
+                src="../icons/green-extensionsicon.svg"
+                width="32"
+                height="32"
+              />
+            </div>
+            <div className="text-section-header text-nowrap">Thank you!</div>
+          </header>
+          <div className="panel-section panel-section-formElements">
+            <span>
+              We greatly appreciate your contribution! (This panel will close
+              automatically)
+            </span>
+          </div>{" "}
+          <footer className="panel-section panel-section-footer">
+            <div onClick={this.cancel} className="panel-section-footer-button">
+              Close
+            </div>
+          </footer>
+        </>
       );
     }
     return (
