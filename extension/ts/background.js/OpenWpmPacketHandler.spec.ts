@@ -38,6 +38,6 @@ describe("OpenWpmPacketHandler", function() {
       [navigationUuid: string]: TrimmedNavigationBatch;
     } = trimNavigationBatches(reportSummarizer, {});
 
-    console.log({ trimmedNavigationBatchesByUuid });
+    // console.log({ trimmedNavigationBatchesByUuid });
   });
 });
