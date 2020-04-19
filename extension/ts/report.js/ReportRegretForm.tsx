@@ -333,9 +333,7 @@ export class ReportRegretForm extends Component<
                                 {index === 0 &&
                                   youtubeVisitMetadata.referrer_url_type !==
                                     "empty" && (
-                                    <li
-                                      className="inline"
-                                    >
+                                    <li className="inline">
                                       {
                                         youTubeNavigationUrlTypeLabels[
                                           youtubeVisitMetadata.referrer_url_type
@@ -343,18 +341,14 @@ export class ReportRegretForm extends Component<
                                       }
                                     </li>
                                   )}
-                                <li
-                                  className="inline"
-                                >
+                                <li className="inline">
                                   {
                                     youTubeNavigationReachTypeLabels[
                                       youtubeVisitMetadata.reach_type
                                     ]
                                   }
                                 </li>
-                                <li
-                                  className="inline"
-                                >
+                                <li className="inline">
                                   {index ===
                                   this.state.regretReportData
                                     .youtube_browsing_history_metadata.length -
@@ -527,20 +521,17 @@ export class ReportRegretForm extends Component<
             >
               Privacy Policy
             </Link>
-            . <br/>
-            More information: {" "}
+            . <br />
+            More information:{" "}
             <Link
               className="inline"
               target="_blank"
               href={browser.runtime.getURL(`consent-form/consent-form.html`)}
             >
               The YouTube Regrets study
-            </Link>{" | "}
-            <Link
-              className="inline"
-              target="_blank"
-              href={"about:blank"}
-            >
+            </Link>
+            {" | "}
+            <Link className="inline" target="_blank" href={"about:blank"}>
               Submit Feedback
             </Link>{" "}
             {/*
