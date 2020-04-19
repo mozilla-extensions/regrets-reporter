@@ -8,6 +8,10 @@ import {
   classifyYouTubeNavigationUrlType,
   YouTubeNavigationUrlType,
 } from "./lib/youTubeNavigationUrlType";
+import {
+  YouTubeUsageStatistics,
+  YouTubeUsageStatisticsUpdate,
+} from "./YouTubeUsageStatistics";
 
 type YouTubeNavigationLinkPosition =
   | "search_results"
@@ -69,9 +73,14 @@ export interface YouTubeNavigation {
   event_ordinal: number;
 }
 
-export interface RegretReportData {
+export interface YouTubeNavigationSpecificRegretReportData {
   video_metadata: VideoMetadata;
   how_the_video_was_reached: YoutubeVisitMetadata[];
+}
+
+export interface RegretReportData
+  extends YouTubeNavigationSpecificRegretReportData {
+  youtube_usage_statistics_update: YouTubeUsageStatisticsUpdate;
 }
 
 export interface RegretReport {
@@ -690,12 +699,12 @@ export class ReportSummarizer {
     };
   }
 
-  async regretReportDataFromYouTubeNavigations(
+  async youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
     youTubeNavigations: YouTubeNavigation[],
     windowId,
     tabId,
     skipWindowAndTabIdFilter = false,
-  ): Promise<RegretReportData> {
+  ): Promise<YouTubeNavigationSpecificRegretReportData> {
     if (youTubeNavigations.length === 0) {
       throw new Error("No YouTube navigations captured yet");
     }

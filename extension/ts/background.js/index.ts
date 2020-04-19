@@ -8,7 +8,11 @@ import {
   NavigationInstrument,
   UserInteractionInstrument,
 } from "@openwpm/webext-instrumentation";
-import { RegretReport, ReportSummarizer } from "./ReportSummarizer";
+import {
+  RegretReport,
+  RegretReportData,
+  ReportSummarizer,
+} from "./ReportSummarizer";
 import { triggerClientDownloadOfData } from "./lib/triggerClientDownloadOfData";
 import {
   NavigationBatch,
@@ -156,12 +160,17 @@ class ExtensionGlue {
               openWpmPacketHandler.navigationBatchPreprocessor
                 .navigationBatchesByNavigationUuid,
             );
-            const regretReportData = await reportSummarizer.regretReportDataFromYouTubeNavigations(
+            const youTubeNavigationSpecificRegretReportData = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
               youTubeNavigations,
               windowId,
               tabId,
               skipWindowAndTabIdFilter,
             );
+            const youtube_usage_statistics_update = await youTubeUsageStatistics.summarizeUpdate();
+            const regretReportData: RegretReportData = {
+              ...youTubeNavigationSpecificRegretReportData,
+              youtube_usage_statistics_update,
+            };
             portFromContentScript.postMessage({
               regretReportData,
             });
