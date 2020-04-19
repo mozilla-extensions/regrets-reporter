@@ -62,6 +62,7 @@ export interface YouTubeNavigation {
   referrer_url: undefined | string | FailedStringAttribute;
   parent_youtube_navigations: YouTubeNavigation[];
   youtube_visit_metadata: YoutubeVisitMetadata;
+  time_stamp: string;
   window_id: number;
   tab_id: number;
   frame_id: number;
@@ -388,6 +389,9 @@ export class ReportSummarizer {
           referrer_url_type,
           reach_type,
         },
+        time_stamp:
+          topFrameNavigationBatch.navigationEnvelope.navigation
+            .committed_time_stamp,
         window_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.window_id,
         tab_id: topFrameNavigationBatch.navigationEnvelope.navigation.tab_id,

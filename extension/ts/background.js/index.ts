@@ -23,7 +23,10 @@ import { getCurrentTab } from "./lib/getCurrentTab";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const store = new Store(localStorageWrapper);
-const youTubeUsageStatistics = new YouTubeUsageStatistics(store);
+const youTubeUsageStatistics = new YouTubeUsageStatistics(
+  store,
+  reportSummarizer,
+);
 const dataSharer = new DataSharer(store);
 
 class ExtensionGlue {
