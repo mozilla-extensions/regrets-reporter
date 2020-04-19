@@ -123,7 +123,7 @@ export class ReportRegretForm extends Component<
         if (m.regretReportData) {
           const { regretReportData } = m;
           console.log("Regret form received report data", { regretReportData });
-          const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.regretted_youtube_navigation_video_metadata.video_id}/mqdefault.jpg`;
+          const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.video_metadata.video_id}/mqdefault.jpg`;
           await this.setState({
             videoThumbUrl,
             regretReportData,
@@ -296,22 +296,16 @@ export class ReportRegretForm extends Component<
                     </div>
                     <div className="mb-4 mt-1">
                       <h4 className="text-md font-medium text-sm overflow-y-auto h-5">
-                        {
-                          this.state.regretReportData
-                            .regretted_youtube_navigation_video_metadata
-                            .video_title
-                        }
+                        {this.state.regretReportData.video_metadata.video_title}
                       </h4>
                       <p className="mt-1 font-hairline text-sm text-grey-darker text-sm overflow-y-auto h-5">
                         {
-                          this.state.regretReportData
-                            .regretted_youtube_navigation_video_metadata
+                          this.state.regretReportData.video_metadata
                             .view_count_at_navigation_short
                         }{" "}
                         ·{" "}
                         {
-                          this.state.regretReportData
-                            .regretted_youtube_navigation_video_metadata
+                          this.state.regretReportData.video_metadata
                             .video_posting_date
                         }
                       </p>
@@ -321,7 +315,7 @@ export class ReportRegretForm extends Component<
                         How you arrived at this video:
                       </label>
                       <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-14">
-                        {this.state.regretReportData.youtube_browsing_history_metadata
+                        {this.state.regretReportData.how_the_video_was_reached
                           .slice()
                           .reverse()
                           .map(
@@ -351,7 +345,7 @@ export class ReportRegretForm extends Component<
                                 <li className="inline">
                                   {index ===
                                   this.state.regretReportData
-                                    .youtube_browsing_history_metadata.length -
+                                    .how_the_video_was_reached.length -
                                     1
                                     ? "This Video"
                                     : youTubeNavigationUrlTypeLabels[

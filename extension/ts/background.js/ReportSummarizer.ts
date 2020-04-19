@@ -70,8 +70,8 @@ export interface YouTubeNavigation {
 }
 
 export interface RegretReportData {
-  regretted_youtube_navigation_video_metadata: VideoMetadata;
-  youtube_browsing_history_metadata: YoutubeVisitMetadata[];
+  video_metadata: VideoMetadata;
+  how_the_video_was_reached: YoutubeVisitMetadata[];
 }
 
 export interface RegretReport {
@@ -717,18 +717,17 @@ export class ReportSummarizer {
       );
     }
     // console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
-    const youtube_browsing_history_metadata = [
+    const how_the_video_was_reached = [
       mostRecentYouTubeNavigation.youtube_visit_metadata,
     ];
-    youtube_browsing_history_metadata.push(
+    how_the_video_was_reached.push(
       ...mostRecentYouTubeNavigation.parent_youtube_navigations.map(
         pyn => pyn.youtube_visit_metadata,
       ),
     );
     return {
-      regretted_youtube_navigation_video_metadata:
-        mostRecentYouTubeNavigation.video_metadata,
-      youtube_browsing_history_metadata,
+      video_metadata: mostRecentYouTubeNavigation.video_metadata,
+      how_the_video_was_reached,
     };
   }
 }
