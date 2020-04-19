@@ -8,7 +8,7 @@ import {
   NavigationInstrument,
   UserInteractionInstrument,
 } from "@openwpm/webext-instrumentation";
-import { ReportSummarizer } from "./ReportSummarizer";
+import { RegretReport, ReportSummarizer } from "./ReportSummarizer";
 import { triggerClientDownloadOfData } from "./lib/triggerClientDownloadOfData";
 import {
   NavigationBatch,
@@ -19,6 +19,7 @@ import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
 import { DataSharer } from "./DataSharer";
 import { Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";
+import { getCurrentTab } from "./lib/getCurrentTab";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const store = new Store(localStorageWrapper);
@@ -112,11 +113,8 @@ class ExtensionGlue {
     browser.tabs.onUpdated.addListener(showPageActionOnWatchPagesOnly);
 
     // Make the page action show on watch pages also in case extension is loaded/reloaded while on one
-    const activeTabs = await browser.tabs.query({
-      active: true,
-    });
-    if (activeTabs.length > 0) {
-      const currentTab = activeTabs[0];
+    const currentTab = await getCurrentTab();
+    if (currentTab) {
       showPageActionOnWatchPagesOnly(currentTab.id, null, currentTab);
     }
 
@@ -127,7 +125,14 @@ class ExtensionGlue {
         return;
       }
       portFromContentScript = p;
-      portFromContentScript.onMessage.addListener(async function(m) {
+      portFromContentScript.onMessage.addListener(async function(m: {
+        regretReport?: RegretReport;
+        requestRegretReportData?: {
+          windowId: number;
+          tabId: number;
+          skipWindowAndTabIdFilter?: boolean;
+        };
+      }) {
         console.log("Message from report-regret-form script:", { m });
         if (m.regretReport) {
           const { regretReport } = m;
@@ -138,6 +143,11 @@ class ExtensionGlue {
         // The report form has triggered a report-related data collection
         if (m.requestRegretReportData) {
           try {
+            const {
+              windowId,
+              tabId,
+              skipWindowAndTabIdFilter,
+            } = m.requestRegretReportData;
             await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
             const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
               openWpmPacketHandler.navigationBatchPreprocessor
@@ -145,6 +155,9 @@ class ExtensionGlue {
             );
             const regretReportData = await reportSummarizer.regretReportDataFromYouTubeNavigations(
               youTubeNavigations,
+              windowId,
+              tabId,
+              skipWindowAndTabIdFilter,
             );
             portFromContentScript.postMessage({
               regretReportData,

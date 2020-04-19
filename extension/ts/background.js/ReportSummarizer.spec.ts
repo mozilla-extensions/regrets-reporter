@@ -4,6 +4,30 @@ import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixture
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 import { youtubeVisitMainPageAndBrowseAround } from "./fixtures/ReportSummarizer/youtubeVisitMainPageAndBrowseAround";
 import { youtubeVisitWatchPageAndInteractWithEndScreens } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndInteractWithEndScreens";
+import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
+
+const firstEncounteredWindowAndTabIds = (navigationBatchesByUuid: {
+  [navigationUuid: string]: TrimmedNavigationBatch;
+}) => {
+  const firstNavigationBatchWithWindowAndTabIdUuid = Object.keys(
+    navigationBatchesByUuid,
+  ).find(
+    navUuid =>
+      !!navigationBatchesByUuid[navUuid].navigationEnvelope.navigation
+        .window_id &&
+      !!navigationBatchesByUuid[navUuid].navigationEnvelope.navigation.tab_id,
+  );
+  const firstNavigationBatchWithWindowAndTabId =
+    navigationBatchesByUuid[firstNavigationBatchWithWindowAndTabIdUuid];
+  return {
+    windowId:
+      firstNavigationBatchWithWindowAndTabId.navigationEnvelope.navigation
+        .window_id,
+    tabId:
+      firstNavigationBatchWithWindowAndTabId.navigationEnvelope.navigation
+        .tab_id,
+  };
+};
 
 describe("ReportSummarizer", function() {
   it("should exist", async function() {
@@ -13,8 +37,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo", async function() {
     const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo;
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-      youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo,
+      fixture,
     );
 
     assert.equal(
@@ -24,12 +49,38 @@ describe("ReportSummarizer", function() {
     );
 
     // console.dir({ youTubeNavigations }, { depth: 5 });
+
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
+    const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
+    );
+    assert.deepEqual(regretReport1, {
+      regretted_youtube_navigation_video_metadata: {
+        video_id: "g4mHPeMGTJM",
+        video_title: "10 hours of absolute silence (the original)",
+        video_description:
+          "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+        video_posting_date: "Sep 20, 2011",
+        view_count_at_navigation: 4173530,
+        view_count_at_navigation_short: "4.1M views",
+      },
+      youtube_browsing_history_metadata: [
+        {
+          reach_type: "page_reload",
+          url_type: "watch_page",
+          referrer_url_type: "empty",
+        },
+      ],
+    });
   });
 
   it("fixture: youtubeVisitWatchPageAndNavigateToFirstUpNext", async function() {
     const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitWatchPageAndNavigateToFirstUpNext;
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-      youtubeVisitWatchPageAndNavigateToFirstUpNext,
+      fixture,
     );
 
     assert.equal(
@@ -53,8 +104,11 @@ describe("ReportSummarizer", function() {
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
     );
     assert.deepEqual(regretReport1, {
       regretted_youtube_navigation_video_metadata: {
@@ -75,8 +129,11 @@ describe("ReportSummarizer", function() {
       ],
     });
 
+    const windowAndTabIds2 = firstEncounteredWindowAndTabIds(fixture);
     const regretReport2 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 2),
+      windowAndTabIds2.windowId,
+      windowAndTabIds2.tabId,
     );
     assert.deepEqual(regretReport2, {
       regretted_youtube_navigation_video_metadata: {
@@ -104,8 +161,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageAndInteractWithEndScreens", async function() {
     const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitWatchPageAndInteractWithEndScreens;
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-      youtubeVisitWatchPageAndInteractWithEndScreens,
+      fixture,
     );
 
     assert.equal(
@@ -129,8 +187,11 @@ describe("ReportSummarizer", function() {
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
     );
     assert.deepEqual(regretReport1, {
       regretted_youtube_navigation_video_metadata: {
@@ -151,8 +212,11 @@ describe("ReportSummarizer", function() {
       ],
     });
 
+    const windowAndTabIds2 = firstEncounteredWindowAndTabIds(fixture);
     const regretReport2 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 2),
+      windowAndTabIds2.windowId,
+      windowAndTabIds2.tabId,
     );
     assert.deepEqual(regretReport2, {
       regretted_youtube_navigation_video_metadata: {
@@ -181,8 +245,9 @@ describe("ReportSummarizer", function() {
 
   it.skip("fixture: youtubeVisitMainPageAndBrowseAround", async function() {
     const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitMainPageAndBrowseAround;
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-      youtubeVisitMainPageAndBrowseAround,
+      fixture,
     );
 
     assert.equal(
@@ -206,8 +271,11 @@ describe("ReportSummarizer", function() {
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
     const regretReport1 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
     );
     assert.deepEqual(regretReport1, {
       regretted_youtube_navigation_video_metadata: {
@@ -228,8 +296,11 @@ describe("ReportSummarizer", function() {
       ],
     });
 
+    const windowAndTabIds2 = firstEncounteredWindowAndTabIds(fixture);
     const regretReport2 = await reportSummarizer.regretReportDataFromYouTubeNavigations(
       youTubeNavigations.slice(0, 2),
+      windowAndTabIds2.windowId,
+      windowAndTabIds2.tabId,
     );
     assert.deepEqual(regretReport2, {
       regretted_youtube_navigation_video_metadata: undefined,

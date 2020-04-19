@@ -24,6 +24,7 @@ import {
 } from "react-icons/all";
 import { DisplayError } from "../shared-react-resources/DisplayError";
 import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
+import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 
 const youTubeNavigationReachTypeLabels: {
   [k in YouTubeNavigationReachType]: string;
@@ -86,15 +87,31 @@ export class ReportRegretForm extends Component<
 
   private backgroundContextPort: Port;
 
-  componentDidMount(): void {
+  async componentDidMount(): Promise<void> {
     // console.log("Connecting to the background script");
     this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
       name: "port-from-report-regret-form",
     });
 
     // Send a request to gather the report data
+    const currentTab = await getCurrentTab();
+    let skipWindowAndTabIdFilter = false;
+    if (
+      typeof window !== "undefined" &&
+      window.location &&
+      window.location.search
+    ) {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("skipWindowAndTabIdFilter")) {
+        skipWindowAndTabIdFilter = true;
+      }
+    }
     this.backgroundContextPort.postMessage({
-      requestRegretReportData: true,
+      requestRegretReportData: {
+        windowId: currentTab.windowId,
+        tabId: currentTab.id,
+        skipWindowAndTabIdFilter,
+      },
     });
 
     // When we have received report data, update state that summarizes it
@@ -530,7 +547,7 @@ export class ReportRegretForm extends Component<
             <a
               className="link inline"
               target="_blank"
-              href="./report-regret.html"
+              href="./report-regret.html?skipWindowAndTabIdFilter=1"
             >
               Debug
             </a>

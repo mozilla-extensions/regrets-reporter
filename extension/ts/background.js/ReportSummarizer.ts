@@ -688,11 +688,30 @@ export class ReportSummarizer {
 
   async regretReportDataFromYouTubeNavigations(
     youTubeNavigations: YouTubeNavigation[],
+    windowId,
+    tabId,
+    skipWindowAndTabIdFilter = false,
   ): Promise<RegretReportData> {
     if (youTubeNavigations.length === 0) {
       throw new Error("No YouTube navigations captured yet");
     }
-    const mostRecentYouTubeNavigation = youTubeNavigations.slice().pop();
+    const matchingYouTubeNavigations = youTubeNavigations.filter(
+      youTubeNavigation =>
+        youTubeNavigation.window_id === windowId &&
+        youTubeNavigation.tab_id === tabId,
+    );
+    // Allows for the report form to be displayed in a separate tab for debugging purposes
+    if (skipWindowAndTabIdFilter) {
+      matchingYouTubeNavigations.push(...youTubeNavigations);
+    }
+    const mostRecentYouTubeNavigation = matchingYouTubeNavigations
+      .slice()
+      .pop();
+    if (!mostRecentYouTubeNavigation) {
+      throw new Error(
+        `No YouTube navigations matching window id ${windowId}, tab id ${tabId} captured yet`,
+      );
+    }
     // console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
     const youtube_browsing_history_metadata = [
       mostRecentYouTubeNavigation.youtube_visit_metadata,

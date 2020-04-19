@@ -19,7 +19,7 @@
 From the background context:
 
 ```javascript
-browser.runtime.getURL(`popup/report-regret.html`);
+browser.runtime.getURL(`popup/report-regret.html?skipWindowAndTabIdFilter=1`);
 ```
 
 ```javascript
