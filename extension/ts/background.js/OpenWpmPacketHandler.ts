@@ -34,10 +34,10 @@ export class OpenWpmPacketHandler {
   // To be able to pause and resume data collection
   public active = true;
 
-  constructor() {
+  constructor(activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor) {
     // Setup active dwell time monitor singleton
     // (used to annotate received tab-relevant data packets)
-    this.activeTabDwellTimeMonitor = new ActiveTabDwellTimeMonitor();
+    this.activeTabDwellTimeMonitor = activeTabDwellTimeMonitor;
 
     // Setup study payload processor singleton
     this.navigationBatchPreprocessor = new NavigationBatchPreprocessor();

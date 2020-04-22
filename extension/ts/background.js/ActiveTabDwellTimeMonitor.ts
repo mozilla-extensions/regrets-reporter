@@ -1,6 +1,9 @@
 /**
  * Monitors active dwell time of all opened/activated tabs
  */
+import { Tabs } from "webextension-polyfill-ts";
+import Tab = Tabs.Tab;
+
 export class ActiveTabDwellTimeMonitor {
   private tabActiveDwellTimes = {};
   private interval;
@@ -22,13 +25,17 @@ export class ActiveTabDwellTimeMonitor {
         active: true,
       });
       activeNonPrivateTabsInTheCurrentWindow.map(tab => {
-        if (this.tabActiveDwellTimes[tab.id] === undefined) {
-          this.tabActiveDwellTimes[tab.id] = intervalMs;
-        } else {
-          this.tabActiveDwellTimes[tab.id] += intervalMs;
-        }
+        this.tabActiveDwellTimeIncrement(tab, intervalMs);
       });
     }, intervalMs);
+  }
+
+  public tabActiveDwellTimeIncrement(tab: Tab, intervalMs: number) {
+    if (this.tabActiveDwellTimes[tab.id] === undefined) {
+      this.tabActiveDwellTimes[tab.id] = intervalMs;
+    } else {
+      this.tabActiveDwellTimes[tab.id] += intervalMs;
+    }
   }
 
   public getTabActiveDwellTime(tabId) {

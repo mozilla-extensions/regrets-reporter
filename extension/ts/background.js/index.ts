@@ -24,12 +24,17 @@ import { DataSharer } from "./DataSharer";
 import { Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";
 import { getCurrentTab } from "./lib/getCurrentTab";
-const openWpmPacketHandler = new OpenWpmPacketHandler();
+import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
+const activeTabDwellTimeMonitor = new ActiveTabDwellTimeMonitor();
+const openWpmPacketHandler = new OpenWpmPacketHandler(
+  activeTabDwellTimeMonitor,
+);
 const reportSummarizer = new ReportSummarizer();
 const store = new Store(localStorageWrapper);
 const youTubeUsageStatistics = new YouTubeUsageStatistics(
   store,
   reportSummarizer,
+  activeTabDwellTimeMonitor,
 );
 const dataSharer = new DataSharer(store);
 
