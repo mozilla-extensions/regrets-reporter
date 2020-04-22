@@ -116,6 +116,7 @@
     "test:unit:mocha": "mocha -r ts-node/register -r sinon/pkg/sinon -r ./test/crypto-polyfill.ts -r ./test/document-polyfill.ts --globals global ts/\\*\\*/\\*.spec.ts",
     "watch": "concurrently 'webpack --watch' 'web-ext run'",
     "webext-instrumentation:build": "cd node_modules/@openwpm/webext-instrumentation && npm run build && cd -",
-    "webext-instrumentation:submodule-rsync": "rsync -r -t -p -o -g -x --stats --delete -l -D ../instrumentation/OpenWPM/automation/Extension/webext-instrumentation/ node_modules/@openwpm/webext-instrumentation/"
+    "webext-instrumentation:submodule-rsync": "rsync -r -t -p -o -g -x --stats --delete -l -D ../instrumentation/OpenWPM/automation/Extension/webext-instrumentation/ node_modules/@openwpm/webext-instrumentation/",
+    "webpack:stats": "webpack --profile --json > stats.json"
   }
 }

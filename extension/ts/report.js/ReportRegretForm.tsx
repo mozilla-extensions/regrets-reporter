@@ -21,7 +21,7 @@ import {
   MdSentimentDissatisfied,
   MdSentimentNeutral,
   MdSentimentVeryDissatisfied,
-} from "react-icons/all";
+} from "react-icons/md";
 import { DisplayError } from "../shared-react-resources/DisplayError";
 import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
