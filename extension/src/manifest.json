@@ -11,7 +11,7 @@
       "strict_min_version": "67.0a1"
     }
   },
-  "default_locale": "en-US",
+  "default_locale": "en_US",
   "background": {
     "scripts": ["background.js"]
   },
