@@ -6,9 +6,8 @@ src/*content-script.js
 src/background.js
 src/report.js
 src/consent-form.js
-# don't lint third party resources
-src/popup/photon-components-web.css
-src/popup/tailwind.min.css
+stats.json
+yarn-error.log
 # makes sure that eslintrc.js gets linted/formatted
 !.eslintrc.js
 # don't lint/format code the directory where get-firefox stores the Firefox binaries

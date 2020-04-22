@@ -7,3 +7,5 @@ src/consent-form.js
 .env
 test/results/coverage
 /firefox-*
+stats.json
+yarn-error.log
