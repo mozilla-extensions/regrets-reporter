@@ -19,13 +19,14 @@ export const classifyYouTubeNavigationUrlType = (
   }
   const miscXhrRequestStartWiths = [
     "https://www.youtube.com/comment_service_ajax",
-    "https://www.youtube.com/youtubei/v1/log_event",
     "https://www.youtube.com/get_video_info",
     "https://www.youtube.com/get_midroll_info",
     "https://www.youtube.com/api/stats",
+    "https://www.youtube.com/youtubei/v1/log_event",
     "https://www.youtube.com/youtubei/v1/guide",
     "https://www.youtube.com/youtubei/v1/feedback",
     "https://www.youtube.com/youtubei/v1/related_ajax",
+    "https://www.youtube.com/youtubei/v1/notification/get_unseen_count",
     "https://www.youtube.com/error_204",
     "https://www.youtube.com/notifications_ajax",
     "https://www.youtube.com/yts/",
