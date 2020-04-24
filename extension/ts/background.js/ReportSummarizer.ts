@@ -296,6 +296,7 @@ export class ReportSummarizer {
             clickEventEnvelopesForParentYouTubeNavigation,
             parentYouTubeNavigation,
             youtubePageMetadata,
+            url_type,
           );
         } else {
           reach_type = "unspecified_navigation";
@@ -640,6 +641,7 @@ export class ReportSummarizer {
     clickEventEnvelopesForParentYouTubeNavigation: OpenWpmPayloadEnvelope[],
     parentYouTubeNavigation: YouTubeNavigation,
     youtubePageMetadata: YoutubePageMetadata,
+    url_type: YouTubeNavigationUrlType,
   ): YouTubeNavigationReachType {
     let clickedWithinRelated = false;
     let clickedEndScreenUpNextAutoplayButton = false;
@@ -706,6 +708,8 @@ export class ReportSummarizer {
 
       let parentWatchNextColumnIncludesThisVideoId;
       if (
+        url_type === "watch_page" &&
+        youtubePageMetadata.video_metadata &&
         parentYouTubeNavigation.outgoing_video_ids_by_category.watch_next_column
       ) {
         parentWatchNextColumnIncludesThisVideoId = parentYouTubeNavigation.outgoing_video_ids_by_category.watch_next_column.includes(
@@ -726,6 +730,7 @@ export class ReportSummarizer {
         );
       }
       if (
+        url_type === "watch_page" &&
         clickedEndScreenUpNextAutoplayButton &&
         parentWatchNextEndScreenIncludesThisVideoId
       ) {
