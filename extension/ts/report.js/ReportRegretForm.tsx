@@ -49,6 +49,7 @@ const youTubeNavigationUrlTypeLabels: {
 } = {
   search_results_page: "Search Results",
   watch_page: "Video Page",
+  user_page: "User Page",
   channel_page: "Channel Page",
   other_page: "Other Page",
   youtube_main_page: "YouTube.com",
