@@ -203,8 +203,15 @@ class ExtensionGlue {
     openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
       navigationBatch: NavigationBatch,
     ): Promise<TrimmedNavigationBatch> => {
-      // Keep track of aggregated statistics
-      await youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
+      try {
+        // Keep track of aggregated statistics
+        await youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
+      } catch (error) {
+        console.error(
+          "Error encountered during youTubeUsageStatistics.seenNavigationBatch",
+          error,
+        );
+      }
 
       // trim away irrelevant parts of the batch (decreases memory usage)
       // TODO
