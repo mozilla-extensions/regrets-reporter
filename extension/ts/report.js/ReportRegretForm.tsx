@@ -171,9 +171,11 @@ export class ReportRegretForm extends Component<
       regretReport,
     });
     this.setState({ reported: true });
+    /*
     setTimeout(() => {
       window.close();
     }, 2500);
+    */
   };
 
   handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
@@ -213,12 +215,15 @@ export class ReportRegretForm extends Component<
                 height="32"
               />
             </div>
-            <div className="text-section-header text-nowrap">Thank you!</div>
+            <div className="text-section-header text-nowrap">
+              We greatly appreciate your contribution!
+            </div>
           </header>
           <div className="panel-section panel-section-formElements">
             <span>
-              We greatly appreciate your contribution! (This panel will close
-              automatically)
+              If you believe that the content you identified in this submission
+              constitutes abuse under YouTube’s policies, please report it to
+              YouTube via its abuse-reporting platform.
             </span>
           </div>{" "}
           <footer className="panel-section panel-section-footer">
