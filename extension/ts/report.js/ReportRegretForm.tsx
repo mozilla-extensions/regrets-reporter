@@ -367,42 +367,44 @@ export class ReportRegretForm extends Component<
                   <div>
                     <p className="mb-3">
                       <span className="label-bold">
-                        Why do you regret watching the video?
+                        Tell us why you regret watching this content:
                       </span>
                     </p>
                     <ul className="list-none">
                       {[
                         {
-                          value: "racist-sexist-homo-trans-phobic-content",
-                          label: "Racist, sexist, or homo/transphobic content",
+                          value: "offends-me",
+                          label: "This content offends me",
                         },
                         {
-                          value: "sexual-content",
-                          label: "Sexual content",
+                          value: "sexual-in-nature",
+                          label: "This content is sexual in nature",
                         },
                         {
-                          value: "extreme-ideological-content-content",
-                          label: "Extreme ideological content",
+                          value: "extreme-ideological",
+                          label: "This is extreme ideological content",
                         },
                         {
-                          value: "violence-disturbing-content",
-                          label: "Violence/disturbing content",
+                          value: "disturbing",
+                          label: "This content was disturbing to me",
                         },
                         {
-                          value: "conspiracy-theories",
-                          label: "Conspiracy theories",
+                          value: "conspiracy-theory",
+                          label: "This is a conspiracy theory",
                         },
                         {
-                          value: "not-appropriate-for-my-age-group",
-                          label: "Not appropriate for my age group",
+                          value: "intended-for-a-younger-audience",
+                          label:
+                            "This content seems like it’s intended for a younger audience",
                         },
                         {
                           value: "bad-music",
-                          label: "Bad music",
+                          label: "This is bad music",
                         },
                         {
-                          value: "slanderous-content",
-                          label: "Slanderous content",
+                          value: "insulting-towards-another-person",
+                          label:
+                            "This content is insulting towards another person",
                         },
                       ].map(item => (
                         <li key={item.value} className="mb-2">
