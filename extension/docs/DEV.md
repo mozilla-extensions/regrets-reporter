@@ -84,3 +84,11 @@ await triggerClientDownloadOfData(
 ```
 
 Restart the browser before collecting data for a new fixture.
+
+## Creating a signed build of the add-on
+
+After version bumping:
+```
+yarn build:production
+npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
+```
