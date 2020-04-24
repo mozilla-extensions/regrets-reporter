@@ -37,9 +37,9 @@ const youTubeNavigationReachTypeLabels: {
   search_action: "Search action",
   direct_navigation: "Direct visit",
   page_reload: "Page reload",
-  without_clicking_at_all: "Auto-play without any interaction",
-  without_clicking_neither_up_next_nor_end_screen: "Auto-play",
-  "<failed>": "Unknown",
+  from_watch_page_without_clicking_at_all: "Auto-play without any interaction",
+  from_watch_page_without_clicking_neither_up_next_nor_end_screen: "Auto-play",
+  "<failed>": "(Unknown interaction)",
 };
 
 const youTubeNavigationUrlTypeLabels: {
@@ -333,7 +333,9 @@ export class ReportRegretForm extends Component<
                               <React.Fragment key={index}>
                                 {index === 0 &&
                                   youtubeVisitMetadata.referrer_url_type !==
-                                    "empty" && (
+                                    "empty" &&
+                                  youtubeVisitMetadata.reach_type !==
+                                    "page_reload" && (
                                     <li className="inline">
                                       {
                                         youTubeNavigationUrlTypeLabels[

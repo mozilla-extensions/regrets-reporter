@@ -22,8 +22,8 @@ export type YouTubeNavigationReachType =
   | "search_action"
   | "direct_navigation"
   | "page_reload"
-  | "without_clicking_at_all"
-  | "without_clicking_neither_up_next_nor_end_screen"
+  | "from_watch_page_without_clicking_at_all"
+  | "from_watch_page_without_clicking_neither_up_next_nor_end_screen"
   | FailedStringAttribute;
 
 type FailedStringAttribute = "<failed>";
@@ -258,12 +258,12 @@ export class ReportSummarizer {
         }
 
         // TODO: Check referrer_url, timing and other transition types
-        parent_youtube_navigations = youTubeNavigations.slice(0, 5);
-        parentYouTubeNavigation = parent_youtube_navigations.slice().pop();
+        parent_youtube_navigations = youTubeNavigations.slice(0, 5).reverse();
+        parentYouTubeNavigation = parent_youtube_navigations.slice().shift();
       } else {
         // TODO: Only consider those within the same tab
-        parent_youtube_navigations = youTubeNavigations.slice(0, 5);
-        parentYouTubeNavigation = parent_youtube_navigations.slice().pop();
+        parent_youtube_navigations = youTubeNavigations.slice(0, 5).reverse();
+        parentYouTubeNavigation = parent_youtube_navigations.slice().shift();
       }
 
       if (!reach_type && parentYouTubeNavigation) {
@@ -666,13 +666,13 @@ export class ReportSummarizer {
     // console.log({clickedWithinRelated, clickedEndScreenUpNextAutoplayButton, clickedEndScreenCancelUpNextAutoplayButton});
 
     if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
-      return "without_clicking_at_all";
+      return "from_watch_page_without_clicking_at_all";
     } else if (
       !clickedWithinRelated &&
       !clickedEndScreenUpNextAutoplayButton &&
       !clickedEndScreenCancelUpNextAutoplayButton
     ) {
-      return "without_clicking_neither_up_next_nor_end_screen";
+      return "from_watch_page_without_clicking_neither_up_next_nor_end_screen";
     } else {
       // console.debug({ referrer_url });
 
