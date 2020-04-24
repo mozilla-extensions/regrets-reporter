@@ -22,6 +22,7 @@ export type YouTubeNavigationReachType =
   | "search_action"
   | "direct_navigation"
   | "page_reload"
+  | "unspecified_navigation"
   | "from_watch_page_without_clicking_at_all"
   | "from_watch_page_without_clicking_neither_up_next_nor_end_screen"
   | FailedStringAttribute;
@@ -297,7 +298,7 @@ export class ReportSummarizer {
             youtubePageMetadata,
           );
         } else {
-          reach_type = "<failed>";
+          reach_type = "unspecified_navigation";
           console.warn("No reach type is extracted for this url type", {
             url: parentYouTubeNavigation.url,
             url_type: parentYouTubeNavigationUrlType,

@@ -37,8 +37,10 @@ const youTubeNavigationReachTypeLabels: {
   search_action: "Search action",
   direct_navigation: "Direct visit",
   page_reload: "Page reload",
+  unspecified_navigation: "Click",
   from_watch_page_without_clicking_at_all: "Auto-play without any interaction",
-  from_watch_page_without_clicking_neither_up_next_nor_end_screen: "Auto-play",
+  from_watch_page_without_clicking_neither_up_next_nor_end_screen:
+    "Not via recommendations",
   "<failed>": "(Unknown interaction)",
 };
 
