@@ -716,12 +716,17 @@ export class ReportSummarizer {
           youtubePageMetadata.video_metadata.video_id,
         );
       }
-      if (clickedWithinRelated && parentWatchNextColumnIncludesThisVideoId) {
+      if (
+        url_type === "watch_page" &&
+        clickedWithinRelated &&
+        parentWatchNextColumnIncludesThisVideoId
+      ) {
         return "watch_next_column";
       }
 
       let parentWatchNextEndScreenIncludesThisVideoId;
       if (
+        url_type === "watch_page" &&
         parentYouTubeNavigation.outgoing_video_ids_by_category
           .watch_next_end_screen
       ) {
