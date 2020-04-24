@@ -11,7 +11,7 @@ const defaultConfig = {
   },
   run: {
     firefox: process.env.FIREFOX_BINARY || "firefoxdeveloperedition",
-    browserConsole: true,
+    browserConsole: false,
     startUrl: [
       "about:devtools-toolbox?type=extension&id=youtube-regrets-reporter-extension%40motin.eu",
       "https://www.youtube.com/watch?v=g4mHPeMGTJM",
