@@ -48,7 +48,7 @@ await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
 await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 ```
 
-2. Browse around
+2. Browse around (remember to start with a page reload or direct visit or else no webNavigation is registered)
 
 3. Download the current set of collected navigations:
 
@@ -70,7 +70,7 @@ Restart the browser before collecting data for a new fixture.
 await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 ```
 
-2. Browse around
+2. Browse around (remember to start with a page reload or direct visit or else no webNavigation is registered)
 
 3. Download the current set of collected navigations:
 
