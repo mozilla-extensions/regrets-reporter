@@ -39,13 +39,13 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   public store: Store;
   public reportSummarizer: ReportSummarizer;
   public activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor;
-  public amount_of_youtube_watch_pages_loaded_by_date = {};
-  public amount_of_time_with_an_active_youtube_tab_by_date = {};
+  public amount_of_youtube_watch_pages_loaded_by_date;
+  public amount_of_time_with_an_active_youtube_tab_by_date;
   /*
-  public amount_of_youtube_video_play_time_in_seconds_by_date = {};
-  public amount_of_youtube_videos_played_on_youtube_watch_pages_by_date = {};
+  public amount_of_youtube_video_play_time_in_seconds_by_date;
+  public amount_of_youtube_videos_played_on_youtube_watch_pages_by_date;
   */
-  public dates_with_at_least_one_youtube_visit = [];
+  public dates_with_at_least_one_youtube_visit;
 
   constructor(
     store: Store,
@@ -68,6 +68,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   }
 
   seenTabActiveDwellTimeIncrement = (tab: Tab, intervalMs: number) => {
+    if (!this.hydrated) {
+      throw new Error("Instance not hydrated");
+    }
     const tabUrlType = classifyYouTubeNavigationUrlType(tab.url);
     if (tabUrlType === "watch_page") {
       const dateTime = Date.now();
@@ -88,6 +91,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   seenNavigationBatch = async (
     navigationBatch: NavigationBatch,
   ): Promise<void> => {
+    if (!this.hydrated) {
+      throw new Error("Instance not hydrated");
+    }
     const navigationBatchByUuid = {};
     navigationBatchByUuid[
       navigationBatch.navigationEnvelope.navigation.uuid
@@ -101,6 +107,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   seenYouTubeNavigation = async (
     youTubeNavigation: YouTubeNavigation,
   ): Promise<void> => {
+    if (!this.hydrated) {
+      throw new Error("Instance not hydrated");
+    }
     const dateTime = parseIsoDateTimeString(youTubeNavigation.time_stamp);
     const dateYmd = format(dateTime, "yyyy-MM-dd");
     if (!this.dates_with_at_least_one_youtube_visit.includes(dateYmd)) {
@@ -120,16 +129,14 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   };
 
   summarizeUpdate = async (): Promise<YouTubeUsageStatisticsUpdate> => {
-    await this.persist();
+    if (!this.hydrated) {
+      throw new Error("Instance not hydrated");
+    }
     const {
       dates_with_at_least_one_youtube_visit,
       amount_of_youtube_watch_pages_loaded_by_date,
       amount_of_time_with_an_active_youtube_tab_by_date,
-    } = await this.store.get([
-      "dates_with_at_least_one_youtube_visit",
-      "amount_of_youtube_watch_pages_loaded_by_date",
-      "amount_of_time_with_an_active_youtube_tab_by_date",
-    ]);
+    } = this;
     let amount_of_youtube_watch_pages_loaded = 0;
     if (amount_of_youtube_watch_pages_loaded_by_date) {
       const dateYmds = Object.keys(
@@ -163,7 +170,32 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     };
   };
 
+  private hydrated = false;
+
+  hydrate = async () => {
+    const {
+      dates_with_at_least_one_youtube_visit,
+      amount_of_youtube_watch_pages_loaded_by_date,
+      amount_of_time_with_an_active_youtube_tab_by_date,
+    } = await this.store.get([
+      "dates_with_at_least_one_youtube_visit",
+      "amount_of_youtube_watch_pages_loaded_by_date",
+      "amount_of_time_with_an_active_youtube_tab_by_date",
+    ]);
+    this.dates_with_at_least_one_youtube_visit =
+      dates_with_at_least_one_youtube_visit || [];
+    this.amount_of_youtube_watch_pages_loaded_by_date =
+      amount_of_youtube_watch_pages_loaded_by_date || {};
+    this.amount_of_time_with_an_active_youtube_tab_by_date =
+      amount_of_time_with_an_active_youtube_tab_by_date || {};
+    this.hydrated = true;
+  };
+
   persist = async () => {
+    // Protection from accidentally emptying persisted data
+    if (!this.hydrated) {
+      throw new Error("Instance not hydrated");
+    }
     await this.store.set({
       dates_with_at_least_one_youtube_visit: this
         .dates_with_at_least_one_youtube_visit,

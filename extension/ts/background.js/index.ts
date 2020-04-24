@@ -130,6 +130,9 @@ class ExtensionGlue {
       showPageActionOnWatchPagesOnly(currentTab.id, null, currentTab);
     }
 
+    // Restore persisted youTubeUsageStatistics
+    await youTubeUsageStatistics.hydrate();
+
     // Set up a connection / listener for content scripts to be able to query collected web traffic data
     let portFromContentScript;
     this.contentScriptPortListener = p => {
