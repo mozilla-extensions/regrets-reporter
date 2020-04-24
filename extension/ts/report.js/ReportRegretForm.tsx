@@ -21,6 +21,7 @@ import {
   MdSentimentDissatisfied,
   MdSentimentNeutral,
   MdSentimentVeryDissatisfied,
+  MdHelp,
 } from "react-icons/md";
 import { DisplayError } from "../shared-react-resources/DisplayError";
 import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
@@ -367,7 +368,11 @@ export class ReportRegretForm extends Component<
                   <div>
                     <p className="mb-3">
                       <span className="label-bold">
-                        Tell us why you regret watching this content:
+                        Tell us why you regret watching this content{" "}
+                        <MdHelp
+                          className="inline text-grey-50 align-middle"
+                          title="The categories below were the most commonly reported by users in a previous YouTube Regrets study; if your report falls into a different category, please indicate that in the “Other” field."
+                        />
                       </span>
                     </p>
                     <ul className="list-none">
