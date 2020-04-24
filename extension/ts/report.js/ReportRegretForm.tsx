@@ -250,7 +250,7 @@ export class ReportRegretForm extends Component<
         </header>
 
         {/*
-        <div class="panel-section-separator"></div>
+        <div className="panel-section-separator" />
 
         <div class="panel-section panel-section-formElements">
           <div class="panel-formElements-item">
