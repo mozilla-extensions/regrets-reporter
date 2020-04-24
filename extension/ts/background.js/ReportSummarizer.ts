@@ -392,58 +392,75 @@ export class ReportSummarizer {
     }
 
     let video_title;
+    let video_posting_date;
+    let view_count_at_navigation_short;
+    let view_count_at_navigation;
+
     try {
-      video_title =
-        ytInitialData.contents.twoColumnWatchNextResults.results.results
-          .contents[0].videoPrimaryInfoRenderer.title.runs[0].text;
+      const twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer = ytInitialData.contents.twoColumnWatchNextResults.results.results.contents.find(
+        contents => {
+          return contents.videoPrimaryInfoRenderer !== undefined;
+        },
+      );
+
+      try {
+        video_title =
+          twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
+            .videoPrimaryInfoRenderer.title.runs[0].text;
+      } catch (err) {
+        console.error("video_title", err.message);
+        video_title = "<failed>";
+      }
+
+      try {
+        video_posting_date =
+          twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
+            .videoPrimaryInfoRenderer.dateText.simpleText;
+      } catch (err) {
+        console.error("video_posting_date", err.message);
+        video_posting_date = "";
+      }
+
+      try {
+        view_count_at_navigation = parseInt(
+          twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer.videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
+            /\D/g,
+            "",
+          ),
+          10,
+        );
+      } catch (err) {
+        console.error("view_count_at_navigation", err.message);
+        view_count_at_navigation = -1;
+      }
+
+      try {
+        view_count_at_navigation_short =
+          twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
+            .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
+            .shortViewCount.simpleText;
+      } catch (err) {
+        console.error("view_count_at_navigation_short", err.message);
+        view_count_at_navigation_short = "<failed>";
+      }
     } catch (err) {
-      console.error("video_title", err.message);
+      console.error("video_* within videoPrimaryInfoRenderer", err.message);
       video_title = "<failed>";
     }
 
     let video_description;
     try {
+      const twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer = ytInitialData.contents.twoColumnWatchNextResults.results.results.contents.find(
+        contents => {
+          return contents.videoSecondaryInfoRenderer !== undefined;
+        },
+      );
       video_description =
-        ytInitialData.contents.twoColumnWatchNextResults.results.results
-          .contents[1].videoSecondaryInfoRenderer.description.runs[0].text;
+        twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer
+          .videoSecondaryInfoRenderer.description.runs[0].text;
     } catch (err) {
       console.error("video_description", err.message);
       video_description = "<failed>";
-    }
-
-    let video_posting_date;
-    try {
-      video_posting_date =
-        ytInitialData.contents.twoColumnWatchNextResults.results.results
-          .contents[0].videoPrimaryInfoRenderer.dateText.simpleText;
-    } catch (err) {
-      console.error("video_posting_date", err.message);
-      video_posting_date = "";
-    }
-
-    let view_count_at_navigation;
-    try {
-      view_count_at_navigation = parseInt(
-        ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
-          /\D/g,
-          "",
-        ),
-        10,
-      );
-    } catch (err) {
-      console.error("view_count_at_navigation", err.message);
-      view_count_at_navigation = -1;
-    }
-
-    let view_count_at_navigation_short;
-    try {
-      view_count_at_navigation_short =
-        ytInitialData.contents.twoColumnWatchNextResults.results.results
-          .contents[0].videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
-          .shortViewCount.simpleText;
-    } catch (err) {
-      console.error("view_count_at_navigation_short", err.message);
-      view_count_at_navigation_short = "<failed>";
     }
 
     const videoIdFromSecondaryResultsItem = el => {

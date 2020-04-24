@@ -6,6 +6,7 @@ import { youtubeVisitMainPageAndBrowseAround } from "./fixtures/ReportSummarizer
 import { youtubeVisitWatchPageAndInteractWithEndScreens } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndInteractWithEndScreens";
 import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
 import { youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage";
+import { youtubeVisitWatchPageOfADifferentType } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageOfADifferentType";
 
 const firstEncounteredWindowAndTabIds = (navigationBatchesByUuid: {
   [navigationUuid: string]: TrimmedNavigationBatch;
@@ -70,6 +71,48 @@ describe("ReportSummarizer", function() {
       how_the_video_was_reached: [
         {
           reach_type: "page_reload",
+          url_type: "watch_page",
+          referrer_url_type: "empty",
+        },
+      ],
+    });
+  });
+
+  it("fixture: youtubeVisitWatchPageOfADifferentType", async function() {
+    const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitWatchPageOfADifferentType;
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      fixture,
+    );
+
+    assert.equal(
+      youTubeNavigations.length,
+      1,
+      "should have found one youtube navigation",
+    );
+
+    // console.dir({ youTubeNavigations }, { depth: 5 });
+
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
+    const youTubeNavigationSpecificRegretReportData1 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
+      video_metadata: {
+        video_description:
+          "As the world struggles to contain the coronavirus pandemic, many have started claiming how this calamity was predicted centuries ago. Sadhguru busts the myth.\n\nDonate towards Corona relief at\n",
+        video_id: "P4QP6c8WmKc",
+        video_posting_date: "Apr 15, 2020",
+        video_title:
+          "Was the Corona Pandemic Predicted Centuries Ago? - Sadhguru",
+        view_count_at_navigation: 315911,
+        view_count_at_navigation_short: "315K views",
+      },
+      how_the_video_was_reached: [
+        {
+          reach_type: "direct_navigation",
           url_type: "watch_page",
           referrer_url_type: "empty",
         },
