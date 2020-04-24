@@ -210,7 +210,13 @@ export class OpenWpmPacketHandler {
         return false;
       }
       if (
-        ["watch_page", "channel_page", "search_results_page"].includes(urlType)
+        [
+          "watch_page",
+          "user_page",
+          "channel_page",
+          "search_results_page",
+          "other_page",
+        ].includes(urlType)
       ) {
         return true;
       }
