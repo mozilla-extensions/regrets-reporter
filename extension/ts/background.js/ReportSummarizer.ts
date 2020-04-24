@@ -8,10 +8,7 @@ import {
   classifyYouTubeNavigationUrlType,
   YouTubeNavigationUrlType,
 } from "./lib/youTubeNavigationUrlType";
-import {
-  YouTubeUsageStatistics,
-  YouTubeUsageStatisticsUpdate,
-} from "./YouTubeUsageStatistics";
+import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
 
 type YouTubeNavigationLinkPosition =
   | "search_results"
@@ -221,7 +218,7 @@ export class ReportSummarizer {
       // console.debug("* extractYouTubeNavigationsFromNavigationBatch debug:", {url, referrer_url, navigation_transition_type, resource_type});
 
       // These do not correspond to actual user usage
-      if (url.indexOf("prefetch=1") > 0) {
+      if (url_type === "prefetch") {
         continue;
       }
 
@@ -232,26 +229,26 @@ export class ReportSummarizer {
       };
       if (capturedContentEnvelope) {
         // Check what kind of page was visited and run the appropriate extraction methods
-        if (url.indexOf("https://www.youtube.com/watch") === 0) {
+        if (url_type === "watch_page") {
           youtubePageMetadata = this.extractYoutubePageMetadataFromCapturedWatchPageContent(
             httpRequestEnvelope,
             capturedContentEnvelope,
           );
-        } else if (
-          url.indexOf("https://www.youtube.com/results?search_query=") === 0
-        ) {
+        } else if (url_type === "search_results_page") {
           youtubePageMetadata = this.extractYoutubePageMetadataFromCapturedSearchResultsPageContent(
             httpRequestEnvelope,
             capturedContentEnvelope,
           );
         } else {
-          console.warn("No video metadata is extracted for this url", { url });
+          console.warn("No video metadata is extracted for this url type", {
+            url,
+            url_type,
+          });
         }
       }
 
       let parent_youtube_navigations;
       let parentYouTubeNavigation;
-
       let reach_type: YouTubeNavigationReachType;
       if (i === 0) {
         if (navigation_transition_type === "typed") {
@@ -267,7 +264,9 @@ export class ReportSummarizer {
         // TODO: Only consider those within the same tab
         parent_youtube_navigations = youTubeNavigations.slice(0, 5);
         parentYouTubeNavigation = parent_youtube_navigations.slice().pop();
+      }
 
+      if (!reach_type && parentYouTubeNavigation) {
         // console.dir({parentYouTubeNavigation}, {depth: 5});
         // console.dir({clickEventEnvelopes}, {depth: 5});
 
@@ -287,102 +286,22 @@ export class ReportSummarizer {
               lastRelevantEventOrdinal,
         );
         // console.dir({clickEventEnvelopesForParentYouTubeNavigation}, {depth: 5});
-        let clickedWithinRelated = false;
-        let clickedEndScreenUpNextAutoplayButton = false;
-        let clickedEndScreenCancelUpNextAutoplayButton = false;
-        clickEventEnvelopesForParentYouTubeNavigation.map(
-          clickEventEnvelope => {
-            const composedPath = JSON.parse(
-              clickEventEnvelope.userInteraction.composed_path,
-            );
-            // console.dir({ composedPath }, { depth: 5 });
-            if (
-              !!composedPath.find(
-                (eventTarget: OpenWPMObjectifiedEventTarget) =>
-                  eventTarget.xpath === "//*[@id='related']",
-              )
-            ) {
-              clickedWithinRelated = true;
-            }
-            if (
-              !!composedPath.find(
-                (eventTarget: OpenWPMObjectifiedEventTarget) =>
-                  eventTarget.xpath.indexOf("//*[@id='movie_player']") === 0 &&
-                  eventTarget.outerHTMLWithoutInnerHTML.indexOf(
-                    "ytp-upnext-autoplay-icon",
-                  ) > 0,
-              )
-            ) {
-              clickedEndScreenUpNextAutoplayButton = true;
-            }
-            if (
-              !!composedPath.find(
-                (eventTarget: OpenWPMObjectifiedEventTarget) =>
-                  eventTarget.xpath.indexOf("//*[@id='movie_player']") === 0 &&
-                  eventTarget.outerHTMLWithoutInnerHTML.indexOf(
-                    "ytp-upnext-cancel-button",
-                  ) > 0,
-              )
-            ) {
-              clickedEndScreenCancelUpNextAutoplayButton = true;
-            }
-          },
-        );
 
-        // console.log({clickedWithinRelated, clickedEndScreenUpNextAutoplayButton, clickedEndScreenCancelUpNextAutoplayButton});
-
-        if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
-          reach_type = "without_clicking_at_all";
-        } else if (
-          !clickedWithinRelated &&
-          !clickedEndScreenUpNextAutoplayButton &&
-          !clickedEndScreenCancelUpNextAutoplayButton
-        ) {
-          reach_type = "without_clicking_neither_up_next_nor_end_screen";
-        } else {
-          // console.debug({ referrer_url });
-
-          /*
-          const parentYouTubeNavigationOutgoingLinkCategories = Object.keys(
-            parentYouTubeNavigation.outgoing_video_ids_by_category,
+        // Check what kind of page was visited and run the appropriate extraction methods
+        const parentYouTubeNavigationUrlType =
+          parentYouTubeNavigation.youtube_visit_metadata.url_type;
+        if (parentYouTubeNavigationUrlType === "watch_page") {
+          reach_type = this.extractReachTypeFromWatchPageData(
+            clickEventEnvelopesForParentYouTubeNavigation,
+            parentYouTubeNavigation,
+            youtubePageMetadata,
           );
-          console.log({ parentYouTubeNavigationOutgoingLinkCategories });
-          */
-
-          // console.log("youtubePageMetadata.video_metadata.video_id", youtubePageMetadata.video_metadata.video_id);
-          // console.dir(parentYouTubeNavigation.outgoing_video_ids_by_category, {depth: 5});
-
-          let parentWatchNextColumnIncludesThisVideoId;
-          if (
-            parentYouTubeNavigation.outgoing_video_ids_by_category
-              .watch_next_column
-          ) {
-            parentWatchNextColumnIncludesThisVideoId = parentYouTubeNavigation.outgoing_video_ids_by_category.watch_next_column.includes(
-              youtubePageMetadata.video_metadata.video_id,
-            );
-          }
-          if (
-            clickedWithinRelated &&
-            parentWatchNextColumnIncludesThisVideoId
-          ) {
-            reach_type = "watch_next_column";
-          }
-
-          let parentWatchNextEndScreenIncludesThisVideoId;
-          if (
-            parentYouTubeNavigation.outgoing_video_ids_by_category
-              .watch_next_end_screen
-          ) {
-            parentWatchNextEndScreenIncludesThisVideoId = parentYouTubeNavigation.outgoing_video_ids_by_category.watch_next_end_screen.includes(
-              youtubePageMetadata.video_metadata.video_id,
-            );
-          }
-          if (
-            clickedEndScreenUpNextAutoplayButton &&
-            parentWatchNextEndScreenIncludesThisVideoId
-          ) {
-            reach_type = "watch_next_end_screen";
-          }
+        } else {
+          reach_type = "<failed>";
+          console.warn("No reach type is extracted for this url type", {
+            url: parentYouTubeNavigation.url,
+            url_type: parentYouTubeNavigationUrlType,
+          });
         }
       }
 
@@ -697,6 +616,105 @@ export class ReportSummarizer {
         search_page_for_you_recommendations,
       },
     };
+  }
+
+  extractReachTypeFromWatchPageData(
+    clickEventEnvelopesForParentYouTubeNavigation: OpenWpmPayloadEnvelope[],
+    parentYouTubeNavigation: YouTubeNavigation,
+    youtubePageMetadata: YoutubePageMetadata,
+  ): YouTubeNavigationReachType {
+    let clickedWithinRelated = false;
+    let clickedEndScreenUpNextAutoplayButton = false;
+    let clickedEndScreenCancelUpNextAutoplayButton = false;
+    clickEventEnvelopesForParentYouTubeNavigation.map(clickEventEnvelope => {
+      const composedPath = JSON.parse(
+        clickEventEnvelope.userInteraction.composed_path,
+      );
+      // console.dir({ composedPath }, { depth: 5 });
+      if (
+        !!composedPath.find(
+          (eventTarget: OpenWPMObjectifiedEventTarget) =>
+            eventTarget.xpath === "//*[@id='related']",
+        )
+      ) {
+        clickedWithinRelated = true;
+      }
+      if (
+        !!composedPath.find(
+          (eventTarget: OpenWPMObjectifiedEventTarget) =>
+            eventTarget.xpath.indexOf("//*[@id='movie_player']") === 0 &&
+            eventTarget.outerHTMLWithoutInnerHTML.indexOf(
+              "ytp-upnext-autoplay-icon",
+            ) > 0,
+        )
+      ) {
+        clickedEndScreenUpNextAutoplayButton = true;
+      }
+      if (
+        !!composedPath.find(
+          (eventTarget: OpenWPMObjectifiedEventTarget) =>
+            eventTarget.xpath.indexOf("//*[@id='movie_player']") === 0 &&
+            eventTarget.outerHTMLWithoutInnerHTML.indexOf(
+              "ytp-upnext-cancel-button",
+            ) > 0,
+        )
+      ) {
+        clickedEndScreenCancelUpNextAutoplayButton = true;
+      }
+    });
+
+    // console.log({clickedWithinRelated, clickedEndScreenUpNextAutoplayButton, clickedEndScreenCancelUpNextAutoplayButton});
+
+    if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
+      return "without_clicking_at_all";
+    } else if (
+      !clickedWithinRelated &&
+      !clickedEndScreenUpNextAutoplayButton &&
+      !clickedEndScreenCancelUpNextAutoplayButton
+    ) {
+      return "without_clicking_neither_up_next_nor_end_screen";
+    } else {
+      // console.debug({ referrer_url });
+
+      /*
+      const parentYouTubeNavigationOutgoingLinkCategories = Object.keys(
+        parentYouTubeNavigation.outgoing_video_ids_by_category,
+      );
+      console.log({ parentYouTubeNavigationOutgoingLinkCategories });
+      */
+
+      // console.log("youtubePageMetadata.video_metadata.video_id", youtubePageMetadata.video_metadata.video_id);
+      // console.dir(parentYouTubeNavigation.outgoing_video_ids_by_category, {depth: 5});
+
+      let parentWatchNextColumnIncludesThisVideoId;
+      if (
+        parentYouTubeNavigation.outgoing_video_ids_by_category.watch_next_column
+      ) {
+        parentWatchNextColumnIncludesThisVideoId = parentYouTubeNavigation.outgoing_video_ids_by_category.watch_next_column.includes(
+          youtubePageMetadata.video_metadata.video_id,
+        );
+      }
+      if (clickedWithinRelated && parentWatchNextColumnIncludesThisVideoId) {
+        return "watch_next_column";
+      }
+
+      let parentWatchNextEndScreenIncludesThisVideoId;
+      if (
+        parentYouTubeNavigation.outgoing_video_ids_by_category
+          .watch_next_end_screen
+      ) {
+        parentWatchNextEndScreenIncludesThisVideoId = parentYouTubeNavigation.outgoing_video_ids_by_category.watch_next_end_screen.includes(
+          youtubePageMetadata.video_metadata.video_id,
+        );
+      }
+      if (
+        clickedEndScreenUpNextAutoplayButton &&
+        parentWatchNextEndScreenIncludesThisVideoId
+      ) {
+        return "watch_next_end_screen";
+      }
+    }
+    return "<failed>";
   }
 
   async youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(

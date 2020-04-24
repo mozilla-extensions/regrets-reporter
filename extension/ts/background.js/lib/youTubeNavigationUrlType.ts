@@ -8,6 +8,7 @@ export type YouTubeNavigationUrlType =
   | "other_page"
   | "misc_xhr"
   | "not_a_youtube_page"
+  | "prefetch"
   | "empty"
   | FailedStringAttribute;
 
@@ -16,6 +17,9 @@ export const classifyYouTubeNavigationUrlType = (
 ): YouTubeNavigationUrlType => {
   if (!url || url === "") {
     return "empty";
+  }
+  if (url.indexOf("prefetch=1") > 0) {
+    return "prefetch";
   }
   const miscXhrRequestStartWiths = [
     "https://www.youtube.com/comment_service_ajax",

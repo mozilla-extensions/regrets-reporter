@@ -53,6 +53,7 @@ const youTubeNavigationUrlTypeLabels: {
   misc_xhr: "Misc XHR Request",
   not_a_youtube_page: "Somewhere outside of YouTube",
   empty: "(Empty)",
+  prefetch: "(Pre-fetch)",
   "<failed>": "(Unknown Page)",
 };
 
