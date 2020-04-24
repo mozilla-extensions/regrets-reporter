@@ -96,7 +96,7 @@
   "private": true,
   "scripts": {
     "build": "webpack && web-ext build",
-    "build:production": "webpack --mode=production && web-ext build",
+    "build:production": "NODE_ENV=production webpack --mode=production && web-ext build",
     "docformat": "doctoc --title '**Contents**' docs/*.md && prettier '**/*.md' --write",
     "eslint": "eslint . --ext jsm,js,json",
     "eslint-fix": "npm run eslint -- --fix",
