@@ -7,6 +7,7 @@ import { youtubeVisitWatchPageAndInteractWithEndScreens } from "./fixtures/Repor
 import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
 import { youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage";
 import { youtubeVisitWatchPageOfADifferentType } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageOfADifferentType";
+import { youtubeVisitMainPageSearchClickUserClickVideo } from "./fixtures/ReportSummarizer/youtubeVisitMainPageSearchClickUserClickVideo";
 
 const firstEncounteredWindowAndTabIds = (navigationBatchesByUuid: {
   [navigationUuid: string]: TrimmedNavigationBatch;
@@ -393,6 +394,138 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "page_reload",
           url_type: "watch_page",
+          referrer_url_type: "empty",
+        },
+      ],
+    });
+  });
+
+  it("fixture: youtubeVisitMainPageSearchClickUserClickVideo", async function() {
+    const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitMainPageSearchClickUserClickVideo;
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      fixture,
+    );
+    const windowAndTabIds = firstEncounteredWindowAndTabIds(fixture);
+
+    assert.equal(
+      youTubeNavigations.length,
+      4,
+      "should have found youtube navigations",
+    );
+
+    // console.dir({ youTubeNavigations }, { depth: 5 });
+
+    assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
+      reach_type: "direct_navigation",
+      url_type: "youtube_main_page",
+      referrer_url_type: "empty",
+    });
+    assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
+    assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
+      reach_type: "unspecified_navigation",
+      url_type: "search_results_page",
+      referrer_url_type: "youtube_main_page",
+    });
+    assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
+
+    const youTubeNavigationSpecificRegretReportData1 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 1),
+      windowAndTabIds.windowId,
+      windowAndTabIds.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
+      video_metadata: undefined,
+      how_the_video_was_reached: [
+        {
+          reach_type: "direct_navigation",
+          url_type: "youtube_main_page",
+          referrer_url_type: "empty",
+        },
+      ],
+    });
+
+    const youTubeNavigationSpecificRegretReportData2 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 2),
+      windowAndTabIds.windowId,
+      windowAndTabIds.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData2, {
+      video_metadata: undefined,
+      how_the_video_was_reached: [
+        {
+          reach_type: "unspecified_navigation",
+          url_type: "search_results_page",
+          referrer_url_type: "youtube_main_page",
+        },
+        {
+          reach_type: "direct_navigation",
+          url_type: "youtube_main_page",
+          referrer_url_type: "empty",
+        },
+      ],
+    });
+
+    const youTubeNavigationSpecificRegretReportData3 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 3),
+      windowAndTabIds.windowId,
+      windowAndTabIds.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData3, {
+      video_metadata: undefined,
+      how_the_video_was_reached: [
+        {
+          reach_type: "unspecified_navigation",
+          url_type: "user_page",
+          referrer_url_type: "search_results_page",
+        },
+        {
+          reach_type: "unspecified_navigation",
+          url_type: "search_results_page",
+          referrer_url_type: "youtube_main_page",
+        },
+        {
+          reach_type: "direct_navigation",
+          url_type: "youtube_main_page",
+          referrer_url_type: "empty",
+        },
+      ],
+    });
+
+    const youTubeNavigationSpecificRegretReportData4 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 4),
+      windowAndTabIds.windowId,
+      windowAndTabIds.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData4, {
+      video_metadata: {
+        video_description:
+          "Cal Jam 18 took place October 6, 2018 in San Bernardino, CA. \nSIGN UP FOR MORE INFO ON FUTURE EVENTS: ",
+        video_id: "PdDpbKX-N-4",
+        video_posting_date: "Feb 28, 2020",
+        video_title: "Cal Jam 18 - More Good Times!",
+        view_count_at_navigation: 31958,
+        view_count_at_navigation_short: "31K views",
+      },
+      how_the_video_was_reached: [
+        {
+          reach_type: "unspecified_navigation",
+          url_type: "watch_page",
+          referrer_url_type: "user_page",
+        },
+        {
+          reach_type: "unspecified_navigation",
+          url_type: "user_page",
+          referrer_url_type: "search_results_page",
+        },
+        {
+          reach_type: "unspecified_navigation",
+          url_type: "search_results_page",
+          referrer_url_type: "youtube_main_page",
+        },
+        {
+          reach_type: "direct_navigation",
+          url_type: "youtube_main_page",
           referrer_url_type: "empty",
         },
       ],
