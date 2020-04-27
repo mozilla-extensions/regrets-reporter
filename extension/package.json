@@ -1,7 +1,7 @@
 {
   "name": "youtube-regrets-reporter-extension",
   "description": "YouTube Regrets Reporter",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": "Mozilla",
   "dependencies": {
     "@openwpm/webext-instrumentation": "../instrumentation/OpenWPM/automation/Extension/webext-instrumentation",
