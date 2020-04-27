@@ -9,6 +9,7 @@
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
+  - [Creating a signed build of the add-on](#creating-a-signed-build-of-the-add-on)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -88,6 +89,7 @@ Restart the browser before collecting data for a new fixture.
 ## Creating a signed build of the add-on
 
 After version bumping:
+
 ```
 yarn build:production
 npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
