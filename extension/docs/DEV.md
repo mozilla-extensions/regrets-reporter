@@ -88,9 +88,8 @@ Restart the browser before collecting data for a new fixture.
 
 ## Creating a signed build of the add-on
 
-After version bumping:
+After version bumping and setting the API_KEY and API_SECRET env vars:
 
 ```
-yarn build:production
-npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
+yarn build:production && npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
 ```
