@@ -22,6 +22,7 @@ export type YouTubeNavigationReachType =
   | "search_action"
   | "direct_navigation"
   | "page_reload"
+  | "clicked_link"
   | "unspecified_navigation"
   | "from_watch_page_without_clicking_at_all"
   | "from_watch_page_without_clicking_neither_up_next_nor_end_screen"
@@ -252,12 +253,23 @@ export class ReportSummarizer {
       let parentYouTubeNavigation;
       let reach_type: YouTubeNavigationReachType;
       if (i === 0) {
-        if (navigation_transition_type === "typed") {
+        if (
+          [
+            "typed",
+            "auto_bookmark",
+            "generated",
+            "start_page",
+            "form_submit",
+            "keyword",
+            "keyword_generated",
+          ].includes(navigation_transition_type)
+        ) {
           reach_type = "direct_navigation";
         } else if (navigation_transition_type === "reload") {
           reach_type = "page_reload";
+        } else if (navigation_transition_type === "link") {
+          reach_type = "clicked_link";
         }
-
         // TODO: Check referrer_url, timing and other transition types
         parent_youtube_navigations = youTubeNavigations.slice(0, 5).reverse();
         parentYouTubeNavigation = parent_youtube_navigations.slice().shift();
