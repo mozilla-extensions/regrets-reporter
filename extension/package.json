@@ -1,6 +1,6 @@
 {
-  "name": "youtube-regrets-reporter-extension",
-  "description": "YouTube Regrets Reporter",
+  "name": "cre-regrets-reporter",
+  "description": "Content Recommendation Engine Regrets Reporter",
   "version": "0.4.2",
   "author": "Mozilla",
   "dependencies": {

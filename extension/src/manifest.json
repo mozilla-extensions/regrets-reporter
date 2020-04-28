@@ -7,7 +7,7 @@
   "incognito": "not_allowed",
   "applications": {
     "gecko": {
-      "id": "youtube-regrets-reporter-extension@motin.eu",
+      "id": "cre-regrets-reporter@mozilla.com.motin.eu",
       "strict_min_version": "67.0a1"
     }
   },
