@@ -14,7 +14,7 @@ import {
   RegretReport,
   RegretReportData,
   YouTubeNavigationReachType,
-  YoutubeVisitMetadata,
+  YouTubeVisitMetadata,
 } from "../background.js/ReportSummarizer";
 import LikertScale from "likert-react";
 import {
@@ -30,11 +30,11 @@ import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 const youTubeNavigationReachTypeLabels: {
   [k in YouTubeNavigationReachType]: string;
 } = {
-//  search_results_click: "Search results",
-//  search_page_for_you_recommendations_click: "Search page recommendations",
+  //  search_results_click: "Search results",
+  //  search_page_for_you_recommendations_click: "Search page recommendations",
   from_watch_page_up_next_column_click: "Up next sidebar",
   from_watch_page_watch_next_end_screen_click: "Watch next end screen",
-//  search_action: "Search action",
+  //  search_action: "Search action",
   direct_navigation: "Direct visit",
   page_reload: "Page reload",
   clicked_link: "Clicked link",
@@ -331,7 +331,7 @@ export class ReportRegretForm extends Component<
                           .reverse()
                           .map(
                             (
-                              youtubeVisitMetadata: YoutubeVisitMetadata,
+                              youtubeVisitMetadata: YouTubeVisitMetadata,
                               index: number,
                             ) => (
                               <React.Fragment key={index}>

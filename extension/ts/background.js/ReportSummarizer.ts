@@ -18,11 +18,11 @@ type YouTubeNavigationLinkPosition =
 // | "up_next_auto_play"
 
 export type YouTubeNavigationReachType =
-// | "search_results_click"
-// | "search_page_for_you_recommendations_click"
+  // | "search_results_click"
+  // | "search_page_for_you_recommendations_click"
   | "from_watch_page_up_next_column_click"
   | "from_watch_page_watch_next_end_screen_click"
-// | "search_action"
+  // | "search_action"
   | "direct_navigation"
   | "page_reload"
   | "clicked_link"
@@ -49,12 +49,12 @@ export type OutgoingVideoIdsByCategory = {
     | FailedStringAttribute;
 };
 
-export interface YoutubePageMetadata {
+export interface YouTubePageMetadata {
   video_metadata: VideoMetadata;
   outgoing_video_ids_by_category: OutgoingVideoIdsByCategory;
 }
 
-export interface YoutubeVisitMetadata {
+export interface YouTubeVisitMetadata {
   reach_type: YouTubeNavigationReachType;
   url_type: YouTubeNavigationUrlType;
 }
@@ -66,7 +66,7 @@ export interface YouTubeNavigation {
   url: undefined | string | FailedStringAttribute;
   referrer_url: undefined | string | FailedStringAttribute;
   parent_youtube_navigations: YouTubeNavigation[];
-  youtube_visit_metadata: YoutubeVisitMetadata;
+  youtube_visit_metadata: YouTubeVisitMetadata;
   time_stamp: string;
   window_id: number;
   tab_id: number;
@@ -76,7 +76,7 @@ export interface YouTubeNavigation {
 
 export interface YouTubeNavigationSpecificRegretReportData {
   video_metadata: VideoMetadata;
-  how_the_video_was_reached: YoutubeVisitMetadata[];
+  how_the_video_was_reached: YouTubeVisitMetadata[];
 }
 
 export interface RegretReportData
@@ -226,19 +226,19 @@ export class ReportSummarizer {
       }
 
       // Extract video metadata from the captured content if available
-      let youtubePageMetadata: YoutubePageMetadata = {
+      let youtubePageMetadata: YouTubePageMetadata = {
         video_metadata: undefined,
         outgoing_video_ids_by_category: {},
       };
       if (capturedContentEnvelope) {
         // Check what kind of page was visited and run the appropriate extraction methods
         if (url_type === "watch_page") {
-          youtubePageMetadata = this.extractYoutubePageMetadataFromCapturedWatchPageContent(
+          youtubePageMetadata = this.extractYouTubePageMetadataFromCapturedWatchPageContent(
             httpRequestEnvelope,
             capturedContentEnvelope,
           );
         } else if (url_type === "search_results_page") {
-          youtubePageMetadata = this.extractYoutubePageMetadataFromCapturedSearchResultsPageContent(
+          youtubePageMetadata = this.extractYouTubePageMetadataFromCapturedSearchResultsPageContent(
             httpRequestEnvelope,
             capturedContentEnvelope,
           );
@@ -356,10 +356,10 @@ export class ReportSummarizer {
     return youTubeNavigations;
   }
 
-  extractYoutubePageMetadataFromCapturedWatchPageContent(
+  extractYouTubePageMetadataFromCapturedWatchPageContent(
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
-  ): YoutubePageMetadata {
+  ): YouTubePageMetadata {
     let ytInitialData;
 
     if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
@@ -564,10 +564,10 @@ export class ReportSummarizer {
     };
   }
 
-  extractYoutubePageMetadataFromCapturedSearchResultsPageContent(
+  extractYouTubePageMetadataFromCapturedSearchResultsPageContent(
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
-  ): YoutubePageMetadata {
+  ): YouTubePageMetadata {
     let ytInitialData;
 
     if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
@@ -651,7 +651,7 @@ export class ReportSummarizer {
   extractReachTypeFromWatchPageData(
     clickEventEnvelopesForParentYouTubeNavigation: OpenWpmPayloadEnvelope[],
     parentYouTubeNavigation: YouTubeNavigation,
-    youtubePageMetadata: YoutubePageMetadata,
+    youtubePageMetadata: YouTubePageMetadata,
     url_type: YouTubeNavigationUrlType,
   ): YouTubeNavigationReachType {
     let clickedWithinRelated = false;

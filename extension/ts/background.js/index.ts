@@ -112,11 +112,7 @@ class ExtensionGlue {
 
     // Only show report-regret page action on YouTube watch pages
     const showPageActionOnWatchPagesOnly = (tabId, changeInfo, tab) => {
-      if (
-        tab.url.match(
-          /:\/\/[^\/]*\.?youtube.com\/watch/,
-        )
-      ) {
+      if (tab.url.match(/:\/\/[^\/]*\.?youtube.com\/watch/)) {
         browser.pageAction.show(tab.id);
       } else {
         browser.pageAction.hide(tab.id);
@@ -229,8 +225,7 @@ class ExtensionGlue {
       http_instrument: true,
       save_content: "main_frame,xmlhttprequest",
       http_instrument_resource_types: "main_frame,xmlhttprequest",
-      http_instrument_urls:
-        "*://*.youtube.com/*|*://*.youtu.be/*",
+      http_instrument_urls: "*://*.youtube.com/*|*://*.youtu.be/*",
       user_interaction_instrument: true,
       user_interaction_instrument_modules: "clicks",
       crawl_id: 0,
