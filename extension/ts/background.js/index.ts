@@ -114,7 +114,7 @@ class ExtensionGlue {
     const showPageActionOnWatchPagesOnly = (tabId, changeInfo, tab) => {
       if (
         tab.url.match(
-          /:\/\/[^\/]*\.?(youtube.com|youtu.be|youtube-nocookies.com)\/watch/,
+          /:\/\/[^\/]*\.?youtube.com\/watch/,
         )
       ) {
         browser.pageAction.show(tab.id);
@@ -230,7 +230,7 @@ class ExtensionGlue {
       save_content: "main_frame,xmlhttprequest",
       http_instrument_resource_types: "main_frame,xmlhttprequest",
       http_instrument_urls:
-        "*://*.youtube.com/*|*://*.youtu.be/*|*://*.youtube-nocookie.com/*",
+        "*://*.youtube.com/*|*://*.youtu.be/*",
       user_interaction_instrument: true,
       user_interaction_instrument_modules: "clicks",
       crawl_id: 0,

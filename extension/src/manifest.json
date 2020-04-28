@@ -19,7 +19,6 @@
   "permissions": [
     "*://*.youtube.com/*",
     "*://*.youtu.be/*",
-    "*://*.youtube-nocookie.com/*",
     "webRequest",
     "webRequestBlocking",
     "webNavigation",
