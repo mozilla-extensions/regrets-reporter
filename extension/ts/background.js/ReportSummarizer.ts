@@ -18,8 +18,11 @@ type YouTubeNavigationLinkPosition =
 // | "up_next_auto_play"
 
 export type YouTubeNavigationReachType =
-  | YouTubeNavigationLinkPosition
-  | "search_action"
+// | "search_results_click"
+// | "search_page_for_you_recommendations_click"
+  | "from_watch_page_up_next_column_click"
+  | "from_watch_page_watch_next_end_screen_click"
+// | "search_action"
   | "direct_navigation"
   | "page_reload"
   | "clicked_link"
@@ -558,7 +561,6 @@ export class ReportSummarizer {
         view_count_at_navigation_short,
       },
       outgoing_video_ids_by_category: {
-        // up_next_auto_play,
         watch_next_column,
         watch_next_end_screen,
       },
@@ -733,7 +735,7 @@ export class ReportSummarizer {
         clickedWithinRelated &&
         parentWatchNextColumnIncludesThisVideoId
       ) {
-        return "watch_next_column";
+        return "from_watch_page_up_next_column_click";
       }
 
       let parentWatchNextEndScreenIncludesThisVideoId;
@@ -751,7 +753,7 @@ export class ReportSummarizer {
         clickedEndScreenUpNextAutoplayButton &&
         parentWatchNextEndScreenIncludesThisVideoId
       ) {
-        return "watch_next_end_screen";
+        return "from_watch_page_watch_next_end_screen_click";
       }
     }
     return "<failed>";
