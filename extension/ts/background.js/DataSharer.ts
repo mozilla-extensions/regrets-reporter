@@ -34,9 +34,14 @@ export class DataSharer {
   async share(data: SharedData) {
     const { sharedData } = await this.store.get("sharedData");
 
-    const amount_of_regret_reports_since_consent_was_given = sharedData
+    let amount_of_regret_reports_since_consent_was_given = sharedData
       ? sharedData.filter($annotatedData => $annotatedData.regretReport).length
       : 0;
+
+    // If this is a regret report, include it in the statistic
+    if (data.regret_report) {
+      amount_of_regret_reports_since_consent_was_given++;
+    }
 
     const annotatedData: AnnotatedSharedData = {
       ...data,
