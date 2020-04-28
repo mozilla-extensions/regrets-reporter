@@ -68,6 +68,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 4173530,
         view_count_at_navigation_short: "4.1M views",
       },
+      watch_page_entry_point: "page_reload",
       how_the_video_was_reached: [
         {
           reach_type: "page_reload",
@@ -109,6 +110,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 315911,
         view_count_at_navigation_short: "315K views",
       },
+      watch_page_entry_point: "direct_navigation",
       how_the_video_was_reached: [
         {
           reach_type: "direct_navigation",
@@ -160,6 +162,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 4173534,
         view_count_at_navigation_short: "4.1M views",
       },
+      watch_page_entry_point: "direct_navigation",
       how_the_video_was_reached: [
         {
           reach_type: "direct_navigation",
@@ -183,6 +186,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 86023815,
         view_count_at_navigation_short: "86M views",
       },
+      watch_page_entry_point: "watch_page",
       how_the_video_was_reached: [
         {
           reach_type: "from_watch_page_up_next_column_click",
@@ -238,6 +242,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 339321,
         view_count_at_navigation_short: "339K views",
       },
+      watch_page_entry_point: "direct_navigation",
       how_the_video_was_reached: [
         {
           reach_type: "direct_navigation",
@@ -262,6 +267,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 2423769,
         view_count_at_navigation_short: "2.4M views",
       },
+      watch_page_entry_point: "watch_page",
       how_the_video_was_reached: [
         {
           reach_type: "from_watch_page_watch_next_end_screen_click",
@@ -318,6 +324,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 4200329,
         view_count_at_navigation_short: "4.2M views",
       },
+      watch_page_entry_point: "page_reload",
       how_the_video_was_reached: [
         {
           reach_type: "page_reload",
@@ -361,6 +368,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 4200329,
         view_count_at_navigation_short: "4.2M views",
       },
+      watch_page_entry_point: "channel_page",
       how_the_video_was_reached: [
         {
           reach_type: "unspecified_navigation",
@@ -478,6 +486,7 @@ describe("ReportSummarizer", function() {
         view_count_at_navigation: 31958,
         view_count_at_navigation_short: "31K views",
       },
+      watch_page_entry_point: "user_page",
       how_the_video_was_reached: [
         {
           reach_type: "unspecified_navigation",
