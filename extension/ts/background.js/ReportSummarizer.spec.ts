@@ -2,7 +2,6 @@ import { assert } from "chai";
 import { ReportSummarizer } from "./ReportSummarizer";
 import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo";
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
-import { youtubeVisitMainPageAndBrowseAround } from "./fixtures/ReportSummarizer/youtubeVisitMainPageAndBrowseAround";
 import { youtubeVisitWatchPageAndInteractWithEndScreens } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndInteractWithEndScreens";
 import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
 import { youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage";
@@ -526,82 +525,6 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "youtube_main_page",
-          referrer_url_type: "empty",
-        },
-      ],
-    });
-  });
-
-  it.skip("fixture: youtubeVisitMainPageAndBrowseAround", async function() {
-    const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitMainPageAndBrowseAround;
-    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
-      fixture,
-    );
-
-    assert.equal(
-      youTubeNavigations.length,
-      11,
-      "should have found two youtube navigations",
-    );
-
-    // console.dir({ youTubeNavigations }, { depth: 5 });
-
-    assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
-      reach_type: "direct_navigation",
-      url_type: "watch_page",
-      referrer_url_type: "empty",
-    });
-    assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
-    assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
-      reach_type: "from_watch_page_up_next_column_click",
-      url_type: "watch_page",
-      referrer_url_type: "watch_page",
-    });
-    assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
-
-    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
-    const youTubeNavigationSpecificRegretReportData1 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
-      youTubeNavigations.slice(0, 1),
-      windowAndTabIds1.windowId,
-      windowAndTabIds1.tabId,
-    );
-    assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
-      video_metadata: {
-        video_description:
-          "Miten se on niin hankalaa muistaa nimiä, ylipäätään kuunnella niitä, ja etenkin selvittää.\n\nDVD:t ja muut tuotteet:\n",
-        video_id: "oVHNwHkYSQg",
-        video_posting_date: "Apr 3, 2020",
-        video_title: "ISMO | Ja nimi oli",
-        view_count_at_navigation: 265681,
-        view_count_at_navigation_short: "265K views",
-      },
-      how_the_video_was_reached: [
-        {
-          reach_type: "direct_navigation",
-          url_type: "watch_page",
-          referrer_url_type: "empty",
-        },
-      ],
-    });
-
-    const windowAndTabIds2 = firstEncounteredWindowAndTabIds(fixture);
-    const youTubeNavigationSpecificRegretReportData2 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
-      youTubeNavigations.slice(0, 2),
-      windowAndTabIds2.windowId,
-      windowAndTabIds2.tabId,
-    );
-    assert.deepEqual(youTubeNavigationSpecificRegretReportData2, {
-      video_metadata: undefined,
-      how_the_video_was_reached: [
-        {
-          reach_type: "search_action",
-          url_type: "watch_page",
-          referrer_url_type: "watch_page",
-        },
-        {
-          reach_type: "direct_navigation",
-          url_type: "watch_page",
           referrer_url_type: "empty",
         },
       ],
