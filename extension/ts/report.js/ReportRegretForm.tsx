@@ -335,19 +335,6 @@ export class ReportRegretForm extends Component<
                               index: number,
                             ) => (
                               <React.Fragment key={index}>
-                                {index === 0 &&
-                                  youtubeVisitMetadata.referrer_url_type !==
-                                    "empty" &&
-                                  youtubeVisitMetadata.reach_type !==
-                                    "page_reload" && (
-                                    <li className="inline">
-                                      {
-                                        youTubeNavigationUrlTypeLabels[
-                                          youtubeVisitMetadata.referrer_url_type
-                                        ]
-                                      }
-                                    </li>
-                                  )}
                                 <li className="inline">
                                   {
                                     youTubeNavigationReachTypeLabels[

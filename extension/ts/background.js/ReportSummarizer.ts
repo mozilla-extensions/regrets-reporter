@@ -57,7 +57,6 @@ export interface YoutubePageMetadata {
 export interface YoutubeVisitMetadata {
   reach_type: YouTubeNavigationReachType;
   url_type: YouTubeNavigationUrlType;
-  referrer_url_type: YouTubeNavigationUrlType;
 }
 
 export interface YouTubeNavigation {
@@ -214,7 +213,6 @@ export class ReportSummarizer {
       const url = httpRequestEnvelope.httpRequest.url;
       const referrer_url = httpRequestEnvelope.httpRequest.referrer;
       const url_type = classifyYouTubeNavigationUrlType(url);
-      const referrer_url_type = classifyYouTubeNavigationUrlType(referrer_url);
       // const resource_type = httpRequestEnvelope.httpRequest.resource_type;
       const navigation_transition_type =
         topFrameNavigationBatch.navigationEnvelope.navigation.transition_type;
@@ -331,7 +329,6 @@ export class ReportSummarizer {
         parent_youtube_navigations,
         youtube_visit_metadata: {
           url_type,
-          referrer_url_type,
           reach_type,
         },
         time_stamp:

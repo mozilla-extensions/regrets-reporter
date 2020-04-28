@@ -72,7 +72,6 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "page_reload",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -114,7 +113,6 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -138,13 +136,11 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "watch_page",
-      referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "from_watch_page_up_next_column_click",
       url_type: "watch_page",
-      referrer_url_type: "watch_page",
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -168,7 +164,6 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -192,12 +187,10 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "from_watch_page_up_next_column_click",
           url_type: "watch_page",
-          referrer_url_type: "watch_page",
         },
         {
           reach_type: "direct_navigation",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -221,13 +214,11 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "watch_page",
-      referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "from_watch_page_watch_next_end_screen_click",
       url_type: "watch_page",
-      referrer_url_type: "watch_page",
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -251,7 +242,6 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -276,12 +266,10 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "from_watch_page_watch_next_end_screen_click",
           url_type: "watch_page",
-          referrer_url_type: "watch_page",
         },
         {
           reach_type: "direct_navigation",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -306,14 +294,12 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "page_reload",
       url_type: "watch_page",
-      referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type:
         "from_watch_page_without_clicking_neither_up_next_nor_end_screen",
       url_type: "channel_page",
-      referrer_url_type: "watch_page",
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -336,7 +322,6 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "page_reload",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -353,12 +338,10 @@ describe("ReportSummarizer", function() {
           reach_type:
             "from_watch_page_without_clicking_neither_up_next_nor_end_screen",
           url_type: "channel_page",
-          referrer_url_type: "watch_page",
         },
         {
           reach_type: "page_reload",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -382,18 +365,15 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "unspecified_navigation",
           url_type: "watch_page",
-          referrer_url_type: "channel_page",
         },
         {
           reach_type:
             "from_watch_page_without_clicking_neither_up_next_nor_end_screen",
           url_type: "channel_page",
-          referrer_url_type: "watch_page",
         },
         {
           reach_type: "page_reload",
           url_type: "watch_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -418,13 +398,11 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "youtube_main_page",
-      referrer_url_type: "empty",
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "unspecified_navigation",
       url_type: "search_results_page",
-      referrer_url_type: "youtube_main_page",
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -439,7 +417,6 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "direct_navigation",
           url_type: "youtube_main_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -455,12 +432,10 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "unspecified_navigation",
           url_type: "search_results_page",
-          referrer_url_type: "youtube_main_page",
         },
         {
           reach_type: "direct_navigation",
           url_type: "youtube_main_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -476,17 +451,14 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "unspecified_navigation",
           url_type: "user_page",
-          referrer_url_type: "search_results_page",
         },
         {
           reach_type: "unspecified_navigation",
           url_type: "search_results_page",
-          referrer_url_type: "youtube_main_page",
         },
         {
           reach_type: "direct_navigation",
           url_type: "youtube_main_page",
-          referrer_url_type: "empty",
         },
       ],
     });
@@ -510,22 +482,18 @@ describe("ReportSummarizer", function() {
         {
           reach_type: "unspecified_navigation",
           url_type: "watch_page",
-          referrer_url_type: "user_page",
         },
         {
           reach_type: "unspecified_navigation",
           url_type: "user_page",
-          referrer_url_type: "search_results_page",
         },
         {
           reach_type: "unspecified_navigation",
           url_type: "search_results_page",
-          referrer_url_type: "youtube_main_page",
         },
         {
           reach_type: "direct_navigation",
           url_type: "youtube_main_page",
-          referrer_url_type: "empty",
         },
       ],
     });
