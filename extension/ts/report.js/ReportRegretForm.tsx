@@ -30,8 +30,8 @@ import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigation
 const youTubePageEntryPointLabels: {
   [k in YouTubePageEntryPoint]: string;
 } = {
-  direct_navigation: "First visit",
-  page_reload: "First visit",
+  direct_navigation: "Direct visit",
+  page_reload: "Direct visit",
   search_results_page: "Search Results",
   watch_page: "Video Page",
   user_page: "User Page",
