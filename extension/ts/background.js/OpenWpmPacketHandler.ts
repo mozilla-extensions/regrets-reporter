@@ -215,7 +215,7 @@ export class OpenWpmPacketHandler {
           "user_page",
           "channel_page",
           "search_results_page",
-          "other_page",
+          "other",
         ].includes(urlType)
       ) {
         return true;

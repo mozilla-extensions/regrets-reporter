@@ -13,8 +13,8 @@ import Port = Runtime.Port;
 import {
   RegretReport,
   RegretReportData,
-  YouTubeNavigationReachType,
-  YouTubeVisitMetadata,
+  YouTubeNavigationMetadata,
+  YouTubePageEntryPoint,
 } from "../background.js/ReportSummarizer";
 import LikertScale from "likert-react";
 import {
@@ -24,35 +24,32 @@ import {
   MdHelp,
 } from "react-icons/md";
 import { DisplayError } from "../shared-react-resources/DisplayError";
-import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
+import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 
-const youTubeNavigationReachTypeLabels: {
-  [k in YouTubeNavigationReachType]: string;
+const youTubePageEntryPointLabels: {
+  [k in YouTubePageEntryPoint]: string;
 } = {
-  //  search_results_click: "Search results",
-  //  search_page_for_you_recommendations_click: "Search page recommendations",
-  from_watch_page_up_next_column_click: "Up next sidebar",
-  from_watch_page_watch_next_end_screen_click: "Watch next end screen",
-  //  search_action: "Search action",
-  direct_navigation: "Direct visit",
-  page_reload: "Page reload",
-  clicked_link: "Clicked link",
-  unspecified_navigation: "Click",
-  from_watch_page_without_clicking_at_all: "Auto-play without any interaction",
-  from_watch_page_without_clicking_neither_up_next_nor_end_screen:
-    "Not via recommendations",
-  "<failed>": "(Unknown interaction)",
-};
-
-const youTubeNavigationUrlTypeLabels: {
-  [k in YouTubeNavigationUrlType]: string;
-} = {
+  direct_navigation: "First visit",
+  page_reload: "First visit",
   search_results_page: "Search Results",
   watch_page: "Video Page",
   user_page: "User Page",
   channel_page: "Channel Page",
-  other_page: "Other Page",
+  other: "Other",
+  youtube_main_page: "YouTube.com",
+  not_a_youtube_page: "Somewhere outside of YouTube",
+  "<failed>": "(Unknown)",
+};
+const youTubeNavigationUrlTypeLabels: {
+  [k in YouTubeNavigationUrlType]: string;
+} = {
+  search_results_page: "Search Results",
+  search_results_page_load_more_results: "Load More Search Results",
+  watch_page: "Video Page",
+  user_page: "User Page",
+  channel_page: "Channel Page",
+  other: "Other Page",
   youtube_main_page: "YouTube.com",
   misc_xhr: "Misc XHR Request",
   not_a_youtube_page: "Somewhere outside of YouTube",
@@ -129,7 +126,7 @@ export class ReportRegretForm extends Component<
         if (m.regretReportData) {
           const { regretReportData } = m;
           console.log("Regret form received report data", { regretReportData });
-          const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.video_metadata.video_id}/mqdefault.jpg`;
+          const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.youtube_navigation_metadata.video_metadata.video_id}/mqdefault.jpg`;
           await this.setState({
             videoThumbUrl,
             regretReportData,
@@ -239,6 +236,22 @@ export class ReportRegretForm extends Component<
         </>
       );
     }
+    const youTubeNavigationMetadata: YouTubeNavigationMetadata = this.state
+      .regretReportData.youtube_navigation_metadata;
+    const parentYouTubeNavigationsMetadata: YouTubeNavigationMetadata[] = this
+      .state.regretReportData.parent_youtube_navigations_metadata;
+    const howTheVideoWasReached = parentYouTubeNavigationsMetadata
+      .slice()
+      .reverse();
+    const oldestReachEntry =
+      howTheVideoWasReached.slice().shift() || youTubeNavigationMetadata;
+    console.log({
+      youTubeNavigationMetadata,
+      parentYouTubeNavigationsMetadata,
+      howTheVideoWasReached,
+      oldestReachEntry,
+    });
+
     return (
       <form>
         <header className="panel-section panel-section-header">
@@ -307,16 +320,16 @@ export class ReportRegretForm extends Component<
                     </div>
                     <div className="mb-4 mt-1">
                       <h4 className="text-md font-medium text-sm overflow-y-auto h-5">
-                        {this.state.regretReportData.video_metadata.video_title}
+                        {youTubeNavigationMetadata.video_metadata.video_title}
                       </h4>
                       <p className="mt-1 font-hairline text-sm text-grey-darker text-sm overflow-y-auto h-5">
                         {
-                          this.state.regretReportData.video_metadata
+                          youTubeNavigationMetadata.video_metadata
                             .view_count_at_navigation_short
                         }{" "}
                         ·{" "}
                         {
-                          this.state.regretReportData.video_metadata
+                          youTubeNavigationMetadata.video_metadata
                             .video_posting_date
                         }
                       </p>
@@ -326,35 +339,53 @@ export class ReportRegretForm extends Component<
                         How you arrived at this video:
                       </label>
                       <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-14">
-                        {this.state.regretReportData.how_the_video_was_reached
-                          .slice()
-                          .reverse()
-                          .map(
-                            (
-                              youtubeVisitMetadata: YouTubeVisitMetadata,
-                              index: number,
-                            ) => (
-                              <React.Fragment key={index}>
+                        <li className="inline">
+                          {
+                            youTubePageEntryPointLabels[
+                              oldestReachEntry.page_entry_point
+                            ]
+                          }
+                        </li>
+                        {howTheVideoWasReached.map(
+                          (
+                            youTubeVisitMetadata: YouTubeNavigationMetadata,
+                            index: number,
+                          ) => (
+                            <React.Fragment key={index}>
+                              {(youTubeVisitMetadata.video_metadata && (
+                                <li
+                                  className="inline"
+                                  title={
+                                    youTubeVisitMetadata.video_metadata
+                                      .video_title
+                                  }
+                                >
+                                  <img
+                                    className="h-4 inline"
+                                    src={`https://img.youtube.com/vi/${youTubeVisitMetadata.video_metadata.video_id}/default.jpg`}
+                                    alt=""
+                                  />
+                                </li>
+                              )) || (
                                 <li className="inline">
                                   {
-                                    youTubeNavigationReachTypeLabels[
-                                      youtubeVisitMetadata.reach_type
+                                    youTubeNavigationUrlTypeLabels[
+                                      youTubeVisitMetadata.url_type
                                     ]
                                   }
                                 </li>
-                                <li className="inline">
-                                  {index ===
-                                  this.state.regretReportData
-                                    .how_the_video_was_reached.length -
-                                    1
-                                    ? "This Video"
-                                    : youTubeNavigationUrlTypeLabels[
-                                        youtubeVisitMetadata.url_type
-                                      ]}
-                                </li>
-                              </React.Fragment>
-                            ),
-                          )}
+                              )}
+                            </React.Fragment>
+                          ),
+                        )}
+                        <li
+                          className="inline"
+                          title={
+                            youTubeNavigationMetadata.video_metadata.video_title
+                          }
+                        >
+                          This Video
+                        </li>
                       </ul>
                     </div>
                   </div>

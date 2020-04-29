@@ -12,23 +12,25 @@ import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
 
 type YouTubeNavigationLinkPosition =
   | "search_results"
-  | "search_page_for_you_recommendations"
+  | "search_results_page_for_you_indirect_videos"
+  | "search_results_page_other_indirect_videos"
   | "watch_next_column"
   | "watch_next_end_screen";
-// | "up_next_auto_play"
 
 export type YouTubeNavigationReachType =
-  // | "search_results_click"
-  // | "search_page_for_you_recommendations_click"
+  | "search_results_video_click"
+  | "search_results_non_video_click"
+  | "search_results_page_for_you_indirect_videos_click"
+  | "search_results_page_other_indirect_videos_click"
   | "from_watch_page_up_next_column_click"
   | "from_watch_page_watch_next_end_screen_click"
   // | "search_action"
   | "direct_navigation"
   | "page_reload"
   | "clicked_link"
-  | "unspecified_navigation"
-  | "from_watch_page_without_clicking_at_all"
-  | "from_watch_page_without_clicking_neither_up_next_nor_end_screen"
+  | "unspecified"
+  | "without_clicking_at_all"
+  | "without_categorized_clicks"
   | FailedStringAttribute;
 
 export type YouTubePageEntryPoint =
@@ -45,6 +47,7 @@ export type YouTubePageEntryPoint =
 
 type FailedStringAttribute = "<failed>";
 type FailedIntegerAttribute = -1;
+type FailedBooleanAttribute = null;
 
 export interface VideoMetadata {
   video_id: string | FailedStringAttribute;
@@ -89,7 +92,14 @@ export interface YouTubeNavigation {
 export interface YouTubeNavigationMetadata {
   video_metadata?: VideoMetadata;
   url_type: YouTubeNavigationUrlType;
-  page_entry_point?: YouTubePageEntryPoint;
+  page_entry_point: YouTubePageEntryPoint;
+  via_search_results: boolean | FailedBooleanAttribute;
+  via_non_search_algorithmic_recommendations_content:
+    | boolean
+    | FailedBooleanAttribute;
+  via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for:
+    | boolean
+    | FailedBooleanAttribute;
 }
 
 export interface YouTubeNavigationSpecificRegretReportData {
@@ -219,6 +229,12 @@ export class ReportSummarizer {
         );
       // console.log({ httpRequestEnvelope });
 
+      if (!httpRequestEnvelope) {
+        throw new Error(
+          `The matching httpRequestEnvelope was not found for request id ${topFrameHttpResponseEnvelope.httpResponse.request_id}`,
+        );
+      }
+
       // ... and the corresponding captured content
       const capturedContentEnvelope = topFrameNavigationBatch.childEnvelopes.find(
         childEnvelope =>
@@ -261,10 +277,12 @@ export class ReportSummarizer {
             capturedContentEnvelope,
           );
         } else {
+          /*
           console.warn("No video metadata is extracted for this url type", {
             url,
             url_type,
           });
+          */
         }
       }
 
@@ -335,12 +353,21 @@ export class ReportSummarizer {
             youtubePageMetadata,
             url_type,
           );
+        } else if (parentYouTubeNavigationUrlType === "search_results_page") {
+          reach_type = this.extractReachTypeFromSearchResultsPageData(
+            clickEventEnvelopesForParentYouTubeNavigation,
+            parentYouTubeNavigation,
+            youtubePageMetadata,
+            url_type,
+          );
         } else {
-          reach_type = "unspecified_navigation";
+          reach_type = "unspecified";
+          /*
           console.warn("No reach type is extracted for this url type", {
             url: parentYouTubeNavigation.url,
             url_type: parentYouTubeNavigationUrlType,
           });
+          */
         }
       }
 
@@ -610,16 +637,24 @@ export class ReportSummarizer {
       const jsonContent =
         capturedContentEnvelope.capturedContent.decoded_content;
       const xhrResponse = JSON.parse(jsonContent);
-      // console.dir({ xhrResponse }, { depth: 5 });
-      ytInitialData = xhrResponse.find(
-        xhrResponseItem => xhrResponseItem.response,
+      const xhrResponseItemWithYtInitialData = xhrResponse.find(
+        xhrResponseItem => {
+          return xhrResponseItem.response !== undefined;
+        },
       );
+      if (!xhrResponseItemWithYtInitialData) {
+        console.error("No xhrResponseItemWithYtInitialData");
+        console.dir({ xhrResponse }, { depth: 4 });
+      }
+      ytInitialData = xhrResponseItemWithYtInitialData.response;
+      // console.dir({ ytInitialData }, {depth: 5});
     }
 
-    // console.log({ ytInitialData });
+    // console.log({ httpRequestEnvelope, ytInitialData });
 
     let search_results;
-    let search_page_for_you_recommendations;
+    let search_results_page_for_you_indirect_videos;
+    let search_results_page_other_indirect_videos;
     try {
       // console.dir(ytInitialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents, { depth: 8 });
       search_results = ytInitialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents.map(
@@ -627,32 +662,41 @@ export class ReportSummarizer {
           if (el.videoRenderer) {
             return el.videoRenderer.videoId;
           }
+          if (el.channelRenderer) {
+            return "(channel)";
+          }
           if (el.playlistRenderer) {
             return el.playlistRenderer.navigationEndpoint.watchEndpoint.videoId;
           }
-          if (el.horizontalCardListRenderer) {
-            return "(related-searches)";
+          if (el.radioRenderer) {
+            return el.radioRenderer.navigationEndpoint.watchEndpoint.videoId;
           }
-          if (
-            el.shelfRenderer &&
-            el.shelfRenderer.title.simpleText === "For you"
-          ) {
+          if (el.horizontalCardListRenderer) {
+            return "(horizontal-card-list)";
+          }
+          // Assume shelf-rendered items are not direct search results
+          if (el.shelfRenderer) {
             try {
-              search_page_for_you_recommendations = el.shelfRenderer.content.verticalListRenderer.items.map(
+              const video_ids = el.shelfRenderer.content.verticalListRenderer.items.map(
                 el => {
                   if (el.videoRenderer) {
                     return el.videoRenderer.videoId;
                   }
                   console.error(
-                    "search_page_for_you_recommendations unhandled el:",
+                    "search_results_page_other_indirect_videos unhandled el:",
                   );
                   console.dir({ el }, { depth: 4 });
                 },
               );
+              if (el.shelfRenderer.title.simpleText === "For you") {
+                search_results_page_for_you_indirect_videos = video_ids;
+              } else {
+                search_results_page_other_indirect_videos = video_ids;
+              }
             } catch (err) {
-              search_page_for_you_recommendations = "<failed>";
+              search_results_page_other_indirect_videos = "<failed>";
             }
-            return "(for-you-recommendations)";
+            return "(indirect-videos)";
           }
           console.error("search_results unhandled el:");
           console.dir({ el }, { depth: 4 });
@@ -660,6 +704,7 @@ export class ReportSummarizer {
       );
     } catch (err) {
       console.error("search_results", err.message);
+      console.dir({ ytInitialData }, { depth: 4 });
       search_results = "<failed>";
     }
 
@@ -667,7 +712,7 @@ export class ReportSummarizer {
       video_metadata: undefined,
       outgoing_video_ids_by_category: {
         search_results,
-        search_page_for_you_recommendations,
+        search_results_page_other_indirect_videos,
       },
     };
   }
@@ -721,13 +766,13 @@ export class ReportSummarizer {
     // console.log({clickedWithinRelated, clickedEndScreenUpNextAutoplayButton, clickedEndScreenCancelUpNextAutoplayButton});
 
     if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
-      return "from_watch_page_without_clicking_at_all";
+      return "without_clicking_at_all";
     } else if (
       !clickedWithinRelated &&
       !clickedEndScreenUpNextAutoplayButton &&
       !clickedEndScreenCancelUpNextAutoplayButton
     ) {
-      return "from_watch_page_without_clicking_neither_up_next_nor_end_screen";
+      return "without_categorized_clicks";
     } else {
       // console.debug({ referrer_url });
 
@@ -741,6 +786,10 @@ export class ReportSummarizer {
       // console.log("youtubePageMetadata.video_metadata.video_id", youtubePageMetadata.video_metadata.video_id);
       // console.dir(parentYouTubeNavigation.outgoing_video_ids_by_category, {depth: 5});
 
+      // Possible TODO: If the additional video check below is to be instantiated in the future, it must support
+      // the possibility that the user loaded more results before clicking
+
+      /*
       let parentWatchNextColumnIncludesThisVideoId;
       if (
         url_type === "watch_page" &&
@@ -751,14 +800,16 @@ export class ReportSummarizer {
           youtubePageMetadata.video_metadata.video_id,
         );
       }
+      */
       if (
         url_type === "watch_page" &&
-        clickedWithinRelated &&
-        parentWatchNextColumnIncludesThisVideoId
+        clickedWithinRelated
+        /* && parentWatchNextColumnIncludesThisVideoId*/
       ) {
         return "from_watch_page_up_next_column_click";
       }
 
+      /*
       let parentWatchNextEndScreenIncludesThisVideoId;
       if (
         url_type === "watch_page" &&
@@ -769,12 +820,99 @@ export class ReportSummarizer {
           youtubePageMetadata.video_metadata.video_id,
         );
       }
+      */
       if (
         url_type === "watch_page" &&
-        clickedEndScreenUpNextAutoplayButton &&
-        parentWatchNextEndScreenIncludesThisVideoId
+        clickedEndScreenUpNextAutoplayButton
+        /* && parentWatchNextEndScreenIncludesThisVideoId */
       ) {
         return "from_watch_page_watch_next_end_screen_click";
+      }
+    }
+    return "<failed>";
+  }
+
+  extractReachTypeFromSearchResultsPageData(
+    clickEventEnvelopesForParentYouTubeNavigation: OpenWpmPayloadEnvelope[],
+    parentYouTubeNavigation: YouTubeNavigation,
+    youtubePageMetadata: YouTubePageMetadata,
+    url_type: YouTubeNavigationUrlType,
+  ): YouTubeNavigationReachType {
+    let clickedWithinSearchResults = false;
+    let clickedWithinSearchPageNotSearchResults = false;
+    clickEventEnvelopesForParentYouTubeNavigation.map(clickEventEnvelope => {
+      const composedPath = JSON.parse(
+        clickEventEnvelope.userInteraction.composed_path,
+      );
+      // console.dir({ composedPath }, { depth: 5 });
+      if (
+        !!composedPath.find(
+          (eventTarget: OpenWPMObjectifiedEventTarget) =>
+            eventTarget.xpath ===
+            "//*[@id='container']/ytd-two-column-search-results-renderer",
+        )
+      ) {
+        clickedWithinSearchResults = true;
+      }
+      if (
+        !!composedPath.find(
+          (eventTarget: OpenWPMObjectifiedEventTarget) =>
+            eventTarget.xpath === "//*[@id='contents']/ytd-shelf-renderer",
+        )
+      ) {
+        clickedWithinSearchPageNotSearchResults = true;
+      }
+    });
+
+    // console.log({clickedWithinSearchResults, clickedWithinSearchPageNotSearchResults,});
+
+    if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
+      return "without_clicking_at_all";
+    } else if (
+      !clickedWithinSearchResults &&
+      !clickedWithinSearchPageNotSearchResults
+    ) {
+      return "without_categorized_clicks";
+    } else {
+      // console.debug({ referrer_url });
+
+      /*
+      if (url_type === "watch_page") {
+        console.log(
+          "youtubePageMetadata.video_metadata.video_id",
+          youtubePageMetadata.video_metadata.video_id,
+        );
+        console.dir(parentYouTubeNavigation.outgoing_video_ids_by_category, {
+          depth: 5,
+        });
+      }
+      */
+
+      if (
+        url_type === "watch_page" &&
+        clickedWithinSearchPageNotSearchResults
+      ) {
+        let searchResultsPageForYouIndirectVideosIncludesThisVideoId;
+        // TODO: Make sure to support also clicks on "+X More" (currently they are not included in the video ids)
+        if (
+          parentYouTubeNavigation.outgoing_video_ids_by_category
+            .search_results_page_for_you_indirect_videos
+        ) {
+          searchResultsPageForYouIndirectVideosIncludesThisVideoId = parentYouTubeNavigation.outgoing_video_ids_by_category.search_results_page_for_you_indirect_videos.includes(
+            youtubePageMetadata.video_metadata.video_id,
+          );
+        }
+        if (searchResultsPageForYouIndirectVideosIncludesThisVideoId) {
+          return "search_results_page_for_you_indirect_videos_click";
+        }
+        return "search_results_page_other_indirect_videos_click";
+      }
+
+      if (url_type === "search_results_page" && clickedWithinSearchResults) {
+        return "search_results_video_click";
+      }
+      if (clickedWithinSearchResults) {
+        return "search_results_non_video_click";
       }
     }
     return "<failed>";
@@ -788,12 +926,32 @@ export class ReportSummarizer {
       page_entry_point: this.pageEntryPointFromYouTubeNavigation(
         youTubeNavigation,
       ),
+      via_search_results: this.viaSearchResultsFromYouTubeNavigation(
+        youTubeNavigation,
+      ),
+      via_non_search_algorithmic_recommendations_content: this.viaNonSearchAlgorithmicRecommendationsContentFromYouTubeNavigation(
+        youTubeNavigation,
+      ),
+      via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: this.viaRecommendationsWithAnExplicitQueryOrConstraintToOptimizeForFromYouTubeNavigation(
+        youTubeNavigation,
+      ),
     };
     if (youTubeNavigation.youtube_visit_metadata.url_type === "watch_page") {
       metadata.video_metadata = youTubeNavigation.video_metadata;
     }
     return metadata;
   };
+
+  parentUrlTypeFromYouTubeNavigation(
+    youTubeNavigation: YouTubeNavigation,
+  ): YouTubeNavigationUrlType {
+    const parentYouTubeNavigation = youTubeNavigation.parent_youtube_navigations
+      .slice()
+      .shift();
+    return parentYouTubeNavigation
+      ? parentYouTubeNavigation.youtube_visit_metadata.url_type
+      : classifyYouTubeNavigationUrlType(youTubeNavigation.referrer_url);
+  }
 
   pageEntryPointFromYouTubeNavigation(
     youTubeNavigation: YouTubeNavigation,
@@ -807,12 +965,9 @@ export class ReportSummarizer {
     if (youTubeNavigation.youtube_visit_metadata.reach_type === "page_reload") {
       return "page_reload";
     }
-    const parentYouTubeNavigation = youTubeNavigation.parent_youtube_navigations
-      .slice()
-      .shift();
-    const parentUrlType = parentYouTubeNavigation
-      ? parentYouTubeNavigation.youtube_visit_metadata.url_type
-      : classifyYouTubeNavigationUrlType(youTubeNavigation.referrer_url);
+    const parentUrlType = this.parentUrlTypeFromYouTubeNavigation(
+      youTubeNavigation,
+    );
     if (parentUrlType === "search_results_page") {
       return "search_results_page";
     }
@@ -835,6 +990,106 @@ export class ReportSummarizer {
       return "<failed>";
     }
     return "other";
+  }
+
+  viaSearchResultsFromYouTubeNavigation(
+    youTubeNavigation: YouTubeNavigation,
+  ): boolean | FailedBooleanAttribute {
+    if (
+      youTubeNavigation.youtube_visit_metadata.reach_type ===
+      "direct_navigation"
+    ) {
+      return false;
+    }
+    if (youTubeNavigation.youtube_visit_metadata.reach_type === "page_reload") {
+      return false;
+    }
+    const parentUrlType = this.parentUrlTypeFromYouTubeNavigation(
+      youTubeNavigation,
+    );
+    if (parentUrlType === "search_results_page") {
+      if (
+        ["search_results_page_for_you_videos_click"].includes(
+          youTubeNavigation.youtube_visit_metadata.reach_type,
+        )
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    if (
+      [
+        "watch_page",
+        "user_page",
+        "channel_page",
+        "youtube_main_page",
+        "not_a_youtube_page",
+      ].includes(parentUrlType)
+    ) {
+      return false;
+    }
+    return null;
+  }
+
+  viaNonSearchAlgorithmicRecommendationsContentFromYouTubeNavigation(
+    youTubeNavigation: YouTubeNavigation,
+  ): boolean | FailedBooleanAttribute {
+    if (youTubeNavigation.youtube_visit_metadata.url_type !== "watch_page") {
+      return null;
+    }
+    if (
+      youTubeNavigation.youtube_visit_metadata.reach_type ===
+      "direct_navigation"
+    ) {
+      return false;
+    }
+    if (youTubeNavigation.youtube_visit_metadata.reach_type === "page_reload") {
+      return false;
+    }
+    const parentUrlType = this.parentUrlTypeFromYouTubeNavigation(
+      youTubeNavigation,
+    );
+    if (parentUrlType === "search_results_page") {
+      if (
+        ["search_results_page_for_you_videos_click"].includes(
+          youTubeNavigation.youtube_visit_metadata.reach_type,
+        )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    if (
+      ["watch_page", "user_page", "channel_page", "youtube_main_page"].includes(
+        parentUrlType,
+      )
+    ) {
+      return true;
+    }
+    if (["not_a_youtube_page"].includes(parentUrlType)) {
+      return false;
+    }
+    return null;
+  }
+
+  viaRecommendationsWithAnExplicitQueryOrConstraintToOptimizeForFromYouTubeNavigation(
+    youTubeNavigation: YouTubeNavigation,
+  ): boolean | FailedBooleanAttribute {
+    if (youTubeNavigation.youtube_visit_metadata.url_type !== "watch_page") {
+      return null;
+    }
+    const parentUrlType = this.parentUrlTypeFromYouTubeNavigation(
+      youTubeNavigation,
+    );
+    if (parentUrlType === "user_page") {
+      return true;
+    }
+    if (parentUrlType === "channel_page") {
+      return true;
+    }
+    return this.viaSearchResultsFromYouTubeNavigation(youTubeNavigation);
   }
 
   async youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(

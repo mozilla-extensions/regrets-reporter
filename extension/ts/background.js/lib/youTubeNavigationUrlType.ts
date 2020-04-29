@@ -2,11 +2,12 @@ type FailedStringAttribute = "<failed>";
 
 export type YouTubeNavigationUrlType =
   | "search_results_page"
+  | "search_results_page_load_more_results"
   | "watch_page"
   | "user_page"
   | "channel_page"
   | "youtube_main_page"
-  | "other_page"
+  | "other"
   | "misc_xhr"
   | "not_a_youtube_page"
   | "prefetch"
@@ -44,6 +45,7 @@ export const classifyYouTubeNavigationUrlType = (
     "/live_chat/get_live_chat",
      */
     "/live_chat/",
+    "/related_ajax",
     "/heartbeat",
     "/error_204",
     "/notifications_ajax",
@@ -72,14 +74,15 @@ export const classifyYouTubeNavigationUrlType = (
       return "channel_page";
     }
   }
-  const searchResultsPageStartWiths = ["/results"];
-  for (const startWith of searchResultsPageStartWiths) {
-    if (parsedUrl.pathname.indexOf(startWith) === 0) {
-      return "search_results_page";
+  const searchResultsPageStartWith = "/results";
+  if (parsedUrl.pathname.indexOf(searchResultsPageStartWith) === 0) {
+    if (parsedUrl.search.indexOf("&continuation=") > 0) {
+      return "search_results_page_load_more_results";
     }
+    return "search_results_page";
   }
   if (parsedUrl.pathname === "/") {
     return "youtube_main_page";
   }
-  return "other_page";
+  return "other";
 };
