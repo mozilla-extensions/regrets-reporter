@@ -290,11 +290,17 @@ export class ReportSummarizer {
           reach_type = "clicked_link";
         }
         // TODO: Check referrer_url, timing and other transition types
-        parent_youtube_navigations = youTubeNavigations.slice(0, 5).reverse();
+        parent_youtube_navigations = youTubeNavigations
+          .slice()
+          .reverse()
+          .slice(0, 5);
         parentYouTubeNavigation = parent_youtube_navigations.slice().shift();
       } else {
         // TODO: Only consider those within the same tab
-        parent_youtube_navigations = youTubeNavigations.slice(0, 5).reverse();
+        parent_youtube_navigations = youTubeNavigations
+          .slice()
+          .reverse()
+          .slice(0, 5);
         parentYouTubeNavigation = parent_youtube_navigations.slice().shift();
       }
 
