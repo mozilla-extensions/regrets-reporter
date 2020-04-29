@@ -665,6 +665,9 @@ export class ReportSummarizer {
           if (el.channelRenderer) {
             return "(channel)";
           }
+          if (el.searchPyvRenderer) {
+            return "(ad)";
+          }
           if (el.playlistRenderer) {
             return el.playlistRenderer.navigationEndpoint.watchEndpoint.videoId;
           }
