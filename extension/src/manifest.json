@@ -7,7 +7,7 @@
   "incognito": "not_allowed",
   "applications": {
     "gecko": {
-      "id": "cre-regrets-reporter@mozilla.com.motin.eu",
+      "id": "regrets-reporter@mozillafoundation.org",
       "strict_min_version": "67.0a1"
     }
   },

@@ -13,7 +13,7 @@ const defaultConfig = {
     firefox: process.env.FIREFOX_BINARY || "firefoxdeveloperedition",
     browserConsole: false,
     startUrl: [
-      "about:devtools-toolbox?type=extension&id=youtube-regrets-reporter-extension%40motin.eu",
+      "about:devtools-toolbox?type=extension&id=regrets-reporter%40mozillafoundation.org",
       "https://www.youtube.com/watch?v=g4mHPeMGTJM",
       "about:debugging#/runtime/this-firefox",
     ],
