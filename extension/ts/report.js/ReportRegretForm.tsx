@@ -245,12 +245,6 @@ export class ReportRegretForm extends Component<
       .reverse();
     const oldestReachEntry =
       howTheVideoWasReached.slice().shift() || youTubeNavigationMetadata;
-    console.log({
-      youTubeNavigationMetadata,
-      parentYouTubeNavigationsMetadata,
-      howTheVideoWasReached,
-      oldestReachEntry,
-    });
 
     return (
       <form>

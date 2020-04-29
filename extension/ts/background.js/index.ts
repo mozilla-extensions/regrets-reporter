@@ -56,10 +56,10 @@ class ExtensionGlue {
       if (p.name !== "port-from-consent-form") {
         return;
       }
-      console.log("Connected to consent-form script");
+      // console.log("Connected to consent-form script");
       portFromContentScript = p;
       portFromContentScript.onMessage.addListener(async function(m) {
-        console.log("Message from consent-form script:", { m });
+        // console.log("Message from consent-form script:", { m });
         if (m.requestConsentStatus) {
           portFromContentScript.postMessage({
             consentStatus: await store.getConsentStatus(),

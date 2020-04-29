@@ -39,7 +39,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
     // When we have received consent status, update state to reflect it
     this.backgroundContextPort.onMessage.addListener(
       (m: { consentStatus: ConsentStatus }) => {
-        console.log("consent-form message from backgroundContextPort", { m });
+        // console.log("consent-form message from backgroundContextPort", { m });
         const { consentStatus } = m;
         this.setState({
           loading: false,
