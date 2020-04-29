@@ -276,8 +276,6 @@ class ExtensionGlue {
       const registerContentScriptOptions = {
         matches: [
           "*://*.youtube.com/*",
-          "*://*.youtu.be/*",
-          "*://*.youtube-nocookie.com/*",
         ],
         allFrames: false,
         matchAboutBlank: false,
