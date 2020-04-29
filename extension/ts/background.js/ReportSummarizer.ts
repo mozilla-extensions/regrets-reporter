@@ -92,9 +92,9 @@ export interface YouTubeNavigationMetadata {
   page_entry_point?: YouTubePageEntryPoint;
 }
 
-export interface YouTubeNavigationSpecificRegretReportData
-  extends YouTubeNavigationMetadata {
-  parent_youtube_navigation_metadata: YouTubeNavigationMetadata[];
+export interface YouTubeNavigationSpecificRegretReportData {
+  youtube_navigation_metadata: YouTubeNavigationMetadata;
+  parent_youtube_navigations_metadata: YouTubeNavigationMetadata[];
 }
 
 export interface RegretReportData
@@ -861,12 +861,12 @@ export class ReportSummarizer {
     const reportMetadata = this.youTubeNavigationMetadataFromYouTubeNavigation(
       mostRecentYouTubeNavigation,
     );
-    const parent_youtube_navigation_metadata = mostRecentYouTubeNavigation.parent_youtube_navigations.map(
+    const parent_youtube_navigations_metadata = mostRecentYouTubeNavigation.parent_youtube_navigations.map(
       this.youTubeNavigationMetadataFromYouTubeNavigation,
     );
     return {
-      ...reportMetadata,
-      parent_youtube_navigation_metadata,
+      youtube_navigation_metadata: reportMetadata,
+      parent_youtube_navigations_metadata,
     };
   }
 }

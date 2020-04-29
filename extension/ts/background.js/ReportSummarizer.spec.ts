@@ -59,18 +59,20 @@ describe("ReportSummarizer", function() {
       windowAndTabIds1.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
-      video_metadata: {
-        video_id: "g4mHPeMGTJM",
-        video_title: "10 hours of absolute silence (the original)",
-        video_description:
-          "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
-        video_posting_date: "Sep 20, 2011",
-        view_count_at_navigation: 4173530,
-        view_count_at_navigation_short: "4.1M views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_id: "g4mHPeMGTJM",
+          video_title: "10 hours of absolute silence (the original)",
+          video_description:
+            "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+          video_posting_date: "Sep 20, 2011",
+          view_count_at_navigation: 4173530,
+          view_count_at_navigation_short: "4.1M views",
+        },
+        page_entry_point: "page_reload",
+        url_type: "watch_page",
       },
-      page_entry_point: "page_reload",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [],
+      parent_youtube_navigations_metadata: [],
     });
   });
 
@@ -96,19 +98,21 @@ describe("ReportSummarizer", function() {
       windowAndTabIds1.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
-      video_metadata: {
-        video_description:
-          "As the world struggles to contain the coronavirus pandemic, many have started claiming how this calamity was predicted centuries ago. Sadhguru busts the myth.\n\nDonate towards Corona relief at\n",
-        video_id: "P4QP6c8WmKc",
-        video_posting_date: "Apr 15, 2020",
-        video_title:
-          "Was the Corona Pandemic Predicted Centuries Ago? - Sadhguru",
-        view_count_at_navigation: 315911,
-        view_count_at_navigation_short: "315K views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description:
+            "As the world struggles to contain the coronavirus pandemic, many have started claiming how this calamity was predicted centuries ago. Sadhguru busts the myth.\n\nDonate towards Corona relief at\n",
+          video_id: "P4QP6c8WmKc",
+          video_posting_date: "Apr 15, 2020",
+          video_title:
+            "Was the Corona Pandemic Predicted Centuries Ago? - Sadhguru",
+          view_count_at_navigation: 315911,
+          view_count_at_navigation_short: "315K views",
+        },
+        page_entry_point: "direct_navigation",
+        url_type: "watch_page",
       },
-      page_entry_point: "direct_navigation",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [],
+      parent_youtube_navigations_metadata: [],
     });
   });
 
@@ -145,18 +149,20 @@ describe("ReportSummarizer", function() {
       windowAndTabIds1.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
-      video_metadata: {
-        video_id: "g4mHPeMGTJM",
-        video_title: "10 hours of absolute silence (the original)",
-        video_description:
-          "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
-        video_posting_date: "Sep 20, 2011",
-        view_count_at_navigation: 4173534,
-        view_count_at_navigation_short: "4.1M views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_id: "g4mHPeMGTJM",
+          video_title: "10 hours of absolute silence (the original)",
+          video_description:
+            "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+          video_posting_date: "Sep 20, 2011",
+          view_count_at_navigation: 4173534,
+          view_count_at_navigation_short: "4.1M views",
+        },
+        page_entry_point: "direct_navigation",
+        url_type: "watch_page",
       },
-      page_entry_point: "direct_navigation",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [],
+      parent_youtube_navigations_metadata: [],
     });
 
     const windowAndTabIds2 = firstEncounteredWindowAndTabIds(fixture);
@@ -166,17 +172,19 @@ describe("ReportSummarizer", function() {
       windowAndTabIds2.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData2, {
-      video_metadata: {
-        video_description: "http://billwurtz.com",
-        video_id: "xuCn8ux2gbs",
-        video_posting_date: "May 10, 2017",
-        video_title: "history of the entire world, i guess",
-        view_count_at_navigation: 86023815,
-        view_count_at_navigation_short: "86M views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description: "http://billwurtz.com",
+          video_id: "xuCn8ux2gbs",
+          video_posting_date: "May 10, 2017",
+          video_title: "history of the entire world, i guess",
+          view_count_at_navigation: 86023815,
+          view_count_at_navigation_short: "86M views",
+        },
+        page_entry_point: "watch_page",
+        url_type: "watch_page",
       },
-      page_entry_point: "watch_page",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [
+      parent_youtube_navigations_metadata: [
         {
           video_metadata: {
             video_id: "g4mHPeMGTJM",
@@ -227,18 +235,20 @@ describe("ReportSummarizer", function() {
       windowAndTabIds1.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
-      video_metadata: {
-        video_description:
-          "Provided to YouTube by TuneCore\n\nMoonlight Sonata · Beethoven\n\nMoonlight Sonata\n\n℗ 2014 Moonlight Sonata\n\nReleased on: 2011-04-27\n\nAuto-generated by YouTube.",
-        video_id: "9_C6CTs0WhI",
-        video_posting_date: "May 8, 2014",
-        video_title: "Moonlight Sonata",
-        view_count_at_navigation: 339321,
-        view_count_at_navigation_short: "339K views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description:
+            "Provided to YouTube by TuneCore\n\nMoonlight Sonata · Beethoven\n\nMoonlight Sonata\n\n℗ 2014 Moonlight Sonata\n\nReleased on: 2011-04-27\n\nAuto-generated by YouTube.",
+          video_id: "9_C6CTs0WhI",
+          video_posting_date: "May 8, 2014",
+          video_title: "Moonlight Sonata",
+          view_count_at_navigation: 339321,
+          view_count_at_navigation_short: "339K views",
+        },
+        page_entry_point: "direct_navigation",
+        url_type: "watch_page",
       },
-      page_entry_point: "direct_navigation",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [],
+      parent_youtube_navigations_metadata: [],
     });
 
     const windowAndTabIds2 = firstEncounteredWindowAndTabIds(fixture);
@@ -248,18 +258,20 @@ describe("ReportSummarizer", function() {
       windowAndTabIds2.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData2, {
-      video_metadata: {
-        video_description:
-          "Provided to YouTube by The Orchard Enterprises\n\nNocturne No. 2 in E flat Major, Op. 9,2 · Frédéric Chopin\n\nChopin\n\n℗ 2009 One Media Publishing\n\nReleased on: 2009-08-17\n\nAuto-generated by YouTube.",
-        video_id: "bVeOdm-29pU",
-        video_posting_date: "Nov 9, 2014",
-        video_title: "Nocturne No. 2 in E flat Major, Op. 9,2",
-        view_count_at_navigation: 2423769,
-        view_count_at_navigation_short: "2.4M views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description:
+            "Provided to YouTube by The Orchard Enterprises\n\nNocturne No. 2 in E flat Major, Op. 9,2 · Frédéric Chopin\n\nChopin\n\n℗ 2009 One Media Publishing\n\nReleased on: 2009-08-17\n\nAuto-generated by YouTube.",
+          video_id: "bVeOdm-29pU",
+          video_posting_date: "Nov 9, 2014",
+          video_title: "Nocturne No. 2 in E flat Major, Op. 9,2",
+          view_count_at_navigation: 2423769,
+          view_count_at_navigation_short: "2.4M views",
+        },
+        page_entry_point: "watch_page",
+        url_type: "watch_page",
       },
-      page_entry_point: "watch_page",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [
+      parent_youtube_navigations_metadata: [
         {
           video_metadata: {
             video_description:
@@ -311,18 +323,20 @@ describe("ReportSummarizer", function() {
       windowAndTabIds.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
-      video_metadata: {
-        video_description:
-          "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
-        video_id: "g4mHPeMGTJM",
-        video_posting_date: "Sep 20, 2011",
-        video_title: "10 hours of absolute silence (the original)",
-        view_count_at_navigation: 4200329,
-        view_count_at_navigation_short: "4.2M views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description:
+            "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+          video_id: "g4mHPeMGTJM",
+          video_posting_date: "Sep 20, 2011",
+          video_title: "10 hours of absolute silence (the original)",
+          view_count_at_navigation: 4200329,
+          view_count_at_navigation_short: "4.2M views",
+        },
+        page_entry_point: "page_reload",
+        url_type: "watch_page",
       },
-      page_entry_point: "page_reload",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [],
+      parent_youtube_navigations_metadata: [],
     });
 
     const youTubeNavigationSpecificRegretReportData2 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
@@ -331,9 +345,11 @@ describe("ReportSummarizer", function() {
       windowAndTabIds.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData2, {
-      url_type: "channel_page",
-      page_entry_point: "watch_page",
-      parent_youtube_navigation_metadata: [
+      youtube_navigation_metadata: {
+        url_type: "channel_page",
+        page_entry_point: "watch_page",
+      },
+      parent_youtube_navigations_metadata: [
         {
           video_metadata: {
             video_description:
@@ -356,18 +372,20 @@ describe("ReportSummarizer", function() {
       windowAndTabIds.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData3, {
-      video_metadata: {
-        video_description:
-          "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
-        video_id: "g4mHPeMGTJM",
-        video_posting_date: "Sep 20, 2011",
-        video_title: "10 hours of absolute silence (the original)",
-        view_count_at_navigation: 4200329,
-        view_count_at_navigation_short: "4.2M views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description:
+            "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+          video_id: "g4mHPeMGTJM",
+          video_posting_date: "Sep 20, 2011",
+          video_title: "10 hours of absolute silence (the original)",
+          view_count_at_navigation: 4200329,
+          view_count_at_navigation_short: "4.2M views",
+        },
+        page_entry_point: "channel_page",
+        url_type: "watch_page",
       },
-      page_entry_point: "channel_page",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [
+      parent_youtube_navigations_metadata: [
         {
           page_entry_point: "watch_page",
           url_type: "channel_page",
@@ -422,9 +440,11 @@ describe("ReportSummarizer", function() {
       windowAndTabIds.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
-      page_entry_point: "direct_navigation",
-      url_type: "youtube_main_page",
-      parent_youtube_navigation_metadata: [],
+      youtube_navigation_metadata: {
+        page_entry_point: "direct_navigation",
+        url_type: "youtube_main_page",
+      },
+      parent_youtube_navigations_metadata: [],
     });
 
     const youTubeNavigationSpecificRegretReportData2 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
@@ -433,9 +453,11 @@ describe("ReportSummarizer", function() {
       windowAndTabIds.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData2, {
-      page_entry_point: "youtube_main_page",
-      url_type: "search_results_page",
-      parent_youtube_navigation_metadata: [
+      youtube_navigation_metadata: {
+        page_entry_point: "youtube_main_page",
+        url_type: "search_results_page",
+      },
+      parent_youtube_navigations_metadata: [
         {
           page_entry_point: "direct_navigation",
           url_type: "youtube_main_page",
@@ -449,9 +471,11 @@ describe("ReportSummarizer", function() {
       windowAndTabIds.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData3, {
-      page_entry_point: "search_results_page",
-      url_type: "user_page",
-      parent_youtube_navigation_metadata: [
+      youtube_navigation_metadata: {
+        page_entry_point: "search_results_page",
+        url_type: "user_page",
+      },
+      parent_youtube_navigations_metadata: [
         {
           page_entry_point: "youtube_main_page",
           url_type: "search_results_page",
@@ -469,18 +493,20 @@ describe("ReportSummarizer", function() {
       windowAndTabIds.tabId,
     );
     assert.deepEqual(youTubeNavigationSpecificRegretReportData4, {
-      video_metadata: {
-        video_description:
-          "Cal Jam 18 took place October 6, 2018 in San Bernardino, CA. \nSIGN UP FOR MORE INFO ON FUTURE EVENTS: ",
-        video_id: "PdDpbKX-N-4",
-        video_posting_date: "Feb 28, 2020",
-        video_title: "Cal Jam 18 - More Good Times!",
-        view_count_at_navigation: 31958,
-        view_count_at_navigation_short: "31K views",
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description:
+            "Cal Jam 18 took place October 6, 2018 in San Bernardino, CA. \nSIGN UP FOR MORE INFO ON FUTURE EVENTS: ",
+          video_id: "PdDpbKX-N-4",
+          video_posting_date: "Feb 28, 2020",
+          video_title: "Cal Jam 18 - More Good Times!",
+          view_count_at_navigation: 31958,
+          view_count_at_navigation_short: "31K views",
+        },
+        page_entry_point: "user_page",
+        url_type: "watch_page",
       },
-      page_entry_point: "user_page",
-      url_type: "watch_page",
-      parent_youtube_navigation_metadata: [
+      parent_youtube_navigations_metadata: [
         {
           page_entry_point: "search_results_page",
           url_type: "user_page",
