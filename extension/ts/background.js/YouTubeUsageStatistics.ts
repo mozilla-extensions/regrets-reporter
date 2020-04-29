@@ -10,43 +10,73 @@ import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import Tab = Tabs.Tab;
 
 export interface YouTubeUsageStatisticsUpdate {
-  amount_of_days_of_at_least_one_youtube_visit: number;
-  amount_of_youtube_watch_pages_loaded: number;
+  amount_of_days_with_at_least_one_youtube_visit: number;
   amount_of_time_with_an_active_youtube_tab: number;
-  /*
-  amount_of_youtube_videos_played_on_youtube_watch_pages: number;
-  amount_of_youtube_video_play_time_in_seconds: number;
-  */
+  amount_of_youtube_watch_pages_loaded_by_category: {
+    in_total: number;
+    via_search_results: number;
+    via_non_search_algorithmic_recommendations_content: number;
+    via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: number;
+  };
+  amount_of_days_with_at_least_one_youtube_watch_page_load_by_category: {
+    in_total: number;
+    via_search_results: number;
+    via_non_search_algorithmic_recommendations_content: number;
+    via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: number;
+  };
+}
+interface AmountByDate {
+  [date: string]: number;
+}
+
+interface DatesByCategory {
+  in_total: string[];
+  via_search_results: string[];
+  via_non_search_algorithmic_recommendations_content: string[];
+  via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: string[];
+}
+
+interface AmountsByCategoryAndDate {
+  in_total: AmountByDate;
+  via_search_results: AmountByDate;
+  via_non_search_algorithmic_recommendations_content: AmountByDate;
+  via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: AmountByDate;
 }
 
 interface YouTubeUsageStatisticsRegistry {
   dates_with_at_least_one_youtube_visit: string[];
-  amount_of_youtube_watch_pages_loaded_by_date: {
-    [date: string]: number;
-  };
-  amount_of_time_with_an_active_youtube_tab_by_date: { [date: string]: number };
-  /*
-  amount_of_youtube_videos_played_on_youtube_watch_pages_by_date: {
-    [date: string]: number;
-  };
-  amount_of_youtube_video_play_time_in_seconds_by_date: {
-    [date: string]: number;
-  };
-  */
+  amount_of_time_with_an_active_youtube_tab_by_date: AmountByDate;
+  amount_of_youtube_watch_pages_loaded_by_category_and_date: AmountsByCategoryAndDate;
+  dates_with_at_least_one_youtube_watch_page_load_by_category: DatesByCategory;
 }
+
+const emptyAmountsByCategoryAndDates = () => ({
+  in_total: {},
+  via_search_results: {},
+  via_non_search_algorithmic_recommendations_content: {},
+  via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: {},
+});
+const emptyDatesByCategory = () => ({
+  in_total: [],
+  via_search_results: [],
+  via_non_search_algorithmic_recommendations_content: [],
+  via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: [],
+});
+const emptyAmountsByCategory = () => ({
+  in_total: 0,
+  via_search_results: 0,
+  via_non_search_algorithmic_recommendations_content: 0,
+  via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+});
 
 export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   public store: Store;
   public reportSummarizer: ReportSummarizer;
   public activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor;
-  public amount_of_youtube_watch_pages_loaded_by_date;
-  public amount_of_time_with_an_active_youtube_tab_by_date;
-  /*
-  public amount_of_youtube_video_play_time_in_seconds_by_date;
-  public amount_of_youtube_videos_played_on_youtube_watch_pages_by_date;
-  */
   public dates_with_at_least_one_youtube_visit;
-
+  public amount_of_time_with_an_active_youtube_tab_by_date;
+  public amount_of_youtube_watch_pages_loaded_by_category_and_date;
+  public dates_with_at_least_one_youtube_watch_page_load_by_category;
   constructor(
     store: Store,
     reportSummarizer: ReportSummarizer,
@@ -67,6 +97,13 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     };
   }
 
+  incrementDateAmount(amountsByDate, dateYmd: string, increment: number = 1) {
+    if (typeof amountsByDate[dateYmd] === "undefined") {
+      amountsByDate[dateYmd] = 0;
+    }
+    amountsByDate[dateYmd] = amountsByDate[dateYmd] + increment;
+  }
+
   seenTabActiveDwellTimeIncrement = (tab: Tab, intervalMs: number) => {
     if (!this.hydrated) {
       throw new Error("Instance not hydrated");
@@ -75,16 +112,11 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     if (tabUrlType === "watch_page") {
       const dateTime = Date.now();
       const dateYmd = format(dateTime, "yyyy-MM-dd");
-      if (
-        typeof this.amount_of_time_with_an_active_youtube_tab_by_date[
-          dateYmd
-        ] === "undefined"
-      ) {
-        this.amount_of_time_with_an_active_youtube_tab_by_date[dateYmd] = 0;
-      }
-      this.amount_of_time_with_an_active_youtube_tab_by_date[dateYmd] =
-        this.amount_of_time_with_an_active_youtube_tab_by_date[dateYmd] +
-        intervalMs;
+      this.incrementDateAmount(
+        this.amount_of_time_with_an_active_youtube_tab_by_date,
+        dateYmd,
+        intervalMs,
+      );
     }
   };
 
@@ -119,12 +151,78 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       classifyYouTubeNavigationUrlType(youTubeNavigation.url) === "watch_page"
     ) {
       if (
-        typeof this.amount_of_youtube_watch_pages_loaded_by_date[dateYmd] ===
-        "undefined"
+        !this.dates_with_at_least_one_youtube_watch_page_load_by_category.in_total.includes(
+          dateYmd,
+        )
       ) {
-        this.amount_of_youtube_watch_pages_loaded_by_date[dateYmd] = 0;
+        this.dates_with_at_least_one_youtube_watch_page_load_by_category.in_total.push(
+          dateYmd,
+        );
       }
-      this.amount_of_youtube_watch_pages_loaded_by_date[dateYmd]++;
+      this.incrementDateAmount(
+        this.amount_of_youtube_watch_pages_loaded_by_category_and_date.in_total,
+        dateYmd,
+      );
+      if (
+        this.reportSummarizer.viaSearchResultsFromYouTubeNavigation(
+          youTubeNavigation,
+        )
+      ) {
+        if (
+          !this.dates_with_at_least_one_youtube_watch_page_load_by_category.via_search_results.includes(
+            dateYmd,
+          )
+        ) {
+          this.dates_with_at_least_one_youtube_watch_page_load_by_category.via_search_results.push(
+            dateYmd,
+          );
+        }
+        this.incrementDateAmount(
+          this.amount_of_youtube_watch_pages_loaded_by_category_and_date
+            .via_search_results,
+          dateYmd,
+        );
+      }
+      if (
+        this.reportSummarizer.viaNonSearchAlgorithmicRecommendationsContentFromYouTubeNavigation(
+          youTubeNavigation,
+        )
+      ) {
+        if (
+          !this.dates_with_at_least_one_youtube_watch_page_load_by_category.via_non_search_algorithmic_recommendations_content.includes(
+            dateYmd,
+          )
+        ) {
+          this.dates_with_at_least_one_youtube_watch_page_load_by_category.via_non_search_algorithmic_recommendations_content.push(
+            dateYmd,
+          );
+        }
+        this.incrementDateAmount(
+          this.amount_of_youtube_watch_pages_loaded_by_category_and_date
+            .via_non_search_algorithmic_recommendations_content,
+          dateYmd,
+        );
+      }
+      if (
+        this.reportSummarizer.viaRecommendationsWithAnExplicitQueryOrConstraintToOptimizeForFromYouTubeNavigation(
+          youTubeNavigation,
+        )
+      ) {
+        if (
+          !this.dates_with_at_least_one_youtube_watch_page_load_by_category.via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for.includes(
+            dateYmd,
+          )
+        ) {
+          this.dates_with_at_least_one_youtube_watch_page_load_by_category.via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for.push(
+            dateYmd,
+          );
+        }
+        this.incrementDateAmount(
+          this.amount_of_youtube_watch_pages_loaded_by_category_and_date
+            .via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for,
+          dateYmd,
+        );
+      }
     }
   };
 
@@ -132,41 +230,71 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     if (!this.hydrated) {
       throw new Error("Instance not hydrated");
     }
+    const reduceAmountsByDateToAmount = amountsByDateToAmount => {
+      const dateYmds = Object.keys(amountsByDateToAmount);
+      return dateYmds
+        .map(date => amountsByDateToAmount[date])
+        .reduce((a, b) => a + b, 0);
+    };
     const {
       dates_with_at_least_one_youtube_visit,
-      amount_of_youtube_watch_pages_loaded_by_date,
+      amount_of_youtube_watch_pages_loaded_by_category_and_date,
       amount_of_time_with_an_active_youtube_tab_by_date,
+      dates_with_at_least_one_youtube_watch_page_load_by_category,
     } = this;
-    let amount_of_youtube_watch_pages_loaded = 0;
-    if (amount_of_youtube_watch_pages_loaded_by_date) {
-      const dateYmds = Object.keys(
-        amount_of_youtube_watch_pages_loaded_by_date,
-      );
-      // console.log({ dateYmds, amount_of_youtube_watch_pages_loaded_by_date });
-      amount_of_youtube_watch_pages_loaded = dateYmds
-        .map(date => amount_of_youtube_watch_pages_loaded_by_date[date])
-        .reduce((a, b) => a + b, 0);
-    }
+    const amount_of_days_with_at_least_one_youtube_visit = dates_with_at_least_one_youtube_visit
+      ? dates_with_at_least_one_youtube_visit.length
+      : 0;
     let amount_of_time_with_an_active_youtube_tab = 0;
     if (amount_of_time_with_an_active_youtube_tab_by_date) {
-      const dateYmds = Object.keys(
+      amount_of_time_with_an_active_youtube_tab = reduceAmountsByDateToAmount(
         amount_of_time_with_an_active_youtube_tab_by_date,
       );
-      // console.log({ dateYmds, amount_of_time_with_an_active_youtube_tab_by_date });
-      amount_of_time_with_an_active_youtube_tab = dateYmds
-        .map(date => amount_of_time_with_an_active_youtube_tab_by_date[date])
-        .reduce((a, b) => a + b, 0);
+    }
+    let amount_of_youtube_watch_pages_loaded_by_category = emptyAmountsByCategory();
+    if (amount_of_youtube_watch_pages_loaded_by_category_and_date) {
+      amount_of_youtube_watch_pages_loaded_by_category = {
+        in_total: reduceAmountsByDateToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_date.in_total,
+        ),
+        via_search_results: reduceAmountsByDateToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_date.via_search_results,
+        ),
+        via_non_search_algorithmic_recommendations_content: reduceAmountsByDateToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_date.via_non_search_algorithmic_recommendations_content,
+        ),
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: reduceAmountsByDateToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_date.via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for,
+        ),
+      };
+    }
+    let amount_of_days_with_at_least_one_youtube_watch_page_load_by_category = emptyAmountsByCategory();
+    if (dates_with_at_least_one_youtube_watch_page_load_by_category) {
+      amount_of_days_with_at_least_one_youtube_watch_page_load_by_category = {
+        in_total: dates_with_at_least_one_youtube_watch_page_load_by_category.in_total
+          ? dates_with_at_least_one_youtube_watch_page_load_by_category.in_total
+              .length
+          : 0,
+        via_search_results: dates_with_at_least_one_youtube_watch_page_load_by_category.via_search_results
+          ? dates_with_at_least_one_youtube_watch_page_load_by_category
+              .via_search_results.length
+          : 0,
+        via_non_search_algorithmic_recommendations_content: dates_with_at_least_one_youtube_watch_page_load_by_category.via_non_search_algorithmic_recommendations_content
+          ? dates_with_at_least_one_youtube_watch_page_load_by_category
+              .via_non_search_algorithmic_recommendations_content.length
+          : 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: dates_with_at_least_one_youtube_watch_page_load_by_category.via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for
+          ? dates_with_at_least_one_youtube_watch_page_load_by_category
+              .via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for
+              .length
+          : 0,
+      };
     }
     return {
-      amount_of_days_of_at_least_one_youtube_visit: dates_with_at_least_one_youtube_visit
-        ? dates_with_at_least_one_youtube_visit.length
-        : 0,
-      amount_of_youtube_watch_pages_loaded,
+      amount_of_days_with_at_least_one_youtube_visit,
       amount_of_time_with_an_active_youtube_tab,
-      /*
-      amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
-      amount_of_youtube_video_play_time_in_seconds: -1,
-       */
+      amount_of_youtube_watch_pages_loaded_by_category,
+      amount_of_days_with_at_least_one_youtube_watch_page_load_by_category,
     };
   };
 
@@ -175,19 +303,25 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   hydrate = async () => {
     const {
       dates_with_at_least_one_youtube_visit,
-      amount_of_youtube_watch_pages_loaded_by_date,
+      amount_of_youtube_watch_pages_loaded_by_category_and_date,
       amount_of_time_with_an_active_youtube_tab_by_date,
+      dates_with_at_least_one_youtube_watch_page_load_by_category,
     } = await this.store.get([
       "dates_with_at_least_one_youtube_visit",
-      "amount_of_youtube_watch_pages_loaded_by_date",
+      "amount_of_youtube_watch_pages_loaded_by_category_and_date",
       "amount_of_time_with_an_active_youtube_tab_by_date",
+      "dates_with_at_least_one_youtube_watch_page_load_by_category",
     ]);
     this.dates_with_at_least_one_youtube_visit =
       dates_with_at_least_one_youtube_visit || [];
-    this.amount_of_youtube_watch_pages_loaded_by_date =
-      amount_of_youtube_watch_pages_loaded_by_date || {};
+    this.amount_of_youtube_watch_pages_loaded_by_category_and_date =
+      amount_of_youtube_watch_pages_loaded_by_category_and_date ||
+      emptyAmountsByCategoryAndDates();
     this.amount_of_time_with_an_active_youtube_tab_by_date =
       amount_of_time_with_an_active_youtube_tab_by_date || {};
+    this.dates_with_at_least_one_youtube_watch_page_load_by_category =
+      dates_with_at_least_one_youtube_watch_page_load_by_category ||
+      emptyDatesByCategory();
     this.hydrated = true;
   };
 
@@ -199,10 +333,12 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     await this.store.set({
       dates_with_at_least_one_youtube_visit: this
         .dates_with_at_least_one_youtube_visit,
-      amount_of_youtube_watch_pages_loaded_by_date: this
-        .amount_of_youtube_watch_pages_loaded_by_date,
       amount_of_time_with_an_active_youtube_tab_by_date: this
         .amount_of_time_with_an_active_youtube_tab_by_date,
+      amount_of_youtube_watch_pages_loaded_by_category_and_date: this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_date,
+      dates_with_at_least_one_youtube_watch_page_load_by_category: this
+        .dates_with_at_least_one_youtube_watch_page_load_by_category,
     });
   };
 

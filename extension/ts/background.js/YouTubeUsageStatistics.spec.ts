@@ -57,13 +57,20 @@ describe("YouTubeUsageStatistics", function() {
     const summarizedUpdate = await summarizeUpdate({}, youTubeUsageStatistics);
 
     assert.deepEqual(summarizedUpdate, {
-      amount_of_days_of_at_least_one_youtube_visit: 0,
-      amount_of_youtube_watch_pages_loaded: 0,
+      amount_of_days_with_at_least_one_youtube_visit: 0,
       amount_of_time_with_an_active_youtube_tab: 1500,
-      /*
-      amount_of_youtube_videos_played_on_youtube_watch_pages: 0,
-      amount_of_youtube_video_play_time_in_seconds: 0,
-       */
+      amount_of_youtube_watch_pages_loaded_by_category: {
+        in_total: 0,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
+      amount_of_days_with_at_least_one_youtube_watch_page_load_by_category: {
+        in_total: 0,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
     });
   });
 
@@ -82,13 +89,20 @@ describe("YouTubeUsageStatistics", function() {
     );
 
     assert.deepEqual(summarizedUpdate, {
-      amount_of_days_of_at_least_one_youtube_visit: 1,
-      amount_of_youtube_watch_pages_loaded: 1,
+      amount_of_days_with_at_least_one_youtube_visit: 1,
       amount_of_time_with_an_active_youtube_tab: 1500,
-      /*
-      amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
-      amount_of_youtube_video_play_time_in_seconds: -1,
-       */
+      amount_of_youtube_watch_pages_loaded_by_category: {
+        in_total: 1,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
+      amount_of_days_with_at_least_one_youtube_watch_page_load_by_category: {
+        in_total: 1,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
     });
 
     const youTubeUsageStatistics2 = new YouTubeUsageStatistics(
@@ -102,13 +116,20 @@ describe("YouTubeUsageStatistics", function() {
     const summarizedUpdate2 = await youTubeUsageStatistics2.summarizeUpdate();
 
     assert.deepEqual(summarizedUpdate2, {
-      amount_of_days_of_at_least_one_youtube_visit: 0,
-      amount_of_youtube_watch_pages_loaded: 0,
+      amount_of_days_with_at_least_one_youtube_visit: 0,
       amount_of_time_with_an_active_youtube_tab: 0,
-      /*
-      amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
-      amount_of_youtube_video_play_time_in_seconds: -1,
-       */
+      amount_of_youtube_watch_pages_loaded_by_category: {
+        in_total: 0,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
+      amount_of_days_with_at_least_one_youtube_watch_page_load_by_category: {
+        in_total: 0,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
     });
 
     // After persist + re-hydration
@@ -117,13 +138,20 @@ describe("YouTubeUsageStatistics", function() {
     const summarizedUpdate3 = await youTubeUsageStatistics2.summarizeUpdate();
 
     assert.deepEqual(summarizedUpdate3, {
-      amount_of_days_of_at_least_one_youtube_visit: 1,
-      amount_of_youtube_watch_pages_loaded: 1,
+      amount_of_days_with_at_least_one_youtube_visit: 1,
       amount_of_time_with_an_active_youtube_tab: 1500,
-      /*
-      amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
-      amount_of_youtube_video_play_time_in_seconds: -1,
-       */
+      amount_of_youtube_watch_pages_loaded_by_category: {
+        in_total: 1,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
+      amount_of_days_with_at_least_one_youtube_watch_page_load_by_category: {
+        in_total: 1,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
     });
   });
 
@@ -142,13 +170,20 @@ describe("YouTubeUsageStatistics", function() {
     );
 
     assert.deepEqual(summarizedUpdate, {
-      amount_of_days_of_at_least_one_youtube_visit: 1,
-      amount_of_youtube_watch_pages_loaded: 2,
+      amount_of_days_with_at_least_one_youtube_visit: 1,
       amount_of_time_with_an_active_youtube_tab: 1500,
-      /*
-      amount_of_youtube_videos_played_on_youtube_watch_pages: -1,
-      amount_of_youtube_video_play_time_in_seconds: -1,
-       */
+      amount_of_youtube_watch_pages_loaded_by_category: {
+        in_total: 2,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 1,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
+      amount_of_days_with_at_least_one_youtube_watch_page_load_by_category: {
+        in_total: 1,
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 1,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+      },
     });
   });
 });
