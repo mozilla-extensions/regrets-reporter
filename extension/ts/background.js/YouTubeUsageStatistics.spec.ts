@@ -26,6 +26,10 @@ const summarizeUpdate = async (
     await youTubeUsageStatistics.seenNavigationBatch(
       navigationBatchesByUuid[navUuid],
     );
+    // "See" it twice so that we know that it does not affect the statistics
+    await youTubeUsageStatistics.seenNavigationBatch(
+      navigationBatchesByUuid[navUuid],
+    );
   }
   const mockTab = { url: "https://www.youtube.com/watch?v=g4mHPeMGTJM" } as Tab;
   await youTubeUsageStatistics.seenTabActiveDwellTimeIncrement(mockTab, 1500);

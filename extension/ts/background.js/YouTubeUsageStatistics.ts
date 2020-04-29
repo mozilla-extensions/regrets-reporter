@@ -36,7 +36,7 @@ interface DatesByCategory {
   via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: string[];
 }
 
-interface AmountsByCategoryAndDate {
+interface AmountsByCategoryAndStringAttribute {
   in_total: AmountByDate;
   via_search_results: AmountByDate;
   via_non_search_algorithmic_recommendations_content: AmountByDate;
@@ -46,11 +46,11 @@ interface AmountsByCategoryAndDate {
 interface YouTubeUsageStatisticsRegistry {
   dates_with_at_least_one_youtube_visit: string[];
   amount_of_time_with_an_active_youtube_tab_by_date: AmountByDate;
-  amount_of_youtube_watch_pages_loaded_by_category_and_date: AmountsByCategoryAndDate;
+  amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid: AmountsByCategoryAndStringAttribute;
   dates_with_at_least_one_youtube_watch_page_load_by_category: DatesByCategory;
 }
 
-const emptyAmountsByCategoryAndDates = () => ({
+const emptyAmountsByCategoryAndStringAttributes = () => ({
   in_total: {},
   via_search_results: {},
   via_non_search_algorithmic_recommendations_content: {},
@@ -75,7 +75,7 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   public activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor;
   public dates_with_at_least_one_youtube_visit;
   public amount_of_time_with_an_active_youtube_tab_by_date;
-  public amount_of_youtube_watch_pages_loaded_by_category_and_date;
+  public amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid;
   public dates_with_at_least_one_youtube_watch_page_load_by_category;
   constructor(
     store: Store,
@@ -127,17 +127,66 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       throw new Error("Instance not hydrated");
     }
     const navigationBatchByUuid = {};
-    navigationBatchByUuid[
-      navigationBatch.navigationEnvelope.navigation.uuid
-    ] = navigationBatch;
+    const navigationBatchUuid =
+      navigationBatch.navigationEnvelope.navigation.uuid;
+    navigationBatchByUuid[navigationBatchUuid] = navigationBatch;
     const youTubeNavigations = await this.reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       navigationBatchByUuid,
     );
-    youTubeNavigations.map(this.seenYouTubeNavigation);
+    // First clear statistics related to this navigation batch, so that they don't get counted twice
+    if (
+      typeof this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .in_total[navigationBatchUuid] !== "undefined"
+    ) {
+      delete this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .in_total[navigationBatchUuid];
+    }
+    if (
+      typeof this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .via_search_results[navigationBatchUuid] !== "undefined"
+    ) {
+      delete this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .via_search_results[navigationBatchUuid];
+    }
+    if (
+      typeof this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .via_non_search_algorithmic_recommendations_content[
+        navigationBatchUuid
+      ] !== "undefined"
+    ) {
+      delete this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .via_non_search_algorithmic_recommendations_content[
+        navigationBatchUuid
+      ];
+    }
+    if (
+      typeof this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for[
+        navigationBatchUuid
+      ] !== "undefined"
+    ) {
+      delete this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+        .via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for[
+        navigationBatchUuid
+      ];
+    }
+    // Then update the statistics related to this navigation batch
+    for (const youTubeNavigation of youTubeNavigations) {
+      this.seenYouTubeNavigation(youTubeNavigation, navigationBatchUuid);
+    }
   };
 
   seenYouTubeNavigation = async (
     youTubeNavigation: YouTubeNavigation,
+    navigationBatchUuid: string,
   ): Promise<void> => {
     if (!this.hydrated) {
       throw new Error("Instance not hydrated");
@@ -159,9 +208,11 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
           dateYmd,
         );
       }
-      this.incrementDateAmount(
-        this.amount_of_youtube_watch_pages_loaded_by_category_and_date.in_total,
-        dateYmd,
+      this.incrementNavigationBatchAmount(
+        this
+          .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+          .in_total,
+        navigationBatchUuid,
       );
       if (
         this.reportSummarizer.viaSearchResultsFromYouTubeNavigation(
@@ -177,10 +228,11 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
             dateYmd,
           );
         }
-        this.incrementDateAmount(
-          this.amount_of_youtube_watch_pages_loaded_by_category_and_date
+        this.incrementNavigationBatchAmount(
+          this
+            .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
             .via_search_results,
-          dateYmd,
+          navigationBatchUuid,
         );
       }
       if (
@@ -197,10 +249,11 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
             dateYmd,
           );
         }
-        this.incrementDateAmount(
-          this.amount_of_youtube_watch_pages_loaded_by_category_and_date
+        this.incrementNavigationBatchAmount(
+          this
+            .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
             .via_non_search_algorithmic_recommendations_content,
-          dateYmd,
+          navigationBatchUuid,
         );
       }
       if (
@@ -217,28 +270,41 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
             dateYmd,
           );
         }
-        this.incrementDateAmount(
-          this.amount_of_youtube_watch_pages_loaded_by_category_and_date
+        this.incrementNavigationBatchAmount(
+          this
+            .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
             .via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for,
-          dateYmd,
+          navigationBatchUuid,
         );
       }
     }
   };
 
+  incrementNavigationBatchAmount(
+    amountsByStringAttribute,
+    stringAttribute: string,
+    increment: number = 1,
+  ) {
+    if (typeof amountsByStringAttribute[stringAttribute] === "undefined") {
+      amountsByStringAttribute[stringAttribute] = 0;
+    }
+    amountsByStringAttribute[stringAttribute] =
+      amountsByStringAttribute[stringAttribute] + increment;
+  }
+
   summarizeUpdate = async (): Promise<YouTubeUsageStatisticsUpdate> => {
     if (!this.hydrated) {
       throw new Error("Instance not hydrated");
     }
-    const reduceAmountsByDateToAmount = amountsByDateToAmount => {
-      const dateYmds = Object.keys(amountsByDateToAmount);
+    const reduceAmountsByStringAttributeToAmount = amountsByStringAttributeToAmount => {
+      const dateYmds = Object.keys(amountsByStringAttributeToAmount);
       return dateYmds
-        .map(date => amountsByDateToAmount[date])
+        .map(date => amountsByStringAttributeToAmount[date])
         .reduce((a, b) => a + b, 0);
     };
     const {
       dates_with_at_least_one_youtube_visit,
-      amount_of_youtube_watch_pages_loaded_by_category_and_date,
+      amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid,
       amount_of_time_with_an_active_youtube_tab_by_date,
       dates_with_at_least_one_youtube_watch_page_load_by_category,
     } = this;
@@ -247,24 +313,26 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       : 0;
     let amount_of_time_with_an_active_youtube_tab = 0;
     if (amount_of_time_with_an_active_youtube_tab_by_date) {
-      amount_of_time_with_an_active_youtube_tab = reduceAmountsByDateToAmount(
+      amount_of_time_with_an_active_youtube_tab = reduceAmountsByStringAttributeToAmount(
         amount_of_time_with_an_active_youtube_tab_by_date,
       );
     }
     let amount_of_youtube_watch_pages_loaded_by_category = emptyAmountsByCategory();
-    if (amount_of_youtube_watch_pages_loaded_by_category_and_date) {
+    if (
+      amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid
+    ) {
       amount_of_youtube_watch_pages_loaded_by_category = {
-        in_total: reduceAmountsByDateToAmount(
-          amount_of_youtube_watch_pages_loaded_by_category_and_date.in_total,
+        in_total: reduceAmountsByStringAttributeToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid.in_total,
         ),
-        via_search_results: reduceAmountsByDateToAmount(
-          amount_of_youtube_watch_pages_loaded_by_category_and_date.via_search_results,
+        via_search_results: reduceAmountsByStringAttributeToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid.via_search_results,
         ),
-        via_non_search_algorithmic_recommendations_content: reduceAmountsByDateToAmount(
-          amount_of_youtube_watch_pages_loaded_by_category_and_date.via_non_search_algorithmic_recommendations_content,
+        via_non_search_algorithmic_recommendations_content: reduceAmountsByStringAttributeToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid.via_non_search_algorithmic_recommendations_content,
         ),
-        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: reduceAmountsByDateToAmount(
-          amount_of_youtube_watch_pages_loaded_by_category_and_date.via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: reduceAmountsByStringAttributeToAmount(
+          amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid.via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for,
         ),
       };
     }
@@ -303,20 +371,20 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   hydrate = async () => {
     const {
       dates_with_at_least_one_youtube_visit,
-      amount_of_youtube_watch_pages_loaded_by_category_and_date,
+      amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid,
       amount_of_time_with_an_active_youtube_tab_by_date,
       dates_with_at_least_one_youtube_watch_page_load_by_category,
     } = await this.store.get([
       "dates_with_at_least_one_youtube_visit",
-      "amount_of_youtube_watch_pages_loaded_by_category_and_date",
+      "amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid",
       "amount_of_time_with_an_active_youtube_tab_by_date",
       "dates_with_at_least_one_youtube_watch_page_load_by_category",
     ]);
     this.dates_with_at_least_one_youtube_visit =
       dates_with_at_least_one_youtube_visit || [];
-    this.amount_of_youtube_watch_pages_loaded_by_category_and_date =
-      amount_of_youtube_watch_pages_loaded_by_category_and_date ||
-      emptyAmountsByCategoryAndDates();
+    this.amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid =
+      amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid ||
+      emptyAmountsByCategoryAndStringAttributes();
     this.amount_of_time_with_an_active_youtube_tab_by_date =
       amount_of_time_with_an_active_youtube_tab_by_date || {};
     this.dates_with_at_least_one_youtube_watch_page_load_by_category =
@@ -335,8 +403,8 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
         .dates_with_at_least_one_youtube_visit,
       amount_of_time_with_an_active_youtube_tab_by_date: this
         .amount_of_time_with_an_active_youtube_tab_by_date,
-      amount_of_youtube_watch_pages_loaded_by_category_and_date: this
-        .amount_of_youtube_watch_pages_loaded_by_category_and_date,
+      amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid: this
+        .amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid,
       dates_with_at_least_one_youtube_watch_page_load_by_category: this
         .dates_with_at_least_one_youtube_watch_page_load_by_category,
     });
