@@ -229,7 +229,7 @@ export class ReportRegretForm extends Component<
             </span>
           </div>{" "}
           <footer className="panel-section panel-section-footer">
-            <div onClick={this.cancel} className="panel-section-footer-button">
+            <div onClick={this.cancel} className="panel-section-footer-button default">
               Close
             </div>
           </footer>
