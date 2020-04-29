@@ -274,9 +274,7 @@ class ExtensionGlue {
       );
       this.userInteractionInstrument.run(config["crawl_id"]);
       const registerContentScriptOptions = {
-        matches: [
-          "*://*.youtube.com/*",
-        ],
+        matches: ["*://*.youtube.com/*"],
         allFrames: false,
         matchAboutBlank: false,
       };
