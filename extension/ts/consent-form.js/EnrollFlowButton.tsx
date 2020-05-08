@@ -113,7 +113,7 @@ export class EnrollFlowButton extends Component<
                 <h2>Study qualification</h2>
 
                 <div>
-                  <p>Are you over 18 years old?</p>
+                  <p>Are you at least 18 years old?</p>
                   <ul className="list-none">
                     <li className="mb-2">
                       <Radio
