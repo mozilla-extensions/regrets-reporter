@@ -5,7 +5,7 @@ import "../shared-react-resources/photon-components-web/index.css";
 import "../shared-react-resources/photon-components-web/attributes";
 import "../shared-react-resources/tailwind.css";
 import { Input } from "../shared-react-resources/photon-components-web/photon-components/Input";
-import { Radio } from "../shared-react-resources/photon-components-web/photon-components/Radio";
+import { Checkbox } from "../shared-react-resources/photon-components-web/photon-components/Checkbox";
 import { Link } from "../shared-react-resources/photon-components-web/photon-components/Link";
 import { TextArea } from "../shared-react-resources/photon-components-web/photon-components/TextArea";
 import { browser, Runtime } from "webextension-polyfill-ts";
@@ -64,7 +64,7 @@ export interface ReportRegretFormState {
   loading: boolean;
   videoThumbUrl: null | string;
   regretReportData: null | RegretReportData;
-  userSuppliedRegretCategory: string;
+  userSuppliedRegretCategories: string[];
   userSuppliedOtherRegretCategory: string;
   userSuppliedSeverity: null | number;
   userSuppliedOptionalComment: string;
@@ -80,7 +80,7 @@ export class ReportRegretForm extends Component<
     loading: true,
     videoThumbUrl: null,
     regretReportData: null,
-    userSuppliedRegretCategory: "",
+    userSuppliedRegretCategories: [],
     userSuppliedOtherRegretCategory: "",
     userSuppliedSeverity: null,
     userSuppliedOptionalComment: "",
@@ -163,7 +163,7 @@ export class ReportRegretForm extends Component<
     event.preventDefault();
     const regretReport: RegretReport = {
       report_data: this.state.regretReportData,
-      user_supplied_regret_category: this.state.userSuppliedRegretCategory,
+      user_supplied_regret_categories: this.state.userSuppliedRegretCategories,
       user_supplied_other_regret_category: this.state
         .userSuppliedOtherRegretCategory,
       user_supplied_severity: this.state.userSuppliedSeverity,
@@ -181,9 +181,25 @@ export class ReportRegretForm extends Component<
   };
 
   handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
-    this.setState({
-      userSuppliedRegretCategory: changeEvent.target.value,
-    });
+    const newValue = changeEvent.target.value;
+    const index = this.state.userSuppliedRegretCategories.indexOf(newValue);
+    if (changeEvent.target.checked) {
+      if (index === -1) {
+        this.setState({
+          userSuppliedRegretCategories: [
+            ...this.state.userSuppliedRegretCategories,
+            newValue,
+          ],
+        });
+      }
+    } else {
+      if (index > -1) {
+        this.state.userSuppliedRegretCategories.splice(index, 1);
+        this.setState({
+          userSuppliedRegretCategories: this.state.userSuppliedRegretCategories,
+        });
+      }
+    }
   };
 
   render() {
@@ -440,13 +456,14 @@ export class ReportRegretForm extends Component<
                         },
                       ].map(item => (
                         <li key={item.value} className="mb-2">
-                          <Radio
-                            name="user_supplied_regret_category"
+                          <Checkbox
+                            name="user_supplied_regret_categories"
                             value={item.value}
                             label={item.label}
                             checked={
-                              this.state.userSuppliedRegretCategory ===
-                              item.value
+                              this.state.userSuppliedRegretCategories.indexOf(
+                                item.value,
+                              ) > -1
                             }
                             onChange={
                               this.handleUserSuppliedRegretCategoryOptionChange
@@ -455,12 +472,14 @@ export class ReportRegretForm extends Component<
                         </li>
                       ))}
                       <li className="mb-2">
-                        <Radio
-                          name="user_supplied_regret_category"
+                        <Checkbox
+                          name="user_supplied_regret_categories"
                           value="other"
                           label="Other: "
                           checked={
-                            this.state.userSuppliedRegretCategory === "other"
+                            this.state.userSuppliedRegretCategories.indexOf(
+                              "other",
+                            ) > -1
                           }
                           onChange={
                             this.handleUserSuppliedRegretCategoryOptionChange
@@ -472,7 +491,9 @@ export class ReportRegretForm extends Component<
                           name="user_supplied_other_regret_category"
                           placeholder=""
                           disabled={
-                            this.state.userSuppliedRegretCategory !== "other"
+                            this.state.userSuppliedRegretCategories.indexOf(
+                              "other",
+                            ) === -1
                           }
                           value={this.state.userSuppliedOtherRegretCategory}
                           onChange={changeEvent => {
