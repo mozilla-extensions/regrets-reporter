@@ -10,6 +10,8 @@ import "../shared-react-resources/tailwind.css";
 import { ConsentStatus } from "../background.js/Store";
 import { ReportRegretInstructions } from "./ReportRegretInstructions";
 import { AboutTheStudy } from "./AboutTheStudy";
+import { YourPrivacy } from "./YourPrivacy";
+import { config } from "../config";
 
 export interface ConsentFormProps {}
 
@@ -107,6 +109,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
             {!this.state.consentStatus && (
               <>
                 <AboutTheStudy />
+                <YourPrivacy />
                 <section className="program-description">
                   <EnrollFlowButton
                     loading={this.state.loading}
@@ -158,6 +161,20 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
                   <h2 className="program-header">About the study</h2>
                 </section>
                 <AboutTheStudy />
+                <YourPrivacy />
+                <section>
+                  <p>
+                    For more information, see our{" "}
+                    <a
+                      href={config.privacyNoticeUrl}
+                      target="_blank"
+                      className="underline"
+                    >
+                      full privacy notice
+                    </a>
+                    .
+                  </p>
+                </section>
               </>
             )}
             <section className="program-leaving">
@@ -182,35 +199,16 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
 
               <p>
                 Leaving the study will not cause your historic study data to be
-                deleted. To request that your shared study data will be deleted,
-                ....
+                deleted. For more information, please read our{" "}
+                <a
+                  href={config.privacyNoticeUrl}
+                  target="_blank"
+                  className="underline"
+                >
+                  full privacy notice
+                </a>
+                .
               </p>
-            </section>
-            <section className="program-privacy">
-              <h2 className="program-header">Your Privacy</h2>
-              <p>
-                Mozilla understands the sensitivity of the data that is
-                collected and works hard to keep your data private and secure:
-              </p>
-              <ul>
-                <li>
-                  This data will be linked to a randomly generated ID we only
-                  use for this particular study. It is used to keep a specific
-                  user&#39;s data together on the server and helps us improve
-                  our analysis.
-                </li>
-                <li>
-                  No data will be collected from inside Private Browsing
-                  windows.
-                </li>
-                <li>
-                  Individual data will never be shared publicly or sold. Only a
-                  small number of researchers will have access to raw data. If
-                  we share aggregate information from the study, we will
-                  disclose it in a way that minimizes the risk of participants
-                  being identified.
-                </li>
-              </ul>
             </section>
             <section className="program-thanks">
               <h2 className="program-header">

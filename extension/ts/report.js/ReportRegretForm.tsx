@@ -26,6 +26,7 @@ import {
 import { DisplayError } from "../shared-react-resources/DisplayError";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
+import { config } from "../config";
 
 const youTubePageEntryPointLabels: {
   [k in YouTubePageEntryPoint]: string;
@@ -566,9 +567,9 @@ export class ReportRegretForm extends Component<
             <Link
               className="inline"
               target="_blank"
-              href="https://www.mozilla.org/en-US/privacy/"
+              href={config.privacyNoticeUrl}
             >
-              Privacy Policy
+              Privacy Notice
             </Link>
             . <br />
             More information:{" "}

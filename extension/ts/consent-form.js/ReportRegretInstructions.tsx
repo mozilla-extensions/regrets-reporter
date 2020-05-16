@@ -15,7 +15,8 @@ export class ReportRegretInstructions extends Component<
         <h2 className="program-header">Reporting a "YouTube Regret":</h2>
         <ol className="consent-form-list">
           <li>
-            Click the [icon description] icon in the browser bar:
+            Whenever you regret watching a specific YouTube video, click the
+            [icon description] icon in the browser bar:
             <br />
             <img
               className="instruction-form my-6"

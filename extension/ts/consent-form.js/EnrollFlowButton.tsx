@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import { Radio } from "../shared-react-resources/photon-components-web/photon-components/Radio";
 import { Button } from "../shared-react-resources/photon-components-web/photon-components/Button";
 import { ConsentStatus } from "../background.js/Store";
+import { config } from "../config";
 
 const customStyles = {
   overlay: {
@@ -94,6 +95,14 @@ export class EnrollFlowButton extends Component<
     return (
       (this.props.consentStatus !== "given" && (
         <div>
+          <p>
+            Please review the{" "}
+            <a href={config.privacyNoticeUrl} target="_blank" className="underline">
+              full privacy notice
+            </a>{" "}
+            before enrolling.
+          </p>
+
           <Button
             className="enroll-button h-20 btn rounded-lg items-center"
             onClick={this.openModal}
@@ -201,7 +210,7 @@ export class EnrollFlowButton extends Component<
                   disabled={this.state.userPartOfMarginalizedGroup === null}
                   onClick={this.onEnroll}
                 >
-                  Enroll in the study
+                  Enroll
                 </Button>
               </>
             )}
@@ -209,7 +218,7 @@ export class EnrollFlowButton extends Component<
         </div>
       )) || (
         <button className="enroll-button enrolled">
-          You've enrolled.
+          You have enrolled.
           <br />
           Welcome!
         </button>
