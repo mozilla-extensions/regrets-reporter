@@ -1,26 +1,26 @@
 @tailwind base;
 
-.consent-form h1 {
+.get-started h1 {
   @apply text-5xl font-bold;
 }
-.consent-form h2 {
+.get-started h2 {
   @apply text-4xl font-bold mb-6;
 }
-.consent-form p {
+.get-started p {
   @apply my-6;
 }
-.consent-form ul.consent-form-list {
+.get-started ul.get-started-list {
   list-style-type: disc;
   padding-left: theme("padding.16");
 }
-.consent-form ul.consent-form-list li {
+.get-started ul.get-started-list li {
   padding-left: theme("padding.4");
 }
-.consent-form ol.consent-form-list {
+.get-started ol.get-started-list {
   list-style-type: decimal;
   padding-left: theme("padding.16");
 }
-.consent-form ol.consent-form-list li {
+.get-started ol.get-started-list li {
   padding-left: theme("padding.4");
 }
 

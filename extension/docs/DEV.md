@@ -20,11 +20,13 @@
 From the background context:
 
 ```javascript
-browser.runtime.getURL(`popup/report-regret.html?skipWindowAndTabIdFilter=1`);
+browser.runtime.getURL(
+  `report-regret-form/report-regret-form.html?skipWindowAndTabIdFilter=1`
+);
 ```
 
 ```javascript
-browser.runtime.getURL(`consent-form/consent-form.html`);
+browser.runtime.getURL(`get-started/get-started.html`);
 ```
 
 ## Checking current report data

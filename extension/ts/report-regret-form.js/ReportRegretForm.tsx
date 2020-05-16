@@ -578,7 +578,7 @@ export class ReportRegretForm extends Component<
               <Link
                 className="inline"
                 target="_blank"
-                href={browser.runtime.getURL(`consent-form/consent-form.html`)}
+                href={browser.runtime.getURL(`get-started/get-started.html`)}
               >
                 The YouTube Regrets study
               </Link>
@@ -599,7 +599,7 @@ export class ReportRegretForm extends Component<
               <a
                 className="link inline"
                 target="_blank"
-                href="./report-regret.html?skipWindowAndTabIdFilter=1"
+                href="./report-regret-form.html?skipWindowAndTabIdFilter=1"
               >
                 Debug
               </a>

@@ -30,7 +30,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
 
   componentDidMount(): void {
     this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
-      name: "port-from-consent-form",
+      name: "port-from-get-started",
     });
 
     // Send a request to gather the current consent status
@@ -41,7 +41,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
     // When we have received consent status, update state to reflect it
     this.backgroundContextPort.onMessage.addListener(
       (m: { consentStatus: ConsentStatus }) => {
-        // console.log("consent-form message from backgroundContextPort", { m });
+        // console.log("get-started message from backgroundContextPort", { m });
         const { consentStatus } = m;
         this.setState({
           loading: false,
@@ -129,7 +129,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
                   </p>
                 </>
               )}
-              <ol className="consent-form-list">
+              <ol className="get-started-list">
                 <li>
                   A message{" "}
                   {(this.state.consentStatus && "has been") || "will be"} sent
@@ -180,7 +180,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
               <h2 className="program-header">Leaving the study</h2>
               <p>Users are welcome to opt out of the study at any point.</p>
               <p>To stop participating in the study:</p>
-              <ol className="consent-form-list">
+              <ol className="get-started-list">
                 <li>
                   Type <code>about:addons</code> into the location bar and press{" "}
                   <code>Enter</code>.

@@ -32,7 +32,7 @@
   "page_action": {
     "browser_style": true,
     "default_title": "__MSG_pageActionButtonTitle__",
-    "default_popup": "popup/report-regret.html"
+    "default_popup": "report-regret-form/report-regret-form.html"
   },
   "browser_action": {
     "browser_style": true,

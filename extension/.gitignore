@@ -2,8 +2,8 @@ dist/*
 node_modules/
 src/*content-script.js
 src/background.js
-src/report.js
-src/consent-form.js
+src/get-started.js
+src/report-regret-form.js
 .env
 test/results/coverage
 /firefox-*

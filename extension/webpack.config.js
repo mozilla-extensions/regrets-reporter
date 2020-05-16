@@ -7,8 +7,8 @@ module.exports = {
     "user-interaction-instrument-content-script":
       "./ts/user-interaction-instrument-content-script.js/index.ts",
     background: "./ts/background.js/index.ts",
-    report: "./ts/report.js/index.tsx",
-    "consent-form": "./ts/consent-form.js/index.tsx",
+    "get-started": "./ts/get-started.js/index.tsx",
+    "report-regret-form": "./ts/report-regret-form.js/index.tsx",
   },
   output: {
     path: path.resolve(__dirname, "src"),

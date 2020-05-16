@@ -15,10 +15,10 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
           Mozilla understands the sensitivity of the data that is collected and
           works hard to keep your data private and secure:
         </p>
-        <ul className="consent-form-list">
+        <ul className="get-started-list">
           <li>
             <strong>General data collection principles</strong>
-            <ul className="consent-form-list">
+            <ul className="get-started-list">
               <li>
                 No data is collected from inside Private Browsing windows.
               </li>
@@ -32,7 +32,7 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
           </li>
           <li>
             <strong>Understand how your data is used</strong>
-            <ul className="consent-form-list">
+            <ul className="get-started-list">
               <li>
                 Only a small number of researchers will have access to raw data.
                 When we share results from the study, we will disclose it in a

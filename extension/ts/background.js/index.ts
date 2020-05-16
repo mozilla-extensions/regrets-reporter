@@ -50,16 +50,16 @@ class ExtensionGlue {
   constructor() {}
 
   async init() {
-    // Set up a connection / listener for the consent-form script to be able to query consent status
+    // Set up a connection / listener for the get-started script to be able to query consent status
     let portFromContentScript;
     this.contentScriptPortListener = p => {
-      if (p.name !== "port-from-consent-form") {
+      if (p.name !== "port-from-get-started") {
         return;
       }
-      // console.log("Connected to consent-form script");
+      // console.log("Connected to get-started script");
       portFromContentScript = p;
       portFromContentScript.onMessage.addListener(async function(m) {
-        // console.log("Message from consent-form script:", { m });
+        // console.log("Message from get-started script:", { m });
         if (m.requestConsentStatus) {
           portFromContentScript.postMessage({
             consentStatus: await store.getConsentStatus(),
@@ -92,7 +92,7 @@ class ExtensionGlue {
   async askForConsent() {
     // Open consent form
     const consentFormUrl = browser.runtime.getURL(
-      `consent-form/consent-form.html`,
+      `get-started/get-started.html`,
     );
     await browser.tabs.create({ url: consentFormUrl });
   }

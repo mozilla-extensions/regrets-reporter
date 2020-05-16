@@ -4,8 +4,8 @@ dist/
 package-lock.json
 src/*content-script.js
 src/background.js
-src/report.js
-src/consent-form.js
+src/get-started.js
+src/report-regret-form.js
 stats.json
 yarn-error.log
 # makes sure that eslintrc.js gets linted/formatted
