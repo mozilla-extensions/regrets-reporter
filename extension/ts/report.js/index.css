@@ -18,3 +18,16 @@
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+.feedback-link {
+  background-color: #000;
+  background-image: url(./feedback.svg);
+  background-position: .125rem .38rem;
+  background-repeat: no-repeat;
+  background-size: 1.125rem;
+  color: #fff;
+  font-size: .75rem;
+  line-height: .75rem;
+  padding: .375rem .375rem .375rem 1.25rem;
+  text-indent: .125rem;
+  white-space: nowrap;
+}

@@ -563,38 +563,49 @@ export class ReportRegretForm extends Component<
         <div className="panel-section-separator" />
 
         <div className="panel-section panel-section-formElements">
-          <span>
-            Your report is shared with Mozilla according to our{" "}
-            <Link
-              className="inline"
-              target="_blank"
-              href={config.privacyNoticeUrl}
-            >
-              Privacy Notice
-            </Link>
-            . <br />
-            More information:{" "}
-            <Link
-              className="inline"
-              target="_blank"
-              href={browser.runtime.getURL(`consent-form/consent-form.html`)}
-            >
-              The YouTube Regrets study
-            </Link>
-            {" | "}
-            <Link className="inline" target="_blank" href={"about:blank"}>
-              Submit Feedback
-            </Link>{" "}
+          <ul className="flex flex-col md:flex-row items-start items-center justify-between">
+            <li>
+              Your report is shared with Mozilla according to our{" "}
+              <Link
+                className="inline"
+                target="_blank"
+                href={config.privacyNoticeUrl}
+              >
+                Privacy Notice
+              </Link>
+              . <br />
+              More information:{" "}
+              <Link
+                className="inline"
+                target="_blank"
+                href={browser.runtime.getURL(`consent-form/consent-form.html`)}
+              >
+                The YouTube Regrets study
+              </Link>
+            </li>
+            <li>
+              <a
+                href={config.feedbackSurveyUrl}
+                rel="noreferrer noopener"
+                target="_blank"
+                className="inline feedback-link"
+              >
+                {" "}
+                Feedback
+              </a>
             {/*
-            <a
-              className="link inline"
-              target="_blank"
-              href="./report-regret.html?skipWindowAndTabIdFilter=1"
-            >
-              Debug
-            </a>
+            </li>
+            <li className="m-2">
+              <a
+                className="link inline"
+                target="_blank"
+                href="./report-regret.html?skipWindowAndTabIdFilter=1"
+              >
+                Debug
+              </a>
             */}
-          </span>
+            </li>
+          </ul>
         </div>
 
         <footer className="panel-section panel-section-footer">
