@@ -4,6 +4,7 @@ import "photon-colors/photon-colors.css";
 import "../shared-react-resources/photon-components-web/index.css";
 import "../shared-react-resources/photon-components-web/attributes";
 import "../shared-react-resources/tailwind.css";
+import "./index.css"
 import { Input } from "../shared-react-resources/photon-components-web/photon-components/Input";
 import { Checkbox } from "../shared-react-resources/photon-components-web/photon-components/Checkbox";
 import { Link } from "../shared-react-resources/photon-components-web/photon-components/Link";
