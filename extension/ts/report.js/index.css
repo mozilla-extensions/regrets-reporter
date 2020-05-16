@@ -9,11 +9,14 @@
   border: 0;
   outline: 0;
 }
-.likert-react_src-___styles__question, .input__label, .textarea__label, .label-bold {
+.likert-react_src-___styles__question,
+.input__label,
+.textarea__label,
+.label-bold {
   font-weight: 600;
   margin-bottom: 0.5em;
 }
-.list-breadcrumb li+li::before {
+.list-breadcrumb li + li::before {
   content: "→";
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -21,13 +24,13 @@
 .feedback-link {
   background-color: #000;
   background-image: url(./feedback.svg);
-  background-position: .125rem .38rem;
+  background-position: 0.125rem 0.38rem;
   background-repeat: no-repeat;
   background-size: 1.125rem;
   color: #fff;
-  font-size: .75rem;
-  line-height: .75rem;
-  padding: .375rem .375rem .375rem 1.25rem;
-  text-indent: .125rem;
+  font-size: 0.75rem;
+  line-height: 0.75rem;
+  padding: 0.375rem 0.375rem 0.375rem 1.25rem;
+  text-indent: 0.125rem;
   white-space: nowrap;
 }
