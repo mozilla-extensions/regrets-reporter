@@ -527,6 +527,7 @@ export class ReportSummarizer {
       video_description = "<failed>";
     }
 
+    /*
     const videoIdFromSecondaryResultsItem = el => {
       if (el.compactAutoplayRenderer) {
         return el.compactAutoplayRenderer.contents
@@ -546,9 +547,13 @@ export class ReportSummarizer {
       if (el.promotedSparklesWebRenderer) {
         return "(ad)";
       }
+      if (el.compactPromotedVideoRenderer) {
+        return el.compactPromotedVideoRenderer.videoId;
+      }
       console.error("watch_next_column unhandled el:");
       console.dir({ el });
     };
+    */
 
     /*
     let up_next_auto_play;
@@ -562,6 +567,7 @@ export class ReportSummarizer {
     }
     */
 
+    /*
     let watch_next_column;
     try {
       watch_next_column = ytInitialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results.map(
@@ -598,6 +604,7 @@ export class ReportSummarizer {
       console.error("watch_next_end_screen", err.message);
       watch_next_end_screen = "<failed>";
     }
+    */
 
     return {
       video_metadata: {
@@ -609,8 +616,8 @@ export class ReportSummarizer {
         view_count_at_navigation_short,
       },
       outgoing_video_ids_by_category: {
-        watch_next_column,
-        watch_next_end_screen,
+        // watch_next_column,
+        // watch_next_end_screen,
       },
     };
   }
