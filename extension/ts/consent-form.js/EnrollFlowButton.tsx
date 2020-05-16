@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
 import Modal from "react-modal";
+import { Checkbox } from "../shared-react-resources/photon-components-web/photon-components/Checkbox";
 import { Radio } from "../shared-react-resources/photon-components-web/photon-components/Radio";
 import { Button } from "../shared-react-resources/photon-components-web/photon-components/Button";
 import { ConsentStatus } from "../background.js/Store";
@@ -27,14 +28,14 @@ Modal.setAppElement("#app");
 export interface EnrollFlowButtonProps {
   loading: boolean;
   consentStatus: ConsentStatus;
-  onEnroll: ({ userOver18, userPartOfMarginalizedGroup }) => void;
+  onEnroll: ({ userPartOfMarginalizedGroup }) => void;
 }
 
 export interface EnrollFlowButtonState {
   modalIsOpen: boolean;
   userPartOfMarginalizedGroup: null | "yes" | "no" | "prefer-not-to-answer";
-  userOver18: null | "yes" | "no";
   userOver18Confirmed: boolean;
+  userHasUnderstoodPrivacyNotice: boolean;
 }
 
 export class EnrollFlowButton extends Component<
@@ -46,31 +47,32 @@ export class EnrollFlowButton extends Component<
     modalIsOpen: false,
     consentStatus: null,
     userPartOfMarginalizedGroup: null,
-    userOver18: null,
     userOver18Confirmed: false,
-  };
-
-  onContinue = async (event: MouseEvent) => {
-    event.preventDefault();
-    this.setState({ userOver18Confirmed: true });
+    userHasUnderstoodPrivacyNotice: false,
   };
 
   onEnroll = async (event: MouseEvent) => {
     event.preventDefault();
     this.closeModal();
-    const { userOver18, userPartOfMarginalizedGroup } = this.state;
-    this.props.onEnroll({ userOver18, userPartOfMarginalizedGroup });
+    const { userPartOfMarginalizedGroup } = this.state;
+    this.props.onEnroll({ userPartOfMarginalizedGroup });
+  };
+
+  handleUserOver18CheckboxChange = changeEvent => {
+    this.setState({
+      userOver18Confirmed: !!changeEvent.target.checked,
+    });
+  };
+
+  handleUserHasUnderstoodPrivacyNoticeCheckboxChange = changeEvent => {
+    this.setState({
+      userHasUnderstoodPrivacyNotice: !!changeEvent.target.checked,
+    });
   };
 
   handleUserPartOfMarginalizedGroupOptionChange = changeEvent => {
     this.setState({
       userPartOfMarginalizedGroup: changeEvent.target.value,
-    });
-  };
-
-  handleUserOver18OptionChange = changeEvent => {
-    this.setState({
-      userOver18: changeEvent.target.value,
     });
   };
 
@@ -97,17 +99,40 @@ export class EnrollFlowButton extends Component<
         <div>
           <p>
             Please review the{" "}
-            <a href={config.privacyNoticeUrl} target="_blank" className="underline">
+            <a
+              href={config.privacyNoticeUrl}
+              target="_blank"
+              className="underline"
+            >
               full privacy notice
             </a>{" "}
             before enrolling.
           </p>
+          <p>
+            <Checkbox
+              checked={this.state.userOver18Confirmed}
+              onChange={this.handleUserOver18CheckboxChange}
+              label="I have read and understood the full privacy notice."
+            />
+          </p>
+          <p>You must be at least 18 years old to enroll.</p>
+          <p>
+            <Checkbox
+              checked={this.state.userHasUnderstoodPrivacyNotice}
+              onChange={this.handleUserHasUnderstoodPrivacyNoticeCheckboxChange}
+              label="I am at least 18 years old."
+            />
+          </p>
 
           <Button
             className="enroll-button h-20 btn rounded-lg items-center"
+            disabled={
+              !this.state.userOver18Confirmed ||
+              !this.state.userHasUnderstoodPrivacyNotice
+            }
             onClick={this.openModal}
           >
-            Enroll in the study
+            Enroll
           </Button>
 
           <Modal
@@ -117,103 +142,61 @@ export class EnrollFlowButton extends Component<
             style={customStyles}
             contentLabel="Example Modal"
           >
-            {(!this.state.userOver18Confirmed && (
-              <>
-                <h2>Study qualification</h2>
+            <>
+              <h2>Great! Only one question left:</h2>
 
-                <div>
-                  <p>Are you at least 18 years old?</p>
-                  <ul className="list-none">
-                    <li className="mb-2">
-                      <Radio
-                        name="userOver18"
-                        value="yes"
-                        label="Yes"
-                        checked={this.state.userOver18 === "yes"}
-                        onChange={this.handleUserOver18OptionChange}
-                      />
-                    </li>
-                    <li className="mb-2">
-                      <Radio
-                        name="userOver18"
-                        value="no"
-                        label="No"
-                        checked={this.state.userOver18 === "no"}
-                        onChange={this.handleUserOver18OptionChange}
-                      />
-                    </li>
-                  </ul>
-                </div>
+              <div>
+                <p>
+                  Do you consider yourself to be part of a marginalized group?
+                </p>
+                <ul className="list-none">
+                  <li className="mb-2">
+                    <Radio
+                      name="userPartOfMarginalizedGroup"
+                      value="yes"
+                      label="Yes"
+                      checked={this.state.userPartOfMarginalizedGroup === "yes"}
+                      onChange={
+                        this.handleUserPartOfMarginalizedGroupOptionChange
+                      }
+                    />
+                  </li>
+                  <li className="mb-2">
+                    <Radio
+                      name="userPartOfMarginalizedGroup"
+                      value="no"
+                      label="No"
+                      checked={this.state.userPartOfMarginalizedGroup === "no"}
+                      onChange={
+                        this.handleUserPartOfMarginalizedGroupOptionChange
+                      }
+                    />
+                  </li>
+                  <li className="mb-2">
+                    <Radio
+                      name="userPartOfMarginalizedGroup"
+                      value="prefer-not-to-answer"
+                      label="I prefer not answer"
+                      checked={
+                        this.state.userPartOfMarginalizedGroup ===
+                        "prefer-not-to-answer"
+                      }
+                      onChange={
+                        this.handleUserPartOfMarginalizedGroupOptionChange
+                      }
+                    />
+                  </li>
+                </ul>
+              </div>
 
-                <Button
-                  className="enroll-button h-20 btn rounded-lg items-center"
-                  disabled={this.state.userOver18 !== "yes"}
-                  onClick={this.onContinue}
-                >
-                  Continue
-                </Button>
-              </>
-            )) || (
-              <>
-                <h2>Great! Only one question left:</h2>
-
-                <div>
-                  <p>
-                    Do you consider yourself to be part of a marginalized group?
-                  </p>
-                  <ul className="list-none">
-                    <li className="mb-2">
-                      <Radio
-                        name="userPartOfMarginalizedGroup"
-                        value="yes"
-                        label="Yes"
-                        checked={
-                          this.state.userPartOfMarginalizedGroup === "yes"
-                        }
-                        onChange={
-                          this.handleUserPartOfMarginalizedGroupOptionChange
-                        }
-                      />
-                    </li>
-                    <li className="mb-2">
-                      <Radio
-                        name="userPartOfMarginalizedGroup"
-                        value="no"
-                        label="No"
-                        checked={
-                          this.state.userPartOfMarginalizedGroup === "no"
-                        }
-                        onChange={
-                          this.handleUserPartOfMarginalizedGroupOptionChange
-                        }
-                      />
-                    </li>
-                    <li className="mb-2">
-                      <Radio
-                        name="userPartOfMarginalizedGroup"
-                        value="prefer-not-to-answer"
-                        label="I prefer not answer"
-                        checked={
-                          this.state.userPartOfMarginalizedGroup ===
-                          "prefer-not-to-answer"
-                        }
-                        onChange={
-                          this.handleUserPartOfMarginalizedGroupOptionChange
-                        }
-                      />
-                    </li>
-                  </ul>
-                </div>
-
-                <Button
-                  className="enroll-button h-20 btn rounded-lg items-center"
-                  disabled={this.state.userPartOfMarginalizedGroup === null}
-                  onClick={this.onEnroll}
-                >
-                  Enroll
-                </Button>
-              </>
-            )}
+              <Button
+                className="enroll-button h-20 btn rounded-lg items-center"
+                disabled={this.state.userPartOfMarginalizedGroup === null}
+                onClick={this.onEnroll}
+              >
+                Enroll
+              </Button>
+            </>
           </Modal>
         </div>
       )) || (

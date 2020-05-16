@@ -67,10 +67,9 @@ class ExtensionGlue {
           });
         }
         if (m.updatedConsentStatus) {
-          const { userOver18, userPartOfMarginalizedGroup } = m;
+          const { userPartOfMarginalizedGroup } = m;
           await store.setConsentStatus(m.updatedConsentStatus);
           await store.setUserSuppliedDemographics({
-            user_over_18: userOver18,
             user_part_of_marginalized_group: userPartOfMarginalizedGroup,
           });
           const consentGiven = (await store.getConsentStatus()) === "given";

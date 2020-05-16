@@ -56,7 +56,7 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
     window.close();
   }
 
-  onEnroll = async ({ userOver18, userPartOfMarginalizedGroup }) => {
+  onEnroll = async ({ userPartOfMarginalizedGroup }) => {
     const consentStatus = "given";
     this.setState({
       loading: false,
@@ -64,7 +64,6 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
     });
     this.backgroundContextPort.postMessage({
       updatedConsentStatus: consentStatus,
-      userOver18,
       userPartOfMarginalizedGroup,
     });
   };

@@ -10,7 +10,6 @@ export interface LocalStorageWrapper {
 
 export interface UserSuppliedDemographics {
   user_part_of_marginalized_group: null | "yes" | "no" | "prefer-not-to-answer";
-  user_over_18: null | "yes" | "no";
 }
 
 export type ConsentStatus = null | "given" | "withdrawn";
