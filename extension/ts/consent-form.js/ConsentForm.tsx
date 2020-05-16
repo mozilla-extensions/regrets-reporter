@@ -73,167 +73,179 @@ export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
   };
 
   render() {
+    if (this.state.loading) {
+      return null;
+    }
     return (
-      <div className="page-container">
-        <header>
-          <div className="layout-wrapper p-12 m-auto">
-            <img className="wordmark" src="./img/mozilla.svg" alt="Mozilla" />
-          </div>
-        </header>
-        <div className="banner">
-          <div className="layout-wrapper px-12 m-auto">
-            <div className="icon-container hidden md:block">
-              <img
-                className="icon h-16 m-4 mb-8"
-                src="./img/green-extensionsicon.svg"
-              />
+      <div
+        className={`app-container ${
+          this.state.consentStatus ? "enrolled" : "not-enrolled"
+        }`}
+      >
+        <div className="page-container">
+          <header>
+            <div className="layout-wrapper p-12 m-auto">
+              <img className="wordmark" src="./img/mozilla.svg" alt="Mozilla" />
             </div>
-            <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
-              {(!this.state.consentStatus &&
-                "Mozilla's YouTube Regrets Study") ||
-                "You have enrolled. Welcome!"}
-            </div>
-          </div>
-        </div>
-        <div className="layout-wrapper px-12 m-auto">
-          {!this.state.consentStatus && (
-            <>
-              <AboutTheStudy />
-              <section className="program-description">
-                <EnrollFlowButton
-                  loading={this.state.loading}
-                  consentStatus={this.state.consentStatus}
-                  onEnroll={this.onEnroll}
+          </header>
+          <div className="banner">
+            <div className="layout-wrapper px-12 m-auto">
+              <div className="icon-container hidden md:block">
+                <img
+                  className="icon h-16 m-4 mb-8"
+                  src="./img/green-extensionsicon.svg"
                 />
-              </section>
-            </>
-          )}
-          <section className="program-instructions">
-            {(this.state.consentStatus && (
-              <h2 className="program-header">Next Steps</h2>
-            )) || (
+              </div>
+              <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
+                {(!this.state.consentStatus &&
+                  "YouTube Regrets Reporter: Enrollment") ||
+                  "You have enrolled. Welcome!"}
+              </div>
+            </div>
+          </div>
+          <div className="layout-wrapper px-12 m-auto">
+            {!this.state.consentStatus && (
               <>
-                <h2 className="program-header">What Will Happen Next</h2>
-                <p>
-                  <strong>If you agree</strong> to participate:
-                </p>
+                <AboutTheStudy />
+                <section className="program-description">
+                  <EnrollFlowButton
+                    loading={this.state.loading}
+                    consentStatus={this.state.consentStatus}
+                    onEnroll={this.onEnroll}
+                  />
+                </section>
               </>
             )}
-            <ol className="consent-form-list">
-              <li>
-                A message{" "}
-                {(this.state.consentStatus && "has been") || "will be"} sent to
-                Mozilla to note that you are (anonymously) willing to
-                participate in the study.
-              </li>
-              <li>
-                Periodically, aggregated information about your YouTube browsing
-                behavior will be sent to Mozilla.
-              </li>
-              <li>
-                Continue using Firefox as you normally would, and whenever you{" "}
-                <strong>regret watching a specific YouTube video</strong>, you
-                should follow the steps below to report it to our researchers.
-              </li>
-              <li>
-                The report will include information about your YouTube browsing
-                behavior up to 5 hours prior to initiating the report. This
-                includes what kind of YouTube pages you have visited and how you
-                interacted with them.
-              </li>
-            </ol>
-          </section>
-          <ReportRegretInstructions />
-          {this.state.consentStatus && (
-            <>
-              <section className="program-description">
-                <h2 className="program-header">About the study</h2>
-              </section>
-              <AboutTheStudy />
-            </>
-          )}
-          <section className="program-leaving">
-            <h2 className="program-header">Leaving the study</h2>
-            <p>Users are welcome to opt out of the study at any point.</p>
-            <p>To stop participating in the study:</p>
-            <ol className="consent-form-list">
-              <li>
-                Type <code>about:addons</code> into the location bar and press{" "}
-                <code>Enter</code>.
-              </li>
-              <li>
-                If you see an addon called <code>YouTube Regrets Reporter</code>
-                , click <strong>Remove</strong>.
-              </li>
-              <li>
-                Opting out of the study will immediately stop all ongoing data
-                collection.
-              </li>
-            </ol>
+            <section className="program-instructions">
+              {(this.state.consentStatus && (
+                <h2 className="program-header">Next Steps</h2>
+              )) || (
+                <>
+                  <h2 className="program-header">What Will Happen Next</h2>
+                  <p>
+                    <strong>If you agree</strong> to participate:
+                  </p>
+                </>
+              )}
+              <ol className="consent-form-list">
+                <li>
+                  A message{" "}
+                  {(this.state.consentStatus && "has been") || "will be"} sent
+                  to Mozilla to note that you are (anonymously) willing to
+                  participate in the study.
+                </li>
+                <li>
+                  Periodically, aggregated information about your YouTube
+                  browsing behavior will be sent to Mozilla.
+                </li>
+                <li>
+                  Continue using Firefox as you normally would, and whenever you{" "}
+                  <strong>regret watching a specific YouTube video</strong>, you
+                  should follow the steps below to report it to our researchers.
+                </li>
+                <li>
+                  The report will include information about your YouTube
+                  browsing behavior up to 5 hours prior to initiating the
+                  report. This includes what kind of YouTube pages you have
+                  visited and how you interacted with them.
+                </li>
+              </ol>
+            </section>
+            <ReportRegretInstructions />
+            {this.state.consentStatus && (
+              <>
+                <section className="program-description">
+                  <h2 className="program-header">About the study</h2>
+                </section>
+                <AboutTheStudy />
+              </>
+            )}
+            <section className="program-leaving">
+              <h2 className="program-header">Leaving the study</h2>
+              <p>Users are welcome to opt out of the study at any point.</p>
+              <p>To stop participating in the study:</p>
+              <ol className="consent-form-list">
+                <li>
+                  Type <code>about:addons</code> into the location bar and press{" "}
+                  <code>Enter</code>.
+                </li>
+                <li>
+                  If you see an addon called{" "}
+                  <code>YouTube Regrets Reporter</code>, click{" "}
+                  <strong>Remove</strong>.
+                </li>
+                <li>
+                  Opting out of the study will immediately stop all ongoing data
+                  collection.
+                </li>
+              </ol>
 
-            <p>
-              Leaving the study will not cause your historic study data to be
-              deleted. To request that your shared study data will be deleted,
-              ....
-            </p>
-          </section>
-          <section className="program-privacy">
-            <h2 className="program-header">Your Privacy</h2>
-            <p>
-              Mozilla understands the sensitivity of the data that is collected
-              and works hard to keep your data private and secure:
-            </p>
-            <ul>
-              <li>
-                This data will be linked to a randomly generated ID we only use
-                for this particular study. It is used to keep a specific
-                user&#39;s data together on the server and helps us improve our
-                analysis.
-              </li>
-              <li>
-                No data will be collected from inside Private Browsing windows.
-              </li>
-              <li>
-                Individual data will never be shared publicly or sold. Only a
-                small number of researchers will have access to raw data. If we
-                share aggregate information from the study, we will disclose it
-                in a way that minimizes the risk of participants being
-                identified.
-              </li>
-            </ul>
-          </section>
-          <section className="program-thanks">
-            <h2 className="program-header">
-              You Help Make The Internet Healthier
-            </h2>
-            <p>
-              At Mozilla, we pride ourselves on making the internet healthier
-              for you, the user! That’s why we need your help.
-            </p>
-            <p>
-              YouTube is one of the most opaque platforms on the market,
-              providing researchers and the public with very little data to
-              study widespread user-reported problems with harmful content on
-              the platform and draw attention to them in an evidence-driven way.
-              Mozilla has already brought these concerns forward with YouTube
-              and pressured the company to release more data to researchers who
-              are trying to understand what content is amplified and pushed down
-              by YouTube’s recommendation algorithms.{" "}
-            </p>
-            <p>
-              By participating in this study, you will help us to make better
-              decisions on your behalf and shape the future of the Internet!
-            </p>
-            <EnrollFlowButton
-              loading={this.state.loading}
-              consentStatus={this.state.consentStatus}
-              onEnroll={this.onEnroll}
-            />
-          </section>
+              <p>
+                Leaving the study will not cause your historic study data to be
+                deleted. To request that your shared study data will be deleted,
+                ....
+              </p>
+            </section>
+            <section className="program-privacy">
+              <h2 className="program-header">Your Privacy</h2>
+              <p>
+                Mozilla understands the sensitivity of the data that is
+                collected and works hard to keep your data private and secure:
+              </p>
+              <ul>
+                <li>
+                  This data will be linked to a randomly generated ID we only
+                  use for this particular study. It is used to keep a specific
+                  user&#39;s data together on the server and helps us improve
+                  our analysis.
+                </li>
+                <li>
+                  No data will be collected from inside Private Browsing
+                  windows.
+                </li>
+                <li>
+                  Individual data will never be shared publicly or sold. Only a
+                  small number of researchers will have access to raw data. If
+                  we share aggregate information from the study, we will
+                  disclose it in a way that minimizes the risk of participants
+                  being identified.
+                </li>
+              </ul>
+            </section>
+            <section className="program-thanks">
+              <h2 className="program-header">
+                You Help Make The Internet Healthier
+              </h2>
+              <p>
+                At Mozilla, we pride ourselves on making the internet healthier
+                for you, the user! That’s why we need your help.
+              </p>
+              <p>
+                YouTube is one of the most opaque platforms on the market,
+                providing researchers and the public with very little data to
+                study widespread user-reported problems with harmful content on
+                the platform and draw attention to them in an evidence-driven
+                way. Mozilla has already brought these concerns forward with
+                YouTube and pressured the company to release more data to
+                researchers who are trying to understand what content is
+                amplified and pushed down by YouTube’s recommendation
+                algorithms.{" "}
+              </p>
+              <p>
+                By participating in this study, you will help us to make better
+                decisions on your behalf and shape the future of the Internet!
+              </p>
+              <EnrollFlowButton
+                loading={this.state.loading}
+                consentStatus={this.state.consentStatus}
+                onEnroll={this.onEnroll}
+              />
+            </section>
+          </div>
+          <footer className="footer">
+            <img className="mozilla-logo m-auto" src="./img/mozilla.svg" />
+          </footer>
         </div>
-        <footer className="footer">
-          <img className="mozilla-logo m-auto" src="./img/mozilla.svg" />
-        </footer>
       </div>
     );
   }

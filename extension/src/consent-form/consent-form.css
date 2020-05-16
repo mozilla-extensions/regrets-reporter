@@ -7,7 +7,8 @@
 }
 
 html,
-body {
+body,
+.app-container {
   min-height: 100%;
   min-width: 100%;
   margin: 0;
@@ -22,7 +23,16 @@ body {
   font-family: Fira Sans, sans-serif;
   font-size: 1.6rem;
   line-height: 2.2rem;
+}
 
+.app-container {
+  background-color: #fff;
+  background-image: none;
+  color: #000;
+  padding-bottom: 1px;
+}
+
+.app-container.enrolled {
   background-color: #1e4488;
   background-image: radial-gradient(
     ellipse 250% 100% at center 140%,
@@ -31,6 +41,16 @@ body {
     #1e4488 100%
   );
   color: #fff;
+}
+
+.wordmark,
+.mozilla-logo {
+  filter: invert(1);
+}
+
+.enrolled .wordmark,
+.enrolled .mozilla-logo {
+  filter: none;
 }
 
 a {
