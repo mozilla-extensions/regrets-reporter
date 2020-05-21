@@ -9,3 +9,6 @@ test/results/coverage
 /firefox-*
 stats.json
 yarn-error.log
+*.map
+.env.production*
+.env.development*

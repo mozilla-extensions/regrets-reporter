@@ -4,16 +4,39 @@
 **Contents**
 
 - [Developing this add-on](#developing-this-add-on)
+  - [Get started](#get-started)
   - [Opening up specific add-on pages](#opening-up-specific-add-on-pages)
   - [Checking current report data](#checking-current-report-data)
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
   - [Creating a signed build of the add-on](#creating-a-signed-build-of-the-add-on)
+  - [Sentry CLI](#sentry-cli)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Developing this add-on
+
+## Get started
+
+```
+yarn install
+```
+
+Configure `.env.*` with values as per https://docs.sentry.io/cli/configuration/, then check the configuration using:
+
+```
+cp .env.development .env
+npx sentry-cli info
+cp .env.production .env
+npx sentry-cli info
+```
+
+To launch Firefox, install the extension and start Webpack in watch mode:
+
+```
+yarn watch
+```
 
 ## Opening up specific add-on pages
 

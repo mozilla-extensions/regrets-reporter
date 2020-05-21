@@ -1,6 +1,27 @@
-/* global require, module, __dirname */
+/* global process, require, module, __dirname */
 
 const path = require("path");
+
+const Dotenv = require("dotenv-webpack");
+const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+
+const dotEnvPath =
+  process.env.NODE_ENV === "production"
+    ? "./.env.production"
+    : "./.env.development";
+
+// Workaround for https://github.com/getsentry/sentry-cli/issues/302
+const fs = require("fs");
+fs.createReadStream(dotEnvPath).pipe(fs.createWriteStream("./.env"));
+
+const plugins = [
+  new Dotenv({
+    path: dotEnvPath,
+  }),
+  new SentryWebpackPlugin({
+    include: "./src/",
+  }),
+];
 
 module.exports = {
   entry: {
@@ -54,6 +75,7 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
   },
+  plugins,
   mode: "development",
-  devtool: "inline-source-map",
+  devtool: "source-map",
 };

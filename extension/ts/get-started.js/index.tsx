@@ -1,3 +1,5 @@
+import { Sentry } from "../shared-resources/Sentry";
+
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 

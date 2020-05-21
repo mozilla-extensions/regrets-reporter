@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "/",
     "noImplicitAny": false,
     "module": "commonjs",
     "target": "es6",

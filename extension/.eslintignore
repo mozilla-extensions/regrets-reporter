@@ -8,6 +8,7 @@ src/get-started.js
 src/report-regret-form.js
 stats.json
 yarn-error.log
+*.map
 # makes sure that eslintrc.js gets linted/formatted
 !.eslintrc.js
 # don't lint/format code the directory where get-firefox stores the Firefox binaries

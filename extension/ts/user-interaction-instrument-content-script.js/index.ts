@@ -1,3 +1,4 @@
+import { Sentry } from "../shared-resources/Sentry";
 import { injectUserInteractionInstrumentPageScript } from "@openwpm/webext-instrumentation";
 
 injectUserInteractionInstrumentPageScript(

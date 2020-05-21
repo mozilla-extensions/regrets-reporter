@@ -1,5 +1,6 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
+import { Sentry } from "../shared-resources/Sentry";
 import { browser } from "webextension-polyfill-ts";
 import {
   CookieInstrument,
