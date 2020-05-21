@@ -1,14 +1,14 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
-import "../shared-react-resources/photon-components-web/index.css";
-import "../shared-react-resources/photon-components-web/attributes";
-import "../shared-react-resources/tailwind.css";
+import "../shared-resources/photon-components-web/index.css";
+import "../shared-resources/photon-components-web/attributes";
+import "../shared-resources/tailwind.css";
 import "./index.css";
-import { Input } from "../shared-react-resources/photon-components-web/photon-components/Input";
-import { Checkbox } from "../shared-react-resources/photon-components-web/photon-components/Checkbox";
-import { Link } from "../shared-react-resources/photon-components-web/photon-components/Link";
-import { TextArea } from "../shared-react-resources/photon-components-web/photon-components/TextArea";
+import { Input } from "../shared-resources/photon-components-web/photon-components/Input";
+import { Checkbox } from "../shared-resources/photon-components-web/photon-components/Checkbox";
+import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
+import { TextArea } from "../shared-resources/photon-components-web/photon-components/TextArea";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import {
@@ -24,7 +24,7 @@ import {
   MdSentimentVeryDissatisfied,
   MdHelp,
 } from "react-icons/md";
-import { DisplayError } from "../shared-react-resources/DisplayError";
+import { DisplayError } from "../shared-resources/DisplayError";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 import { config } from "../config";
