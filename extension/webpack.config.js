@@ -18,10 +18,16 @@ const plugins = [
   new Dotenv({
     path: dotEnvPath,
   }),
-  new SentryWebpackPlugin({
-    include: "./src/",
-  }),
 ];
+
+// Don't upload sources to Sentry for karma tests
+if (process.env.NODE_ENV !== "test") {
+  plugins.push(
+    new SentryWebpackPlugin({
+      include: "./src/",
+    }),
+  );
+}
 
 module.exports = {
   entry: {
