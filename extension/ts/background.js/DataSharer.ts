@@ -2,6 +2,7 @@ import { RegretReport } from "./ReportSummarizer";
 import { makeUUID } from "./lib/uuid";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
 import { ConsentStatus, Store, UserSuppliedDemographics } from "./Store";
+import { TelemetryClient } from "./TelemetryClient";
 
 export interface SharedDataEventMetadata {
   client_timestamp: string;
@@ -27,8 +28,11 @@ export interface AnnotatedSharedData extends SharedData {
 
 export class DataSharer {
   public store: Store;
+  public telemetryClient: TelemetryClient;
+
   constructor(store) {
     this.store = store;
+    this.telemetryClient = new TelemetryClient();
   }
 
   async share(data: SharedData) {
@@ -55,6 +59,7 @@ export class DataSharer {
       },
     };
 
+    // Store a copy of the data for local introspection
     if (sharedData) {
       sharedData.push(annotatedData);
       await this.store.set({ sharedData });
@@ -63,6 +68,12 @@ export class DataSharer {
         sharedData: [annotatedData],
       });
     }
+
+    // Queue for external upload
+    await this.telemetryClient.submitPayload(
+      "regrets-reporter-payload",
+      annotatedData,
+    );
   }
 
   async export() {
