@@ -7,6 +7,7 @@
   - [Get started](#get-started)
   - [Opening up specific add-on pages](#opening-up-specific-add-on-pages)
   - [Checking current report data](#checking-current-report-data)
+  - [Export shared data](#export-shared-data)
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
@@ -60,6 +61,12 @@ await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
   openWpmPacketHandler.navigationBatchPreprocessor
     .navigationBatchesByNavigationUuid
 );
+```
+
+## Export shared data
+
+```javascript
+await exportSharedData();
 ```
 
 ## Collecting traffic data for test fixtures

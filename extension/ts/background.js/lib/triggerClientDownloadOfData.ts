@@ -1,12 +1,10 @@
-import { browser } from "webextension-polyfill-ts";
-
 export const triggerClientDownloadOfData = async (data, filename) => {
   const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], {
+  let file = new File([json], filename, {
     type: "application/json;charset=utf-8",
   });
-  await browser.downloads.download({
-    url: URL.createObjectURL(blob),
+  return {
+    url: URL.createObjectURL(file),
     filename,
-  });
+  };
 };

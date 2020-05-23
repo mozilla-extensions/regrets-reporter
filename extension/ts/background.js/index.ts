@@ -99,17 +99,6 @@ class ExtensionGlue {
   }
 
   async start() {
-    // During prototype phase, we have a browser action button that allows for downloading the reported data
-    const exportSharedData = async () => {
-      console.debug("Exporting shared data");
-      const sharedData = await dataSharer.export();
-      await triggerClientDownloadOfData(
-        sharedData,
-        `youTubeRegretsReporter-sharedData-userUuid=${await store.extensionInstallationUuid()}.json`,
-      );
-    };
-    browser.browserAction.onClicked.addListener(exportSharedData);
-
     // Only show report-regret page action on YouTube watch pages
     const showPageActionOnWatchPagesOnly = (tabId, changeInfo, tab) => {
       if (tab.url.match(/:\/\/[^\/]*\.?youtube.com\/watch/)) {
@@ -348,6 +337,13 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 (window as any).openWpmPacketHandler = openWpmPacketHandler;
 (window as any).reportSummarizer = reportSummarizer;
 (window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
+(window as any).exportSharedData = async () => {
+  const sharedData = await dataSharer.export();
+  return triggerClientDownloadOfData(
+    sharedData,
+    `youTubeRegretsReporter-sharedData-userUuid=${await store.extensionInstallationUuid()}.json`,
+  );
+};
 
 // init the extension glue on every extension load
 async function onEveryExtensionLoad() {

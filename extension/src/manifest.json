@@ -24,7 +24,6 @@
     "webNavigation",
     "cookies",
     "storage",
-    "downloads",
     "alarms",
     "tabs"
   ],
@@ -33,9 +32,5 @@
     "browser_style": true,
     "default_title": "__MSG_pageActionButtonTitle__",
     "default_popup": "report-regret-form/report-regret-form.html"
-  },
-  "browser_action": {
-    "browser_style": true,
-    "default_title": "__MSG_browserActionButtonTitle__"
   }
 }
