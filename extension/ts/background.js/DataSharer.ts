@@ -11,6 +11,12 @@ export interface SharedDataEventMetadata {
   event_uuid: string;
   user_supplied_demographics: UserSuppliedDemographics;
   amount_of_regret_reports_since_consent_was_given: number;
+  browser_info: {
+    build_id: string;
+    name: string;
+    vendor: string;
+    version: string;
+  };
   extension_version: string;
 }
 
@@ -48,6 +54,8 @@ export class DataSharer {
       amount_of_regret_reports_since_consent_was_given++;
     }
 
+    const browserInfo = await browser.runtime.getBrowserInfo();
+
     const annotatedData: AnnotatedSharedData = {
       ...data,
       event_metadata: {
@@ -56,6 +64,12 @@ export class DataSharer {
         event_uuid: makeUUID(),
         user_supplied_demographics: await this.store.getUserSuppliedDemographics(),
         amount_of_regret_reports_since_consent_was_given,
+        browser_info: {
+          build_id: browserInfo.buildID,
+          vendor: browserInfo.vendor,
+          version: browserInfo.version,
+          name: browserInfo.name,
+        },
         extension_version: browser.runtime.getManifest().version,
       },
     };
