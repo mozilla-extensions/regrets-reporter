@@ -14,6 +14,10 @@ const dotEnvPath =
 const fs = require("fs");
 fs.createReadStream(dotEnvPath).pipe(fs.createWriteStream("./.env"));
 
+// Build manifest.json
+const { buildManifest } = require("./buildManifest");
+buildManifest({ dotEnvPath });
+
 const plugins = [
   new Dotenv({
     path: dotEnvPath,

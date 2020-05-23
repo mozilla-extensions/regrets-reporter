@@ -68,6 +68,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^1.11.0",
+    "safe-es6-template": "^1.0.1",
     "selenium-webdriver": "^3.6.0",
     "sinon": "4.0.0",
     "sinon-chrome": "2.2.1",

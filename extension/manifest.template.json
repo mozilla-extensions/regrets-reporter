@@ -1,8 +1,8 @@
 {
+  "manifest_version": 2,
   "name": "YouTube Regrets Reporter",
   "description": "__MSG_extensionDescription__",
-  "version": "0.5.1",
-  "manifest_version": 2,
+  "version": "${package.version}",
   "hidden": false,
   "incognito": "not_allowed",
   "applications": {
