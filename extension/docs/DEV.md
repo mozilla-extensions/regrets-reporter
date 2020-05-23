@@ -11,6 +11,7 @@
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
   - [Creating a signed build of the add-on](#creating-a-signed-build-of-the-add-on)
+  - [Generating JSON schema for telemetry ingestion based on typings](#generating-json-schema-for-telemetry-ingestion-based-on-typings)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -116,4 +117,10 @@ After version bumping and setting the API_KEY and API_SECRET env vars:
 
 ```
 yarn build:production && npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
+```
+
+## Generating JSON schema for telemetry ingestion based on typings
+
+```
+npx typescript-json-schema tsconfig.json AnnotatedSharedData
 ```
