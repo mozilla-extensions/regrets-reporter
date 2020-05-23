@@ -22,7 +22,6 @@
     "webRequest",
     "webRequestBlocking",
     "webNavigation",
-    "cookies",
     "storage",
     "alarms",
     "tabs"
