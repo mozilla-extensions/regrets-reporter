@@ -42,21 +42,13 @@ export class DataSharer {
     this.telemetryClient = new TelemetryClient();
   }
 
-  async share(data: SharedData) {
-    const { sharedData } = await this.store.get("sharedData");
+  async annotateSharedData(
+    data: SharedData,
+    amount_of_regret_reports_since_consent_was_given,
+  ): Promise<AnnotatedSharedData> {
+    const browserInfo = await globalThis.browser.runtime.getBrowserInfo();
 
-    let amount_of_regret_reports_since_consent_was_given = sharedData
-      ? sharedData.filter($annotatedData => $annotatedData.regretReport).length
-      : 0;
-
-    // If this is a regret report, include it in the statistic
-    if (data.regret_report) {
-      amount_of_regret_reports_since_consent_was_given++;
-    }
-
-    const browserInfo = await browser.runtime.getBrowserInfo();
-
-    const annotatedData: AnnotatedSharedData = {
+    return {
       ...data,
       event_metadata: {
         client_timestamp: new Date().toISOString(),
@@ -70,9 +62,27 @@ export class DataSharer {
           version: browserInfo.version,
           name: browserInfo.name,
         },
-        extension_version: browser.runtime.getManifest().version,
+        extension_version: globalThis.browser.runtime.getManifest().version,
       },
     };
+  }
+
+  async share(data: SharedData) {
+    const { sharedData } = await this.store.get("sharedData");
+
+    let amount_of_regret_reports_since_consent_was_given = sharedData
+      ? sharedData.filter($annotatedData => $annotatedData.regretReport).length
+      : 0;
+
+    // If this is a regret report, include it in the statistic
+    if (data.regret_report) {
+      amount_of_regret_reports_since_consent_was_given++;
+    }
+
+    const annotatedData: AnnotatedSharedData = await this.annotateSharedData(
+      data,
+      amount_of_regret_reports_since_consent_was_given,
+    );
 
     // Store a copy of the data for local introspection
     if (sharedData) {
@@ -85,10 +95,7 @@ export class DataSharer {
     }
 
     // Queue for external upload
-    await this.telemetryClient.submitPayload(
-      "regrets-reporter-payload",
-      annotatedData,
-    );
+    await this.telemetryClient.submitPayload(annotatedData);
   }
 
   async export() {

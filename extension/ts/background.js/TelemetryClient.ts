@@ -3,6 +3,7 @@
 
 import { config } from "../config";
 import nock from "nock";
+import { AnnotatedSharedData } from "./DataSharer";
 
 declare namespace browser.telemetry {
   function submitPing(
@@ -14,6 +15,19 @@ declare namespace browser.telemetry {
     },
   ): void;
 }
+
+const MS_IN_A_MINUTE = 60 * 1000;
+
+// Timeout after which we consider a ping submission failed.
+const PING_SUBMIT_TIMEOUT_MS = 1.5 * MS_IN_A_MINUTE;
+
+// https://stackoverflow.com/a/57888548/682317
+const fetchWithTimeout = (url, ms, options: any = {}) => {
+  const controller = new AbortController();
+  const promise = fetch(url, { signal: controller.signal, ...options });
+  const timeout = setTimeout(() => controller.abort(), ms);
+  return promise.finally(() => clearTimeout(timeout));
+};
 
 export class TelemetryClient {
   composeSubmitRequestPath = (namespace, docType, docVersion, docId) => {
@@ -32,26 +46,30 @@ export class TelemetryClient {
   // TODO
   validatePayload = () => {};
 
-  submitPayload = async (telemetryTopic, payload) => {
+  submitPayload = async (payload: AnnotatedSharedData) => {
     const namespace = "regrets-reporter";
-    const docType = telemetryTopic;
+    const docType = "regrets-reporter-update";
     const docVersion = 1;
-    const docId = "foo";
+    const docId = payload.event_metadata.event_uuid;
 
-    const dataResponse = await fetch(
+    const dataResponse = await fetchWithTimeout(
       this.composeSubmitUrl(namespace, docType, docVersion, docId),
+      PING_SUBMIT_TIMEOUT_MS,
       {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          /*
-          Date - The client-supplied timestamp of the incoming request. Used for computing client clock skew.
-           */
+          Accept: "text/plain",
+          "Content-Type": "application/json; charset=UTF-8",
+          Date: new Date().toUTCString(),
         },
         body: JSON.stringify(payload),
       },
     ).catch(async error => {
+      if (error.name === "AbortError") {
+        // fetch aborted due to timeout
+      } else {
+        // network error or json parsing error
+      }
       console.error(
         "Error encountered when submitting a telemetry payload. Returning an empty result",
       );

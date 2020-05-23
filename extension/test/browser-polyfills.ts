@@ -1,4 +1,14 @@
-import fetch from "node-fetch";
+const {
+  AbortController: polyfillAbortController,
+  abortableFetch,
+} = require("abortcontroller-polyfill/dist/cjs-ponyfill");
+const { fetch: polyfillFetch } = abortableFetch(require("node-fetch"));
+
+// @ts-ignore
+global.AbortController = polyfillAbortController;
+
+// @ts-ignore
+global.fetch = polyfillFetch;
 
 // @ts-ignore
 const { Crypto } = require("@peculiar/webcrypto");
@@ -6,9 +16,23 @@ const { Crypto } = require("@peculiar/webcrypto");
 global.crypto = new Crypto();
 
 // @ts-ignore
-global.fetch = fetch;
-
-// @ts-ignore
 global.document = {
   addEventListener: () => {},
+};
+
+// @ts-ignore
+globalThis.browser = {
+  runtime: {
+    getBrowserInfo: async () => {
+      return {
+        buildID: "1234567890",
+        name: "Test",
+        vendor: "Test",
+        version: "1.2.3",
+      };
+    },
+    getManifest: () => {
+      return { version: "0.0.0" };
+    },
+  },
 };
