@@ -11,7 +11,6 @@
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
   - [Creating a signed build of the add-on](#creating-a-signed-build-of-the-add-on)
-  - [Sentry CLI](#sentry-cli)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

@@ -161,7 +161,7 @@ export class OpenWpmPacketHandler {
     if (await privateBrowsingActive()) {
       return;
     }
-    console.log(
+    console.info(
       `OpenWPM saveContent packet of approximate size ${humanFileSize(
         content.length,
       )} received. Hash: ${contentHash}`,
