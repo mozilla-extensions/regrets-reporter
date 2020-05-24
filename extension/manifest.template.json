@@ -19,6 +19,7 @@
   "permissions": [
     "*://*.youtube.com/*",
     "*://*.youtu.be/*",
+    "${env.TELEMETRY_SERVER}/*",
     "webRequest",
     "webRequestBlocking",
     "webNavigation",

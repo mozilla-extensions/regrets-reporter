@@ -2,7 +2,6 @@
 // https://docs.telemetry.mozilla.org/concepts/pipeline/http_edge_spec.html
 
 import { config } from "../config";
-import nock from "nock";
 import { AnnotatedSharedData } from "./DataSharer";
 
 declare namespace browser.telemetry {
@@ -22,7 +21,7 @@ const MS_IN_A_MINUTE = 60 * 1000;
 const PING_SUBMIT_TIMEOUT_MS = 1.5 * MS_IN_A_MINUTE;
 
 // https://stackoverflow.com/a/57888548/682317
-const fetchWithTimeout = (url, ms, options: any = {}) => {
+const fetchWithTimeout = (url, ms, options: any = {}): Promise<Response> => {
   const controller = new AbortController();
   const promise = fetch(url, { signal: controller.signal, ...options });
   const timeout = setTimeout(() => controller.abort(), ms);
@@ -78,9 +77,14 @@ export class TelemetryClient {
     });
 
     console.log({ dataResponse });
+    if (dataResponse === false) {
+      return false;
+    }
     if (dataResponse === true) {
       return true;
     }
-    console.error("Fetched data response is not truthy");
+    const response = await dataResponse.text();
+    console.log({ response });
+    return response;
   };
 }
