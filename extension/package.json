@@ -126,6 +126,7 @@
     "test:unit": "npm-run-all -n test:unit:mocha test:unit:karma",
     "test:unit:karma": "NODE_ENV=test npm run prestart && karma start",
     "test:unit:mocha": "DOTENV_CONFIG_PATH=.env.development mocha -r ts-node/register -r sinon/pkg/sinon -r ./test/browser-polyfills.ts -r dotenv/config your_script.js --globals global ts/\\*\\*/\\*.spec.ts",
+    "dev-telemetry-server": "docker run -p 80:8000 -v \"$(pwd)/../../../mozilla-pipeline-schemas\"/schemas:/app/resources/schemas -it mozilla/edge-validator:latest",
     "watch": "concurrently 'webpack --watch' 'web-ext run'",
     "webext-instrumentation:build": "cd node_modules/@openwpm/webext-instrumentation && npm run build && cd -",
     "webext-instrumentation:submodule-rsync": "rsync -r -t -p -o -g -x --stats --delete -l -D ../instrumentation/OpenWPM/automation/Extension/webext-instrumentation/ node_modules/@openwpm/webext-instrumentation/",

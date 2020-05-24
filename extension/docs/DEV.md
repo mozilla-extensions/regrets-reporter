@@ -13,7 +13,7 @@
     - [ReportSummarizer](#reportsummarizer)
   - [Creating a signed build of the add-on](#creating-a-signed-build-of-the-add-on)
   - [Generating JSON schema for telemetry ingestion based on typings](#generating-json-schema-for-telemetry-ingestion-based-on-typings)
-  - [Validating generated JSON schema](#validating-generated-json-schema)
+  - [Validating the generated JSON schema](#validating-the-generated-json-schema)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -138,8 +138,9 @@ npx typescript-json-schema tsconfig.json AnnotatedSharedData
 1. Update the corresponding schema files in a local `mozilla-pipeline-schemas` repo.
 
 2. Run:
+
 ```
-docker run -p 80:8000 -v "$(pwd)/../../../mozilla-pipeline-schemas"/schemas:/app/resources/schemas -it mozilla/edge-validator:latest
+yarn dev-telemetry-server
 ```
 
 3. Use `TELEMETRY_SERVER=http://localhost` in .env.development.
