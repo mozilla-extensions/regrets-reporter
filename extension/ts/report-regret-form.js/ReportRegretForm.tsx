@@ -68,7 +68,7 @@ export interface ReportRegretFormState {
   regretReportData: null | RegretReportData;
   userSuppliedRegretCategories: string[];
   userSuppliedOtherRegretCategory: string;
-  userSuppliedSeverity: null | number;
+  userSuppliedSeverity: number;
   userSuppliedOptionalComment: string;
   error: boolean;
   reported: boolean;
@@ -84,7 +84,7 @@ export class ReportRegretForm extends Component<
     regretReportData: null,
     userSuppliedRegretCategories: [],
     userSuppliedOtherRegretCategory: "",
-    userSuppliedSeverity: null,
+    userSuppliedSeverity: -1,
     userSuppliedOptionalComment: "",
     error: false,
     reported: false,

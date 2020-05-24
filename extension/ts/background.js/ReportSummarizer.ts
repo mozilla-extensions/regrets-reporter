@@ -116,7 +116,7 @@ export interface RegretReport {
   report_data: RegretReportData;
   user_supplied_regret_categories: string[];
   user_supplied_other_regret_category: string;
-  user_supplied_severity: null | number;
+  user_supplied_severity: number;
   user_supplied_optional_comment: string;
 }
 
