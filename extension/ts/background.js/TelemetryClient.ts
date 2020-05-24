@@ -1,8 +1,6 @@
-// /submit/<namespace>/<docType>/<docVersion>/<docId>
-// https://docs.telemetry.mozilla.org/concepts/pipeline/http_edge_spec.html
-
 import { config } from "../config";
 import { AnnotatedSharedData } from "./DataSharer";
+import { validateSchema } from "./lib/validateSchema";
 
 declare namespace browser.telemetry {
   function submitPing(
@@ -29,6 +27,14 @@ const fetchWithTimeout = (url, ms, options: any = {}): Promise<Response> => {
 };
 
 export class TelemetryClient {
+  /**
+   * See https://docs.telemetry.mozilla.org/concepts/pipeline/http_edge_spec.html
+   *
+   * @param namespace
+   * @param docType
+   * @param docVersion
+   * @param docId
+   */
   composeSubmitRequestPath = (namespace, docType, docVersion, docId) => {
     return `/submit/${namespace}/${docType}/${docVersion}/${docId}`;
   };
@@ -42,10 +48,23 @@ export class TelemetryClient {
     )}`;
   };
 
-  // TODO
-  validatePayload = () => {};
+  validatePayload = (payload: AnnotatedSharedData) => {
+    console.debug(
+      "Telemetry about to be validated using the compiled ajv validate() function:",
+      payload,
+    );
+
+    const validationResult = validateSchema(payload);
+
+    if (!validationResult.valid) {
+      console.error("Invalid telemetry payload", { payload, validationResult });
+      throw new Error("Invalid telemetry payload");
+    }
+  };
 
   submitPayload = async (payload: AnnotatedSharedData) => {
+    this.validatePayload(payload);
+
     const namespace = "regrets-reporter";
     const docType = "regrets-reporter-update";
     const docVersion = 1;

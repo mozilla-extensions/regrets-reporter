@@ -18,6 +18,7 @@
     "react-modal": "^3.11.2"
   },
   "devDependencies": {
+    "ajv-cli": "^3.0.0",
     "@fullhuman/postcss-purgecss": "^2.1.2",
     "@peculiar/webcrypto": "^1.0.26",
     "@sentry/webpack-plugin": "^1.11.1",
@@ -114,9 +115,10 @@
     "lint:fixpack": "fixpack",
     "lint:tslint": "tslint src/**/*.ts",
     "lint:web-ext-lint": "web-ext lint",
+    "compile-schema": "ajv compile -s telemetry-schema/regrets-reporter-update.1.schema.json -o ts/background.js/lib/validate.js",
     "postformat": "npm run docformat && npm run eslint-fix && fixpack",
     "postinstall": "cd node_modules/@openwpm/webext-instrumentation && npm install",
-    "prebuild": "npm-run-all webext-instrumentation:submodule-rsync webext-instrumentation:build",
+    "prebuild": "npm-run-all webext-instrumentation:submodule-rsync webext-instrumentation:build compile-schema",
     "prestart": "node ./ensure_minimum_node_version.js && npm run build",
     "prewatch": "npm run prebuild",
     "start": "web-ext run",

@@ -6,6 +6,7 @@ src/*content-script.js
 src/background.js
 src/get-started.js
 src/report-regret-form.js
+ts/background.js/lib/validate.js
 stats.json
 yarn-error.log
 *.map

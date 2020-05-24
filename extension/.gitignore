@@ -5,6 +5,7 @@ src/background.js
 src/get-started.js
 src/report-regret-form.js
 src/manifest.json
+ts/background.js/lib/validate.js
 .env
 test/results/coverage
 /firefox-*
