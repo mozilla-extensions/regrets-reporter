@@ -1,7 +1,7 @@
 import { config } from "../config";
 import { AnnotatedSharedData } from "./DataSharer";
 import { validateSchema } from "./lib/validateSchema";
-import * as pako from "pako";
+import { gzip } from "pako";
 
 declare namespace browser.telemetry {
   function submitPing(
@@ -82,7 +82,7 @@ export class TelemetryClient {
           Date: new Date().toUTCString(),
           "Content-Encoding": "gzip",
         },
-        body: await pako.gzip(JSON.stringify(payload)),
+        body: await gzip(JSON.stringify(payload)),
       },
     ).catch(async error => {
       if (error.name === "AbortError") {
