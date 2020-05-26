@@ -54,6 +54,10 @@ export interface TrimmedNavigationBatch extends NavigationBatch {
   trimmedUserInteractionCount: number;
 }
 
+export interface TrimmedNavigationBatchesByUuid {
+  [navigationUuid: string]: TrimmedNavigationBatch;
+}
+
 export type OpenWPMType =
   | "navigations"
   | "navigation_batches"
@@ -197,9 +201,7 @@ export class NavigationBatchPreprocessor {
     };
   };
   public openWpmPayloadEnvelopeProcessQueue: OpenWpmPayloadEnvelope[] = [];
-  public navigationBatchesByNavigationUuid: {
-    [navigationUuid: string]: TrimmedNavigationBatch;
-  } = {};
+  public navigationBatchesByNavigationUuid: TrimmedNavigationBatchesByUuid = {};
 
   async submitOpenWPMPayload(
     type: OpenWPMType,

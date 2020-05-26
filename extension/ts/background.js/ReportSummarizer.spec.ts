@@ -3,15 +3,15 @@ import { ReportSummarizer } from "./ReportSummarizer";
 import { youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo";
 import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToFirstUpNext";
 import { youtubeVisitWatchPageAndInteractWithEndScreens } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndInteractWithEndScreens";
-import { TrimmedNavigationBatch } from "./NavigationBatchPreprocessor";
+import { TrimmedNavigationBatchesByUuid } from "./NavigationBatchPreprocessor";
 import { youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage";
 import { youtubeVisitWatchPageOfADifferentType } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageOfADifferentType";
 import { youtubeVisitMainPageSearchClickUserClickVideo } from "./fixtures/ReportSummarizer/youtubeVisitMainPageSearchClickUserClickVideo";
 import { youtubeVisitWatchPageAndSearchClickUserSearchResultVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndSearchClickUserSearchResultVideo";
 
-const firstEncounteredWindowAndTabIds = (navigationBatchesByUuid: {
-  [navigationUuid: string]: TrimmedNavigationBatch;
-}) => {
+const firstEncounteredWindowAndTabIds = (
+  navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
+) => {
   const firstNavigationBatchWithWindowAndTabIdUuid = Object.keys(
     navigationBatchesByUuid,
   ).find(

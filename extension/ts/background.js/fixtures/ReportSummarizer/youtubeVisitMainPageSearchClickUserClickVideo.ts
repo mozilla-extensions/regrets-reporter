@@ -1,8 +1,6 @@
-import { TrimmedNavigationBatch } from "../../NavigationBatchPreprocessor";
+import { TrimmedNavigationBatchesByUuid } from "../../NavigationBatchPreprocessor";
 
-export const youtubeVisitMainPageSearchClickUserClickVideo: {
-  [navigationUuid: string]: TrimmedNavigationBatch;
-} = {
+export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBatchesByUuid = {
   "cde77145-d87f-44e8-9036-dab4869457ab": {
     navigationEnvelope: {
       type: "navigations",

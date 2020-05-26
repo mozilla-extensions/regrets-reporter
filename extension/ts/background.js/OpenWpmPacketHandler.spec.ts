@@ -4,21 +4,16 @@ import { OpenWpmPacketHandler } from "./OpenWpmPacketHandler";
 import {
   NavigationBatch,
   TrimmedNavigationBatch,
+  TrimmedNavigationBatchesByUuid,
 } from "./NavigationBatchPreprocessor";
 import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 
 const trimNavigationBatches = (
   reportSummarizer: ReportSummarizer,
-  navigationBatchesByUuid: {
-    [navigationUuid: string]: NavigationBatch;
-  },
-): {
-  [navigationUuid: string]: TrimmedNavigationBatch;
-} => {
+  navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
+): TrimmedNavigationBatchesByUuid => {
   const navUuids = Object.keys(navigationBatchesByUuid);
-  const trimmedNavigationBatchesByUuid: {
-    [navigationUuid: string]: TrimmedNavigationBatch;
-  } = {};
+  const trimmedNavigationBatchesByUuid: TrimmedNavigationBatchesByUuid = {};
   for (const navUuid of navUuids) {
     trimmedNavigationBatchesByUuid[
       navUuid
@@ -39,9 +34,10 @@ describe("OpenWpmPacketHandler", function() {
 
   it("fixture: youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const trimmedNavigationBatchesByUuid: {
-      [navigationUuid: string]: TrimmedNavigationBatch;
-    } = trimNavigationBatches(reportSummarizer, {});
+    const trimmedNavigationBatchesByUuid: TrimmedNavigationBatchesByUuid = trimNavigationBatches(
+      reportSummarizer,
+      {},
+    );
 
     // console.log({ trimmedNavigationBatchesByUuid });
   });

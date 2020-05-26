@@ -1,8 +1,6 @@
-import { TrimmedNavigationBatch } from "../../NavigationBatchPreprocessor";
+import { TrimmedNavigationBatchesByUuid } from "../../NavigationBatchPreprocessor";
 
-export const youtubeVisitWatchPageAndNavigateToFirstUpNext: {
-  [navigationUuid: string]: TrimmedNavigationBatch;
-} = {
+export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBatchesByUuid = {
   "d2d9c9dd-4d1c-4b36-8732-378ef276ce7d": {
     navigationEnvelope: {
       type: "navigations",

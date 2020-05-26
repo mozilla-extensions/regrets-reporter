@@ -2,6 +2,7 @@ import {
   NavigationBatch,
   OpenWpmPayloadEnvelope,
   TrimmedNavigationBatch,
+  TrimmedNavigationBatchesByUuid,
 } from "./NavigationBatchPreprocessor";
 import { OpenWPMObjectifiedEventTarget } from "@openwpm/webext-instrumentation";
 import {
@@ -164,9 +165,9 @@ export class ReportSummarizer {
     return trimmedNavigationBatch;
   }
 
-  async navigationBatchesByUuidToYouTubeNavigations(navigationBatchesByUuid: {
-    [navigationUuid: string]: TrimmedNavigationBatch;
-  }): Promise<YouTubeNavigation[]> {
+  async navigationBatchesByUuidToYouTubeNavigations(
+    navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
+  ): Promise<YouTubeNavigation[]> {
     // Only consider navigations in the top/main frame (no subframes)
     // (this should already be taken care of by the filtering in OpenWpmPacketHandler
     // but keeping for clarity's sake)
