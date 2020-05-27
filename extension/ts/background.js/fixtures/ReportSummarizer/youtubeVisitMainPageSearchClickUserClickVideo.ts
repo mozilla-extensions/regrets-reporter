@@ -48,8 +48,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"],["Cookie","YSC=gwjaJXk82Gc; GPS=1; VISITOR_INFO1_LIVE=pO7k-PcsgWg; CONSENT=WP.2860cd; PREF=f4=4000000"],["Upgrade-Insecure-Requests","1"]]',
           is_XHR: 0,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "undefined",
           loading_origin: "undefined",
           loading_href: "undefined",
@@ -102,8 +100,8 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
         tabActiveDwellTime: 24500,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "e882a947-bf45-45ab-a84d-22b0f5c59051",
           event_ordinal: 12,
           page_scoped_event_ordinal: 0,
@@ -141,8 +139,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.youtube.com/"],["X-YouTube-STS","18375"],["X-YouTube-Client-Name","1"],["X-YouTube-Client-Version","2.20200424.06.00"],["X-YouTube-Device","cbr=Firefox&cbrver=76.0&ceng=Gecko&cengver=76.0&cos=Macintosh&cosver=10.15"],["X-YouTube-Page-CL","308102149"],["X-YouTube-Page-Label","youtube.ytfe.desktop_20200423_6_RC0"],["X-YouTube-Variants-Checksum","389eac5d1dea378ca5cbd76ca0b129d3"],["X-YouTube-Utc-Offset","180"],["X-YouTube-Time-Zone","Europe/Helsinki"],["X-YouTube-Ad-Signals","dt=1587733213624&flash=0&frm&u_tz=180&u_his=3&u_java&u_h=1050&u_w=1680&u_ah=1027&u_aw=1680&u_cd=24&u_nplug=1&u_nmime=2&bc=29&bih=846&biw=1280&brdim=4%2C23%2C4%2C23%2C1680%2C23%2C1280%2C946%2C1280%2C846&vis=1&wgl=true&ca_type=image&bid=ANyPxKqt5hp4oXGUfTC2rqDu0L_QAQr3JW0aE_peG6ud7uxqHwlZERVocchI29FBH9RXDH-cIclXqqko5VpFwhTCUgRImfgSsg"],["X-SPF-Referer","https://www.youtube.com/"],["X-SPF-Previous","https://www.youtube.com/"],["Connection","keep-alive"],["Cookie","YSC=gwjaJXk82Gc; GPS=1; VISITOR_INFO1_LIVE=pO7k-PcsgWg; CONSENT=WP.2860cd; PREF=f4=4000000; ST-kef3pu=oq=foo&gs_l=youtube.3..0i131k1j0l2j0i131k1l3j0l2j0i131k1l5j0.4053.4324.0.4492.4.4.0.0.0.0.140.267.0j2.3.0....0...1ac.1.64.youtube..1.2.267.0...178.WjunjEdyTSk&itct=CBwQ7VAiEwiloKORj4HpAhURQ7IKHQ-fBTg%3D&csn=3OKiXtWpPNzNyQX94aK4BA"]]',
           is_XHR: 1,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "https://www.youtube.com",
           loading_origin: "https://www.youtube.com",
           loading_href: "https://www.youtube.com/",
@@ -212,8 +208,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.youtube.com/results?search_query=foo"],["X-YouTube-STS","18375"],["X-YouTube-Client-Name","1"],["X-YouTube-Client-Version","2.20200424.06.00"],["X-YouTube-Device","cbr=Firefox&cbrver=76.0&ceng=Gecko&cengver=76.0&cos=Macintosh&cosver=10.15"],["X-YouTube-Page-CL","308102149"],["X-YouTube-Page-Label","youtube.ytfe.desktop_20200423_6_RC0"],["X-YouTube-Variants-Checksum","389eac5d1dea378ca5cbd76ca0b129d3"],["X-YouTube-Utc-Offset","180"],["X-YouTube-Time-Zone","Europe/Helsinki"],["X-YouTube-Ad-Signals","dt=1587733213624&flash=0&frm&u_tz=180&u_his=4&u_java&u_h=1050&u_w=1680&u_ah=1027&u_aw=1680&u_cd=24&u_nplug=1&u_nmime=2&bc=29&bih=846&biw=1280&brdim=4%2C23%2C4%2C23%2C1680%2C23%2C1280%2C946%2C1280%2C846&vis=1&wgl=true&ca_type=image&bid=ANyPxKqt5hp4oXGUfTC2rqDu0L_QAQr3JW0aE_peG6ud7uxqHwlZERVocchI29FBH9RXDH-cIclXqqko5VpFwhTCUgRImfgSsg"],["X-SPF-Referer","https://www.youtube.com/results?search_query=foo"],["X-SPF-Previous","https://www.youtube.com/results?search_query=foo"],["Connection","keep-alive"],["Cookie","YSC=gwjaJXk82Gc; GPS=1; VISITOR_INFO1_LIVE=pO7k-PcsgWg; CONSENT=WP.2860cd; PREF=f4=4000000; ST-nopvk7=itct=CN8BENowGAAiEwif-OWUj4HpAhVRUbIKHSboDas%3D&csn=5OKiXsjEFoG1yQW89KPIBQ"]]',
           is_XHR: 1,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "https://www.youtube.com",
           loading_origin: "https://www.youtube.com",
           loading_href: "https://www.youtube.com/",
@@ -225,8 +219,8 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
         tabActiveDwellTime: 32500,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "e882a947-bf45-45ab-a84d-22b0f5c59051",
           event_ordinal: 18,
           page_scoped_event_ordinal: 1,
@@ -305,8 +299,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.youtube.com/user/foofighters"],["X-YouTube-STS","18375"],["X-YouTube-Client-Name","1"],["X-YouTube-Client-Version","2.20200424.06.00"],["X-YouTube-Device","cbr=Firefox&cbrver=76.0&ceng=Gecko&cengver=76.0&cos=Macintosh&cosver=10.15"],["X-YouTube-Page-CL","308102149"],["X-YouTube-Page-Label","youtube.ytfe.desktop_20200423_6_RC0"],["X-YouTube-Variants-Checksum","389eac5d1dea378ca5cbd76ca0b129d3"],["X-YouTube-Utc-Offset","180"],["X-YouTube-Time-Zone","Europe/Helsinki"],["X-YouTube-Ad-Signals","dt=1587733213624&flash=0&frm&u_tz=180&u_his=5&u_java&u_h=1050&u_w=1680&u_ah=1027&u_aw=1680&u_cd=24&u_nplug=1&u_nmime=2&bc=29&bih=846&biw=1280&brdim=4%2C23%2C4%2C23%2C1680%2C23%2C1280%2C946%2C1280%2C846&vis=1&wgl=true&ca_type=image&bid=ANyPxKqt5hp4oXGUfTC2rqDu0L_QAQr3JW0aE_peG6ud7uxqHwlZERVocchI29FBH9RXDH-cIclXqqko5VpFwhTCUgRImfgSsg"],["X-SPF-Referer","https://www.youtube.com/user/foofighters"],["X-SPF-Previous","https://www.youtube.com/user/foofighters"],["Connection","keep-alive"],["Cookie","YSC=gwjaJXk82Gc; GPS=1; VISITOR_INFO1_LIVE=pO7k-PcsgWg; CONSENT=WP.2860cd; PREF=f4=4000000; ST-1leqc8h=itct=COIBEJQ1GAAiEwjg0PGVj4HpAhUZTLIKHQfwADsyC2M0LW92ZXJ2aWV3WhhVQ2kyS05zczRZeDczTkcwSkFSU0ZlMEE%3D&csn=5uKiXoKtJ9DUyAWZmZ7YCg"]]',
           is_XHR: 1,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "https://www.youtube.com",
           loading_origin: "https://www.youtube.com",
           loading_href: "https://www.youtube.com/",
@@ -318,8 +310,8 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
         tabActiveDwellTime: 36250,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "e882a947-bf45-45ab-a84d-22b0f5c59051",
           event_ordinal: 23,
           page_scoped_event_ordinal: 2,
@@ -386,12 +378,12 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
     httpRedirectCount: 0,
     javascriptOperationCount: 0,
     capturedContentCount: 4,
-    userInteractionCount: 3,
+    uiInteractionCount: 3,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
-    trimmedUserInteractionCount: -1,
+    trimmedUiInteractionCount: -1,
   },
 };

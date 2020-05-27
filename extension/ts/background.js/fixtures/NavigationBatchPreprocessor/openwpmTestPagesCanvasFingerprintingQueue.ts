@@ -46,8 +46,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       headers:
         '[["Host","localtest.me:8000"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate"],["Connection","keep-alive"],["Upgrade-Insecure-Requests","1"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "undefined",
       loading_origin: "undefined",
       loading_href: "undefined",
@@ -423,8 +421,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       headers:
         '[["Host","localtest.me:8000"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "http://localtest.me:8000",
       loading_origin: "http://localtest.me:8000",
       loading_href:

@@ -19,8 +19,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","example.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate"],["Connection","keep-alive"],["Upgrade-Insecure-Requests","1"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "undefined",
       loading_origin: "undefined",
       loading_href: "undefined",
@@ -99,8 +97,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","example.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "http://example.com",
       loading_origin: "http://example.com",
       loading_href: "http://example.com/",
@@ -152,8 +148,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate"],["Referer","http://example.com/"],["Connection","keep-alive"],["Upgrade-Insecure-Requests","1"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "http://example.com",
       loading_origin: "undefined",
       loading_href: "undefined",
@@ -202,8 +196,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","http://example.com/"],["Connection","keep-alive"],["Upgrade-Insecure-Requests","1"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "http://example.com",
       loading_origin: "undefined",
       loading_href: "undefined",
@@ -259,8 +251,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/css,*/*;q=0.1"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/domains/reserved"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -289,8 +279,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/css,*/*;q=0.1"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/domains/reserved"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -319,8 +307,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/domains/reserved"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -349,8 +335,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/domains/reserved"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -379,8 +363,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","image/webp,*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/domains/reserved"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -524,8 +506,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","application/font-woff2;q=1.0,application/font-woff;q=0.9,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/_css/2015.1/screen.css"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -554,8 +534,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","application/font-woff2;q=1.0,application/font-woff;q=0.9,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/_css/2015.1/screen.css"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -584,8 +562,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","application/font-woff2;q=1.0,application/font-woff;q=0.9,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.iana.org/_css/2015.1/screen.css"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",
@@ -637,8 +613,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       headers:
         '[["Host","www.iana.org"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "https://www.iana.org",
       loading_origin: "https://www.iana.org",
       loading_href: "https://www.iana.org/domains/reserved",

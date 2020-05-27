@@ -22,8 +22,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       headers:
         '[["Host","example.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:75.0) Gecko/20100101 Firefox/75.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate"],["Connection","keep-alive"],["Upgrade-Insecure-Requests","1"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "undefined",
       loading_origin: "undefined",
       loading_href: "undefined",
@@ -120,8 +118,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       headers:
         '[["Host","example.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:75.0) Gecko/20100101 Firefox/75.0"],["Accept","image/webp,*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate"],["Connection","keep-alive"]]',
       is_XHR: 0,
-      is_full_page: 1,
-      is_frame_load: 0,
       triggering_origin: "http://example.com",
       loading_origin: "http://example.com",
       loading_href: "http://example.com/",

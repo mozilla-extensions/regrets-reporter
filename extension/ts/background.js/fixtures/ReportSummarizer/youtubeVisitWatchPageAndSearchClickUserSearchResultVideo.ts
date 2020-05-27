@@ -48,8 +48,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"],["Cookie","VISITOR_INFO1_LIVE=MKI4DKsVjuA; GPS=1; YSC=LLbnyN0-QCc; CONSENT=WP.28638c; PREF=f4=4000000"],["Upgrade-Insecure-Requests","1"]]',
           is_XHR: 0,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "undefined",
           loading_origin: "undefined",
           loading_href: "undefined",
@@ -102,8 +100,8 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
         tabActiveDwellTime: 6750,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "de2cbaa4-5ba8-4004-ab6f-74698b7e0b46",
           event_ordinal: 23,
           page_scoped_event_ordinal: 0,
@@ -141,8 +139,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.youtube.com/watch?v=g4mHPeMGTJM"],["X-YouTube-STS","18379"],["X-YouTube-Client-Name","1"],["X-YouTube-Client-Version","2.20200425.07.00"],["X-YouTube-Device","cbr=Firefox&cbrver=76.0&ceng=Gecko&cengver=76.0&cos=Macintosh&cosver=10.15"],["X-YouTube-Page-CL","308361561"],["X-YouTube-Page-Label","youtube.ytfe.desktop_20200424_7_RC0"],["X-YouTube-Variants-Checksum","82853f6344d75755e7a68685b6b91786"],["X-YouTube-Utc-Offset","180"],["X-YouTube-Time-Zone","Europe/Helsinki"],["X-YouTube-Ad-Signals","dt=1588154905266&flash=0&frm&u_tz=180&u_his=1&u_java&u_h=1050&u_w=1680&u_ah=1027&u_aw=1680&u_cd=24&u_nplug=1&u_nmime=2&bc=29&bih=846&biw=1280&brdim=4%2C23%2C4%2C23%2C1680%2C23%2C1280%2C946%2C1280%2C846&vis=1&wgl=true&ca_type=image&bid=ANyPxKoTpfS8SlhP49iQMnRBo3PgImtcNX1yaUaD4ys-ppem3Lm0dwBleEI46hNwBlkHCrdnSJF88xB6Mm7s4IpOQenfU4ddCA"],["X-SPF-Referer","https://www.youtube.com/watch?v=g4mHPeMGTJM"],["X-SPF-Previous","https://www.youtube.com/watch?v=g4mHPeMGTJM"],["Connection","keep-alive"],["Cookie","VISITOR_INFO1_LIVE=MKI4DKsVjuA; GPS=1; YSC=LLbnyN0-QCc; CONSENT=WP.28638c; PREF=f4=4000000; ST-kef3pu=oq=foo&gs_l=youtube.3..0l3j0i131k1l4j0l2j0i131k1l5.11366.11644.0.12011.4.4.0.0.0.0.238.238.2-1.2.0.ytpkt_e%2Cytpo-bo-kt%3D1%2Cytposo-bo-kt%3D1%2Ccfro%3D1...0...1ac.1.64.youtube..2.1.238.0...402.e5iWEmfHnzE&itct=CBwQ7VAiEwjphLSHso3pAhXpwU8IHTSRDJk%3D&csn=GFKpXqGpFbr27QT20I34CQ"]]',
           is_XHR: 1,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "https://www.youtube.com",
           loading_origin: "https://www.youtube.com",
           loading_href: "https://www.youtube.com/watch?v=g4mHPeMGTJM",
@@ -195,8 +191,8 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
         tabActiveDwellTime: 20500,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "de2cbaa4-5ba8-4004-ab6f-74698b7e0b46",
           event_ordinal: 40,
           page_scoped_event_ordinal: 1,
@@ -234,8 +230,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.youtube.com/results?search_query=foo"],["X-YouTube-STS","18379"],["X-YouTube-Client-Name","1"],["X-YouTube-Client-Version","2.20200425.07.00"],["X-YouTube-Device","cbr=Firefox&cbrver=76.0&ceng=Gecko&cengver=76.0&cos=Macintosh&cosver=10.15"],["X-YouTube-Page-CL","308361561"],["X-YouTube-Page-Label","youtube.ytfe.desktop_20200424_7_RC0"],["X-YouTube-Variants-Checksum","82853f6344d75755e7a68685b6b91786"],["X-YouTube-Utc-Offset","180"],["X-YouTube-Time-Zone","Europe/Helsinki"],["X-YouTube-Ad-Signals","dt=1588154905266&flash=0&frm&u_tz=180&u_his=2&u_java&u_h=1050&u_w=1680&u_ah=1027&u_aw=1680&u_cd=24&u_nplug=1&u_nmime=2&bc=29&bih=846&biw=1280&brdim=4%2C23%2C4%2C23%2C1680%2C23%2C1280%2C946%2C1280%2C846&vis=1&wgl=true&ca_type=image&bid=ANyPxKoTpfS8SlhP49iQMnRBo3PgImtcNX1yaUaD4ys-ppem3Lm0dwBleEI46hNwBlkHCrdnSJF88xB6Mm7s4IpOQenfU4ddCA"],["X-SPF-Referer","https://www.youtube.com/results?search_query=foo"],["X-SPF-Previous","https://www.youtube.com/results?search_query=foo"],["Connection","keep-alive"],["Cookie","VISITOR_INFO1_LIVE=MKI4DKsVjuA; GPS=1; YSC=LLbnyN0-QCc; CONSENT=WP.28638c; PREF=f4=4000000; ST-lfel19=csn=J1KpXpbQFYa1yAX3p6rgAQ&itct=CN8BENwwGAAiEwjKpcWOso3pAhUBPrIKHf7zDcAyBnNlYXJjaFIDZm9vmgEDEPQk&lact=145"]]',
           is_XHR: 1,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "https://www.youtube.com",
           loading_origin: "https://www.youtube.com",
           loading_href: "https://www.youtube.com/watch?v=g4mHPeMGTJM",
@@ -247,8 +241,8 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
         tabActiveDwellTime: 56500,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "de2cbaa4-5ba8-4004-ab6f-74698b7e0b46",
           event_ordinal: 43,
           page_scoped_event_ordinal: 2,
@@ -315,12 +309,12 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
     httpRedirectCount: 0,
     javascriptOperationCount: 0,
     capturedContentCount: 5,
-    userInteractionCount: 3,
+    uiInteractionCount: 3,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
-    trimmedUserInteractionCount: -1,
+    trimmedUiInteractionCount: -1,
   },
 };

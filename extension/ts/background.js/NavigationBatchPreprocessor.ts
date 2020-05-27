@@ -5,7 +5,7 @@ import {
   JavascriptCookieRecord,
   JavascriptOperation,
   Navigation,
-  UserInteraction,
+  UiInteraction,
 } from "@openwpm/webext-instrumentation";
 import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
@@ -42,7 +42,7 @@ export interface NavigationBatch {
   httpRedirectCount: number;
   javascriptOperationCount: number;
   capturedContentCount: number;
-  userInteractionCount: number;
+  uiInteractionCount: number;
 }
 
 export interface TrimmedNavigationBatch extends NavigationBatch {
@@ -51,7 +51,7 @@ export interface TrimmedNavigationBatch extends NavigationBatch {
   trimmedHttpRedirectCount: number;
   trimmedJavascriptOperationCount: number;
   trimmedCapturedContentCount: number;
-  trimmedUserInteractionCount: number;
+  trimmedUiInteractionCount: number;
 }
 
 export interface TrimmedNavigationBatchesByUuid {
@@ -69,7 +69,7 @@ export type OpenWPMType =
   | "javascript_cookies"
   | "openwpm_log"
   | "openwpm_captured_content"
-  | "user_interactions";
+  | "ui_interactions";
 
 type OpenWPMPayload =
   | Navigation
@@ -82,7 +82,7 @@ type OpenWPMPayload =
   | JavascriptCookieRecord
   | LogEntry
   | CapturedContent
-  | UserInteraction;
+  | UiInteraction;
 
 type BatchableChildOpenWPMPayload =
   | HttpRequest
@@ -90,7 +90,7 @@ type BatchableChildOpenWPMPayload =
   | HttpRedirect
   | JavascriptOperation
   | CapturedContent
-  | UserInteraction;
+  | UiInteraction;
 
 /**
  * An envelope that allows for grouping of different
@@ -109,7 +109,7 @@ export interface OpenWpmPayloadEnvelope {
   javascriptCookieRecord?: JavascriptCookieRecord;
   logEntry?: LogEntry;
   capturedContent?: CapturedContent;
-  userInteraction?: UserInteraction;
+  uiInteraction?: UiInteraction;
   tabActiveDwellTime?: number;
 }
 
@@ -127,8 +127,8 @@ export const batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope = (
       return openWpmPayloadEnvelope.javascriptOperation as JavascriptOperation;
     case "openwpm_captured_content":
       return openWpmPayloadEnvelope.capturedContent as CapturedContent;
-    case "user_interactions":
-      return openWpmPayloadEnvelope.userInteraction as CapturedContent;
+    case "ui_interactions":
+      return openWpmPayloadEnvelope.uiInteraction as CapturedContent;
   }
   throw new Error(`Unexpected type supplied: '${openWpmPayloadEnvelope.type}'`);
 };
@@ -163,8 +163,8 @@ export const openWpmPayloadEnvelopeFromOpenWpmTypeAndPayload = (
       type === "openwpm_captured_content"
         ? (payload as CapturedContent)
         : undefined,
-    userInteraction:
-      type === "user_interactions" ? (payload as UserInteraction) : undefined,
+    uiInteraction:
+      type === "ui_interactions" ? (payload as UiInteraction) : undefined,
   };
   return openWpmPayloadEnvelope;
 };
@@ -197,7 +197,7 @@ export class NavigationBatchPreprocessor {
       trimmedHttpRedirectCount: -1,
       trimmedJavascriptOperationCount: -1,
       trimmedCapturedContentCount: -1,
-      trimmedUserInteractionCount: -1,
+      trimmedUiInteractionCount: -1,
     };
   };
   public openWpmPayloadEnvelopeProcessQueue: OpenWpmPayloadEnvelope[] = [];
@@ -254,7 +254,7 @@ export class NavigationBatchPreprocessor {
       "http_redirects",
       "javascript",
       "openwpm_captured_content",
-      "user_interactions",
+      "ui_interactions",
     ].includes(type);
   }
 
@@ -370,7 +370,7 @@ export class NavigationBatchPreprocessor {
             httpRedirectCount: 0,
             javascriptOperationCount: 0,
             capturedContentCount: 0,
-            userInteractionCount: 0,
+            uiInteractionCount: 0,
           };
 
           // Remove navigation envelope from this run's processing queue
@@ -464,8 +464,8 @@ export class NavigationBatchPreprocessor {
                     case "openwpm_captured_content":
                       navigationBatch.capturedContentCount++;
                       break;
-                    case "user_interactions":
-                      navigationBatch.userInteractionCount++;
+                    case "ui_interactions":
+                      navigationBatch.uiInteractionCount++;
                       break;
                   }
                 }
@@ -510,9 +510,9 @@ export class NavigationBatchPreprocessor {
                 capturedContentCount:
                   existingNavigationBatch.capturedContentCount +
                   navigationBatch.capturedContentCount,
-                userInteractionCount:
-                  existingNavigationBatch.userInteractionCount +
-                  navigationBatch.userInteractionCount,
+                uiInteractionCount:
+                  existingNavigationBatch.uiInteractionCount +
+                  navigationBatch.uiInteractionCount,
               };
             } else {
               updatedNavigationBatch = navigationBatch;

@@ -48,8 +48,6 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"],["Cookie","YSC=-rp_mkzUeg0; GPS=1; VISITOR_INFO1_LIVE=f5dpwalY05I; CONSENT=WP.285c47; PREF=f4=4000000"],["Upgrade-Insecure-Requests","1"]]',
           is_XHR: 0,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "undefined",
           loading_origin: "undefined",
           loading_href: "undefined",
@@ -102,8 +100,8 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
         tabActiveDwellTime: 3000,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "1feb66e9-b8dc-490f-9752-b518e022ff4e",
           event_ordinal: 13,
           page_scoped_event_ordinal: 0,
@@ -129,12 +127,12 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
     httpRedirectCount: 0,
     javascriptOperationCount: 0,
     capturedContentCount: 1,
-    userInteractionCount: 1,
+    uiInteractionCount: 1,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
-    trimmedUserInteractionCount: -1,
+    trimmedUiInteractionCount: -1,
   },
 };

@@ -48,8 +48,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:77.0) Gecko/20100101 Firefox/77.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"],["Cookie","YSC=GaFl2b3NOZo; VISITOR_INFO1_LIVE=dQSQyhH0cQ4; CONSENT=WP.28722b; PREF=f4=4000000"],["Upgrade-Insecure-Requests","1"]]',
           is_XHR: 0,
-
-          is_frame_load: 0,
           triggering_origin: "undefined",
           loading_origin: "undefined",
           loading_href: "undefined",
@@ -78,8 +76,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:77.0) Gecko/20100101 Firefox/77.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"],["Cookie","YSC=GaFl2b3NOZo; VISITOR_INFO1_LIVE=dQSQyhH0cQ4; CONSENT=WP.28722b; PREF=f4=4000000"],["Upgrade-Insecure-Requests","1"]]',
           is_XHR: 0,
-
-          is_frame_load: 0,
           triggering_origin: "undefined",
           loading_origin: "undefined",
           loading_href: "undefined",

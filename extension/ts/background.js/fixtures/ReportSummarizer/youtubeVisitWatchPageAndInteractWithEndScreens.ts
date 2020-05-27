@@ -48,8 +48,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"],["Cookie","VISITOR_INFO1_LIVE=5grC_KOU6-s; YSC=kfZj5nXPtNQ; GPS=1; CONSENT=WP.285cb9; PREF=f4=4000000; AST=MTU4NzEwNjk0Mg==; dkv=328b88486454cb742d844d4e3e995861e3QEAAAAdGxpcGl+VJleMA=="],["Upgrade-Insecure-Requests","1"]]',
           is_XHR: 0,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "undefined",
           loading_origin: "undefined",
           loading_href: "undefined",
@@ -102,8 +100,8 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
         tabActiveDwellTime: 100750,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "39d37910-9342-4171-bf78-569afd5d8f71",
           event_ordinal: 52,
           page_scoped_event_ordinal: 0,
@@ -124,8 +122,8 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
         tabActiveDwellTime: 107750,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "39d37910-9342-4171-bf78-569afd5d8f71",
           event_ordinal: 59,
           page_scoped_event_ordinal: 1,
@@ -163,8 +161,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","*/*"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Referer","https://www.youtube.com/watch?v=9_C6CTs0WhI"],["X-YouTube-STS","18368"],["X-YouTube-Client-Name","1"],["X-YouTube-Client-Version","2.20200416.04.01"],["X-YouTube-Device","cbr=Firefox&cbrver=76.0&ceng=Gecko&cengver=76.0&cos=Macintosh&cosver=10.15"],["X-YouTube-Page-CL","306682833"],["X-YouTube-Page-Label","youtube.ytfe.desktop_20200415_4_RC1"],["X-YouTube-Variants-Checksum","dcc3ad822f42b08ebf32525a405681c4"],["X-YouTube-Utc-Offset","180"],["X-YouTube-Time-Zone","Europe/Helsinki"],["X-YouTube-Ad-Signals","dt=1587107046279&flash=0&frm&u_tz=180&u_his=3&u_java&u_h=1050&u_w=1680&u_ah=1027&u_aw=1680&u_cd=24&u_nplug=1&u_nmime=2&bc=29&bih=846&biw=1265&brdim=4%2C23%2C4%2C23%2C1680%2C23%2C1280%2C946%2C1280%2C846&vis=1&wgl=true&ca_type=image&bid=ANyPxKrTDg_Swt81fSgbTrdWcDgsX2oV09bSqcbLPRBsBvzqjdgEwj736Vew8Hs55STOUbdS74W9eI3UfevdPidynJ8_XIBd_Q"],["X-SPF-Referer","https://www.youtube.com/watch?v=9_C6CTs0WhI"],["X-SPF-Previous","https://www.youtube.com/watch?v=9_C6CTs0WhI"],["Connection","keep-alive"],["Cookie","VISITOR_INFO1_LIVE=5grC_KOU6-s; YSC=kfZj5nXPtNQ; GPS=1; CONSENT=WP.285cb9; PREF=f4=4000000; AST=MTU4NzEwNjk0Mg==; dkv=328b88486454cb742d844d4e3e995861e3QEAAAAdGxpcGl+VJleMA==; ST-j7gezw=itct=CCsQvU4YACITCMCrsL3y7ugCFRa4mwodP8UDPDIJZW5kc2NyZWVuSJK00dmTwa749wE%3D&lact=4&vis=0&csn=5VSZXojLH5Ct7QSOlpTACA"]]',
           is_XHR: 1,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "https://www.youtube.com",
           loading_origin: "https://www.youtube.com",
           loading_href: "https://www.youtube.com/watch?v=9_C6CTs0WhI",
@@ -217,8 +213,8 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
         tabActiveDwellTime: 120500,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "39d37910-9342-4171-bf78-569afd5d8f71",
           event_ordinal: 66,
           page_scoped_event_ordinal: 2,
@@ -239,8 +235,8 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
         tabActiveDwellTime: 130250,
       },
       {
-        type: "user_interactions",
-        userInteraction: {
+        type: "ui_interactions",
+        uiInteraction: {
           extension_session_uuid: "39d37910-9342-4171-bf78-569afd5d8f71",
           event_ordinal: 71,
           page_scoped_event_ordinal: 3,
@@ -266,12 +262,12 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
     httpRedirectCount: 0,
     javascriptOperationCount: 0,
     capturedContentCount: 2,
-    userInteractionCount: 4,
+    uiInteractionCount: 4,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
-    trimmedUserInteractionCount: -1,
+    trimmedUiInteractionCount: -1,
   },
 };

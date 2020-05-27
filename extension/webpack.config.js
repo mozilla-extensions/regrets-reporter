@@ -35,8 +35,8 @@ if (process.env.NODE_ENV !== "test") {
 
 module.exports = {
   entry: {
-    "user-interaction-instrument-content-script":
-      "./ts/user-interaction-instrument-content-script.js/index.ts",
+    "ui-instrument-content-script":
+      "./ts/ui-instrument-content-script.js/index.ts",
     background: "./ts/background.js/index.ts",
     "get-started": "./ts/get-started.js/index.tsx",
     "report-regret-form": "./ts/report-regret-form.js/index.tsx",

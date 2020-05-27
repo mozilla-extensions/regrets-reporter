@@ -48,8 +48,6 @@ export const youtubeVisitWatchPageOfADifferentType: TrimmedNavigationBatchesByUu
           headers:
             '[["Host","www.youtube.com"],["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:76.0) Gecko/20100101 Firefox/76.0"],["Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],["Accept-Language","en-US,en;q=0.5"],["Accept-Encoding","gzip, deflate, br"],["Connection","keep-alive"],["Cookie","VISITOR_INFO1_LIVE=qhf_P1ZINuw; YSC=kBxiy9gXpjg; GPS=1; CONSENT=WP.2860c7; PREF=f4=4000000"],["Upgrade-Insecure-Requests","1"]]',
           is_XHR: 0,
-          is_full_page: 1,
-          is_frame_load: 0,
           triggering_origin: "undefined",
           loading_origin: "undefined",
           loading_href: "undefined",
@@ -107,12 +105,12 @@ export const youtubeVisitWatchPageOfADifferentType: TrimmedNavigationBatchesByUu
     httpRedirectCount: 0,
     javascriptOperationCount: 0,
     capturedContentCount: 1,
-    userInteractionCount: 0,
+    uiInteractionCount: 0,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
-    trimmedUserInteractionCount: -1,
+    trimmedUiInteractionCount: -1,
   },
 };

@@ -224,7 +224,10 @@ export class OpenWpmPacketHandler {
         return true;
       }
     }
-    if (instrument === "user_interactions") {
+    if (instrument === "ui_interactions") {
+      return record.frame_id === 0;
+    }
+    if (instrument === "ui_states") {
       return record.frame_id === 0;
     }
     console.log("TODO Keep this packet?", { instrument, record });

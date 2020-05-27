@@ -7,7 +7,7 @@ import {
   JavascriptInstrument,
   HttpInstrument,
   NavigationInstrument,
-  UserInteractionInstrument,
+  UiInstrument,
 } from "@openwpm/webext-instrumentation";
 import {
   RegretReport,
@@ -44,7 +44,7 @@ class ExtensionGlue {
   private cookieInstrument: CookieInstrument;
   private jsInstrument: JavascriptInstrument;
   private httpInstrument: HttpInstrument;
-  private userInteractionInstrument: UserInteractionInstrument;
+  private uiInstrument: UiInstrument;
   private openwpmCrawlId: string;
   private contentScriptPortListener;
 
@@ -215,8 +215,8 @@ class ExtensionGlue {
       save_content: "main_frame,xmlhttprequest",
       http_instrument_resource_types: "main_frame,xmlhttprequest",
       http_instrument_urls: "*://*.youtube.com/*|*://*.youtu.be/*",
-      user_interaction_instrument: true,
-      user_interaction_instrument_modules: "clicks",
+      ui_instrument: true,
+      ui_instrument_modules: "clicks,state",
       crawl_id: 0,
     };
     await this.startOpenWPMInstrumentation(openwpmConfig);
@@ -245,7 +245,7 @@ class ExtensionGlue {
       this.jsInstrument.run(config["crawl_id"]);
     }
     if (config["http_instrument"]) {
-      await openWpmPacketHandler.logDebug("HTTP Instrumentation enabled");
+      await openWpmPacketHandler.logDebug("HTTP instrumentation enabled");
       this.httpInstrument = new HttpInstrument(openWpmPacketHandler);
       this.httpInstrument.run(
         config["crawl_id"],
@@ -254,22 +254,18 @@ class ExtensionGlue {
         config["http_instrument_urls"],
       );
     }
-    if (config["user_interaction_instrument"]) {
-      await openWpmPacketHandler.logDebug(
-        "Interaction Instrumentation enabled",
-      );
-      this.userInteractionInstrument = new UserInteractionInstrument(
-        openWpmPacketHandler,
-      );
-      this.userInteractionInstrument.run(config["crawl_id"]);
+    if (config["ui_instrument"]) {
+      await openWpmPacketHandler.logDebug("UI instrumentation enabled");
+      this.uiInstrument = new UiInstrument(openWpmPacketHandler);
+      this.uiInstrument.run(config["crawl_id"]);
       const registerContentScriptOptions = {
         matches: ["*://*.youtube.com/*"],
         allFrames: false,
         matchAboutBlank: false,
       };
-      await this.userInteractionInstrument.registerContentScript(
+      await this.uiInstrument.registerContentScript(
         config["testing"],
-        config["user_interaction_instrument_modules"],
+        config["ui_instrument_modules"],
         registerContentScriptOptions,
       );
     }
@@ -314,8 +310,8 @@ class ExtensionGlue {
     if (this.httpInstrument) {
       await this.httpInstrument.cleanup();
     }
-    if (this.userInteractionInstrument) {
-      await this.userInteractionInstrument.cleanup();
+    if (this.uiInstrument) {
+      await this.uiInstrument.cleanup();
     }
     if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
       openWpmPacketHandler.activeTabDwellTimeMonitor.cleanup();

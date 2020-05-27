@@ -132,7 +132,7 @@ export class ReportSummarizer {
       trimmedHttpRedirectCount: -1,
       trimmedJavascriptOperationCount: -1,
       trimmedCapturedContentCount: -1,
-      trimmedUserInteractionCount: -1,
+      trimmedUiInteractionCount: -1,
     };
     // console.log({ trimmedNavigationBatch });
 
@@ -211,8 +211,8 @@ export class ReportSummarizer {
 
     const clickEventEnvelopes = topFrameNavigationBatch.childEnvelopes.filter(
       childEnvelope =>
-        childEnvelope.type === "user_interactions" &&
-        childEnvelope.userInteraction.frame_id === 0,
+        childEnvelope.type === "ui_interactions" &&
+        childEnvelope.uiInteraction.frame_id === 0,
     );
 
     let i = -1;
@@ -357,9 +357,9 @@ export class ReportSummarizer {
 
         const clickEventEnvelopesForParentYouTubeNavigation = clickEventEnvelopes.filter(
           childEnvelope =>
-            childEnvelope.userInteraction.event_ordinal >
+            childEnvelope.uiInteraction.event_ordinal >
               firstRelevantEventOrdinal &&
-            childEnvelope.userInteraction.event_ordinal <
+            childEnvelope.uiInteraction.event_ordinal <
               lastRelevantEventOrdinal,
         );
         // console.dir({clickEventEnvelopesForParentYouTubeNavigation}, {depth: 5});
@@ -759,7 +759,7 @@ export class ReportSummarizer {
     let clickedEndScreenCancelUpNextAutoplayButton = false;
     clickEventEnvelopesForParentYouTubeNavigation.map(clickEventEnvelope => {
       const composedPath = JSON.parse(
-        clickEventEnvelope.userInteraction.composed_path,
+        clickEventEnvelope.uiInteraction.composed_path,
       );
       // console.dir({ composedPath }, { depth: 5 });
       if (
@@ -873,7 +873,7 @@ export class ReportSummarizer {
     let clickedWithinSearchPageNotSearchResults = false;
     clickEventEnvelopesForParentYouTubeNavigation.map(clickEventEnvelope => {
       const composedPath = JSON.parse(
-        clickEventEnvelope.userInteraction.composed_path,
+        clickEventEnvelope.uiInteraction.composed_path,
       );
       // console.dir({ composedPath }, { depth: 5 });
       if (
