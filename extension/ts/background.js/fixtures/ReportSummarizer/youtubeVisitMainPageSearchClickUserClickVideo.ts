@@ -379,11 +379,13 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
     javascriptOperationCount: 0,
     capturedContentCount: 4,
     uiInteractionCount: 3,
+    uiStateCount: 0,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
     trimmedUiInteractionCount: -1,
+    trimmedUiStateCount: -1,
   },
 };

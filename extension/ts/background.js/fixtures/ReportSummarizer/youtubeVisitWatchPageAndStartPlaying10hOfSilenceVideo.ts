@@ -128,11 +128,13 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
     javascriptOperationCount: 0,
     capturedContentCount: 1,
     uiInteractionCount: 1,
+    uiStateCount: 0,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
     trimmedUiInteractionCount: -1,
+    trimmedUiStateCount: -1,
   },
 };

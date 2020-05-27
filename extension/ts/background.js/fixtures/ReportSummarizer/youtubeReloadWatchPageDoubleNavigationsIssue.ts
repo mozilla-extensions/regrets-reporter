@@ -93,12 +93,14 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
     javascriptOperationCount: 0,
     capturedContentCount: 0,
     uiInteractionCount: 0,
+    uiStateCount: 0,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
     trimmedUiInteractionCount: -1,
+    trimmedUiStateCount: -1,
   },
   "e3d1dbba-835f-4837-b3ed-56671cd0419b": {
     navigationEnvelope: {
@@ -177,11 +179,13 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
     javascriptOperationCount: 0,
     capturedContentCount: 1,
     uiInteractionCount: 0,
+    uiStateCount: 0,
     trimmedHttpRequestCount: -1,
     trimmedHttpResponseCount: -1,
     trimmedHttpRedirectCount: -1,
     trimmedJavascriptOperationCount: -1,
     trimmedCapturedContentCount: -1,
     trimmedUiInteractionCount: -1,
+    trimmedUiStateCount: -1,
   },
 };

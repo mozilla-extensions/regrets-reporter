@@ -133,6 +133,7 @@ export class ReportSummarizer {
       trimmedJavascriptOperationCount: -1,
       trimmedCapturedContentCount: -1,
       trimmedUiInteractionCount: -1,
+      trimmedUiStateCount: -1,
     };
     // console.log({ trimmedNavigationBatch });
 

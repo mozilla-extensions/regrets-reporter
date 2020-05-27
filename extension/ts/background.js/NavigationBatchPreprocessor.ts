@@ -6,6 +6,7 @@ import {
   JavascriptOperation,
   Navigation,
   UiInteraction,
+  UiState,
 } from "@openwpm/webext-instrumentation";
 import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
@@ -43,6 +44,7 @@ export interface NavigationBatch {
   javascriptOperationCount: number;
   capturedContentCount: number;
   uiInteractionCount: number;
+  uiStateCount: number;
 }
 
 export interface TrimmedNavigationBatch extends NavigationBatch {
@@ -52,6 +54,7 @@ export interface TrimmedNavigationBatch extends NavigationBatch {
   trimmedJavascriptOperationCount: number;
   trimmedCapturedContentCount: number;
   trimmedUiInteractionCount: number;
+  trimmedUiStateCount: number;
 }
 
 export interface TrimmedNavigationBatchesByUuid {
@@ -69,7 +72,8 @@ export type OpenWPMType =
   | "javascript_cookies"
   | "openwpm_log"
   | "openwpm_captured_content"
-  | "ui_interactions";
+  | "ui_interactions"
+  | "ui_states";
 
 type OpenWPMPayload =
   | Navigation
@@ -82,7 +86,8 @@ type OpenWPMPayload =
   | JavascriptCookieRecord
   | LogEntry
   | CapturedContent
-  | UiInteraction;
+  | UiInteraction
+  | UiState;
 
 type BatchableChildOpenWPMPayload =
   | HttpRequest
@@ -90,7 +95,8 @@ type BatchableChildOpenWPMPayload =
   | HttpRedirect
   | JavascriptOperation
   | CapturedContent
-  | UiInteraction;
+  | UiInteraction
+  | UiState;
 
 /**
  * An envelope that allows for grouping of different
@@ -110,6 +116,7 @@ export interface OpenWpmPayloadEnvelope {
   logEntry?: LogEntry;
   capturedContent?: CapturedContent;
   uiInteraction?: UiInteraction;
+  uiState?: UiState;
   tabActiveDwellTime?: number;
 }
 
@@ -129,6 +136,8 @@ export const batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope = (
       return openWpmPayloadEnvelope.capturedContent as CapturedContent;
     case "ui_interactions":
       return openWpmPayloadEnvelope.uiInteraction as CapturedContent;
+    case "ui_states":
+      return openWpmPayloadEnvelope.uiState as CapturedContent;
   }
   throw new Error(`Unexpected type supplied: '${openWpmPayloadEnvelope.type}'`);
 };
@@ -165,6 +174,7 @@ export const openWpmPayloadEnvelopeFromOpenWpmTypeAndPayload = (
         : undefined,
     uiInteraction:
       type === "ui_interactions" ? (payload as UiInteraction) : undefined,
+    uiState: type === "ui_states" ? (payload as UiState) : undefined,
   };
   return openWpmPayloadEnvelope;
 };
@@ -198,6 +208,7 @@ export class NavigationBatchPreprocessor {
       trimmedJavascriptOperationCount: -1,
       trimmedCapturedContentCount: -1,
       trimmedUiInteractionCount: -1,
+      trimmedUiStateCount: -1,
     };
   };
   public openWpmPayloadEnvelopeProcessQueue: OpenWpmPayloadEnvelope[] = [];
@@ -255,6 +266,7 @@ export class NavigationBatchPreprocessor {
       "javascript",
       "openwpm_captured_content",
       "ui_interactions",
+      "ui_states",
     ].includes(type);
   }
 
@@ -371,6 +383,7 @@ export class NavigationBatchPreprocessor {
             javascriptOperationCount: 0,
             capturedContentCount: 0,
             uiInteractionCount: 0,
+            uiStateCount: 0,
           };
 
           // Remove navigation envelope from this run's processing queue
@@ -467,6 +480,9 @@ export class NavigationBatchPreprocessor {
                     case "ui_interactions":
                       navigationBatch.uiInteractionCount++;
                       break;
+                    case "ui_states":
+                      navigationBatch.uiStateCount++;
+                      break;
                   }
                 }
                 removeItemFromArray(
@@ -513,6 +529,9 @@ export class NavigationBatchPreprocessor {
                 uiInteractionCount:
                   existingNavigationBatch.uiInteractionCount +
                   navigationBatch.uiInteractionCount,
+                uiStateCount:
+                  existingNavigationBatch.uiStateCount +
+                  navigationBatch.uiStateCount,
               };
             } else {
               updatedNavigationBatch = navigationBatch;
