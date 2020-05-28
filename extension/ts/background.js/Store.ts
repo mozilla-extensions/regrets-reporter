@@ -14,6 +14,14 @@ export interface UserSuppliedDemographics {
 
 export type ConsentStatus = null | "given" | "withdrawn";
 
+export interface ExtensionPreferences {
+  enableErrorReporting: boolean;
+}
+
+export const defaultExtensionPreferences = {
+  enableErrorReporting: true,
+};
+
 export class Store implements LocalStorageWrapper {
   public localStorageWrapper: LocalStorageWrapper;
   constructor(localStorageWrapper) {
@@ -64,6 +72,20 @@ export class Store implements LocalStorageWrapper {
     const generatedUuid = makeUUID();
     await this.set({ extensionInstallationUuid: generatedUuid });
     return generatedUuid;
+  };
+
+  getExtensionPreferences = async (): Promise<ExtensionPreferences> => {
+    const { extensionPreferences } = await this.get("extensionPreferences");
+    return {
+      ...defaultExtensionPreferences,
+      ...extensionPreferences,
+    };
+  };
+
+  setExtensionPreferences = async (
+    extensionPreferences: ExtensionPreferences,
+  ) => {
+    await this.set({ extensionPreferences });
   };
 
   getUserSuppliedDemographics = async (): Promise<UserSuppliedDemographics> => {

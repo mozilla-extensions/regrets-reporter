@@ -32,5 +32,9 @@
     "browser_style": true,
     "default_title": "__MSG_pageActionButtonTitle__",
     "default_popup": "report-regret-form/report-regret-form.html"
+  },
+  "options_ui": {
+    "page": "options-ui/options-ui.html",
+    "browser_style": true
   }
 }

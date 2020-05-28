@@ -47,6 +47,7 @@ class ExtensionGlue {
   private uiInstrument: UiInstrument;
   private openwpmCrawlId: string;
   private contentScriptPortListener;
+  private optionsUiPortListener;
 
   constructor() {}
 
@@ -88,6 +89,31 @@ class ExtensionGlue {
       });
     };
     browser.runtime.onConnect.addListener(this.contentScriptPortListener);
+    // Set up a connection / listener for the options-ui script to be able to query preferences
+    let portFromOptionsUi;
+    this.optionsUiPortListener = p => {
+      if (p.name !== "port-from-options-ui") {
+        return;
+      }
+      console.log("Connected to options-ui script");
+      portFromOptionsUi = p;
+      portFromOptionsUi.onMessage.addListener(async function(m) {
+        console.log("Message from get-started script:", { m });
+        if (m.requestExtensionPreferences) {
+          portFromOptionsUi.postMessage({
+            extensionPreferences: await store.getExtensionPreferences(),
+          });
+        }
+        if (m.updatedExtensionPreferences) {
+          await store.setExtensionPreferences(m.updatedExtensionPreferences);
+          // TODO: React on changes to preferences here
+          portFromOptionsUi.postMessage({
+            extensionPreferences: await store.getExtensionPreferences(),
+          });
+        }
+      });
+    };
+    browser.runtime.onConnect.addListener(this.optionsUiPortListener);
   }
 
   async askForConsent() {
@@ -297,6 +323,9 @@ class ExtensionGlue {
   async cleanup() {
     if (this.contentScriptPortListener) {
       browser.runtime.onMessage.removeListener(this.contentScriptPortListener);
+    }
+    if (this.optionsUiPortListener) {
+      browser.runtime.onMessage.removeListener(this.optionsUiPortListener);
     }
     if (this.navigationInstrument) {
       await this.navigationInstrument.cleanup();

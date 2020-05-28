@@ -1,0 +1,8 @@
+body {
+  background-color: #fff;
+}
+
+/* To align with the current font size */
+.checkbox {
+  margin: -3px 5px;
+}

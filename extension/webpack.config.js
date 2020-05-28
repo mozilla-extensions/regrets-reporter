@@ -40,6 +40,7 @@ module.exports = {
     background: "./ts/background.js/index.ts",
     "get-started": "./ts/get-started.js/index.tsx",
     "report-regret-form": "./ts/report-regret-form.js/index.tsx",
+    "options-ui": "./ts/options-ui.js/index.tsx",
   },
   output: {
     path: path.resolve(__dirname, "src"),
