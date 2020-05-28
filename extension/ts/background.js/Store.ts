@@ -59,7 +59,7 @@ export class Store implements LocalStorageWrapper {
   };
 
   /**
-   * Returns a persistent unique widentifier of the extension installation
+   * Returns a persistent unique identifier of the extension installation
    * sent with each report. Not related to the Firefox client id
    */
   extensionInstallationUuid = async () => {
