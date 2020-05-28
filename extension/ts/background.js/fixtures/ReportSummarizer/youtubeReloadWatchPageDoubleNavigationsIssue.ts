@@ -27,7 +27,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
         before_navigate_event_ordinal: 0,
         before_navigate_time_stamp: "2020-05-26T06:35:38.614Z",
       },
-      tabActiveDwellTime: 750,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 750,
       },
       {
         type: "http_requests",
@@ -84,7 +82,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 16000,
       },
     ],
     httpRequestCount: 2,
@@ -128,7 +125,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
         before_navigate_event_ordinal: 4,
         before_navigate_time_stamp: "2020-05-26T06:35:54.052Z",
       },
-      tabActiveDwellTime: 16500,
     },
     childEnvelopes: [
       {
@@ -145,7 +141,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
           event_ordinal: 6,
           time_stamp: "2020-05-26T06:35:54.984Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -170,7 +165,6 @@ export const youtubeReloadWatchPageDoubleNavigationsIssue: TrimmedNavigationBatc
           content_hash:
             "5ec31494961c20665a096df795124548984fd2053dd99c85ef523432ff9de611",
         },
-        tabActiveDwellTime: 17000,
       },
     ],
     httpRequestCount: 0,

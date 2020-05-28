@@ -117,7 +117,6 @@ export interface OpenWpmPayloadEnvelope {
   capturedContent?: CapturedContent;
   uiInteraction?: UiInteraction;
   uiState?: UiState;
-  tabActiveDwellTime?: number;
 }
 
 export const batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope = (
@@ -214,15 +213,10 @@ export class NavigationBatchPreprocessor {
   public openWpmPayloadEnvelopeProcessQueue: OpenWpmPayloadEnvelope[] = [];
   public navigationBatchesByNavigationUuid: TrimmedNavigationBatchesByUuid = {};
 
-  async submitOpenWPMPayload(
-    type: OpenWPMType,
-    payload: any,
-    tabActiveDwellTime: number = null,
-  ) {
+  async submitOpenWPMPayload(type: OpenWPMType, payload: any) {
     // console.log({ type, payload });
     const openWpmPayloadEnvelope: OpenWpmPayloadEnvelope = {
       ...openWpmPayloadEnvelopeFromOpenWpmTypeAndPayload(type, payload),
-      tabActiveDwellTime,
     };
     return this.queueOrIgnore(openWpmPayloadEnvelope);
   }

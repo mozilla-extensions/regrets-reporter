@@ -25,17 +25,12 @@ import { DataSharer } from "./DataSharer";
 import { Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";
 import { getCurrentTab } from "./lib/getCurrentTab";
-import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
-const activeTabDwellTimeMonitor = new ActiveTabDwellTimeMonitor();
-const openWpmPacketHandler = new OpenWpmPacketHandler(
-  activeTabDwellTimeMonitor,
-);
+const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const store = new Store(localStorageWrapper);
 const youTubeUsageStatistics = new YouTubeUsageStatistics(
   store,
   reportSummarizer,
-  activeTabDwellTimeMonitor,
 );
 const dataSharer = new DataSharer(store);
 
@@ -208,9 +203,6 @@ class ExtensionGlue {
     };
     browser.runtime.onConnect.addListener(this.reportRegretFormPortListener);
 
-    // Set up the active tab dwell time monitor
-    openWpmPacketHandler.activeTabDwellTimeMonitor.run();
-
     // Add hooks to the navigation batch preprocessor
     openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
       navigationBatch: NavigationBatch,
@@ -300,9 +292,6 @@ class ExtensionGlue {
 
   pause() {
     openWpmPacketHandler.pause();
-    if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
-      openWpmPacketHandler.activeTabDwellTimeMonitor.cleanup();
-    }
     if (openWpmPacketHandler.navigationBatchPreprocessor) {
       openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
     }
@@ -310,9 +299,6 @@ class ExtensionGlue {
 
   resume() {
     openWpmPacketHandler.resume();
-    if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
-      openWpmPacketHandler.activeTabDwellTimeMonitor.run();
-    }
     if (openWpmPacketHandler.navigationBatchPreprocessor) {
       openWpmPacketHandler.navigationBatchPreprocessor.run();
     }
@@ -347,9 +333,6 @@ class ExtensionGlue {
     }
     if (this.uiInstrument) {
       await this.uiInstrument.cleanup();
-    }
-    if (openWpmPacketHandler.activeTabDwellTimeMonitor) {
-      openWpmPacketHandler.activeTabDwellTimeMonitor.cleanup();
     }
     if (openWpmPacketHandler.navigationBatchPreprocessor) {
       await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();

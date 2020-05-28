@@ -27,7 +27,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
         before_navigate_event_ordinal: 19,
         before_navigate_time_stamp: "2020-04-29T10:08:24.281Z",
       },
-      tabActiveDwellTime: 5250,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 5000,
       },
       {
         type: "openwpm_captured_content",
@@ -72,7 +70,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           event_ordinal: 22,
           time_stamp: "2020-04-29T10:08:24.959Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -97,7 +94,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           content_hash:
             "be7710eece8b1965b5af290931cf9e208fab93ab7806f25172c98ee8b5f6af66",
         },
-        tabActiveDwellTime: 6750,
       },
       {
         type: "ui_interactions",
@@ -119,7 +115,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           top_level_url: "https://www.youtube.com/watch?v=g4mHPeMGTJM",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 9000,
       },
       {
         type: "http_requests",
@@ -147,7 +142,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 20000,
       },
       {
         type: "openwpm_captured_content",
@@ -163,7 +157,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           event_ordinal: 29,
           time_stamp: "2020-04-29T10:08:39.971Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -188,7 +181,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           content_hash:
             "373e12121893f990e619e9b5a4da412c0c8a7047ecf94339cdf49af8c92e7a25",
         },
-        tabActiveDwellTime: 20500,
       },
       {
         type: "ui_interactions",
@@ -210,7 +202,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           top_level_url: "https://www.youtube.com/results?search_query=foo",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 55750,
       },
       {
         type: "http_requests",
@@ -238,7 +229,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 56500,
       },
       {
         type: "ui_interactions",
@@ -260,7 +250,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           top_level_url: "https://www.youtube.com/watch?v=A8z6rbmx7Mg",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 57250,
       },
       {
         type: "openwpm_captured_content",
@@ -276,7 +265,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           event_ordinal: 42,
           time_stamp: "2020-04-29T10:09:17.029Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -301,7 +289,6 @@ export const youtubeVisitWatchPageAndSearchClickUserSearchResultVideo: TrimmedNa
           content_hash:
             "bee468c2b4f689077afa003faa742a15d258cfbfa2b8fadc327723a0286503aa",
         },
-        tabActiveDwellTime: 57250,
       },
     ],
     httpRequestCount: 5,

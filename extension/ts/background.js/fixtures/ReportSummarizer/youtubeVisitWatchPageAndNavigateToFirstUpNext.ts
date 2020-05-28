@@ -27,7 +27,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
         before_navigate_event_ordinal: 12,
         before_navigate_time_stamp: "2020-04-16T12:03:21.129Z",
       },
-      tabActiveDwellTime: 1500,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 1000,
       },
       {
         type: "openwpm_captured_content",
@@ -72,7 +70,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
           event_ordinal: 15,
           time_stamp: "2020-04-16T12:03:21.772Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -97,7 +94,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
           content_hash:
             "b6e43b42b038f28a2eb3bb32204c693d362344da4750c6b80196e7f054f39045",
         },
-        tabActiveDwellTime: 3000,
       },
       {
         type: "http_requests",
@@ -125,7 +121,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 5500,
       },
       {
         type: "ui_interactions",
@@ -147,7 +142,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
           top_level_url: "https://www.youtube.com/watch?v=xuCn8ux2gbs",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 5750,
       },
       {
         type: "openwpm_captured_content",
@@ -163,7 +157,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
           event_ordinal: 19,
           time_stamp: "2020-04-16T12:03:26.375Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -188,7 +181,6 @@ export const youtubeVisitWatchPageAndNavigateToFirstUpNext: TrimmedNavigationBat
           content_hash:
             "51f114f3ecab91f02b3eaafe3b260c08f885cdb6f6931793ab9a12a4e5f4829f",
         },
-        tabActiveDwellTime: 6250,
       },
     ],
     httpRequestCount: 2,

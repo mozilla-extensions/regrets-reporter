@@ -27,7 +27,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 7750,
   },
   {
     type: "navigations" as OpenWPMType,
@@ -54,7 +53,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       before_navigate_event_ordinal: 0,
       before_navigate_time_stamp: "2018-11-23T01:34:40.475Z",
     },
-    tabActiveDwellTime: 8250,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -77,7 +75,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Content-Encoding","gzip"],["Accept-Ranges","bytes"],["Cache-Control","max-age=604800"],["Content-Type","text/html; charset=UTF-8"],["Date","Fri, 23 Nov 2018 01:34:40 GMT"],["Etag","\\"1541025663\\""],["Expires","Fri, 30 Nov 2018 01:34:40 GMT"],["Last-Modified","Fri, 09 Aug 2013 23:54:35 GMT"],["Server","ECS (lga/1390)"],["Vary","Accept-Encoding"],["X-Cache","HIT"],["Content-Length","606"]]',
       location: "",
     },
-    tabActiveDwellTime: 8250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -105,7 +102,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 8250,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -128,7 +124,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Content-Encoding","gzip"],["Accept-Ranges","bytes"],["Cache-Control","max-age=604800"],["Content-Type","text/html; charset=UTF-8"],["Date","Fri, 23 Nov 2018 01:34:40 GMT"],["Expires","Fri, 30 Nov 2018 01:34:40 GMT"],["Last-Modified","Fri, 16 Nov 2018 21:05:05 GMT"],["Server","ECS (lga/1391)"],["Vary","Accept-Encoding"],["X-Cache","404-HIT"],["Content-Length","606"]]',
       location: "",
     },
-    tabActiveDwellTime: 8250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -156,7 +151,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 12750,
   },
   {
     type: "http_redirects" as OpenWPMType,
@@ -176,7 +170,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       response_status_text: "HTTP/1.1 302 Found",
       time_stamp: "2018-11-23T01:34:45.870Z",
     },
-    tabActiveDwellTime: 13250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -204,7 +197,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 13250,
   },
   {
     type: "navigations" as OpenWPMType,
@@ -231,7 +223,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       before_navigate_event_ordinal: 6,
       before_navigate_time_stamp: "2018-11-23T01:34:45.488Z",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -259,7 +250,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -287,7 +277,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -315,7 +304,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -343,7 +331,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -371,7 +358,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -394,7 +380,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Fri, 23 Nov 2018 01:19:53 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Vary","Accept-Encoding"],["Content-Length","3155"],["Content-Encoding","gzip"],["Last-Modified","Tue, 21 Jul 2015 00:49:48 GMT"],["Cache-control","public, s-maxage=900, max-age=7202"],["Expires","Fri, 23 Nov 2018 03:19:53 GMT"],["Content-Type","text/html; charset=UTF-8"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","131"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 14500,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -417,7 +402,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Fri, 23 Nov 2018 01:15:57 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Vary","Accept-Encoding"],["Content-Length","9189"],["Content-Encoding","gzip"],["Last-Modified","Thu, 24 May 2018 19:40:12 GMT"],["Cache-control","public, s-maxage=1800, max-age=7205"],["Expires","Fri, 30 Nov 2018 01:15:57 GMT"],["Content-Type","text/css"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","169"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 14500,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -440,7 +424,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Fri, 23 Nov 2018 01:13:22 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Vary","Accept-Encoding"],["Content-Length","7661"],["Content-Encoding","gzip"],["Last-Modified","Sat, 01 Oct 2016 16:44:02 GMT"],["Cache-control","public, s-maxage=1800, max-age=7205"],["Expires","Fri, 30 Nov 2018 01:13:22 GMT"],["Content-Type","text/css"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","173"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 14750,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -463,7 +446,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Thu, 22 Nov 2018 09:27:09 GMT"],["Expires","Thu, 29 Nov 2018 09:27:09 GMT"],["Vary","Accept-Encoding"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Last-Modified","Mon, 08 Aug 2016 18:14:43 GMT"],["Cache-control","public, s-maxage=1800, max-age=7205"],["Content-Encoding","gzip"],["Content-Type","application/javascript"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","13770"],["Accept-Ranges","bytes"],["Content-Length","81"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 14750,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -486,7 +468,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Fri, 23 Nov 2018 01:17:14 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Vary","Accept-Encoding"],["Content-Length","32980"],["Content-Encoding","gzip"],["Last-Modified","Mon, 22 Apr 2013 18:18:55 GMT"],["Cache-control","public, s-maxage=1800, max-age=7205"],["Expires","Fri, 30 Nov 2018 01:17:14 GMT"],["Content-Type","application/javascript"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","176"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 15000,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -514,7 +495,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 15000,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -542,7 +522,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 15000,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -570,7 +549,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 15000,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -593,7 +571,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Thu, 22 Nov 2018 10:12:40 GMT"],["Last-Modified","Fri, 04 Jan 2013 01:17:14 GMT"],["Vary","Accept-Encoding"],["Expires","Thu, 29 Nov 2018 10:12:40 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Content-Length","32870"],["Content-Type","image/svg+xml"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","10380"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 15250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -621,7 +598,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 15500,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -644,7 +620,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Thu, 22 Nov 2018 16:29:13 GMT"],["Last-Modified","Wed, 26 Aug 2015 00:25:13 GMT"],["Vary","Accept-Encoding"],["Expires","Thu, 29 Nov 2018 16:29:13 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Content-Length","89024"],["Content-Type","application/font-woff"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","6467"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 15750,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -667,7 +642,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Thu, 22 Nov 2018 10:12:51 GMT"],["Last-Modified","Wed, 26 Aug 2015 00:25:13 GMT"],["Vary","Accept-Encoding"],["Expires","Thu, 29 Nov 2018 10:12:51 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Content-Length","157504"],["Content-Type","application/font-woff"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","9494"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 16000,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -690,7 +664,6 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Thu, 22 Nov 2018 18:11:54 GMT"],["Expires","Thu, 29 Nov 2018 18:11:54 GMT"],["Vary","Accept-Encoding"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Last-Modified","Wed, 26 Aug 2015 00:25:13 GMT"],["Cache-control","public, s-maxage=1800, max-age=7205"],["Content-Type","application/font-woff"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","5123"],["Accept-Ranges","bytes"],["Content-Length","156596"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 16000,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -713,6 +686,5 @@ export const exampleDotComVisitFollowedByMoreInformationLinkClickQueue = [
         '[["Date","Fri, 23 Nov 2018 01:17:38 GMT"],["X-Frame-Options","SAMEORIGIN"],["Referrer-Policy","origin-when-cross-origin"],["Content-Security-Policy","upgrade-insecure-requests"],["Vary","Accept-Encoding"],["Content-Length","4426"],["Content-Encoding","gzip"],["Last-Modified","Fri, 04 Jan 2013 01:17:14 GMT"],["Cache-control","public, s-maxage=1800, max-age=7205"],["Expires","Fri, 30 Nov 2018 01:17:38 GMT"],["Content-Type","image/vnd.microsoft.icon"],["Server","Apache"],["Strict-Transport-Security","max-age=48211200; preload"],["X-Cache-Hits","108"],["Accept-Ranges","bytes"],["Connection","keep-alive"]]',
       location: "",
     },
-    tabActiveDwellTime: 16000,
   },
 ];

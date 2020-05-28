@@ -24,8 +24,7 @@
     "webRequestBlocking",
     "webNavigation",
     "storage",
-    "alarms",
-    "tabs"
+    "alarms"
   ],
   "icons": {},
   "page_action": {

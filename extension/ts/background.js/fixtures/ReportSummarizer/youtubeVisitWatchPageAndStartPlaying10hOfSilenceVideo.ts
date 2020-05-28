@@ -27,7 +27,6 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
         before_navigate_event_ordinal: 9,
         before_navigate_time_stamp: "2020-04-16T11:59:07.453Z",
       },
-      tabActiveDwellTime: 2500,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 2000,
       },
       {
         type: "openwpm_captured_content",
@@ -72,7 +70,6 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
           event_ordinal: 12,
           time_stamp: "2020-04-16T11:59:08.391Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -97,7 +94,6 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
           content_hash:
             "f7706542f905e905df38459a62b6807c3e9619a36e5b600355113bab7c403b81",
         },
-        tabActiveDwellTime: 3000,
       },
       {
         type: "ui_interactions",
@@ -119,7 +115,6 @@ export const youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo: TrimmedNavig
           top_level_url: "https://www.youtube.com/watch?v=g4mHPeMGTJM",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 9250,
       },
     ],
     httpRequestCount: 1,

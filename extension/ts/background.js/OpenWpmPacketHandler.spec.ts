@@ -6,7 +6,6 @@ import {
   TrimmedNavigationBatch,
   TrimmedNavigationBatchesByUuid,
 } from "./NavigationBatchPreprocessor";
-import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 
 const trimNavigationBatches = (
   reportSummarizer: ReportSummarizer,
@@ -22,13 +21,9 @@ const trimNavigationBatches = (
   return trimmedNavigationBatchesByUuid;
 };
 
-const activeTabDwellTimeMonitor = new ActiveTabDwellTimeMonitor();
-
 describe("OpenWpmPacketHandler", function() {
   it("should exist", async function() {
-    const openWpmPacketHandler = new OpenWpmPacketHandler(
-      activeTabDwellTimeMonitor,
-    );
+    const openWpmPacketHandler = new OpenWpmPacketHandler();
     assert.isObject(openWpmPacketHandler);
   });
 

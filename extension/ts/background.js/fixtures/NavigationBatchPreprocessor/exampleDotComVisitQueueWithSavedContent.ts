@@ -30,7 +30,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 1500,
   },
   {
     type: "openwpm_captured_content",
@@ -46,7 +45,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       event_ordinal: 81,
       time_stamp: "2020-03-31T10:13:10.640Z",
     },
-    tabActiveDwellTime: null,
   },
   {
     type: "http_responses",
@@ -71,7 +69,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       content_hash:
         "ea8fac7c65fb589b0d53560f5251f74f9e9b243478dcb6b3ea79b5e36449c8d9",
     },
-    tabActiveDwellTime: 2250,
   },
   {
     type: "navigations",
@@ -98,7 +95,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       before_navigate_event_ordinal: 79,
       before_navigate_time_stamp: "2020-03-31T10:13:09.904Z",
     },
-    tabActiveDwellTime: 2250,
   },
   {
     type: "http_requests",
@@ -126,7 +122,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 2500,
   },
   {
     type: "openwpm_captured_content",
@@ -142,7 +137,6 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       event_ordinal: 84,
       time_stamp: "2020-03-31T10:13:11.073Z",
     },
-    tabActiveDwellTime: null,
   },
   {
     type: "http_responses",
@@ -167,6 +161,5 @@ export const exampleDotComVisitQueueWithSavedContent: OpenWpmPayloadEnvelope[] =
       content_hash:
         "ea8fac7c65fb589b0d53560f5251f74f9e9b243478dcb6b3ea79b5e36449c8d9",
     },
-    tabActiveDwellTime: 2750,
   },
 ];

@@ -27,7 +27,6 @@ export const youtubeVisitWatchPageOfADifferentType: TrimmedNavigationBatchesByUu
         before_navigate_event_ordinal: 7,
         before_navigate_time_stamp: "2020-04-24T11:53:23.186Z",
       },
-      tabActiveDwellTime: 3750,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeVisitWatchPageOfADifferentType: TrimmedNavigationBatchesByUu
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 3500,
       },
       {
         type: "openwpm_captured_content",
@@ -72,7 +70,6 @@ export const youtubeVisitWatchPageOfADifferentType: TrimmedNavigationBatchesByUu
           event_ordinal: 10,
           time_stamp: "2020-04-24T11:53:23.944Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -97,7 +94,6 @@ export const youtubeVisitWatchPageOfADifferentType: TrimmedNavigationBatchesByUu
           content_hash:
             "fb89802be995cb1786347dee6497291a3d8ad4f2027072cedf0e77d07eb2706d",
         },
-        tabActiveDwellTime: 5750,
       },
     ],
     httpRequestCount: 1,

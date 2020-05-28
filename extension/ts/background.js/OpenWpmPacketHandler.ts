@@ -1,5 +1,4 @@
 import { humanFileSize } from "./lib/humanFileSize";
-import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { HttpResponse } from "@openwpm/webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
@@ -28,17 +27,12 @@ const privateBrowsingActive = async () => {
 };
 
 export class OpenWpmPacketHandler {
-  public activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor;
   public navigationBatchPreprocessor: NavigationBatchPreprocessor;
 
   // To be able to pause and resume data collection
   public active = true;
 
-  constructor(activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor) {
-    // Setup active dwell time monitor singleton
-    // (used to annotate received tab-relevant data packets)
-    this.activeTabDwellTimeMonitor = activeTabDwellTimeMonitor;
-
+  constructor() {
     // Setup study payload processor singleton
     this.navigationBatchPreprocessor = new NavigationBatchPreprocessor();
   }
@@ -140,17 +134,9 @@ export class OpenWpmPacketHandler {
       return;
     }
 
-    // Annotate tab active dwell time
-    let tabActiveDwellTime;
-    if (record.tab_id > 0) {
-      tabActiveDwellTime = this.activeTabDwellTimeMonitor.getTabActiveDwellTime(
-        record.tab_id,
-      );
-    }
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       instrument,
       record,
-      tabActiveDwellTime,
     );
   };
 

@@ -393,10 +393,12 @@ export class ReportSummarizer {
         }
       }
 
+      // TODO
+      const tab_active_dwell_time_at_navigation = -1;
+
       const youTubeNavigation: YouTubeNavigation = {
         ...youtubePageMetadata,
-        tab_active_dwell_time_at_navigation:
-          topFrameNavigationBatch.navigationEnvelope.tabActiveDwellTime,
+        tab_active_dwell_time_at_navigation,
         url,
         referrer_url,
         parent_youtube_navigations,

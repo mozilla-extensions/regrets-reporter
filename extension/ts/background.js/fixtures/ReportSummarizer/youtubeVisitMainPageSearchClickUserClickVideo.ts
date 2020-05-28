@@ -27,7 +27,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
         before_navigate_event_ordinal: 8,
         before_navigate_time_stamp: "2020-04-24T13:00:12.894Z",
       },
-      tabActiveDwellTime: 23000,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 22750,
       },
       {
         type: "openwpm_captured_content",
@@ -72,7 +70,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           event_ordinal: 11,
           time_stamp: "2020-04-24T13:00:13.687Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -97,7 +94,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           content_hash:
             "727c911ef8bfa8c2fd7b174d1494d51475454a87ac1a6c57bf5eb214a31cb730",
         },
-        tabActiveDwellTime: 24500,
       },
       {
         type: "ui_interactions",
@@ -119,7 +115,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           top_level_url: "https://www.youtube.com/",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 29250,
       },
       {
         type: "http_requests",
@@ -147,7 +142,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 30250,
       },
       {
         type: "openwpm_captured_content",
@@ -163,7 +157,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           event_ordinal: 14,
           time_stamp: "2020-04-24T13:00:20.938Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -188,7 +181,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           content_hash:
             "cfdb6e95cbc2020504fcb1a65d719deb088e7f4d23897d1c53ccc1dc4dbd79cc",
         },
-        tabActiveDwellTime: 30750,
       },
       {
         type: "http_requests",
@@ -216,7 +208,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 32500,
       },
       {
         type: "ui_interactions",
@@ -238,7 +229,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           top_level_url: "https://www.youtube.com/user/foofighters",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 32500,
       },
       {
         type: "openwpm_captured_content",
@@ -254,7 +244,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           event_ordinal: 19,
           time_stamp: "2020-04-24T13:00:23.821Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -279,7 +268,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           content_hash:
             "8a44df28b20815d85843b92bbb2597dba50a70a6031779508efac520c3c21dd0",
         },
-        tabActiveDwellTime: 33500,
       },
       {
         type: "http_requests",
@@ -307,7 +295,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 36250,
       },
       {
         type: "ui_interactions",
@@ -329,7 +316,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           top_level_url: "https://www.youtube.com/watch?v=PdDpbKX-N-4",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 36500,
       },
       {
         type: "openwpm_captured_content",
@@ -345,7 +331,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           event_ordinal: 25,
           time_stamp: "2020-04-24T13:00:27.978Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -370,7 +355,6 @@ export const youtubeVisitMainPageSearchClickUserClickVideo: TrimmedNavigationBat
           content_hash:
             "38da763fa2c5f0d3fc13bc89f5f9d10076ddbef3410728ef0f68672da0282d35",
         },
-        tabActiveDwellTime: 37750,
       },
     ],
     httpRequestCount: 4,

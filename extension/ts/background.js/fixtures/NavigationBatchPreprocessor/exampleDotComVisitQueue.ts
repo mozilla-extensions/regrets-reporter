@@ -30,7 +30,6 @@ export const exampleDotComVisitQueue: OpenWpmPayloadEnvelope[] = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 7750,
   },
   {
     type: "navigations" as OpenWPMType,
@@ -57,7 +56,6 @@ export const exampleDotComVisitQueue: OpenWpmPayloadEnvelope[] = [
       before_navigate_event_ordinal: 0,
       before_navigate_time_stamp: "2018-11-23T01:34:40.475Z",
     },
-    tabActiveDwellTime: 8250,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -80,7 +78,6 @@ export const exampleDotComVisitQueue: OpenWpmPayloadEnvelope[] = [
         '[["Content-Encoding","gzip"],["Accept-Ranges","bytes"],["Cache-Control","max-age=604800"],["Content-Type","text/html; charset=UTF-8"],["Date","Fri, 23 Nov 2018 01:34:40 GMT"],["Etag","\\"1541025663\\""],["Expires","Fri, 30 Nov 2018 01:34:40 GMT"],["Last-Modified","Fri, 09 Aug 2013 23:54:35 GMT"],["Server","ECS (lga/1390)"],["Vary","Accept-Encoding"],["X-Cache","HIT"],["Content-Length","606"]]',
       location: "",
     },
-    tabActiveDwellTime: 8250,
   },
   {
     type: "http_requests" as OpenWPMType,
@@ -108,7 +105,6 @@ export const exampleDotComVisitQueue: OpenWpmPayloadEnvelope[] = [
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 8250,
   },
   {
     type: "http_responses" as OpenWPMType,
@@ -131,6 +127,5 @@ export const exampleDotComVisitQueue: OpenWpmPayloadEnvelope[] = [
         '[["Content-Encoding","gzip"],["Accept-Ranges","bytes"],["Cache-Control","max-age=604800"],["Content-Type","text/html; charset=UTF-8"],["Date","Fri, 23 Nov 2018 01:34:40 GMT"],["Expires","Fri, 30 Nov 2018 01:34:40 GMT"],["Last-Modified","Fri, 16 Nov 2018 21:05:05 GMT"],["Server","ECS (lga/1391)"],["Vary","Accept-Encoding"],["X-Cache","404-HIT"],["Content-Length","606"]]',
       location: "",
     },
-    tabActiveDwellTime: 8250,
   },
 ];

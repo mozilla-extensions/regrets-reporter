@@ -27,7 +27,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
         before_navigate_event_ordinal: 44,
         before_navigate_time_stamp: "2020-04-17T07:04:05.444Z",
       },
-      tabActiveDwellTime: 99500,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 99250,
       },
       {
         type: "openwpm_captured_content",
@@ -72,7 +70,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           event_ordinal: 47,
           time_stamp: "2020-04-17T07:04:06.149Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -97,7 +94,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           content_hash:
             "216f1eae5c1ac969e8a25e024fb6a2a4afdc9d2bee78806db01f0546a3403e3c",
         },
-        tabActiveDwellTime: 100750,
       },
       {
         type: "ui_interactions",
@@ -119,7 +115,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           top_level_url: "https://www.youtube.com/watch?v=9_C6CTs0WhI",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 107750,
       },
       {
         type: "ui_interactions",
@@ -141,7 +136,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           top_level_url: "https://www.youtube.com/watch?v=9_C6CTs0WhI",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 119750,
       },
       {
         type: "http_requests",
@@ -169,7 +163,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 120000,
       },
       {
         type: "openwpm_captured_content",
@@ -185,7 +178,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           event_ordinal: 63,
           time_stamp: "2020-04-17T07:04:27.021Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -210,7 +202,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           content_hash:
             "3c4f098a9bdddd1e78b2e37546740ffcf7850dcfb5793f69ce3de895dd2a42e6",
         },
-        tabActiveDwellTime: 120500,
       },
       {
         type: "ui_interactions",
@@ -232,7 +223,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           top_level_url: "https://www.youtube.com/watch?v=bVeOdm-29pU",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 130250,
       },
       {
         type: "ui_interactions",
@@ -254,7 +244,6 @@ export const youtubeVisitWatchPageAndInteractWithEndScreens: TrimmedNavigationBa
           top_level_url: "https://www.youtube.com/watch?v=bVeOdm-29pU",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 138250,
       },
     ],
     httpRequestCount: 2,

@@ -6,7 +6,6 @@ import { browser, Tabs } from "webextension-polyfill-ts";
 import { Store } from "./Store";
 import { classifyYouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
 import { ReportSummarizer, YouTubeNavigation } from "./ReportSummarizer";
-import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import Tab = Tabs.Tab;
 
 export interface YouTubeUsageStatisticsUpdate {
@@ -72,29 +71,13 @@ const emptyAmountsByCategory = () => ({
 export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   public store: Store;
   public reportSummarizer: ReportSummarizer;
-  public activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor;
   public dates_with_at_least_one_youtube_visit;
   public amount_of_time_with_an_active_youtube_tab_by_date;
   public amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid;
   public dates_with_at_least_one_youtube_watch_page_load_by_category;
-  constructor(
-    store: Store,
-    reportSummarizer: ReportSummarizer,
-    activeTabDwellTimeMonitor: ActiveTabDwellTimeMonitor,
-  ) {
+  constructor(store: Store, reportSummarizer: ReportSummarizer) {
     this.store = store;
     this.reportSummarizer = reportSummarizer;
-    this.activeTabDwellTimeMonitor = activeTabDwellTimeMonitor;
-    const originalDwellTimeHook = activeTabDwellTimeMonitor.tabActiveDwellTimeIncrement.bind(
-      activeTabDwellTimeMonitor,
-    );
-    activeTabDwellTimeMonitor.tabActiveDwellTimeIncrement = (
-      tab: Tab,
-      intervalMs: number,
-    ) => {
-      this.seenTabActiveDwellTimeIncrement(tab, intervalMs);
-      originalDwellTimeHook(tab, intervalMs);
-    };
   }
 
   incrementDateAmount(amountsByDate, dateYmd: string, increment: number = 1) {

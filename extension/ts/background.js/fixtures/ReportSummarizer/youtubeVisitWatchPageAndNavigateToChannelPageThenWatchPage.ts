@@ -27,7 +27,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
         before_navigate_event_ordinal: 34,
         before_navigate_time_stamp: "2020-04-24T11:34:17.054Z",
       },
-      tabActiveDwellTime: 47500,
     },
     childEnvelopes: [
       {
@@ -56,7 +55,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 47000,
       },
       {
         type: "openwpm_captured_content",
@@ -72,7 +70,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           event_ordinal: 37,
           time_stamp: "2020-04-24T11:34:17.980Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -97,7 +94,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           content_hash:
             "5447e8c5343466ecbd4271cb59239514c2671a5404131c2104f0d52f3349d234",
         },
-        tabActiveDwellTime: 48750,
       },
       {
         type: "http_requests",
@@ -125,7 +121,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 53000,
       },
       {
         type: "ui_interactions",
@@ -148,7 +143,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
             "https://www.youtube.com/channel/UC0oxtUyZTeNP_LkaWei3PjA",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 53000,
       },
       {
         type: "openwpm_captured_content",
@@ -164,7 +158,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           event_ordinal: 42,
           time_stamp: "2020-04-24T11:34:23.542Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -189,7 +182,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           content_hash:
             "a8e23bea1b0a622f179a85cb408c1b048200dd6587a233464de6c97958736334",
         },
-        tabActiveDwellTime: 53500,
       },
       {
         type: "http_requests",
@@ -217,7 +209,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           parent_frame_id: -1,
           frame_ancestors: "[]",
         },
-        tabActiveDwellTime: 55500,
       },
       {
         type: "ui_interactions",
@@ -239,7 +230,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           top_level_url: "https://www.youtube.com/watch?v=g4mHPeMGTJM",
           crawl_id: 0,
         },
-        tabActiveDwellTime: 55500,
       },
       {
         type: "openwpm_captured_content",
@@ -255,7 +245,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           event_ordinal: 55,
           time_stamp: "2020-04-24T11:34:26.134Z",
         },
-        tabActiveDwellTime: null,
       },
       {
         type: "http_responses",
@@ -280,7 +269,6 @@ export const youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage: Trimmed
           content_hash:
             "576bf7652413fb52a7e69efb8467bf21d36366c0c5e24d74a9a6f74e53844b3c",
         },
-        tabActiveDwellTime: 56000,
       },
     ],
     httpRequestCount: 3,

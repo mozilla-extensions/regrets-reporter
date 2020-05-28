@@ -8,12 +8,10 @@ import { youtubeVisitWatchPageAndNavigateToFirstUpNext } from "./fixtures/Report
 import { NavigationBatch } from "./NavigationBatchPreprocessor";
 import { mockLocalStorage } from "./lib/mockLocalStorage";
 import { ReportSummarizer } from "./ReportSummarizer";
-import { ActiveTabDwellTimeMonitor } from "./ActiveTabDwellTimeMonitor";
 import { Store } from "./Store";
 import { Tabs } from "webextension-polyfill-ts";
 import Tab = Tabs.Tab;
 const reportSummarizer = new ReportSummarizer();
-const activeTabDwellTimeMonitor = new ActiveTabDwellTimeMonitor();
 
 const summarizeUpdate = async (
   navigationBatchesByUuid: {
@@ -43,7 +41,6 @@ describe("YouTubeUsageStatistics", function() {
     const youTubeUsageStatistics = new YouTubeUsageStatistics(
       store,
       reportSummarizer,
-      activeTabDwellTimeMonitor,
     );
     await youTubeUsageStatistics.hydrate();
     assert.isObject(youTubeUsageStatistics);
@@ -55,7 +52,6 @@ describe("YouTubeUsageStatistics", function() {
     const youTubeUsageStatistics = new YouTubeUsageStatistics(
       store,
       reportSummarizer,
-      activeTabDwellTimeMonitor,
     );
     await youTubeUsageStatistics.hydrate();
     const summarizedUpdate = await summarizeUpdate({}, youTubeUsageStatistics);
@@ -84,7 +80,6 @@ describe("YouTubeUsageStatistics", function() {
     const youTubeUsageStatistics = new YouTubeUsageStatistics(
       store,
       reportSummarizer,
-      activeTabDwellTimeMonitor,
     );
     await youTubeUsageStatistics.hydrate();
     const summarizedUpdate = await summarizeUpdate(
@@ -112,7 +107,6 @@ describe("YouTubeUsageStatistics", function() {
     const youTubeUsageStatistics2 = new YouTubeUsageStatistics(
       store,
       reportSummarizer,
-      activeTabDwellTimeMonitor,
     );
     await youTubeUsageStatistics2.hydrate();
 
@@ -165,7 +159,6 @@ describe("YouTubeUsageStatistics", function() {
     const youTubeUsageStatistics = new YouTubeUsageStatistics(
       store,
       reportSummarizer,
-      activeTabDwellTimeMonitor,
     );
     await youTubeUsageStatistics.hydrate();
     const summarizedUpdate = await summarizeUpdate(

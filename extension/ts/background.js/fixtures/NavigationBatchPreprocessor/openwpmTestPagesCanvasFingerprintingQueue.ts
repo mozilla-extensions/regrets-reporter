@@ -26,7 +26,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       before_navigate_event_ordinal: 0,
       before_navigate_time_stamp: "2018-11-26T14:11:51.759Z",
     },
-    tabActiveDwellTime: 14000,
   },
   {
     type: "http_requests",
@@ -55,7 +54,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 14000,
   },
   {
     type: "http_responses",
@@ -78,7 +76,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
         '[["Server","SimpleHTTP/0.6 Python/2.7.10"],["Date","Mon, 26 Nov 2018 14:11:51 GMT"],["Content-type","text/html"],["Content-Length","995"],["Last-Modified","Mon, 26 Nov 2018 13:58:31 GMT"]]',
       location: "",
     },
-    tabActiveDwellTime: 14000,
   },
   {
     type: "javascript",
@@ -108,7 +105,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
       arguments: '["2d"]',
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -137,7 +133,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       top_level_url:
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -166,7 +161,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       top_level_url:
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -195,7 +189,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       top_level_url:
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -224,7 +217,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       top_level_url:
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -254,7 +246,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
       arguments: "[125,1,62,20]",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -283,7 +274,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       top_level_url:
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -313,7 +303,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
       arguments: '["BrowserLeaks,com <canvas> 1.0",2,15]',
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -342,7 +331,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       top_level_url:
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -372,7 +360,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
       arguments: '["BrowserLeaks,com <canvas> 1.0",4,17]',
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "javascript",
@@ -401,7 +388,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       top_level_url:
         "http://localtest.me:8000/test_pages/canvas_fingerprinting.html",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_requests",
@@ -431,7 +417,6 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
       parent_frame_id: -1,
       frame_ancestors: "[]",
     },
-    tabActiveDwellTime: 14250,
   },
   {
     type: "http_responses",
@@ -454,6 +439,5 @@ export const openwpmTestPagesCanvasFingerprintingQueue: OpenWpmPayloadEnvelope[]
         '[["Server","SimpleHTTP/0.6 Python/2.7.10"],["Date","Mon, 26 Nov 2018 14:11:51 GMT"],["Content-Type","text/html"],["Connection","close"]]',
       location: "",
     },
-    tabActiveDwellTime: 14250,
   },
 ];
