@@ -7,6 +7,7 @@ import "../shared-resources/tailwind.css";
 import "./index.css";
 import { Input } from "../shared-resources/photon-components-web/photon-components/Input";
 import { Checkbox } from "../shared-resources/photon-components-web/photon-components/Checkbox";
+import "../shared-resources/photon-components-web/photon-components/Checkbox/light-theme.css";
 import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
 import { TextArea } from "../shared-resources/photon-components-web/photon-components/TextArea";
 import { browser, Runtime } from "webextension-polyfill-ts";
