@@ -76,6 +76,8 @@ await exportSharedData();
 
 (Note: Temporarily add the `"<all_urls>",` permission to manifest.json if necessary)
 
+After launching the extension and consenting to the study:
+
 1. Clear the current set of collected traffic data and stop scheduled processing:
 
 ```javascript
@@ -98,7 +100,9 @@ Restart the browser before collecting data for a new fixture.
 
 ### ReportSummarizer
 
-1. Clear the current set of collected navigations:
+After launching the extension and consenting to the study:
+
+1. Clear the current set of collected navigations and stop scheduled processing:
 
 ```javascript
 await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();

@@ -48,6 +48,7 @@ class ExtensionGlue {
   private openwpmCrawlId: string;
   private contentScriptPortListener;
   private optionsUiPortListener;
+  private reportRegretFormPortListener;
 
   constructor() {}
 
@@ -145,13 +146,13 @@ class ExtensionGlue {
     await youTubeUsageStatistics.hydrate();
 
     // Set up a connection / listener for content scripts to be able to query collected web traffic data
-    let portFromContentScript;
-    this.contentScriptPortListener = p => {
+    let portFromReportRegretForm;
+    this.reportRegretFormPortListener = p => {
       if (p.name !== "port-from-report-regret-form") {
         return;
       }
-      portFromContentScript = p;
-      portFromContentScript.onMessage.addListener(async function(m: {
+      portFromReportRegretForm = p;
+      portFromReportRegretForm.onMessage.addListener(async function(m: {
         regretReport?: RegretReport;
         requestRegretReportData?: {
           windowId: number;
@@ -190,7 +191,7 @@ class ExtensionGlue {
               ...youTubeNavigationSpecificRegretReportData,
               youtube_usage_statistics_update,
             };
-            portFromContentScript.postMessage({
+            portFromReportRegretForm.postMessage({
               regretReportData,
             });
           } catch (error) {
@@ -198,14 +199,14 @@ class ExtensionGlue {
               "Error encountered during regret report data processing",
               error,
             );
-            portFromContentScript.postMessage({
+            portFromReportRegretForm.postMessage({
               errorMessage: error.message,
             });
           }
         }
       });
     };
-    browser.runtime.onConnect.addListener(this.contentScriptPortListener);
+    browser.runtime.onConnect.addListener(this.reportRegretFormPortListener);
 
     // Set up the active tab dwell time monitor
     openWpmPacketHandler.activeTabDwellTimeMonitor.run();
@@ -326,6 +327,11 @@ class ExtensionGlue {
     }
     if (this.optionsUiPortListener) {
       browser.runtime.onMessage.removeListener(this.optionsUiPortListener);
+    }
+    if (this.reportRegretFormPortListener) {
+      browser.runtime.onMessage.removeListener(
+        this.reportRegretFormPortListener,
+      );
     }
     if (this.navigationInstrument) {
       await this.navigationInstrument.cleanup();

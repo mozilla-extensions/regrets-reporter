@@ -143,6 +143,7 @@ export class ReportRegretForm extends Component<
           });
           return;
         }
+        console.error("Unexpected message", { m });
         await this.setState({
           loading: false,
           error: true,
@@ -184,21 +185,24 @@ export class ReportRegretForm extends Component<
 
   handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
     const newValue = changeEvent.target.value;
-    const index = this.state.userSuppliedRegretCategories.indexOf(newValue);
-    if (changeEvent.target.checked) {
+    const userSuppliedRegretCategories = this.state
+      .userSuppliedRegretCategories;
+    const index = userSuppliedRegretCategories.indexOf(newValue);
+    const checked = changeEvent.target.checked;
+    if (checked) {
       if (index === -1) {
         this.setState({
           userSuppliedRegretCategories: [
-            ...this.state.userSuppliedRegretCategories,
+            ...userSuppliedRegretCategories,
             newValue,
           ],
         });
       }
     } else {
       if (index > -1) {
-        this.state.userSuppliedRegretCategories.splice(index, 1);
+        userSuppliedRegretCategories.splice(index, 1);
         this.setState({
-          userSuppliedRegretCategories: this.state.userSuppliedRegretCategories,
+          userSuppliedRegretCategories: userSuppliedRegretCategories,
         });
       }
     }
