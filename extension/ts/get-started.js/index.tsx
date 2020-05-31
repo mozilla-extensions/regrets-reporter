@@ -4,13 +4,13 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { ErrorBoundary } from "../shared-resources/ErrorBoundary";
-import { ConsentForm } from "./ConsentForm";
+import { GetStartedFlow } from "./GetStartedFlow";
 
 import "./index.css";
 
 ReactDOM.render(
   <ErrorBoundary>
-    <ConsentForm />
+    <GetStartedFlow />
   </ErrorBoundary>,
   document.getElementById("app"),
 );

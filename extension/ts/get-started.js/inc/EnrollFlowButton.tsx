@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
 import Modal from "react-modal";
-import { Checkbox } from "../shared-resources/photon-components-web/photon-components/Checkbox";
-import { Radio } from "../shared-resources/photon-components-web/photon-components/Radio";
-import { Button } from "../shared-resources/photon-components-web/photon-components/Button";
-import { ConsentStatus } from "../background.js/Store";
-import { config } from "../config";
+import { Checkbox } from "../../shared-resources/photon-components-web/photon-components/Checkbox";
+import { Radio } from "../../shared-resources/photon-components-web/photon-components/Radio";
+import { Button } from "../../shared-resources/photon-components-web/photon-components/Button";
+import { ConsentStatus } from "../../background.js/Store";
+import { config } from "../../config";
 
 const customStyles = {
   overlay: {

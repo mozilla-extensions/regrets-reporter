@@ -2,26 +2,29 @@ import * as React from "react";
 import { Component, MouseEvent } from "react";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
-import { EnrollFlowButton } from "./EnrollFlowButton";
 import "photon-colors/photon-colors.css";
 import "../shared-resources/photon-components-web/index.css";
 import "../shared-resources/photon-components-web/attributes";
 import "../shared-resources/tailwind.css";
+import { EnrollFlowButton } from "./inc/EnrollFlowButton";
 import { ConsentStatus } from "../background.js/Store";
-import { ReportRegretInstructions } from "./ReportRegretInstructions";
-import { AboutTheStudy } from "./AboutTheStudy";
-import { YourPrivacy } from "./YourPrivacy";
+import { ReportRegretInstructions } from "./inc/ReportRegretInstructions";
+import { AboutTheStudy } from "./inc/AboutTheStudy";
+import { YourPrivacy } from "./inc/YourPrivacy";
+import { YouMakeTheInternetHealther } from "./inc/YouMakeTheInternetHealther";
 import { config } from "../config";
-import { YouMakeTheInternetHealther } from "./YouMakeTheInternetHealther";
 
-export interface ConsentFormProps {}
+export interface GetStartedFlowProps {}
 
-export interface ConsentFormState {
+export interface GetStartedFlowState {
   loading: boolean;
   consentStatus: ConsentStatus;
 }
 
-export class ConsentForm extends Component<ConsentFormProps, ConsentFormState> {
+export class GetStartedFlow extends Component<
+  GetStartedFlowProps,
+  GetStartedFlowState
+> {
   public state = {
     loading: true,
     consentStatus: null,
