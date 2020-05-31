@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
   options.plugins.push(
     require("@fullhuman/postcss-purgecss")({
-      content: ["./ts/consent-form.js/*.tsx", "./ts/report.js/*.tsx"],
+      content: ["./ts/*.js/*.tsx"],
       defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
     }),
   );
