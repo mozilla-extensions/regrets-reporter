@@ -9,6 +9,7 @@ import { youtubeVisitWatchPageOfADifferentType } from "./fixtures/ReportSummariz
 import { youtubeVisitMainPageSearchClickUserClickVideo } from "./fixtures/ReportSummarizer/youtubeVisitMainPageSearchClickUserClickVideo";
 import { youtubeVisitWatchPageAndSearchClickUserSearchResultVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndSearchClickUserSearchResultVideo";
 import { youtubeReloadWatchPageDoubleNavigationsIssue } from "./fixtures/ReportSummarizer/youtubeReloadWatchPageDoubleNavigationsIssue";
+import { youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile";
 
 const firstEncounteredWindowAndTabIds = (
   navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
@@ -76,6 +77,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [],
     });
@@ -119,6 +122,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [],
     });
@@ -142,11 +147,15 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "from_watch_page_up_next_column_click",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -172,6 +181,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [],
     });
@@ -197,6 +208,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: true,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -214,6 +227,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: false,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -237,11 +252,15 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "from_watch_page_watch_next_end_screen_click",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -267,6 +286,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [],
     });
@@ -293,6 +314,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: true,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -310,6 +333,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: false,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -334,11 +359,15 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "page_reload",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "without_categorized_clicks",
       url_type: "channel_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
 
@@ -363,6 +392,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [],
     });
@@ -379,6 +410,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: null,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -396,6 +429,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: false,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -421,6 +456,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: true,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: true,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -429,6 +466,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
         {
           video_metadata: {
@@ -445,6 +484,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: false,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -469,21 +510,29 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "direct_navigation",
       url_type: "youtube_main_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "unspecified",
       url_type: "search_results_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
     assert.deepEqual(youTubeNavigations[2].youtube_visit_metadata, {
       reach_type: "search_results_non_video_click",
       url_type: "user_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[2].parent_youtube_navigations.length, 2);
     assert.deepEqual(youTubeNavigations[3].youtube_visit_metadata, {
       reach_type: "unspecified",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[3].parent_youtube_navigations.length, 3);
 
@@ -499,6 +548,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: null,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [],
     });
@@ -515,6 +566,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: null,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -523,6 +576,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -539,6 +594,8 @@ describe("ReportSummarizer", function() {
         via_search_results: true,
         via_non_search_algorithmic_recommendations_content: null,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -547,6 +604,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
         {
           page_entry_point: "direct_navigation",
@@ -554,6 +613,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -579,6 +640,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: true,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: true,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -587,6 +650,8 @@ describe("ReportSummarizer", function() {
           via_search_results: true,
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
         {
           page_entry_point: "youtube_main_page",
@@ -594,6 +659,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
         {
           page_entry_point: "direct_navigation",
@@ -601,6 +668,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -625,16 +694,22 @@ describe("ReportSummarizer", function() {
     assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
       reach_type: "page_reload",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
     assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
       reach_type: "without_categorized_clicks", // search action
       url_type: "search_results_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
     assert.deepEqual(youTubeNavigations[2].youtube_visit_metadata, {
       reach_type: "search_results_page_other_indirect_videos_click",
       url_type: "watch_page",
+      video_element_play_time: 0,
+      document_visible_time: 0,
     });
     assert.equal(youTubeNavigations[2].parent_youtube_navigations.length, 2);
 
@@ -659,6 +734,8 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [],
     });
@@ -684,6 +761,8 @@ describe("ReportSummarizer", function() {
         via_search_results: true,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: true,
+        video_element_play_time: 0,
+        document_visible_time: 0,
       },
       parent_youtube_navigations_metadata: [
         {
@@ -692,6 +771,8 @@ describe("ReportSummarizer", function() {
           via_non_search_algorithmic_recommendations_content: null,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: null,
           via_search_results: false,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
         {
           video_metadata: {
@@ -708,6 +789,8 @@ describe("ReportSummarizer", function() {
           via_search_results: false,
           via_non_search_algorithmic_recommendations_content: false,
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+          video_element_play_time: 0,
+          document_visible_time: 0,
         },
       ],
     });
@@ -750,6 +833,52 @@ describe("ReportSummarizer", function() {
         via_search_results: false,
         via_non_search_algorithmic_recommendations_content: false,
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 0,
+        document_visible_time: 0,
+      },
+      parent_youtube_navigations_metadata: [],
+    });
+  });
+
+  it("fixture: youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile", async function() {
+    const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile;
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      fixture,
+    );
+
+    assert.equal(
+      youTubeNavigations.length,
+      1,
+      "should have found one youtube navigation",
+    );
+
+    // console.dir({ youTubeNavigations }, { depth: 5 });
+
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
+    const youTubeNavigationSpecificRegretReportData1 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_id: "g4mHPeMGTJM",
+          video_title: "10 hours of absolute silence (the original)",
+          video_description:
+            "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+          video_posting_date: "Sep 20, 2011",
+          view_count_at_navigation: 4326854,
+          view_count_at_navigation_short: "4.3M views",
+        },
+        page_entry_point: "page_reload",
+        url_type: "watch_page",
+        via_search_results: false,
+        via_non_search_algorithmic_recommendations_content: false,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: false,
+        video_element_play_time: 8000,
+        document_visible_time: 15000,
       },
       parent_youtube_navigations_metadata: [],
     });

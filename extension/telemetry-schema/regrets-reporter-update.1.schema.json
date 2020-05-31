@@ -1,9 +1,25 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "regrets-reporter-update",
-  "type": "object",
   "$comment": "See https://docs.google.com/document/d/104x-QmODN7CQwvKVDlB4D2BJzJ0Q-BKnluW5EA7vX7Q/edit",
   "definitions": {
+    "AmountsByCategory": {
+      "properties": {
+        "in_total": {
+          "type": "number"
+        },
+        "via_non_search_algorithmic_recommendations_content": {
+          "type": "number"
+        },
+        "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": {
+          "type": "number"
+        },
+        "via_search_results": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
     "ConsentStatus": {
       "enum": ["given", "withdrawn"],
       "type": "string"
@@ -121,7 +137,11 @@
       "type": "object"
     },
     "YouTubeNavigationMetadata": {
+      "description": "Selected/derived attributes from YouTubeNavigations",
       "properties": {
+        "document_visible_time": {
+          "type": "number"
+        },
         "page_entry_point": {
           "$ref": "#/definitions/YouTubePageEntryPoint"
         },
@@ -136,6 +156,9 @@
         },
         "via_search_results": {
           "type": "boolean"
+        },
+        "video_element_play_time": {
+          "type": "number"
         },
         "video_metadata": {
           "$ref": "#/definitions/VideoMetadata"
@@ -177,45 +200,32 @@
     },
     "YouTubeUsageStatisticsUpdate": {
       "properties": {
+        "amount_of_days_of_at_least_one_video_played_on_a_youtube_watch_page": {
+          "$ref": "#/definitions/AmountsByCategory"
+        },
         "amount_of_days_with_at_least_one_youtube_visit": {
           "type": "number"
         },
-        "amount_of_days_with_at_least_one_youtube_watch_page_load_by_category": {
-          "properties": {
-            "in_total": {
-              "type": "number"
-            },
-            "via_non_search_algorithmic_recommendations_content": {
-              "type": "number"
-            },
-            "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": {
-              "type": "number"
-            },
-            "via_search_results": {
-              "type": "number"
-            }
-          },
-          "type": "object"
+        "amount_of_days_with_at_least_one_youtube_watch_page_load": {
+          "$ref": "#/definitions/AmountsByCategory"
         },
         "amount_of_time_with_an_active_youtube_tab": {
           "type": "number"
         },
-        "amount_of_youtube_watch_pages_loaded_by_category": {
-          "properties": {
-            "in_total": {
-              "type": "number"
-            },
-            "via_non_search_algorithmic_recommendations_content": {
-              "type": "number"
-            },
-            "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": {
-              "type": "number"
-            },
-            "via_search_results": {
-              "type": "number"
-            }
-          },
-          "type": "object"
+        "amount_of_time_with_an_active_youtube_watch_page_tab": {
+          "$ref": "#/definitions/AmountsByCategory"
+        },
+        "amount_of_youtube_video_play_time": {
+          "type": "number"
+        },
+        "amount_of_youtube_video_play_time_on_youtube_watch_pages": {
+          "$ref": "#/definitions/AmountsByCategory"
+        },
+        "amount_of_youtube_videos_played_on_youtube_watch_pages": {
+          "$ref": "#/definitions/AmountsByCategory"
+        },
+        "amount_of_youtube_watch_pages_loaded": {
+          "$ref": "#/definitions/AmountsByCategory"
         }
       },
       "type": "object"
@@ -242,5 +252,6 @@
     "youtube_usage_statistics_update": {
       "$ref": "#/definitions/YouTubeUsageStatisticsUpdate"
     }
-  }
+  },
+  "type": "object"
 }

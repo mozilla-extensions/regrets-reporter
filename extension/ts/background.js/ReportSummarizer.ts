@@ -73,12 +73,13 @@ export interface YouTubePageMetadata {
 export interface YouTubeVisitMetadata {
   reach_type: YouTubeNavigationReachType;
   url_type: YouTubeNavigationUrlType;
+  video_element_play_time: number;
+  document_visible_time: number;
 }
 
 export interface YouTubeNavigation {
   video_metadata?: VideoMetadata;
   outgoing_video_ids_by_category?: OutgoingVideoIdsByCategory;
-  tab_active_dwell_time_at_navigation: number | FailedIntegerAttribute;
   url: undefined | string | FailedStringAttribute;
   referrer_url: undefined | string | FailedStringAttribute;
   parent_youtube_navigations: YouTubeNavigation[];
@@ -90,6 +91,9 @@ export interface YouTubeNavigation {
   event_ordinal: number;
 }
 
+/**
+ * Selected/derived attributes from YouTubeNavigations
+ */
 export interface YouTubeNavigationMetadata {
   video_metadata?: VideoMetadata;
   url_type: YouTubeNavigationUrlType;
@@ -101,6 +105,8 @@ export interface YouTubeNavigationMetadata {
   via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for:
     | boolean
     | FailedBooleanAttribute;
+  video_element_play_time: number;
+  document_visible_time: number;
 }
 
 export interface YouTubeNavigationSpecificRegretReportData {
@@ -216,17 +222,25 @@ export class ReportSummarizer {
         childEnvelope.uiInteraction.frame_id === 0,
     );
 
+    const uiStateEnvelopes = topFrameNavigationBatch.childEnvelopes.filter(
+      childEnvelope =>
+        childEnvelope.type === "ui_states" &&
+        childEnvelope.uiState.frame_id === 0,
+    );
+
     let i = -1;
-    for (const topFrameHttpResponseEnvelope of topFrameHttpResponseEnvelopes) {
+    for (const currentHttpResponseEnvelope of topFrameHttpResponseEnvelopes) {
       i = i + 1;
-      // console.log({ topFrameHttpResponseEnvelope });
+      // console.log({ currentHttpResponseEnvelope });
+      const nextHttpResponseEnvelope =
+        topFrameHttpResponseEnvelopes[i + 1] || false;
 
       // The corresponding http request(s)
 
       const httpRequestEnvelopeMatcher = childEnvelope =>
         childEnvelope.type === "http_requests" &&
         childEnvelope.httpRequest.request_id ===
-          topFrameHttpResponseEnvelope.httpResponse.request_id;
+          currentHttpResponseEnvelope.httpResponse.request_id;
 
       let httpRequestEnvelope = topFrameNavigationBatch.childEnvelopes
         .slice()
@@ -253,7 +267,7 @@ export class ReportSummarizer {
       // If the http request is still not found, it is unexpected
       if (!httpRequestEnvelope) {
         throw new Error(
-          `The matching httpRequestEnvelope was not found for request id ${topFrameHttpResponseEnvelope.httpResponse.request_id}`,
+          `The matching httpRequestEnvelope was not found for request id ${currentHttpResponseEnvelope.httpResponse.request_id}`,
         );
       }
 
@@ -263,7 +277,7 @@ export class ReportSummarizer {
           childEnvelope.type === "openwpm_captured_content" &&
           childEnvelope.capturedContent.frame_id === 0 &&
           childEnvelope.capturedContent.content_hash ===
-            topFrameHttpResponseEnvelope.httpResponse.content_hash,
+            currentHttpResponseEnvelope.httpResponse.content_hash,
       );
 
       const url = httpRequestEnvelope.httpRequest.url;
@@ -280,6 +294,40 @@ export class ReportSummarizer {
       if (url_type === "prefetch") {
         continue;
       }
+
+      // event ordinals relevant to slicing the click and ui state events by http response / youtube navigation
+      const currentHttpResponseEventOrdinal =
+        currentHttpResponseEnvelope.httpResponse.event_ordinal;
+      const nextHttpResponseEventOrdinal = nextHttpResponseEnvelope
+        ? nextHttpResponseEnvelope.httpResponse.event_ordinal
+        : Number.MAX_SAFE_INTEGER;
+
+      // console.log({currentHttpResponseEventOrdinal, nextHttpResponseEventOrdinal});
+
+      // ui states for the current youtube navigation
+      const uiStateEnvelopesForCurrentYouTubeNavigation = uiStateEnvelopes.filter(
+        childEnvelope =>
+          childEnvelope.uiState.event_ordinal >
+            currentHttpResponseEventOrdinal &&
+          childEnvelope.uiState.event_ordinal < nextHttpResponseEventOrdinal,
+      );
+      // console.dir({ uiStateEnvelopesForCurrentYouTubeNavigation }, { depth: 5 });
+
+      const video_element_play_time = uiStateEnvelopesForCurrentYouTubeNavigation
+        .map(uiStateEnvelope =>
+          uiStateEnvelope.uiState.video_element_is_playing === 1
+            ? uiStateEnvelope.uiState.interval_ms
+            : 0,
+        )
+        .reduce((a, b) => a + b, 0);
+
+      const document_visible_time = uiStateEnvelopesForCurrentYouTubeNavigation
+        .map(uiStateEnvelope =>
+          uiStateEnvelope.uiState.document_hidden === 0
+            ? uiStateEnvelope.uiState.interval_ms
+            : 0,
+        )
+        .reduce((a, b) => a + b, 0);
 
       // Extract video metadata from the captured content if available
       let youtubePageMetadata: YouTubePageMetadata = {
@@ -347,21 +395,21 @@ export class ReportSummarizer {
       if (!reach_type && parentYouTubeNavigation) {
         // console.dir({parentYouTubeNavigation}, {depth: 5});
         // console.dir({clickEventEnvelopes}, {depth: 5});
+        // console.dir({ uiStateEnvelopes }, { depth: 5 });
+
+        // event ordinal relevant to slicing the click events by http response / youtube navigation
+        const parentYouTubeNavigationEventOrdinal =
+          parentYouTubeNavigation.event_ordinal;
+
+        // console.log({ parentYouTubeNavigationEventOrdinal });
 
         // click events leading up to the subsequent youtube navigation
-        const firstRelevantEventOrdinal = parentYouTubeNavigation.event_ordinal;
-        const lastRelevantEventOrdinal =
-          topFrameHttpResponseEnvelope.httpResponse.event_ordinal;
-        // const lastRelevantEventOrdinal = nextTopFrameHttpResponseEnvelopes ? nextTopFrameHttpResponseEnvelopes.httpResponse.event_ordinal : Number.MAX_SAFE_INTEGER;
-
-        // console.log({firstRelevantEventOrdinal,lastRelevantEventOrdinal });
-
         const clickEventEnvelopesForParentYouTubeNavigation = clickEventEnvelopes.filter(
           childEnvelope =>
             childEnvelope.uiInteraction.event_ordinal >
-              firstRelevantEventOrdinal &&
+              parentYouTubeNavigationEventOrdinal &&
             childEnvelope.uiInteraction.event_ordinal <
-              lastRelevantEventOrdinal,
+              currentHttpResponseEventOrdinal,
         );
         // console.dir({clickEventEnvelopesForParentYouTubeNavigation}, {depth: 5});
 
@@ -393,18 +441,16 @@ export class ReportSummarizer {
         }
       }
 
-      // TODO
-      const tab_active_dwell_time_at_navigation = -1;
-
       const youTubeNavigation: YouTubeNavigation = {
         ...youtubePageMetadata,
-        tab_active_dwell_time_at_navigation,
         url,
         referrer_url,
         parent_youtube_navigations,
         youtube_visit_metadata: {
           url_type,
           reach_type,
+          video_element_play_time,
+          document_visible_time,
         },
         time_stamp:
           topFrameNavigationBatch.navigationEnvelope.navigation
@@ -415,16 +461,6 @@ export class ReportSummarizer {
         frame_id:
           topFrameNavigationBatch.navigationEnvelope.navigation.frame_id,
         event_ordinal,
-        /*
-        event_metadata: {
-          client_timestamp:
-            topFrameNavigationBatch.navigationEnvelope.navigation
-              .committed_time_stamp,
-          extension_installation_uuid,
-          event_uuid:
-            topFrameNavigationBatch.navigationEnvelope.navigation.uuid,
-        },
-        */
       };
       youTubeNavigations.push(youTubeNavigation);
     }
@@ -969,6 +1005,10 @@ export class ReportSummarizer {
       via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: this.viaRecommendationsWithAnExplicitQueryOrConstraintToOptimizeForFromYouTubeNavigation(
         youTubeNavigation,
       ),
+      video_element_play_time:
+        youTubeNavigation.youtube_visit_metadata.video_element_play_time,
+      document_visible_time:
+        youTubeNavigation.youtube_visit_metadata.document_visible_time,
     };
     if (youTubeNavigation.youtube_visit_metadata.url_type === "watch_page") {
       metadata.video_metadata = youTubeNavigation.video_metadata;

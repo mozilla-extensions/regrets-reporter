@@ -134,9 +134,9 @@ export const batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope = (
     case "openwpm_captured_content":
       return openWpmPayloadEnvelope.capturedContent as CapturedContent;
     case "ui_interactions":
-      return openWpmPayloadEnvelope.uiInteraction as CapturedContent;
+      return openWpmPayloadEnvelope.uiInteraction as UiInteraction;
     case "ui_states":
-      return openWpmPayloadEnvelope.uiState as CapturedContent;
+      return openWpmPayloadEnvelope.uiState as UiState;
   }
   throw new Error(`Unexpected type supplied: '${openWpmPayloadEnvelope.type}'`);
 };
