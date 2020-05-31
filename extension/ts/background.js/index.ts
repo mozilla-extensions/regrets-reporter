@@ -123,11 +123,21 @@ class ExtensionGlue {
   async start() {
     // Only show report-regret page action on YouTube watch pages
     const showPageActionOnWatchPagesOnly = (tabId, changeInfo, tab) => {
-      if (tab.url.match(/:\/\/[^\/]*\.?youtube.com\/watch/)) {
-        browser.pageAction.show(tab.id);
-      } else {
+      function onExecuted(result) {
+        const url = result ? result[0] : false;
+        if (url && url.match(/:\/\/[^\/]*\.?youtube.com\/watch/)) {
+          browser.pageAction.show(tab.id);
+        } else {
+          browser.pageAction.hide(tab.id);
+        }
+      }
+      function onError(_error) {
         browser.pageAction.hide(tab.id);
       }
+      const executing = browser.tabs.executeScript({
+        code: "location.href",
+      });
+      executing.then(onExecuted, onError);
     };
     browser.tabs.onUpdated.addListener(showPageActionOnWatchPagesOnly);
 
