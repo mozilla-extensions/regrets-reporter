@@ -245,7 +245,9 @@ class ExtensionGlue {
       http_instrument_resource_types: "main_frame,xmlhttprequest",
       http_instrument_urls: "*://*.youtube.com/*|*://*.youtu.be/*",
       ui_instrument: true,
-      ui_instrument_modules: "clicks,state",
+      ui_instrument_clicks: true,
+      ui_instrument_state: true,
+      ui_instrument_state_interval_ms: "1000",
       crawl_id: 0,
     };
     await this.startOpenWPMInstrumentation(openwpmConfig);
@@ -293,8 +295,12 @@ class ExtensionGlue {
         matchAboutBlank: false,
       };
       await this.uiInstrument.registerContentScript(
-        config["testing"],
-        config["ui_instrument_modules"],
+        {
+          testing: config["testing"],
+          clicks: config["ui_instrument_clicks"],
+          state: config["ui_instrument_state"],
+          state_interval_ms: config["ui_instrument_state_interval_ms"],
+        },
         registerContentScriptOptions,
       );
     }
