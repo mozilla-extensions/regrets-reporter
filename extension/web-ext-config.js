@@ -17,9 +17,7 @@ const defaultConfig = {
       "https://www.youtube.com/watch?v=g4mHPeMGTJM",
       "about:debugging#/runtime/this-firefox",
     ],
-    pref: [
-      "browser.ctrlTab.recentlyUsedOrder=false",
-    ],
+    pref: ["browser.ctrlTab.recentlyUsedOrder=false"],
   },
 };
 
