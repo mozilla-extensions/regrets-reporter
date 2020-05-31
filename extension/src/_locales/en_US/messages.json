@@ -1,14 +1,14 @@
 {
   "extensionName": {
-    "message": "YouTube Regrets Reporter",
+    "message": "Regrets Reporter",
     "description": "Name of the extension"
   },
   "extensionDescription": {
-    "message": "YouTube Regrets Reporter",
+    "message": "Regrets Reporter",
     "description": "Description of the extension."
   },
   "pageActionButtonTitle": {
-    "message": "Report YouTube Regret",
+    "message": "Report Regret",
     "description": "The page action button title."
   }
 }
