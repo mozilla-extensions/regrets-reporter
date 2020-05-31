@@ -134,8 +134,11 @@ yarn build:production && npx web-ext sign --api-key $API_KEY --api-secret $API_S
 ## Generating JSON schema for telemetry ingestion based on typings
 
 ```
-npx typescript-json-schema tsconfig.json AnnotatedSharedData
+npx typescript-json-schema tsconfig.json AnnotatedSharedData > telemetry-schema/regrets-reporter-update.1.schema.json
+yarn format
 ```
+
+Then revert the top rows in the schema (since it includes manually added/modified metadata).
 
 ## Validating the generated JSON schema
 
