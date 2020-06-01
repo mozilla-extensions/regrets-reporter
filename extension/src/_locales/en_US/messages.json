@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "Regrets Reporter",
+    "message": "RegretsReporter",
     "description": "Name of the extension"
   },
   "extensionDescription": {
-    "message": "Regrets Reporter",
+    "message": "The RegretsReporter browser extension, built by the nonprofit Mozilla, lets you flag regrettable recommendations on YouTube.",
     "description": "Description of the extension."
   },
   "pageActionButtonTitle": {

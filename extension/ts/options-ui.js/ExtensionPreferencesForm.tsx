@@ -104,7 +104,7 @@ export class ExtensionPreferencesForm extends Component<
         <div className="panel-section panel-section-formElements p-0 mx-0 my-4">
           <div className="panel-formElements-item">
             <Checkbox
-              label="Allow Regrets Reporter to send information about encountered errors to Mozilla"
+              label="Allow RegretsReporter to send information about encountered errors to Mozilla"
               value="enable_error_reporting"
               checked={this.state.extensionPreferences.enableErrorReporting}
               onChange={this.handleEnableErrorReportingChange}

@@ -103,7 +103,7 @@ export class GetStartedFlow extends Component<
               </div>
               <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
                 {(!this.state.consentStatus &&
-                  "YouTube Regrets Reporter: Enrollment") ||
+                  "RegretsReporter: Enrollment") ||
                   "You have enrolled. Welcome!"}
               </div>
             </div>
@@ -191,7 +191,7 @@ export class GetStartedFlow extends Component<
                 </li>
                 <li>
                   If you see an addon called{" "}
-                  <code>YouTube Regrets Reporter</code>, click{" "}
+                  <code>RegretsReporter</code>, click{" "}
                   <strong>Remove</strong>.
                 </li>
                 <li>
