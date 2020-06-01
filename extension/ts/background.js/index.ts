@@ -41,7 +41,7 @@ class ExtensionGlue {
   private httpInstrument: HttpInstrument;
   private uiInstrument: UiInstrument;
   private openwpmCrawlId: string;
-  private contentScriptPortListener;
+  private getStartedPortListener;
   private optionsUiPortListener;
   private reportRegretFormPortListener;
 
@@ -49,42 +49,33 @@ class ExtensionGlue {
 
   async init() {
     // Set up a connection / listener for the get-started script to be able to query consent status
-    let portFromContentScript;
-    this.contentScriptPortListener = p => {
+    let portFromGetStarted;
+    this.getStartedPortListener = p => {
       if (p.name !== "port-from-get-started") {
         return;
       }
       // console.log("Connected to get-started script");
-      portFromContentScript = p;
-      portFromContentScript.onMessage.addListener(async function(m) {
+      portFromGetStarted = p;
+      portFromGetStarted.onMessage.addListener(async function(m) {
         // console.log("Message from get-started script:", { m });
-        if (m.requestConsentStatus) {
-          portFromContentScript.postMessage({
-            consentStatus: await store.getConsentStatus(),
-            consentStatusTimestamp: await store.getConsentStatusTimestamp(),
+        if (m.requestUserSuppliedDemographics) {
+          portFromGetStarted.postMessage({
+            userSuppliedDemographics: await store.getUserSuppliedDemographics(),
           });
         }
-        if (m.updatedConsentStatus) {
-          const { userPartOfMarginalizedGroup } = m;
-          await store.setConsentStatus(m.updatedConsentStatus);
-          await store.setUserSuppliedDemographics({
-            user_part_of_marginalized_group: userPartOfMarginalizedGroup,
+        if (m.updatedUserSuppliedDemographics) {
+          await store.setUserSuppliedDemographics(
+            m.updatedUserSuppliedDemographics,
+          );
+          await dataSharer.share({
+            user_supplied_demographics_update: {
+              user_supplied_demographics: await store.getUserSuppliedDemographics(),
+            },
           });
-          const consentGiven = (await store.getConsentStatus()) === "given";
-          if (consentGiven) {
-            console.log("Enrolled. Starting study");
-            await dataSharer.share({
-              data_sharing_consent_update: {
-                consent_status: await store.getConsentStatus(),
-                consent_status_timestamp: await store.getConsentStatusTimestamp(),
-              },
-            });
-            await extensionGlue.start();
-          }
         }
       });
     };
-    browser.runtime.onConnect.addListener(this.contentScriptPortListener);
+    browser.runtime.onConnect.addListener(this.getStartedPortListener);
     // Set up a connection / listener for the options-ui script to be able to query preferences
     let portFromOptionsUi;
     this.optionsUiPortListener = p => {
@@ -324,8 +315,8 @@ class ExtensionGlue {
    * Called at end of study, and if the user disables the study or it gets uninstalled by other means.
    */
   async cleanup() {
-    if (this.contentScriptPortListener) {
-      browser.runtime.onMessage.removeListener(this.contentScriptPortListener);
+    if (this.getStartedPortListener) {
+      browser.runtime.onMessage.removeListener(this.getStartedPortListener);
     }
     if (this.optionsUiPortListener) {
       browser.runtime.onMessage.removeListener(this.optionsUiPortListener);
@@ -377,12 +368,13 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 
 // init the extension glue on every extension load
 async function onEveryExtensionLoad() {
-  const consentGiven = (await store.getConsentStatus()) === "given";
+  const userSuppliedDemographics = await store.getUserSuppliedDemographics();
+  const userHasSuppliedDemographics =
+    userSuppliedDemographics && userSuppliedDemographics.last_updated !== null;
   await extensionGlue.init();
-  if (consentGiven) {
-    await extensionGlue.start();
-  } else {
+  if (!userHasSuppliedDemographics) {
     await extensionGlue.askForConsent();
   }
+  await extensionGlue.start();
 }
 onEveryExtensionLoad().then();

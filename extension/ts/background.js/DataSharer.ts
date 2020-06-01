@@ -23,9 +23,8 @@ export interface SharedDataEventMetadata {
 export interface SharedData {
   regret_report?: RegretReport;
   youtube_usage_statistics_update?: YouTubeUsageStatisticsUpdate;
-  data_sharing_consent_update?: {
-    consent_status: ConsentStatus;
-    consent_status_timestamp: string;
+  user_supplied_demographics_update?: {
+    user_supplied_demographics: UserSuppliedDemographics;
   };
 }
 

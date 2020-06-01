@@ -10,6 +10,7 @@ export interface LocalStorageWrapper {
 
 export interface UserSuppliedDemographics {
   user_part_of_marginalized_group: null | "yes" | "no" | "prefer-not-to-answer";
+  last_updated: null | string;
 }
 
 export type ConsentStatus = null | "given" | "withdrawn";
@@ -40,23 +41,6 @@ export class Store implements LocalStorageWrapper {
     [s: string]: any;
   }> => ({});
   set = async (items: StorageAreaSetItemsType): Promise<void> => {};
-
-  getConsentStatus = async (): Promise<ConsentStatus> => {
-    const { consentStatus, consentStatusTimestamp } = await this.get(
-      "consentStatus",
-    );
-    return consentStatus;
-  };
-
-  getConsentStatusTimestamp = async (): Promise<string> => {
-    const { consentStatusTimestamp } = await this.get("consentStatusTimestamp");
-    return consentStatusTimestamp;
-  };
-
-  setConsentStatus = async (consentStatus: ConsentStatus) => {
-    const consentStatusTimestamp = new Date().toISOString();
-    await this.set({ consentStatus, consentStatusTimestamp });
-  };
 
   /**
    * Returns a persistent unique identifier of the extension installation
@@ -92,7 +76,12 @@ export class Store implements LocalStorageWrapper {
     const { userSuppliedDemographics } = await this.get(
       "userSuppliedDemographics",
     );
-    return userSuppliedDemographics;
+    return (
+      userSuppliedDemographics || {
+        user_part_of_marginalized_group: null,
+        last_updated: null,
+      }
+    );
   };
 
   setUserSuppliedDemographics = async (

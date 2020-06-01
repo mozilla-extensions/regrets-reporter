@@ -7,7 +7,7 @@ import "../shared-resources/photon-components-web/index.css";
 import "../shared-resources/photon-components-web/attributes";
 import "../shared-resources/tailwind.css";
 import { SupplyDemographicsButton } from "./inc/SupplyDemographicsButton";
-import { ConsentStatus } from "../background.js/Store";
+import { UserSuppliedDemographics } from "../background.js/Store";
 import { ReportRegretInstructions } from "./inc/ReportRegretInstructions";
 import { AboutTheStudy } from "./inc/AboutTheStudy";
 import { YourPrivacy } from "./inc/YourPrivacy";
@@ -18,7 +18,7 @@ export interface GetStartedFlowProps {}
 
 export interface GetStartedFlowState {
   loading: boolean;
-  consentStatus: ConsentStatus;
+  userSuppliedDemographics: UserSuppliedDemographics;
 }
 
 export class GetStartedFlow extends Component<
@@ -27,7 +27,7 @@ export class GetStartedFlow extends Component<
 > {
   public state = {
     loading: true,
-    consentStatus: null,
+    userSuppliedDemographics: null,
   };
 
   private backgroundContextPort: Port;
@@ -39,17 +39,17 @@ export class GetStartedFlow extends Component<
 
     // Send a request to gather the current consent status
     this.backgroundContextPort.postMessage({
-      requestConsentStatus: true,
+      requestUserSuppliedDemographics: true,
     });
 
-    // When we have received consent status, update state to reflect it
+    // When we have received user supplied demographics, update state to reflect it
     this.backgroundContextPort.onMessage.addListener(
-      (m: { consentStatus: ConsentStatus }) => {
-        // console.log("get-started message from backgroundContextPort", { m });
-        const { consentStatus } = m;
+      (m: { userSuppliedDemographics: UserSuppliedDemographics }) => {
+        console.log("get-started message from backgroundContextPort", { m });
+        const { userSuppliedDemographics } = m;
         this.setState({
           loading: false,
-          consentStatus,
+          userSuppliedDemographics,
         });
       },
     );
@@ -60,15 +60,15 @@ export class GetStartedFlow extends Component<
     window.close();
   }
 
-  onEnroll = async ({ userPartOfMarginalizedGroup }) => {
-    const consentStatus = "given";
+  onSaveUserSuppliedDemographics = async (
+    userSuppliedDemographics: UserSuppliedDemographics,
+  ) => {
     this.setState({
       loading: false,
-      consentStatus,
+      userSuppliedDemographics,
     });
     this.backgroundContextPort.postMessage({
-      updatedConsentStatus: consentStatus,
-      userPartOfMarginalizedGroup,
+      updatedUserSuppliedDemographics: userSuppliedDemographics,
     });
   };
 
@@ -82,11 +82,7 @@ export class GetStartedFlow extends Component<
       return null;
     }
     return (
-      <div
-        className={`app-container ${
-          this.state.consentStatus ? "enrolled" : "not-enrolled"
-        }`}
-      >
+      <div className={`app-container enrolled`}>
         <div className="page-container">
           <header>
             <div className="layout-wrapper p-12 m-auto">
@@ -102,47 +98,33 @@ export class GetStartedFlow extends Component<
                 />
               </div>
               <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
-                {(!this.state.consentStatus &&
-                  "RegretsReporter: Enrollment") ||
-                  "You have enrolled. Welcome!"}
+                RegretsReporter: Welcome!
               </div>
             </div>
           </div>
           <div className="layout-wrapper px-12 m-auto">
-            {!this.state.consentStatus && (
-              <>
-                <AboutTheStudy />
-                <YourPrivacy />
-                <section className="program-description">
-                  <SupplyDemographicsButton
-                    loading={this.state.loading}
-                    consentStatus={this.state.consentStatus}
-                    onEnroll={this.onEnroll}
-                  />
-                </section>
-              </>
-            )}
             <section className="program-instructions">
-              {(this.state.consentStatus && (
-                <h2 className="program-header">Next Steps</h2>
-              )) || (
-                <>
-                  <h2 className="program-header">What Will Happen Next</h2>
-                  <p>
-                    <strong>If you agree</strong> to participate:
-                  </p>
-                </>
-              )}
+              <h2 className="program-header">Next Steps</h2>
               <ol className="get-started-list">
                 <li>
-                  A message{" "}
-                  {(this.state.consentStatus && "has been") || "will be"} sent
-                  to Mozilla to note that you are (anonymously) willing to
-                  participate in the study.
-                </li>
-                <li>
-                  Periodically, aggregated information about your YouTube
-                  browsing behavior will be sent to Mozilla.
+                  <span
+                    className={
+                      this.state.userSuppliedDemographics.last_updated === null
+                        ? ""
+                        : "line-through"
+                    }
+                  >
+                    Tell us a bit about yourself (optional):
+                  </span>
+                  <SupplyDemographicsButton
+                    loading={this.state.loading}
+                    userSuppliedDemographics={
+                      this.state.userSuppliedDemographics
+                    }
+                    onSaveUserSuppliedDemographics={
+                      this.onSaveUserSuppliedDemographics
+                    }
+                  />
                 </li>
                 <li>
                   Continue using Firefox as you normally would, and whenever you{" "}
@@ -150,36 +132,39 @@ export class GetStartedFlow extends Component<
                   should follow the steps below to report it to our researchers.
                 </li>
                 <li>
-                  The report will include information about your YouTube
-                  browsing behavior up to 5 hours prior to initiating the
-                  report. This includes what kind of YouTube pages you have
-                  visited and how you interacted with them.
+                  Remember, we will periodically share insights based on the
+                  anonymous data sent from this extension with regulators,
+                  journalists and YouTube employees. Please review the{" "}
+                  <a
+                    href={config.privacyNoticeUrl}
+                    target="_blank"
+                    className="underline"
+                  >
+                    full privacy notice
+                  </a>{" "}
+                  for more information.
                 </li>
               </ol>
             </section>
             <ReportRegretInstructions />
-            {this.state.consentStatus && (
-              <>
-                <section className="program-description">
-                  <h2 className="program-header">About the study</h2>
-                </section>
-                <AboutTheStudy />
-                <YourPrivacy />
-                <section>
-                  <p>
-                    For more information, see our{" "}
-                    <a
-                      href={config.privacyNoticeUrl}
-                      target="_blank"
-                      className="underline"
-                    >
-                      full privacy notice
-                    </a>
-                    .
-                  </p>
-                </section>
-              </>
-            )}
+            <section className="program-description">
+              <h2 className="program-header">About the study</h2>
+            </section>
+            <AboutTheStudy />
+            <YourPrivacy />
+            <section>
+              <p>
+                For more information, see our{" "}
+                <a
+                  href={config.privacyNoticeUrl}
+                  target="_blank"
+                  className="underline"
+                >
+                  full privacy notice
+                </a>
+                .
+              </p>
+            </section>
             <section className="program-leaving">
               <h2 className="program-header">Leaving the study</h2>
               <p>Users are welcome to opt out of the study at any point.</p>
@@ -190,8 +175,7 @@ export class GetStartedFlow extends Component<
                   <code>Enter</code>.
                 </li>
                 <li>
-                  If you see an addon called{" "}
-                  <code>RegretsReporter</code>, click{" "}
+                  If you see an addon called <code>RegretsReporter</code>, click{" "}
                   <strong>Remove</strong>.
                 </li>
                 <li>
@@ -217,8 +201,10 @@ export class GetStartedFlow extends Component<
             <section className="program-thanks">
               <SupplyDemographicsButton
                 loading={this.state.loading}
-                consentStatus={this.state.consentStatus}
-                onEnroll={this.onEnroll}
+                userSuppliedDemographics={this.state.userSuppliedDemographics}
+                onSaveUserSuppliedDemographics={
+                  this.onSaveUserSuppliedDemographics
+                }
               />
             </section>
           </div>

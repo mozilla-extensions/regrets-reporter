@@ -112,37 +112,6 @@ a {
   max-width: 200px;
 }
 
-.enroll-button {
-  background: #57bd35;
-  color: #fff;
-  border: 1px solid #40a624;
-  padding: 24px 12px;
-  width: 320px;
-  text-align: center;
-  font-weight: 500;
-  margin: 40px auto 0;
-  display: block;
-  font-size: 23px;
-  cursor: pointer;
-}
-
-.enroll-button:hover {
-  background: #40a624;
-  border: 1px solid #399320;
-}
-
-.enroll-button:active {
-  background: #399320;
-  border: 1px solid #2e761a;
-}
-
-.enroll-button.enrolled {
-  background: none;
-  border: none !important;
-  -moz-appearance: none;
-  cursor: default;
-}
-
 a:visited {
   color: #f9f9f9;
 }
