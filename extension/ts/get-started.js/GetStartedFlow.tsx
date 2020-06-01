@@ -6,7 +6,7 @@ import "photon-colors/photon-colors.css";
 import "../shared-resources/photon-components-web/index.css";
 import "../shared-resources/photon-components-web/attributes";
 import "../shared-resources/tailwind.css";
-import { EnrollFlowButton } from "./inc/EnrollFlowButton";
+import { SupplyDemographicsButton } from "./inc/SupplyDemographicsButton";
 import { ConsentStatus } from "../background.js/Store";
 import { ReportRegretInstructions } from "./inc/ReportRegretInstructions";
 import { AboutTheStudy } from "./inc/AboutTheStudy";
@@ -114,7 +114,7 @@ export class GetStartedFlow extends Component<
                 <AboutTheStudy />
                 <YourPrivacy />
                 <section className="program-description">
-                  <EnrollFlowButton
+                  <SupplyDemographicsButton
                     loading={this.state.loading}
                     consentStatus={this.state.consentStatus}
                     onEnroll={this.onEnroll}
@@ -215,7 +215,7 @@ export class GetStartedFlow extends Component<
             </section>
             <YouMakeTheInternetHealther />
             <section className="program-thanks">
-              <EnrollFlowButton
+              <SupplyDemographicsButton
                 loading={this.state.loading}
                 consentStatus={this.state.consentStatus}
                 onEnroll={this.onEnroll}

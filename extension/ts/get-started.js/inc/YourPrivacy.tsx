@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Component } from "react";
-import { EnrollFlowButton } from "./EnrollFlowButton";
 
 export interface YourPrivacyProps {}
 
