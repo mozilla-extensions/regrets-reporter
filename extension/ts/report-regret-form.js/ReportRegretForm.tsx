@@ -79,14 +79,18 @@ export class ReportRegretForm extends Component<
   ReportRegretFormProps,
   ReportRegretFormState
 > {
-  public state = {
-    loading: true,
-    videoThumbUrl: null,
-    regretReportData: null,
+  private defaultFormState = {
     userSuppliedRegretCategories: [],
     userSuppliedOtherRegretCategory: "",
     userSuppliedSeverity: -1,
     userSuppliedOptionalComment: "",
+  };
+
+  public state = {
+    loading: true,
+    videoThumbUrl: null,
+    regretReportData: null,
+    ...this.defaultFormState,
     error: false,
     reported: false,
   };
@@ -129,10 +133,30 @@ export class ReportRegretForm extends Component<
         if (m.regretReportData) {
           const { regretReportData } = m;
           console.log("Regret form received report data", { regretReportData });
-          const videoThumbUrl = `https://img.youtube.com/vi/${regretReportData.youtube_navigation_metadata.video_metadata.video_id}/mqdefault.jpg`;
+          const videoId =
+            regretReportData.youtube_navigation_metadata.video_metadata
+              .video_id;
+          const videoThumbUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+
+          // Hydrate draft contents from a previous form edit if available
+          const storageKey = `report-regret-form-state:${videoId}`;
+          const persistedState = localStorage.getItem(storageKey);
+          const {
+            userSuppliedRegretCategories,
+            userSuppliedOtherRegretCategory,
+            userSuppliedSeverity,
+            userSuppliedOptionalComment,
+          } = persistedState
+            ? JSON.parse(persistedState)
+            : this.defaultFormState;
+
           await this.setState({
-            videoThumbUrl,
             regretReportData,
+            videoThumbUrl,
+            userSuppliedRegretCategories,
+            userSuppliedOtherRegretCategory,
+            userSuppliedSeverity,
+            userSuppliedOptionalComment,
             loading: false,
           });
           return null;
@@ -176,12 +200,45 @@ export class ReportRegretForm extends Component<
     this.backgroundContextPort.postMessage({
       regretReport,
     });
-    this.setState({ reported: true });
+    const {
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+    } = this.defaultFormState;
+    await this.setState({
+      reported: true,
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+    });
     /*
     setTimeout(() => {
       window.close();
     }, 2500);
     */
+    return this.persistFormState();
+  };
+
+  handleChange = async changeEvent => {
+    const { name, value } = changeEvent.target;
+    switch (name) {
+      case "user_supplied_regret_categories":
+        await this.handleUserSuppliedRegretCategoryOptionChange(changeEvent);
+        break;
+      case "user_supplied_other_regret_category":
+        await this.setState({
+          userSuppliedOtherRegretCategory: value,
+        });
+        break;
+      case "user_supplied_optional_comment":
+        await this.setState({
+          userSuppliedOptionalComment: value,
+        });
+        break;
+    }
+    return this.persistFormState();
   };
 
   handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
@@ -207,6 +264,25 @@ export class ReportRegretForm extends Component<
         });
       }
     }
+  };
+
+  persistFormState = () => {
+    const {
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+    } = this.state;
+    const videoId = this.state.regretReportData.youtube_navigation_metadata
+      .video_metadata.video_id;
+    const storageKey = `report-regret-form-state:${videoId}`;
+    const stateToPersist = JSON.stringify({
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+    });
+    localStorage.setItem(storageKey, stateToPersist);
   };
 
   render() {
@@ -452,9 +528,7 @@ export class ReportRegretForm extends Component<
                                 item.value,
                               ) > -1
                             }
-                            onChange={
-                              this.handleUserSuppliedRegretCategoryOptionChange
-                            }
+                            onChange={this.handleChange}
                           />
                         </li>
                       ))}
@@ -468,9 +542,7 @@ export class ReportRegretForm extends Component<
                               "other",
                             ) > -1
                           }
-                          onChange={
-                            this.handleUserSuppliedRegretCategoryOptionChange
-                          }
+                          onChange={this.handleChange}
                         />
                         <Input
                           className="input__field w-full my-3"
@@ -483,12 +555,7 @@ export class ReportRegretForm extends Component<
                             ) === -1
                           }
                           value={this.state.userSuppliedOtherRegretCategory}
-                          onChange={changeEvent => {
-                            this.setState({
-                              userSuppliedOtherRegretCategory:
-                                changeEvent.target.value,
-                            });
-                          }}
+                          onChange={this.handleChange}
                         />
                       </li>
                     </ul>
@@ -508,9 +575,10 @@ export class ReportRegretForm extends Component<
                           <MdSentimentDissatisfied key="2" />,
                           <MdSentimentVeryDissatisfied key="1" />,
                         ]}
-                        onClick={(q, n) =>
-                          this.setState({ userSuppliedSeverity: n })
-                        }
+                        onClick={async (q, n) => {
+                          await this.setState({ userSuppliedSeverity: n });
+                          return this.persistFormState();
+                        }}
                       />
                     </span>
                   </div>
@@ -524,17 +592,13 @@ export class ReportRegretForm extends Component<
                     <TextArea
                       className="textarea__field w-full form-textarea mt-1 block w-full"
                       rows={2}
-                      id="user_supplied_comment"
-                      name="user_supplied_comment"
+                      id="user_supplied_optional_comment"
+                      name="user_supplied_optional_comment"
                       placeholder=""
                       label="Will you tell us more about why you regret watching the
                         video? (Optional)"
                       value={this.state.userSuppliedOptionalComment}
-                      onChange={changeEvent => {
-                        this.setState({
-                          userSuppliedOptionalComment: changeEvent.target.value,
-                        });
-                      }}
+                      onChange={this.handleChange}
                     />
                   </div>
                 </div>
