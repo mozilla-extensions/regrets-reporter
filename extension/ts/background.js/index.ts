@@ -34,6 +34,10 @@ const youTubeUsageStatistics = new YouTubeUsageStatistics(
 );
 const dataSharer = new DataSharer(store);
 
+/**
+ * Ties together overall execution logic and allows content scripts
+ * to access persistent storage via cross-process messaging
+ */
 class ExtensionGlue {
   private navigationInstrument: NavigationInstrument;
   private cookieInstrument: CookieInstrument;

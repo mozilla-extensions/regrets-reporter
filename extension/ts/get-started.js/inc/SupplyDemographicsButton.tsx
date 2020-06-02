@@ -64,7 +64,6 @@ export class SupplyDemographicsButton extends Component<
 
   handleChange = changeEvent => {
     const { name, value } = changeEvent.target;
-    console.log({ name, value });
     switch (name) {
       case "dem_age":
         return this.setState({ dem_age: value });
