@@ -81,6 +81,9 @@ export class TelemetryClient {
           "Content-Type": "application/json; charset=UTF-8",
           Date: new Date().toUTCString(),
           "Content-Encoding": "gzip",
+          "X-Client-Type": "RegretsReporter",
+          "X-Client-Version": await globalThis.browser.runtime.getManifest()
+            .version,
         },
         body: await gzip(JSON.stringify(payload)),
       },
