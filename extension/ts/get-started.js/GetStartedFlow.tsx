@@ -62,7 +62,6 @@ export class GetStartedFlow extends Component<
     userSuppliedDemographics: UserSuppliedDemographics,
   ) => {
     this.setState({
-      loading: false,
       userSuppliedDemographics,
     });
     this.backgroundContextPort.postMessage({

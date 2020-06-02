@@ -1,7 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "regrets-reporter-update",
-  "$comment": "See https://docs.google.com/document/d/104x-QmODN7CQwvKVDlB4D2BJzJ0Q-BKnluW5EA7vX7Q/edit",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "AmountsByCategory": {
       "properties": {
@@ -19,10 +17,6 @@
         }
       },
       "type": "object"
-    },
-    "ConsentStatus": {
-      "enum": ["given", "withdrawn"],
-      "type": "string"
     },
     "RegretReport": {
       "properties": {
@@ -106,8 +100,17 @@
     },
     "UserSuppliedDemographics": {
       "properties": {
-        "user_part_of_marginalized_group": {
-          "enum": ["no", "prefer-not-to-answer", "yes"],
+        "dem_age": {
+          "type": "string"
+        },
+        "dem_gender": {
+          "enum": ["man", "other-description", "women"],
+          "type": "string"
+        },
+        "dem_gender_descr": {
+          "type": "string"
+        },
+        "last_updated": {
           "type": "string"
         }
       },
@@ -232,22 +235,19 @@
     }
   },
   "properties": {
-    "data_sharing_consent_update": {
-      "properties": {
-        "consent_status": {
-          "$ref": "#/definitions/ConsentStatus"
-        },
-        "consent_status_timestamp": {
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "event_metadata": {
       "$ref": "#/definitions/SharedDataEventMetadata"
     },
     "regret_report": {
       "$ref": "#/definitions/RegretReport"
+    },
+    "user_supplied_demographics_update": {
+      "properties": {
+        "user_supplied_demographics": {
+          "$ref": "#/definitions/UserSuppliedDemographics"
+        }
+      },
+      "type": "object"
     },
     "youtube_usage_statistics_update": {
       "$ref": "#/definitions/YouTubeUsageStatisticsUpdate"

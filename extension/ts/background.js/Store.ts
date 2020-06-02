@@ -9,7 +9,9 @@ export interface LocalStorageWrapper {
 }
 
 export interface UserSuppliedDemographics {
-  user_part_of_marginalized_group: null | "yes" | "no" | "prefer-not-to-answer";
+  dem_age: null | string;
+  dem_gender: null | "man" | "women" | "other-description";
+  dem_gender_descr: null | string;
   last_updated: null | string;
 }
 
@@ -78,7 +80,9 @@ export class Store implements LocalStorageWrapper {
     );
     return (
       userSuppliedDemographics || {
-        user_part_of_marginalized_group: null,
+        dem_age: null,
+        dem_gender: null,
+        dem_gender_descr: null,
         last_updated: null,
       }
     );

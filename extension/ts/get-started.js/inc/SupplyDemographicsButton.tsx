@@ -3,6 +3,7 @@ import { Component, MouseEvent } from "react";
 import Modal from "react-modal";
 import { Radio } from "../../shared-resources/photon-components-web/photon-components/Radio";
 import { Button } from "../../shared-resources/photon-components-web/photon-components/Button";
+import { Input } from "../../shared-resources/photon-components-web/photon-components/Input";
 import { UserSuppliedDemographics } from "../../background.js/Store";
 
 const customStyles = {
@@ -31,9 +32,9 @@ export interface SupplyDemographicsButtonProps {
   ) => void;
 }
 
-export interface SupplyDemographicsButtonState {
+export interface SupplyDemographicsButtonState
+  extends UserSuppliedDemographics {
   modalIsOpen: boolean;
-  userPartOfMarginalizedGroup: null | "yes" | "no" | "prefer-not-to-answer";
 }
 
 export class SupplyDemographicsButton extends Component<
@@ -42,24 +43,36 @@ export class SupplyDemographicsButton extends Component<
 > {
   public state = {
     modalIsOpen: false,
-    userPartOfMarginalizedGroup: null,
+    dem_age: "",
+    dem_gender: null,
+    dem_gender_descr: "",
+    last_updated: null,
   };
 
-  onSaveUserSuppliedDemographics = async (event: MouseEvent) => {
+  onSubmit = async (event: MouseEvent) => {
     event.preventDefault();
     this.closeModal();
-    const { userPartOfMarginalizedGroup } = this.state;
+    const { dem_age, dem_gender, dem_gender_descr } = this.state;
     const userSuppliedDemographics = {
-      user_part_of_marginalized_group: userPartOfMarginalizedGroup,
+      dem_age: dem_age === "" ? null : dem_age,
+      dem_gender,
+      dem_gender_descr: dem_gender_descr === "" ? null : dem_gender_descr,
       last_updated: new Date().toISOString(),
     };
     this.props.onSaveUserSuppliedDemographics(userSuppliedDemographics);
   };
 
-  handleUserPartOfMarginalizedGroupOptionChange = changeEvent => {
-    this.setState({
-      userPartOfMarginalizedGroup: changeEvent.target.value,
-    });
+  handleChange = changeEvent => {
+    const { name, value } = changeEvent.target;
+    console.log({ name, value });
+    switch (name) {
+      case "dem_age":
+        return this.setState({ dem_age: value });
+      case "dem_gender":
+        return this.setState({ dem_gender: value });
+      case "dem_gender_descr":
+        return this.setState({ dem_gender_descr: value });
+    }
   };
 
   openModal = () => {
@@ -99,55 +112,56 @@ export class SupplyDemographicsButton extends Component<
         >
           <>
             <h2>Question 1:</h2>
-
             <div>
-              <p>
-                Do you consider yourself to be part of a marginalized group?
-              </p>
-              <ul className="list-none">
-                <li className="mb-2">
-                  <Radio
-                    name="userPartOfMarginalizedGroup"
-                    value="yes"
-                    label="Yes"
-                    checked={this.state.userPartOfMarginalizedGroup === "yes"}
-                    onChange={
-                      this.handleUserPartOfMarginalizedGroupOptionChange
-                    }
-                  />
-                </li>
-                <li className="mb-2">
-                  <Radio
-                    name="userPartOfMarginalizedGroup"
-                    value="no"
-                    label="No"
-                    checked={this.state.userPartOfMarginalizedGroup === "no"}
-                    onChange={
-                      this.handleUserPartOfMarginalizedGroupOptionChange
-                    }
-                  />
-                </li>
-                <li className="mb-2">
-                  <Radio
-                    name="userPartOfMarginalizedGroup"
-                    value="prefer-not-to-answer"
-                    label="I prefer not answer"
-                    checked={
-                      this.state.userPartOfMarginalizedGroup ===
-                      "prefer-not-to-answer"
-                    }
-                    onChange={
-                      this.handleUserPartOfMarginalizedGroupOptionChange
-                    }
-                  />
-                </li>
-              </ul>
+              <Input
+                label="What is your age?"
+                name="dem_age"
+                value={this.state.dem_age}
+                onChange={this.handleChange}
+              />
             </div>
 
+            <h2>Question 2:</h2>
+            <div>
+              <p>What is your gender?</p>
+              <ul className="list-none">
+                {[
+                  {
+                    value: "man",
+                    label: "Man",
+                  },
+                  {
+                    value: "woman",
+                    label: "Woman",
+                  },
+                  {
+                    value: "other-description",
+                    label: "These don't describe me",
+                  },
+                ].map(item => (
+                  <li key={item.value} className="mb-2">
+                    <Radio
+                      name="dem_gender"
+                      value={item.value}
+                      label={item.label}
+                      checked={this.state.dem_gender === item.value}
+                      onChange={this.handleChange}
+                    />
+                  </li>
+                ))}
+              </ul>
+              {this.state.dem_gender === "other-description" && (
+                <Input
+                  label="How would you describe your gender?"
+                  name="dem_gender_descr"
+                  value={this.state.dem_gender_descr}
+                  onChange={this.handleChange}
+                />
+              )}
+            </div>
             <Button
-              className="enroll-button h-20 btn rounded-lg items-center"
-              disabled={this.state.userPartOfMarginalizedGroup === null}
-              onClick={this.onSaveUserSuppliedDemographics}
+              className="bg-green hover:bg-green-dark text-white font-bold m-4 py-4 px-8 rounded-full items-center"
+              onClick={this.onSubmit}
             >
               Save
             </Button>
