@@ -22,10 +22,14 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
                 No data is collected from inside Private Browsing windows.
               </li>
               <li>
-                The collected data will be linked to a randomly generated data
-                ID used for this particular study only. It is used to keep a
-                specific user's data together on the server, helps us improve
-                our analysis and allows us to fulfill legal obligations.
+                Periodically, aggregated information about your YouTube browsing
+                behavior will be sent to Mozilla.
+              </li>
+              <li>
+                Regret reports include some information about your YouTube
+                browsing behavior up to 5 hours prior to initiating the report.
+                This includes what kind of YouTube pages you have visited and
+                how you reached them.
               </li>
             </ul>
           </li>
@@ -38,9 +42,9 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
                 way that minimizes the risk of participants being identified.
               </li>
               <li>
-                We will share the video IDs of reported videos along with the
-                regret category that users report with YouTube to help them
-                improve their recommendation systems.
+                We will periodically share insights based on the anonymous data
+                sent from this extension with regulators, journalists and
+                YouTube employees.
               </li>
             </ul>
           </li>

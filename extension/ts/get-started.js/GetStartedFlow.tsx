@@ -9,9 +9,7 @@ import "../shared-resources/tailwind.css";
 import { SupplyDemographicsButton } from "./inc/SupplyDemographicsButton";
 import { UserSuppliedDemographics } from "../background.js/Store";
 import { ReportRegretInstructions } from "./inc/ReportRegretInstructions";
-import { AboutTheStudy } from "./inc/AboutTheStudy";
 import { YourPrivacy } from "./inc/YourPrivacy";
-import { YouMakeTheInternetHealther } from "./inc/YouMakeTheInternetHealther";
 import { config } from "../config";
 
 export interface GetStartedFlowProps {}
@@ -128,8 +126,9 @@ export class GetStartedFlow extends Component<
                 </li>
                 <li>
                   Continue using Firefox as you normally would, and whenever you{" "}
-                  <strong>regret watching a specific YouTube video</strong>, you
-                  should follow the steps below to report it to our researchers.
+                  <strong>regret watching a specific YouTube video</strong>,
+                  please <strong>follow the steps below</strong> to report it to
+                  our researchers.
                 </li>
                 <li>
                   Remember, we will periodically share insights based on the
@@ -147,10 +146,6 @@ export class GetStartedFlow extends Component<
               </ol>
             </section>
             <ReportRegretInstructions />
-            <section className="program-description">
-              <h2 className="program-header">About the study</h2>
-            </section>
-            <AboutTheStudy />
             <YourPrivacy />
             <section>
               <p>
@@ -166,27 +161,30 @@ export class GetStartedFlow extends Component<
               </p>
             </section>
             <section className="program-leaving">
-              <h2 className="program-header">Leaving the study</h2>
-              <p>Users are welcome to opt out of the study at any point.</p>
-              <p>To stop participating in the study:</p>
+              <h2 className="program-header">Uninstalling</h2>
+              <p>
+                Users are welcome to opt out at any point by uninstalling the
+                extension:
+              </p>
               <ol className="get-started-list">
                 <li>
                   Type <code>about:addons</code> into the location bar and press{" "}
                   <code>Enter</code>.
                 </li>
                 <li>
-                  If you see an addon called <code>RegretsReporter</code>, click{" "}
-                  <strong>Remove</strong>.
+                  Select <code>Extensions</code> on the left side if it is not
+                  already selected.
                 </li>
                 <li>
-                  Opting out of the study will immediately stop all ongoing data
-                  collection.
+                  If you see an addon called <code>RegretsReporter</code>, click{" "}
+                  <strong>Remove</strong>.
                 </li>
               </ol>
 
               <p>
-                Leaving the study will not cause your historic study data to be
-                deleted. For more information, please read our{" "}
+                Uninstalling the extension will stop all ongoing data
+                collection, only your already contributed data will be available
+                to our researchers. For more information, please read our{" "}
                 <a
                   href={config.privacyNoticeUrl}
                   target="_blank"
@@ -196,16 +194,6 @@ export class GetStartedFlow extends Component<
                 </a>
                 .
               </p>
-            </section>
-            <YouMakeTheInternetHealther />
-            <section className="program-thanks">
-              <SupplyDemographicsButton
-                loading={this.state.loading}
-                userSuppliedDemographics={this.state.userSuppliedDemographics}
-                onSaveUserSuppliedDemographics={
-                  this.onSaveUserSuppliedDemographics
-                }
-              />
             </section>
           </div>
           <footer className="footer">
