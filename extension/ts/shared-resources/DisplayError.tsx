@@ -1,7 +1,12 @@
 import * as React from "react";
 import { MouseEvent } from "react";
 
-export class DisplayError extends React.Component<{}, {}> {
+export class DisplayError extends React.Component<
+  {
+    message?: string;
+  },
+  {}
+> {
   constructor(props) {
     super(props);
   }
@@ -23,7 +28,7 @@ export class DisplayError extends React.Component<{}, {}> {
             />
           </div>
           <div className="text-section-header">
-            Could not display the "YouTube Regret" form
+            {this.props.message || "An error occurred"}
           </div>
         </header>
         <div className="panel-section panel-section-formElements">
