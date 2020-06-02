@@ -1,7 +1,7 @@
 import { RegretReport } from "./ReportSummarizer";
 import { makeUUID } from "./lib/uuid";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
-import { ConsentStatus, Store, UserSuppliedDemographics } from "./Store";
+import { Store, UserSuppliedDemographics } from "./Store";
 import { browser } from "webextension-polyfill-ts";
 import { TelemetryClient } from "./TelemetryClient";
 

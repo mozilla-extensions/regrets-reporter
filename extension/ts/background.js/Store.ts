@@ -9,10 +9,10 @@ export interface LocalStorageWrapper {
 }
 
 export interface UserSuppliedDemographics {
-  dem_age: null | string;
-  dem_gender: null | "man" | "women" | "other-description";
-  dem_gender_descr: null | string;
-  last_updated: null | string;
+  dem_age: "" | string;
+  dem_gender: "" | "man" | "woman" | "other-description" | string;
+  dem_gender_descr: "" | string;
+  last_updated: "" | string;
 }
 
 export type ConsentStatus = null | "given" | "withdrawn";
@@ -80,10 +80,10 @@ export class Store implements LocalStorageWrapper {
     );
     return (
       userSuppliedDemographics || {
-        dem_age: null,
-        dem_gender: null,
-        dem_gender_descr: null,
-        last_updated: null,
+        dem_age: "",
+        dem_gender: "",
+        dem_gender_descr: "",
+        last_updated: "",
       }
     );
   };

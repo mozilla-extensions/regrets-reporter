@@ -44,9 +44,9 @@ export class SupplyDemographicsButton extends Component<
   public state = {
     modalIsOpen: false,
     dem_age: "",
-    dem_gender: null,
+    dem_gender: "",
     dem_gender_descr: "",
-    last_updated: null,
+    last_updated: "",
   };
 
   onSubmit = async (event: MouseEvent) => {
@@ -54,9 +54,9 @@ export class SupplyDemographicsButton extends Component<
     this.closeModal();
     const { dem_age, dem_gender, dem_gender_descr } = this.state;
     const userSuppliedDemographics = {
-      dem_age: dem_age === "" ? null : dem_age,
+      dem_age,
       dem_gender,
-      dem_gender_descr: dem_gender_descr === "" ? null : dem_gender_descr,
+      dem_gender_descr,
       last_updated: new Date().toISOString(),
     };
     this.props.onSaveUserSuppliedDemographics(userSuppliedDemographics);
