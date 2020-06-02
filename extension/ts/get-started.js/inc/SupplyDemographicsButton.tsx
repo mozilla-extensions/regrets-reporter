@@ -110,9 +110,10 @@ export class SupplyDemographicsButton extends Component<
           style={customStyles}
           contentLabel="Modal"
         >
-          <>
-            <h2>Question 1:</h2>
-            <div>
+          <div className="m-8">
+            <h2>Demographics survey</h2>
+
+            <div className="m-4">
               <Input
                 label="What is your age?"
                 name="dem_age"
@@ -121,8 +122,7 @@ export class SupplyDemographicsButton extends Component<
               />
             </div>
 
-            <h2>Question 2:</h2>
-            <div>
+            <div className="m-4">
               <p>What is your gender?</p>
               <ul className="list-none">
                 {[
@@ -160,12 +160,12 @@ export class SupplyDemographicsButton extends Component<
               )}
             </div>
             <Button
-              className="bg-green hover:bg-green-dark text-white font-bold m-4 py-4 px-8 rounded-full items-center"
+              className="w-full bg-green hover:bg-green-dark text-white font-bold m-4 py-4 px-8 rounded-full items-center"
               onClick={this.onSubmit}
             >
-              Save
+              Submit
             </Button>
-          </>
+          </div>
         </Modal>
       </div>
     );
