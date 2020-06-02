@@ -329,7 +329,7 @@ export class ReportRegretForm extends Component<
 
         <div className="px-0">
           <div className="grid grid-cols-5 gap-4 -mx-0">
-            <div className="col-span-2 px-0">
+            <div className="col-span-2 row-span-3 px-0">
               <div className="panel-section panel-section-formElements">
                 <div className="panel-formElements-item">
                   <div className="flex-1 mr-1">
@@ -360,7 +360,7 @@ export class ReportRegretForm extends Component<
                       <label className="label-bold">
                         How you arrived at this video:
                       </label>
-                      <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-14">
+                      <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-48">
                         <li className="inline">
                           {
                             youTubePageEntryPointLabels[
@@ -430,38 +430,16 @@ export class ReportRegretForm extends Component<
                     <ul className="list-none">
                       {[
                         {
-                          value: "offends-me",
-                          label: "This content offends me",
+                          value: "false",
+                          label: "False",
                         },
                         {
-                          value: "sexual-in-nature",
-                          label: "This content is sexual in nature",
+                          value: "offensive",
+                          label: "Offensive",
                         },
                         {
-                          value: "extreme-ideological",
-                          label: "This is extreme ideological content",
-                        },
-                        {
-                          value: "disturbing",
-                          label: "This content was disturbing to me",
-                        },
-                        {
-                          value: "conspiracy-theory",
-                          label: "This is a conspiracy theory",
-                        },
-                        {
-                          value: "intended-for-a-younger-audience",
-                          label:
-                            "This content seems like it’s intended for a younger audience",
-                        },
-                        {
-                          value: "bad-music",
-                          label: "This is bad music",
-                        },
-                        {
-                          value: "insulting-towards-another-person",
-                          label:
-                            "This content is insulting towards another person",
+                          value: "bizarre",
+                          label: "Bizarre",
                         },
                       ].map(item => (
                         <li key={item.value} className="mb-2">
@@ -518,9 +496,7 @@ export class ReportRegretForm extends Component<
                 </div>
               </div>
             </div>
-          </div>
-          <div className="grid grid-cols-5 gap-4 -mx-0">
-            <div className="col-span-2 px-0">
+            <div className="col-span-3 px-0">
               <div className="pt-0 panel-section panel-section-formElements">
                 <div className="">
                   <div className="w-full">
