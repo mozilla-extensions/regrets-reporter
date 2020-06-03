@@ -1,9 +1,6 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
-import {
-  disableErrorReporting,
-  enableErrorReporting,
-} from "../shared-resources/ErrorReporting";
+import { initErrorReportingInBackgroundScript } from "../shared-resources/ErrorReporting";
 import { browser } from "webextension-polyfill-ts";
 import {
   CookieInstrument,
@@ -49,17 +46,23 @@ class ExtensionGlue {
   private uiInstrument: UiInstrument;
   private openwpmCrawlId: string;
   private getStartedPortListener;
-  private optionsUiPortListener;
+  private extensionPreferencesPortListener;
   private reportRegretFormPortListener;
 
   constructor() {}
 
   async init() {
     // Enable error reporting if not opted out
-    const extensionPreferences = await store.getExtensionPreferences();
-    if (extensionPreferences.enableErrorReporting) {
-      enableErrorReporting();
-    }
+    this.extensionPreferencesPortListener = initErrorReportingInBackgroundScript(
+      store,
+      [
+        "port-from-report-regret-form:index",
+        "port-from-options-ui:index",
+        "port-from-options-ui:form",
+        "port-from-get-started:index",
+        "port-from-ui-instrument-content-script:index",
+      ],
+    );
     // Set up a connection / listener for the get-started script to be able to query consent status
     let portFromGetStarted;
     this.getStartedPortListener = p => {
@@ -88,36 +91,6 @@ class ExtensionGlue {
       });
     };
     browser.runtime.onConnect.addListener(this.getStartedPortListener);
-    // Set up a connection / listener for the options-ui script to be able to query preferences
-    let portFromOptionsUi;
-    this.optionsUiPortListener = p => {
-      if (p.name !== "port-from-options-ui") {
-        return;
-      }
-      console.log("Connected to options-ui script");
-      portFromOptionsUi = p;
-      portFromOptionsUi.onMessage.addListener(async function(m) {
-        console.log("Message from get-started script:", { m });
-        if (m.requestExtensionPreferences) {
-          portFromOptionsUi.postMessage({
-            extensionPreferences: await store.getExtensionPreferences(),
-          });
-        }
-        if (m.updatedExtensionPreferences) {
-          await store.setExtensionPreferences(m.updatedExtensionPreferences);
-          const updatedExtensionPreferences = await store.getExtensionPreferences();
-          if (updatedExtensionPreferences.enableErrorReporting) {
-            enableErrorReporting();
-          } else {
-            disableErrorReporting();
-          }
-          portFromOptionsUi.postMessage({
-            extensionPreferences: updatedExtensionPreferences,
-          });
-        }
-      });
-    };
-    browser.runtime.onConnect.addListener(this.optionsUiPortListener);
   }
 
   async askForConsent() {
@@ -335,8 +308,10 @@ class ExtensionGlue {
     if (this.getStartedPortListener) {
       browser.runtime.onMessage.removeListener(this.getStartedPortListener);
     }
-    if (this.optionsUiPortListener) {
-      browser.runtime.onMessage.removeListener(this.optionsUiPortListener);
+    if (this.extensionPreferencesPortListener) {
+      browser.runtime.onMessage.removeListener(
+        this.extensionPreferencesPortListener,
+      );
     }
     if (this.reportRegretFormPortListener) {
       browser.runtime.onMessage.removeListener(

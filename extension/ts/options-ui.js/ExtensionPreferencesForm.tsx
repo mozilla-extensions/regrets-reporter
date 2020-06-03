@@ -37,7 +37,7 @@ export class ExtensionPreferencesForm extends Component<
   async componentDidMount(): Promise<void> {
     // console.log("Connecting to the background script");
     this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
-      name: "port-from-options-ui",
+      name: "port-from-options-ui:form",
     });
 
     this.backgroundContextPort.postMessage({
@@ -75,7 +75,7 @@ export class ExtensionPreferencesForm extends Component<
     updatedExtensionPreferences: ExtensionPreferences,
   ) => {
     this.backgroundContextPort.postMessage({
-      updatedExtensionPreferences,
+      saveExtensionPreferences: { updatedExtensionPreferences },
     });
   };
 

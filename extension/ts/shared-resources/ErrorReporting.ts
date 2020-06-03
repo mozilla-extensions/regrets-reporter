@@ -1,5 +1,13 @@
 import * as Sentry from "@sentry/browser";
 import { config } from "../config";
+import { ExtensionPreferences, Store } from "../background.js/Store";
+import {
+  communicateExtensionPreferenceChangesToContentScripts,
+  subscribeToExtensionPreferenceChangesInBackgroundScript,
+  subscribeToExtensionPreferenceChangesInContentScript,
+} from "./subscribeToExtensionPreferenceChanges";
+import { Runtime } from "webextension-polyfill-ts";
+import Port = Runtime.Port;
 
 Sentry.init({ dsn: config.sentryDsn });
 
@@ -14,6 +22,45 @@ const disableErrorReporting = () =>
 
 // Start with Sentry disabled
 disableErrorReporting();
+
+export const toggleErrorReportingBasedAsPerExtensionPreferences = (
+  extensionPreferences: ExtensionPreferences,
+) => {
+  if (extensionPreferences.enableErrorReporting) {
+    enableErrorReporting();
+    console.info("Enabled error reporting");
+  } else {
+    disableErrorReporting();
+    console.info("Disabled error reporting");
+  }
+};
+
+export const initErrorReportingInBackgroundScript = async (
+  store: Store,
+  portNames: string[],
+): Promise<(port: Port) => void> => {
+  console.info(
+    `Inquiring about error reporting preference in background script`,
+  );
+  await subscribeToExtensionPreferenceChangesInBackgroundScript(
+    store,
+    toggleErrorReportingBasedAsPerExtensionPreferences,
+  );
+  // Set up the port listeners that initErrorReportingInContentScript()
+  // expects to be available
+  return communicateExtensionPreferenceChangesToContentScripts(
+    store,
+    portNames,
+  );
+};
+
+export const initErrorReportingInContentScript = async (portName: string) => {
+  console.info(`Inquiring about error reporting preference in "${portName}"`);
+  await subscribeToExtensionPreferenceChangesInContentScript(
+    portName,
+    toggleErrorReportingBasedAsPerExtensionPreferences,
+  );
+};
 
 /**
  * Required for Sentry to map source-map paths properly
@@ -47,4 +94,4 @@ Sentry.configureScope(scope => {
   });
 });
 
-export { Sentry, enableErrorReporting, disableErrorReporting };
+export { Sentry };

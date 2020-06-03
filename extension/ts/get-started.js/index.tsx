@@ -1,4 +1,4 @@
-import "../shared-resources/ErrorReporting";
+import { initErrorReportingInContentScript } from "../shared-resources/ErrorReporting";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -8,9 +8,13 @@ import { GetStartedFlow } from "./GetStartedFlow";
 
 import "./index.css";
 
-ReactDOM.render(
-  <ErrorBoundary>
-    <GetStartedFlow />
-  </ErrorBoundary>,
-  document.getElementById("app"),
-);
+const init = async () => {
+  await initErrorReportingInContentScript("port-from-get-started:index");
+  ReactDOM.render(
+    <ErrorBoundary>
+      <GetStartedFlow />
+    </ErrorBoundary>,
+    document.getElementById("app"),
+  );
+};
+init();
