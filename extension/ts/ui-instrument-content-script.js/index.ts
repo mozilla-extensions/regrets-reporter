@@ -1,4 +1,4 @@
-import { Sentry } from "../shared-resources/Sentry";
+import "../shared-resources/ErrorReporting";
 import { injectUiInstrumentPageScript } from "@openwpm/webext-instrumentation";
 
 injectUiInstrumentPageScript(

@@ -1,4 +1,4 @@
-import { Sentry } from "../shared-resources/Sentry";
+import "../shared-resources/ErrorReporting";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";

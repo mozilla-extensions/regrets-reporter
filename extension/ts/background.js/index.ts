@@ -1,6 +1,9 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
-import { Sentry } from "../shared-resources/Sentry";
+import {
+  disableErrorReporting,
+  enableErrorReporting,
+} from "../shared-resources/ErrorReporting";
 import { browser } from "webextension-polyfill-ts";
 import {
   CookieInstrument,
@@ -52,6 +55,11 @@ class ExtensionGlue {
   constructor() {}
 
   async init() {
+    // Enable error reporting if not opted out
+    const extensionPreferences = await store.getExtensionPreferences();
+    if (extensionPreferences.enableErrorReporting) {
+      enableErrorReporting();
+    }
     // Set up a connection / listener for the get-started script to be able to query consent status
     let portFromGetStarted;
     this.getStartedPortListener = p => {
@@ -97,9 +105,14 @@ class ExtensionGlue {
         }
         if (m.updatedExtensionPreferences) {
           await store.setExtensionPreferences(m.updatedExtensionPreferences);
-          // TODO: React on changes to preferences here
+          const updatedExtensionPreferences = await store.getExtensionPreferences();
+          if (updatedExtensionPreferences.enableErrorReporting) {
+            enableErrorReporting();
+          } else {
+            disableErrorReporting();
+          }
           portFromOptionsUi.postMessage({
-            extensionPreferences: await store.getExtensionPreferences(),
+            extensionPreferences: updatedExtensionPreferences,
           });
         }
       });

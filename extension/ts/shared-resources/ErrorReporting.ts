@@ -3,12 +3,24 @@ import { config } from "../config";
 
 Sentry.init({ dsn: config.sentryDsn });
 
+const enableErrorReporting = () =>
+  (Sentry.getCurrentHub()
+    .getClient()
+    .getOptions().enabled = true);
+const disableErrorReporting = () =>
+  (Sentry.getCurrentHub()
+    .getClient()
+    .getOptions().enabled = false);
+
+// Start with Sentry disabled
+disableErrorReporting();
+
 /**
  * Required for Sentry to map source-map paths properly
  */
 Sentry.configureScope(scope => {
   scope.addEventProcessor(async (event: any) => {
-    // console.log("Unprocessed sentry event", Object.assign({}, {event}));
+    console.log("Unprocessed sentry event", Object.assign({}, { event }));
 
     const normalizeUrl = url => {
       return url.replace(
@@ -30,9 +42,9 @@ Sentry.configureScope(scope => {
       );
     }
 
-    // console.log("Processed sentry event", {event});
+    console.log("Processed sentry event", { event });
     return event;
   });
 });
 
-export { Sentry };
+export { Sentry, enableErrorReporting, disableErrorReporting };
