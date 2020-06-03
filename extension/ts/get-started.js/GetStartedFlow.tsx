@@ -43,7 +43,7 @@ export class GetStartedFlow extends Component<
     // When we have received user supplied demographics, update state to reflect it
     this.backgroundContextPort.onMessage.addListener(
       (m: { userSuppliedDemographics: UserSuppliedDemographics }) => {
-        console.log("get-started message from backgroundContextPort", { m });
+        // console.log("get-started message from backgroundContextPort", { m });
         const { userSuppliedDemographics } = m;
         this.setState({
           loading: false,

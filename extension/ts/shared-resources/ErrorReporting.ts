@@ -20,7 +20,7 @@ disableErrorReporting();
  */
 Sentry.configureScope(scope => {
   scope.addEventProcessor(async (event: any) => {
-    console.log("Unprocessed sentry event", Object.assign({}, { event }));
+    // console.log("Unprocessed sentry event", Object.assign({}, { event }));
 
     const normalizeUrl = url => {
       return url.replace(
@@ -42,7 +42,7 @@ Sentry.configureScope(scope => {
       );
     }
 
-    console.log("Processed sentry event", { event });
+    // console.log("Processed sentry event", { event });
     return event;
   });
 });

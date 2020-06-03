@@ -56,7 +56,7 @@ export class OpenWpmPacketHandler {
     }
     const level = "info";
     const logEntry: LogEntry = { level, msg };
-    console.log(`OpenWPM INFO log message: ${msg}`);
+    console.info(`OpenWPM INFO log message: ${msg}`);
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       "openwpm_log",
       logEntry,
