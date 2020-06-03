@@ -4,6 +4,7 @@ import { MouseEvent } from "react";
 export class DisplayError extends React.Component<
   {
     message?: string;
+    eventId?: string;
   },
   {}
 > {
