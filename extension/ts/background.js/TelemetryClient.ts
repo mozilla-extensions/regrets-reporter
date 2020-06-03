@@ -2,6 +2,8 @@ import { config } from "../config";
 import { AnnotatedSharedData } from "./DataSharer";
 import { validateSchema } from "./lib/validateSchema";
 import { gzip } from "pako";
+import { Sentry } from "../shared-resources/ErrorReporting";
+import { flatten } from "flat";
 
 declare namespace browser.telemetry {
   function submitPing(
@@ -58,13 +60,23 @@ export class TelemetryClient {
     const validationResult = validateSchema(payload);
 
     if (!validationResult.valid) {
-      console.error("Invalid telemetry payload", { payload, validationResult });
-      throw new Error("Invalid telemetry payload");
+      const exception = new Error("Invalid telemetry payload");
+      Sentry.withScope(scope => {
+        scope.setExtras({ validationResult: flatten(validationResult) });
+        Sentry.captureException(exception);
+        console.error("Invalid telemetry payload", {
+          payload,
+          validationResult,
+        });
+      });
+      return false;
     }
   };
 
   submitPayload = async (payload: AnnotatedSharedData) => {
-    this.validatePayload(payload);
+    if (!this.validatePayload(payload)) {
+      return false;
+    }
 
     const namespace = "regrets-reporter";
     const docType = "regrets-reporter-update";
