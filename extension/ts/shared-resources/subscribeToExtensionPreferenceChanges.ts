@@ -77,7 +77,7 @@ export const communicateExtensionPreferenceChangesToContentScripts = async (
     }
     port.onMessage.addListener(async function(m) {
       connectedPorts[port.name] = port;
-      console.debug(`Message from port "${port.name}"`, { m });
+      // console.debug(`Message from port "${port.name}"`, { m });
       if (m.requestExtensionPreferences) {
         port.postMessage({
           extensionPreferences: await store.getExtensionPreferences(),

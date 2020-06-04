@@ -90,7 +90,13 @@ Sentry.configureScope(scope => {
       event.culprit = normalizeUrl(event.culprit);
     }
 
-    if (event.exception) {
+    if (
+      event.exception &&
+      event.exception.values &&
+      event.exception.values[0] &&
+      event.exception.values[0].stacktrace &&
+      event.exception.values[0].stacktrace.frames
+    ) {
       event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames.map(
         frame => {
           frame.filename = normalizeUrl(frame.filename);

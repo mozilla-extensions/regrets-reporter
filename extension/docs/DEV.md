@@ -142,7 +142,7 @@ Then revert the top rows in the schema (since it includes manually added/modifie
 
 ## Validating the generated JSON schema
 
-1. Update the corresponding schema files in a local `mozilla-pipeline-schemas` repo.
+1. Update the corresponding schema files in a local `mozilla-pipeline-schemas` repo. (Export shared data to get valid example payloads).
 
 2. Run:
 

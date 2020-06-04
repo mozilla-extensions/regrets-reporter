@@ -196,32 +196,34 @@ export class OpenWpmPacketHandler {
       return record.frame_id === 0;
     }
     if (instrument === "http_responses" || instrument === "http_requests") {
-      const urlType = classifyYouTubeNavigationUrlType(record.url);
-      if (urlType === "misc_xhr") {
+      const { url } = record;
+      const urlType = classifyYouTubeNavigationUrlType(url);
+      if (
+        urlType === "misc_xhr" ||
+        urlType === "prefetch" ||
+        urlType === "search_results_page_load_more_results"
+      ) {
         return false;
       }
       if (
-        [
-          "watch_page",
-          "user_page",
-          "channel_page",
-          "search_results_page",
-        ].includes(urlType)
+        urlType === "watch_page" ||
+        urlType === "user_page" ||
+        urlType === "channel_page" ||
+        urlType === "search_results_page" ||
+        urlType === "youtube_main_page"
       ) {
         return true;
       }
-      // Anonymously report "other" urls to be able to classify urls better
-      // as the YouTube API / protocol changes over time
       if (urlType === "other") {
+        // Anonymously report "other" urls to be able to classify urls better
+        // as the YouTube API / protocol changes over time
         captureExceptionWithExtras(
           new Error("Encountered an unclassified YouTube URL"),
-          { url: record.url },
+          { url },
         );
-        return false;
+        console.warn("Encountered an unclassified YouTube URL", { url });
       }
-      if (urlType === "youtube_main_page") {
-        return true;
-      }
+      return false;
     }
     if (instrument === "ui_interactions") {
       return record.frame_id === 0;
