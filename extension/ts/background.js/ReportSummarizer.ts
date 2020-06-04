@@ -196,7 +196,6 @@ export class ReportSummarizer {
       youTubeNavigations.push(
         ...this.extractYouTubeNavigationsFromNavigationBatch(
           topFrameNavigationBatch,
-          navigationBatchesByUuid,
         ),
       );
     }
@@ -206,7 +205,6 @@ export class ReportSummarizer {
 
   extractYouTubeNavigationsFromNavigationBatch(
     topFrameNavigationBatch: TrimmedNavigationBatch,
-    navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
   ): YouTubeNavigation[] {
     const youTubeNavigations: YouTubeNavigation[] = [];
 
@@ -237,35 +235,22 @@ export class ReportSummarizer {
         topFrameHttpResponseEnvelopes[i + 1] || false;
 
       // The corresponding http request(s)
-
       const httpRequestEnvelopeMatcher = childEnvelope =>
         childEnvelope.type === "http_requests" &&
         childEnvelope.httpRequest.request_id ===
           currentHttpResponseEnvelope.httpResponse.request_id;
 
-      let httpRequestEnvelope = topFrameNavigationBatch.childEnvelopes
+      const httpRequestEnvelope = topFrameNavigationBatch.childEnvelopes
         .slice()
         .reverse()
-        .find(httpRequestEnvelopeMatcher);
+        .find(
+          childEnvelope =>
+            childEnvelope.type === "http_requests" &&
+            childEnvelope.httpRequest.request_id ===
+              currentHttpResponseEnvelope.httpResponse.request_id,
+        );
       // console.log({ httpRequestEnvelope });
 
-      // Sometimes the http request envelope was created within the lifespan of a previous webNavigation,
-      // thus we need to also check other navigation batches if it resides over there
-      if (!httpRequestEnvelope) {
-        Object.keys(navigationBatchesByUuid).forEach(navUuid => {
-          const matchingHttpRequestEnvelope = navigationBatchesByUuid[
-            navUuid
-          ].childEnvelopes
-            .slice()
-            .reverse()
-            .find(httpRequestEnvelopeMatcher);
-          if (matchingHttpRequestEnvelope) {
-            httpRequestEnvelope = matchingHttpRequestEnvelope;
-          }
-        });
-      }
-
-      // If the http request is still not found, it is unexpected
       if (!httpRequestEnvelope) {
         throw new Error(
           `The matching httpRequestEnvelope was not found for request id ${currentHttpResponseEnvelope.httpResponse.request_id}`,
