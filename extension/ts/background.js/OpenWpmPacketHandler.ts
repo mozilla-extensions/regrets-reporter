@@ -206,10 +206,18 @@ export class OpenWpmPacketHandler {
           "user_page",
           "channel_page",
           "search_results_page",
-          "other",
         ].includes(urlType)
       ) {
         return true;
+      }
+      // Anonymously report "other" urls to be able to classify urls better
+      // as the YouTube API / protocol changes over time
+      if (urlType === "other") {
+        captureExceptionWithExtras(
+          new Error("Encountered an unclassified YouTube URL"),
+          { url: record.url },
+        );
+        return false;
       }
       if (urlType === "youtube_main_page") {
         return true;
