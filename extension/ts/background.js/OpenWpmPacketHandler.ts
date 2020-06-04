@@ -3,6 +3,7 @@ import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { HttpResponse } from "@openwpm/webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
 import { classifyYouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
+import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 
 export interface LogEntry {
   level: string;
@@ -88,6 +89,7 @@ export class OpenWpmPacketHandler {
     }
     const level = "error";
     const logEntry: LogEntry = { level, msg };
+    captureExceptionWithExtras(new Error("OpenWPM ERROR log message"), { msg });
     console.error(`OpenWPM ERROR log message: ${msg}`);
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       "openwpm_log",
@@ -104,6 +106,9 @@ export class OpenWpmPacketHandler {
     }
     const level = "critical";
     const logEntry: LogEntry = { level, msg };
+    captureExceptionWithExtras(new Error("OpenWPM CRITICAL log message"), {
+      msg,
+    });
     console.error(`OpenWPM CRITICAL log message: ${msg}`);
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       "openwpm_log",
@@ -216,7 +221,14 @@ export class OpenWpmPacketHandler {
     if (instrument === "ui_states") {
       return record.frame_id === 0;
     }
-    console.log("TODO Keep this packet?", { instrument, record });
+    captureExceptionWithExtras(
+      new Error("Unhandled OpenWPM packet encountered in acceptPacket()"),
+      { instrument, record },
+    );
+    console.warn("Unhandled OpenWPM packet encountered in acceptPacket()", {
+      instrument,
+      record,
+    });
     return false;
   };
 

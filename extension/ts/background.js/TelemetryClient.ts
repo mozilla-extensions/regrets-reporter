@@ -2,8 +2,7 @@ import { config } from "../config";
 import { AnnotatedSharedData } from "./DataSharer";
 import { validateSchema } from "./lib/validateSchema";
 import { gzip } from "pako";
-import { Sentry } from "../shared-resources/ErrorReporting";
-import { flatten } from "flat";
+import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 
 declare namespace browser.telemetry {
   function submitPing(
@@ -61,13 +60,10 @@ export class TelemetryClient {
 
     if (!validationResult.valid) {
       const exception = new Error("Invalid telemetry payload");
-      Sentry.withScope(scope => {
-        scope.setExtras({ validationResult: flatten(validationResult) });
-        Sentry.captureException(exception);
-        console.error("Invalid telemetry payload", {
-          payload,
-          validationResult,
-        });
+      captureExceptionWithExtras(exception, { validationResult });
+      console.error("Invalid telemetry payload", {
+        payload,
+        validationResult,
       });
       return false;
     }
@@ -105,6 +101,10 @@ export class TelemetryClient {
       } else {
         // network error or json parsing error
       }
+      captureExceptionWithExtras(error, {
+        msg:
+          "Error encountered when submitting a telemetry payload. Returning an empty result",
+      });
       console.error(
         "Error encountered when submitting a telemetry payload. Returning an empty result",
       );

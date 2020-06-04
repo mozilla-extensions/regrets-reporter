@@ -29,6 +29,7 @@ import { DisplayError } from "../shared-resources/DisplayError";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 import { config } from "../config";
+import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 
 const youTubePageEntryPointLabels: {
   [k in YouTubePageEntryPoint]: string;
@@ -168,6 +169,7 @@ export class ReportRegretForm extends Component<
           });
           return;
         }
+        captureExceptionWithExtras(new Error("Unexpected message"), { m });
         console.error("Unexpected message", { m });
         await this.setState({
           loading: false,

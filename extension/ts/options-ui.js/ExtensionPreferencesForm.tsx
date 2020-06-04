@@ -11,6 +11,7 @@ import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
 import { DisplayError } from "../shared-resources/DisplayError";
 import { ExtensionPreferences } from "../background.js/Store";
+import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 
 export interface ExtensionPreferencesFormProps {}
 
@@ -57,6 +58,7 @@ export class ExtensionPreferencesForm extends Component<
           });
           return null;
         }
+        captureExceptionWithExtras(new Error("Unexpected message"), { m });
         console.error("Unexpected message", { m });
         await this.setState({
           loading: false,

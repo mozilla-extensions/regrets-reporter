@@ -1,6 +1,9 @@
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(extensionGlue)" }]*/
 
-import { initErrorReportingInBackgroundScript } from "../shared-resources/ErrorReporting";
+import {
+  captureExceptionWithExtras,
+  initErrorReportingInBackgroundScript,
+} from "../shared-resources/ErrorReporting";
 import { browser } from "webextension-polyfill-ts";
 import {
   CookieInstrument,
@@ -152,6 +155,9 @@ class ExtensionGlue {
               regretReportData,
             });
           } catch (error) {
+            captureExceptionWithExtras(error, {
+              msg: "Error encountered during regret report data processing",
+            });
             console.error(
               "Error encountered during regret report data processing",
               error,
@@ -173,6 +179,10 @@ class ExtensionGlue {
         // Keep track of aggregated statistics
         await youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
       } catch (error) {
+        captureExceptionWithExtras(error, {
+          msg:
+            "Error encountered during youTubeUsageStatistics.seenNavigationBatch",
+        });
         console.error(
           "Error encountered during youTubeUsageStatistics.seenNavigationBatch",
           error,

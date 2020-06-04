@@ -8,6 +8,7 @@ import {
 } from "./subscribeToExtensionPreferenceChanges";
 import { Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
+import { flatten } from "flat";
 
 Sentry.init({ dsn: config.sentryDsn });
 
@@ -60,6 +61,15 @@ export const initErrorReportingInContentScript = async (portName: string) => {
     portName,
     toggleErrorReportingBasedAsPerExtensionPreferences,
   );
+};
+
+export const captureExceptionWithExtras = (exception, extras = null) => {
+  Sentry.withScope(scope => {
+    if (extras !== null) {
+      scope.setExtras(flatten(extras));
+    }
+    Sentry.captureException(exception);
+  });
 };
 
 /**

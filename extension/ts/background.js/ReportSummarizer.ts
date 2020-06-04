@@ -10,6 +10,7 @@ import {
   YouTubeNavigationUrlType,
 } from "./lib/youTubeNavigationUrlType";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
+import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 
 type YouTubeNavigationLinkPosition =
   | "search_results"
@@ -481,7 +482,13 @@ export class ReportSummarizer {
         /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
       );
       if (!matchArray) {
-        console.error("No MATCH", { matchArray });
+        captureExceptionWithExtras(
+          new Error("No match of ytInitialData in htmlContent"),
+          { matchArray },
+        );
+        console.error("No match of ytInitialData in htmlContent", {
+          matchArray,
+        });
       }
       ytInitialData = JSON.parse(matchArray[1]);
     } else {
@@ -495,6 +502,9 @@ export class ReportSummarizer {
         },
       );
       if (!xhrResponseItemWithYtInitialData) {
+        captureExceptionWithExtras(
+          new Error("No xhrResponseItemWithYtInitialData"),
+        );
         console.error("No xhrResponseItemWithYtInitialData");
         console.dir({ xhrResponse }, { depth: 4 });
       }
@@ -510,6 +520,7 @@ export class ReportSummarizer {
     try {
       video_id = ytInitialData.currentVideoEndpoint.watchEndpoint.videoId;
     } catch (err) {
+      captureExceptionWithExtras(err, { attribute: "video_id" });
       console.error("video_id", err.message);
       // console.dir({ ytInitialData }, {depth: 5});
       video_id = "<failed>";
@@ -532,6 +543,7 @@ export class ReportSummarizer {
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
             .videoPrimaryInfoRenderer.title.runs[0].text;
       } catch (err) {
+        captureExceptionWithExtras(err, { attribute: "video_title" });
         console.error("video_title", err.message);
         video_title = "<failed>";
       }
@@ -541,6 +553,7 @@ export class ReportSummarizer {
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
             .videoPrimaryInfoRenderer.dateText.simpleText;
       } catch (err) {
+        captureExceptionWithExtras(err, { attribute: "video_posting_date" });
         console.error("video_posting_date", err.message);
         video_posting_date = "";
       }
@@ -554,6 +567,9 @@ export class ReportSummarizer {
           10,
         );
       } catch (err) {
+        captureExceptionWithExtras(err, {
+          attribute: "view_count_at_navigation",
+        });
         console.error("view_count_at_navigation", err.message);
         view_count_at_navigation = -1;
       }
@@ -564,10 +580,16 @@ export class ReportSummarizer {
             .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
             .shortViewCount.simpleText;
       } catch (err) {
+        captureExceptionWithExtras(err, {
+          attribute: "view_count_at_navigation_short",
+        });
         console.error("view_count_at_navigation_short", err.message);
         view_count_at_navigation_short = "<failed>";
       }
     } catch (err) {
+      captureExceptionWithExtras(err, {
+        attribute: "video_* within videoPrimaryInfoRenderer",
+      });
       console.error("video_* within videoPrimaryInfoRenderer", err.message);
       video_title = "<failed>";
     }
@@ -583,6 +605,7 @@ export class ReportSummarizer {
         twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer
           .videoSecondaryInfoRenderer.description.runs[0].text;
     } catch (err) {
+      captureExceptionWithExtras(err, { attribute: "video_description" });
       console.error("video_description", err.message);
       video_description = "<failed>";
     }
@@ -752,6 +775,12 @@ export class ReportSummarizer {
                   if (el.videoRenderer) {
                     return el.videoRenderer.videoId;
                   }
+                  captureExceptionWithExtras(
+                    new Error(
+                      "search_results_page_other_indirect_videos unhandled el",
+                    ),
+                    { el },
+                  );
                   console.error(
                     "search_results_page_other_indirect_videos unhandled el:",
                   );
@@ -768,11 +797,15 @@ export class ReportSummarizer {
             }
             return "(indirect-videos)";
           }
+          captureExceptionWithExtras(new Error("search_results unhandled el"), {
+            el,
+          });
           console.error("search_results unhandled el:");
           console.dir({ el }, { depth: 4 });
         },
       );
     } catch (err) {
+      captureExceptionWithExtras(err);
       console.error("search_results", err.message);
       console.dir({ ytInitialData }, { depth: 4 });
       search_results = "<failed>";
