@@ -50,11 +50,12 @@ export class TelemetryClient {
     )}`;
   };
 
+  /**
+   * Validate the payload using the compiled ajv validate() function
+   * @param payload
+   */
   validatePayload = (payload: AnnotatedSharedData) => {
-    console.debug(
-      "Telemetry about to be validated using the compiled ajv validate() function:",
-      payload,
-    );
+    console.debug("Telemetry about to be validated:", payload);
 
     const validationResult = validateSchema(payload);
 
@@ -67,6 +68,7 @@ export class TelemetryClient {
       });
       return false;
     }
+    return true;
   };
 
   submitPayload = async (payload: AnnotatedSharedData) => {
@@ -112,15 +114,11 @@ export class TelemetryClient {
       return false;
     });
 
-    console.log({ dataResponse });
     if (dataResponse === false) {
       return false;
     }
-    if (dataResponse === true) {
-      return true;
-    }
-    const response = await dataResponse.text();
-    console.log({ response });
+    const response = dataResponse === true ? true : await dataResponse.text();
+    console.debug("Telemetry submitted", { response });
     return response;
   };
 }

@@ -14,14 +14,16 @@ describe("TelemetryClient", function() {
     nock(config.telemetryServer)
       .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
       .query(true)
-      .reply(200, (uri, requestBody) => {
-        if (this.req) {
-          console.log("path:", this.req.path);
-          console.log("headers:", this.req.headers);
-        }
-        console.log({ requestBody });
-        return "foo";
-      });
+      .reply(
+        200,
+        (uri, requestBody) => {
+          return "OK";
+        },
+        {
+          "accept-encoding": "gzip, deflate",
+          "content-type": "text/plain",
+        },
+      );
 
     const store = new Store(mockLocalStorage);
     const dataSharer = new DataSharer(store);
@@ -35,22 +37,25 @@ describe("TelemetryClient", function() {
     );
     console.log({ submitPayloadReturnValue });
 
-    assert.equal("bar", "bar");
+    assert.equal(submitPayloadReturnValue, "OK");
   });
 
+  /* TODO
   it("unsuccessful submitPayload request results in an unsent request in the queue", async function() {
     nock.disableNetConnect();
     nock(config.telemetryServer)
-      .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
+      .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.* /)
       .query(true)
-      .reply(200, (uri, requestBody) => {
-        if (this.req) {
-          console.log("path:", this.req.path);
-          console.log("headers:", this.req.headers);
-        }
-        console.log({ requestBody });
-        return "foo";
-      });
+      .reply(
+        200,
+        (uri, requestBody) => {
+          return "OK";
+        },
+        {
+          "accept-encoding": "gzip, deflate",
+          "content-type": "text/plain",
+        },
+      );
 
     const store = new Store(mockLocalStorage);
     const dataSharer = new DataSharer(store);
@@ -64,6 +69,7 @@ describe("TelemetryClient", function() {
     );
     console.log({ submitPayloadReturnValue });
 
-    assert.equal("bar", "bar");
+    assert.equal(submitPayloadReturnValue, "OK");
   });
+  */
 });
