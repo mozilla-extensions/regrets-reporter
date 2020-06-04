@@ -8,13 +8,6 @@ export interface LocalStorageWrapper {
   set: StorageArea["set"];
 }
 
-export interface UserSuppliedDemographics {
-  dem_age: "" | string;
-  dem_gender: "" | "man" | "woman" | "other-description" | string;
-  dem_gender_descr: "" | string;
-  last_updated: "" | string;
-}
-
 export type ConsentStatus = null | "given" | "withdrawn";
 
 export interface ExtensionPreferences {
@@ -72,25 +65,5 @@ export class Store implements LocalStorageWrapper {
     extensionPreferences: ExtensionPreferences,
   ) => {
     await this.set({ extensionPreferences });
-  };
-
-  getUserSuppliedDemographics = async (): Promise<UserSuppliedDemographics> => {
-    const { userSuppliedDemographics } = await this.get(
-      "userSuppliedDemographics",
-    );
-    return (
-      userSuppliedDemographics || {
-        dem_age: "",
-        dem_gender: "",
-        dem_gender_descr: "",
-        last_updated: "",
-      }
-    );
-  };
-
-  setUserSuppliedDemographics = async (
-    userSuppliedDemographics: UserSuppliedDemographics,
-  ) => {
-    await this.set({ userSuppliedDemographics });
   };
 }

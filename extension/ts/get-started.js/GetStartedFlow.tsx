@@ -1,83 +1,29 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
-import { browser, Runtime } from "webextension-polyfill-ts";
-import Port = Runtime.Port;
 import "photon-colors/photon-colors.css";
 import "../shared-resources/photon-components-web/index.css";
 import "../shared-resources/photon-components-web/attributes";
 import "../shared-resources/tailwind.css";
-import { SupplyDemographicsButton } from "./inc/SupplyDemographicsButton";
-import { UserSuppliedDemographics } from "../background.js/Store";
 import { ReportRegretInstructions } from "./inc/ReportRegretInstructions";
 import { YourPrivacy } from "./inc/YourPrivacy";
 import { config } from "../config";
 
 export interface GetStartedFlowProps {}
 
-export interface GetStartedFlowState {
-  loading: boolean;
-  userSuppliedDemographics: UserSuppliedDemographics;
-}
+export interface GetStartedFlowState {}
 
 export class GetStartedFlow extends Component<
   GetStartedFlowProps,
   GetStartedFlowState
 > {
-  public state = {
-    loading: true,
-    userSuppliedDemographics: null,
-  };
-
-  private backgroundContextPort: Port;
-
-  componentDidMount(): void {
-    this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
-      name: "port-from-get-started",
-    });
-
-    // Send a request to gather the current consent status
-    this.backgroundContextPort.postMessage({
-      requestUserSuppliedDemographics: true,
-    });
-
-    // When we have received user supplied demographics, update state to reflect it
-    this.backgroundContextPort.onMessage.addListener(
-      (m: { userSuppliedDemographics: UserSuppliedDemographics }) => {
-        // console.log("get-started message from backgroundContextPort", { m });
-        const { userSuppliedDemographics } = m;
-        this.setState({
-          loading: false,
-          userSuppliedDemographics,
-        });
-      },
-    );
-  }
+  public state = {};
 
   cancel(event: MouseEvent) {
     event.preventDefault();
     window.close();
   }
 
-  onSaveUserSuppliedDemographics = async (
-    userSuppliedDemographics: UserSuppliedDemographics,
-  ) => {
-    this.setState({
-      userSuppliedDemographics,
-    });
-    this.backgroundContextPort.postMessage({
-      updatedUserSuppliedDemographics: userSuppliedDemographics,
-    });
-  };
-
-  report = async (event: MouseEvent) => {
-    event.preventDefault();
-    window.close();
-  };
-
   render() {
-    if (this.state.loading) {
-      return null;
-    }
     return (
       <div className={`app-container enrolled`}>
         <div className="page-container">
@@ -103,26 +49,6 @@ export class GetStartedFlow extends Component<
             <section className="program-instructions">
               <h2 className="program-header">Next Steps</h2>
               <ol className="get-started-list">
-                <li>
-                  <span
-                    className={
-                      this.state.userSuppliedDemographics.last_updated === null
-                        ? ""
-                        : "line-through"
-                    }
-                  >
-                    Tell us a bit about yourself (optional):
-                  </span>
-                  <SupplyDemographicsButton
-                    loading={this.state.loading}
-                    userSuppliedDemographics={
-                      this.state.userSuppliedDemographics
-                    }
-                    onSaveUserSuppliedDemographics={
-                      this.onSaveUserSuppliedDemographics
-                    }
-                  />
-                </li>
                 <li>
                   Continue using Firefox as you normally would, and whenever you{" "}
                   <strong>regret watching a specific YouTube video</strong>,

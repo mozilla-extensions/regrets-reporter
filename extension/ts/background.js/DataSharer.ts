@@ -1,15 +1,13 @@
 import { RegretReport } from "./ReportSummarizer";
 import { makeUUID } from "./lib/uuid";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
-import { Store, UserSuppliedDemographics } from "./Store";
-import { browser } from "webextension-polyfill-ts";
+import { Store } from "./Store";
 import { TelemetryClient } from "./TelemetryClient";
 
 export interface SharedDataEventMetadata {
   client_timestamp: string;
   extension_installation_uuid: string;
   event_uuid: string;
-  user_supplied_demographics: UserSuppliedDemographics;
   amount_of_regret_reports_since_consent_was_given: number;
   browser_info: {
     build_id: string;
@@ -23,9 +21,6 @@ export interface SharedDataEventMetadata {
 export interface SharedData {
   regret_report?: RegretReport;
   youtube_usage_statistics_update?: YouTubeUsageStatisticsUpdate;
-  user_supplied_demographics_update?: {
-    user_supplied_demographics: UserSuppliedDemographics;
-  };
 }
 
 export interface AnnotatedSharedData extends SharedData {
@@ -53,7 +48,6 @@ export class DataSharer {
         client_timestamp: new Date().toISOString(),
         extension_installation_uuid: await this.store.extensionInstallationUuid(),
         event_uuid: makeUUID(),
-        user_supplied_demographics: await this.store.getUserSuppliedDemographics(),
         amount_of_regret_reports_since_consent_was_given,
         browser_info: {
           build_id: browserInfo.buildID,

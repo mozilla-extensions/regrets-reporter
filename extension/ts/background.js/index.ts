@@ -63,38 +63,9 @@ class ExtensionGlue {
         "port-from-ui-instrument-content-script:index",
       ],
     );
-    // Set up a connection / listener for the get-started script to be able to query consent status
-    let portFromGetStarted;
-    this.getStartedPortListener = p => {
-      if (p.name !== "port-from-get-started") {
-        return;
-      }
-      // console.log("Connected to get-started script");
-      portFromGetStarted = p;
-      portFromGetStarted.onMessage.addListener(async function(m) {
-        // console.log("Message from get-started script:", { m });
-        if (m.requestUserSuppliedDemographics) {
-          portFromGetStarted.postMessage({
-            userSuppliedDemographics: await store.getUserSuppliedDemographics(),
-          });
-        }
-        if (m.updatedUserSuppliedDemographics) {
-          await store.setUserSuppliedDemographics(
-            m.updatedUserSuppliedDemographics,
-          );
-          await dataSharer.share({
-            user_supplied_demographics_update: {
-              user_supplied_demographics: await store.getUserSuppliedDemographics(),
-            },
-          });
-        }
-      });
-    };
-    browser.runtime.onConnect.addListener(this.getStartedPortListener);
   }
 
-  async askForConsent() {
-    // Open consent form
+  async openGetStarted() {
     const consentFormUrl = browser.runtime.getURL(
       `get-started/get-started.html`,
     );
@@ -360,12 +331,13 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 
 // init the extension glue on every extension load
 async function onEveryExtensionLoad() {
-  const userSuppliedDemographics = await store.getUserSuppliedDemographics();
-  const userHasSuppliedDemographics =
-    userSuppliedDemographics && userSuppliedDemographics.last_updated !== null;
   await extensionGlue.init();
-  if (!userHasSuppliedDemographics) {
-    await extensionGlue.askForConsent();
+  const { hasOpenedGetStarted } = await browser.storage.local.get(
+    "hasOpenedGetStarted",
+  );
+  if (!hasOpenedGetStarted) {
+    await extensionGlue.openGetStarted();
+    await browser.storage.local.set({ hasOpenedGetStarted: true });
   }
   await extensionGlue.start();
 }

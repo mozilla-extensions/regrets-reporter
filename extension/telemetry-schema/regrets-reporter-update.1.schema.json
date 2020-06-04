@@ -93,26 +93,6 @@
         },
         "extension_version": {
           "type": "string"
-        },
-        "user_supplied_demographics": {
-          "$ref": "#/definitions/UserSuppliedDemographics"
-        }
-      },
-      "type": "object"
-    },
-    "UserSuppliedDemographics": {
-      "properties": {
-        "dem_age": {
-          "type": "string"
-        },
-        "dem_gender": {
-          "type": "string"
-        },
-        "dem_gender_descr": {
-          "type": "string"
-        },
-        "last_updated": {
-          "type": "string"
         }
       },
       "type": "object"
@@ -241,14 +221,6 @@
     },
     "regret_report": {
       "$ref": "#/definitions/RegretReport"
-    },
-    "user_supplied_demographics_update": {
-      "properties": {
-        "user_supplied_demographics": {
-          "$ref": "#/definitions/UserSuppliedDemographics"
-        }
-      },
-      "type": "object"
     },
     "youtube_usage_statistics_update": {
       "$ref": "#/definitions/YouTubeUsageStatisticsUpdate"
