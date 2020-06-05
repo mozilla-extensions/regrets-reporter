@@ -120,7 +120,7 @@ class ExtensionGlue {
           skipWindowAndTabIdFilter?: boolean;
         };
       }) {
-        console.log("Message from report-regret-form script:", { m });
+        // console.log("Message from report-regret-form script:", { m });
         if (m.regretReport) {
           const { regretReport } = m;
           // Share the reported regret

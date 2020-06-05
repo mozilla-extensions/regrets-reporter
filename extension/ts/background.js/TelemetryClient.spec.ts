@@ -17,7 +17,7 @@ describe("TelemetryClient", function() {
       .reply(
         200,
         (uri, requestBody) => {
-          return "OK";
+          return "";
         },
         {
           "accept-encoding": "gzip, deflate",
@@ -35,9 +35,8 @@ describe("TelemetryClient", function() {
     const submitPayloadReturnValue = await telemetryClient.submitPayload(
       annotatedData,
     );
-    console.log({ submitPayloadReturnValue });
 
-    assert.equal(submitPayloadReturnValue, "OK");
+    assert.equal(submitPayloadReturnValue, "");
   });
 
   /* TODO
@@ -49,7 +48,7 @@ describe("TelemetryClient", function() {
       .reply(
         200,
         (uri, requestBody) => {
-          return "OK";
+          return "";
         },
         {
           "accept-encoding": "gzip, deflate",
@@ -67,9 +66,8 @@ describe("TelemetryClient", function() {
     const submitPayloadReturnValue = await telemetryClient.submitPayload(
       annotatedData,
     );
-    console.log({ submitPayloadReturnValue });
 
-    assert.equal(submitPayloadReturnValue, "OK");
+    assert.equal(submitPayloadReturnValue, "");
   });
   */
 });
