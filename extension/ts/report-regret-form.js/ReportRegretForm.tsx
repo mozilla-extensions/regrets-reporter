@@ -54,6 +54,7 @@ const youTubeNavigationUrlTypeLabels: {
   user_page: "User Page",
   channel_page: "Channel Page",
   other: "Other Page",
+  unknown: "Unknown Page",
   youtube_main_page: "YouTube.com",
   misc_xhr: "Misc XHR Request",
   not_a_youtube_page: "Somewhere outside of YouTube",
