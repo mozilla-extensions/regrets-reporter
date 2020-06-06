@@ -200,6 +200,7 @@ export class OpenWpmPacketHandler {
       const urlType = classifyYouTubeNavigationUrlType(url);
       if (
         urlType === "misc_xhr" ||
+        urlType === "other" ||
         urlType === "prefetch" ||
         urlType === "search_results_page_load_more_results"
       ) {
@@ -214,14 +215,15 @@ export class OpenWpmPacketHandler {
       ) {
         return true;
       }
-      if (urlType === "other") {
-        // Anonymously report "other" urls to be able to classify urls better
+      if (urlType === "unknown") {
+        // Anonymously report unknown urls to be able to classify urls better
         // as the YouTube API / protocol changes over time
+        const parsedUrl = new URL(url);
         captureExceptionWithExtras(
-          new Error("Encountered an unclassified YouTube URL"),
-          { url },
+          new Error("Encountered an unknown YouTube URL"),
+          { url, parsedUrl },
         );
-        console.warn("Encountered an unclassified YouTube URL", { url });
+        console.warn("Encountered an unknown YouTube URL", { url });
       }
       return false;
     }

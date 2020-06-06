@@ -12,6 +12,7 @@ export type YouTubeNavigationUrlType =
   | "not_a_youtube_page"
   | "prefetch"
   | "empty"
+  | "unknown"
   | FailedStringAttribute;
 
 export const classifyYouTubeNavigationUrlType = (
@@ -84,5 +85,11 @@ export const classifyYouTubeNavigationUrlType = (
   if (parsedUrl.pathname === "/") {
     return "youtube_main_page";
   }
-  return "other";
+  const otherRequestStartWiths = ["/accounts"];
+  for (const startWith of otherRequestStartWiths) {
+    if (parsedUrl.pathname.indexOf(startWith) === 0) {
+      return "other";
+    }
+  }
+  return "unknown";
 };
