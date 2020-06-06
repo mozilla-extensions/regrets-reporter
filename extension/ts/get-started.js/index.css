@@ -1,3 +1,5 @@
+/* purgecss start ignore */
+
 .get-started h1 {
   @apply text-5xl font-bold;
 }
@@ -26,3 +28,5 @@
 .checkbox {
   margin: 0px 6px;
 }
+
+/* purgecss end ignore */
