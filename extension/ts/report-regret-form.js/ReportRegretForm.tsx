@@ -629,7 +629,7 @@ export class ReportRegretForm extends Component<
                 target="_blank"
                 href={browser.runtime.getURL(`get-started/get-started.html`)}
               >
-                The YouTube Regrets study
+                RegretReporter Instructions
               </Link>
             </li>
             <li>
