@@ -233,6 +233,9 @@ export class OpenWpmPacketHandler {
     if (instrument === "ui_states") {
       return record.frame_id === 0;
     }
+    if (instrument === "http_redirects") {
+      return false;
+    }
     captureExceptionWithExtras(
       new Error("Unhandled OpenWPM packet encountered in acceptPacket()"),
       { instrument, record },
