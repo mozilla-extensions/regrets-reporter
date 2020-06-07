@@ -383,6 +383,9 @@ export class NavigationBatchPreprocessor {
 
     // For each navigation...
     const reprocessingQueue: OpenWpmPayloadEnvelope[] = [];
+    const httpResponseEnvelopesMissingTheirRequestCounterpartsByNavigationUuid: {
+      [uuid: string]: OpenWpmPayloadEnvelope[];
+    } = {};
     await Promise.all(
       webNavigationOpenWpmPayloadEnvelopes.map(
         async (webNavigationOpenWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
@@ -489,11 +492,40 @@ export class NavigationBatchPreprocessor {
             },
           );
 
+          // Sometimes http request envelopes were created within the lifespan of a previous webNavigation
+          // thus we need to check for http responses without http request counterparts
+          navigationBatch.childEnvelopes
+            .filter(
+              (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) =>
+                openWpmPayloadEnvelope.type === "http_responses",
+            )
+            .forEach((openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+              const currentHttpResponseEnvelope = openWpmPayloadEnvelope;
+              const httpRequestEnvelopeMatcher = childEnvelope =>
+                childEnvelope.type === "http_requests" &&
+                childEnvelope.httpRequest.request_id ===
+                  currentHttpResponseEnvelope.httpResponse.request_id;
+              const httpRequestEnvelope = navigationBatch.childEnvelopes
+                .reverse()
+                .find(httpRequestEnvelopeMatcher);
+              if (!httpRequestEnvelope) {
+                const a = httpResponseEnvelopesMissingTheirRequestCounterpartsByNavigationUuid;
+                if (a[navigation.uuid]) {
+                  a[navigation.uuid].push(currentHttpResponseEnvelope);
+                } else {
+                  a[navigation.uuid] = [currentHttpResponseEnvelope];
+                }
+              }
+            });
+
           // console.log("navigationBatch.childEnvelopes.length", navigationBatch.childEnvelopes.length);
 
           if (purge) {
             // Remove from navigationBatchesByNavigationUuid
             delete this.navigationBatchesByNavigationUuid[navigation.uuid];
+            delete httpResponseEnvelopesMissingTheirRequestCounterpartsByNavigationUuid[
+              navigation.uuid
+            ];
           } else {
             // Update navigationBatchesByNavigationUuid
             let updatedNavigationBatch;
@@ -522,6 +554,65 @@ export class NavigationBatchPreprocessor {
     );
 
     // console.log("this.navigationBatchesByNavigationUuid", this.navigationBatchesByNavigationUuid);
+
+    // move stray http request envelopes to the same batch where their response envelope are found
+    const navUuidsWithMissingCounterparts = Object.keys(
+      httpResponseEnvelopesMissingTheirRequestCounterpartsByNavigationUuid,
+    );
+    if (navUuidsWithMissingCounterparts.length > 0) {
+      navUuidsWithMissingCounterparts.forEach(
+        (navUuidWithMissingCounterparts: string) => {
+          const httpResponseEnvelopesMissingTheirRequestCounterparts =
+            httpResponseEnvelopesMissingTheirRequestCounterpartsByNavigationUuid[
+              navUuidWithMissingCounterparts
+            ];
+
+          httpResponseEnvelopesMissingTheirRequestCounterparts.forEach(
+            (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+              const currentHttpResponseEnvelope = openWpmPayloadEnvelope;
+              const httpRequestEnvelopeMatcher = childEnvelope =>
+                childEnvelope.type === "http_requests" &&
+                childEnvelope.httpRequest.request_id ===
+                  currentHttpResponseEnvelope.httpResponse.request_id;
+
+              // check other navigation batches for the stray envelopes
+              const navUuidsToCheck = Object.keys(
+                this.navigationBatchesByNavigationUuid,
+              ).filter(
+                navUuidToCheck =>
+                  navUuidToCheck !== navUuidWithMissingCounterparts,
+              );
+              navUuidsToCheck.some(navUuidToCheck => {
+                const candidateNavigationBatch = this
+                  .navigationBatchesByNavigationUuid[navUuidToCheck];
+                const matchingHttpRequestEnvelope = candidateNavigationBatch.childEnvelopes
+                  .reverse()
+                  .find(httpRequestEnvelopeMatcher);
+                if (matchingHttpRequestEnvelope) {
+                  // remove from candidateNavigationBatch
+                  removeItemFromArray(
+                    candidateNavigationBatch.childEnvelopes,
+                    matchingHttpRequestEnvelope,
+                  );
+                  setEnvelopeCounts(candidateNavigationBatch);
+                  // add the stray envelope to this navigation batch
+                  const navigationBatch = this
+                    .navigationBatchesByNavigationUuid[
+                    navUuidWithMissingCounterparts
+                  ];
+                  navigationBatch.childEnvelopes.unshift(
+                    matchingHttpRequestEnvelope,
+                  );
+                  setEnvelopeCounts(navigationBatch);
+                  return true;
+                }
+                return false;
+              });
+            },
+          );
+        },
+      );
+    }
 
     // Restore relevant items to the processing queue
     reprocessingQueue.reverse().map(openWpmPayloadEnvelope => {

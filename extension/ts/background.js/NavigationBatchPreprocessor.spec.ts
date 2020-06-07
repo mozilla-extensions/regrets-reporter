@@ -417,7 +417,7 @@ describe("NavigationBatchPreprocessor", function() {
           navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
             "e8018778-7f92-432a-814b-ac4312e482f0"
           ];
-        assert.equal(oneNavigationBatch.childEnvelopes.length, 2);
+        assert.equal(oneNavigationBatch.childEnvelopes.length, 1);
         assert.deepStrictEqual(
           [
             oneNavigationBatch.httpRequestCount,
@@ -425,14 +425,14 @@ describe("NavigationBatchPreprocessor", function() {
             oneNavigationBatch.httpRedirectCount,
             oneNavigationBatch.capturedContentCount,
           ],
-          [2, 0, 0, 0],
+          [1, 0, 0, 0],
         );
 
         const anotherNavigationBatch: NavigationBatch =
           navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
             "e3d1dbba-835f-4837-b3ed-56671cd0419b"
           ];
-        assert.equal(anotherNavigationBatch.childEnvelopes.length, 2);
+        assert.equal(anotherNavigationBatch.childEnvelopes.length, 3);
         assert.deepStrictEqual(
           [
             anotherNavigationBatch.httpRequestCount,
@@ -440,7 +440,7 @@ describe("NavigationBatchPreprocessor", function() {
             anotherNavigationBatch.httpRedirectCount,
             anotherNavigationBatch.capturedContentCount,
           ],
-          [0, 1, 0, 1],
+          [1, 1, 0, 1],
         );
       });
     });
