@@ -87,7 +87,14 @@ class ExtensionGlue {
         }
       }
       function onError(_error) {
-        browser.pageAction.hide(tab.id);
+        try {
+          browser.pageAction.hide(tab.id);
+        } catch (e) {
+          if (e.message.indexOf("Invalid tab ID") === 0) {
+            // do nothing, the tab does not exist anymore
+          }
+          throw e;
+        }
       }
       const executing = browser.tabs.executeScript({
         code: "location.href",
