@@ -354,6 +354,30 @@ export class NavigationBatchPreprocessor {
       return fromEventOrdinal < eventOrdinal && eventOrdinal < toEventOrdinal;
     };
 
+    const setEnvelopeCounts = $navigationBatch => {
+      $navigationBatch.httpRequestCount = $navigationBatch.childEnvelopes.filter(
+        env => env.type === "http_requests",
+      ).length;
+      $navigationBatch.httpResponseCount = $navigationBatch.childEnvelopes.filter(
+        env => env.type === "http_responses",
+      ).length;
+      $navigationBatch.httpRedirectCount = $navigationBatch.childEnvelopes.filter(
+        env => env.type === "http_redirects",
+      ).length;
+      $navigationBatch.javascriptOperationCount = $navigationBatch.childEnvelopes.filter(
+        env => env.type === "javascript",
+      ).length;
+      $navigationBatch.capturedContentCount = $navigationBatch.childEnvelopes.filter(
+        env => env.type === "openwpm_captured_content",
+      ).length;
+      $navigationBatch.uiInteractionCount = $navigationBatch.childEnvelopes.filter(
+        env => env.type === "ui_interactions",
+      ).length;
+      $navigationBatch.uiStateCount = $navigationBatch.childEnvelopes.filter(
+        env => env.type === "ui_states",
+      ).length;
+    };
+
     // console.log("debug processQueue", openWpmPayloadEnvelopeProcessQueue.length, webNavigationOpenWpmPayloadEnvelopes.length);
     // console.log("JSON.stringify(openWpmPayloadEnvelopeProcessQueue)", JSON.stringify(openWpmPayloadEnvelopeProcessQueue));
 
@@ -433,7 +457,7 @@ export class NavigationBatchPreprocessor {
 
           // console.log("childCandidates.length", childCandidates.length);
 
-          const openWpmPayloadEnvelopesAssignedToThisNavigation = childCandidates.filter(
+          childCandidates.forEach(
             (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
               // Which are found in the same frame and navigation event ordinal bounds
               const payload: BatchableChildOpenWPMPayload = batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope(
@@ -454,42 +478,18 @@ export class NavigationBatchPreprocessor {
               if (isSameFrame && isWithinNavigationEventOrdinalBounds) {
                 if (isWithinNavigationEventAgeThreshold) {
                   navigationBatch.childEnvelopes.push(openWpmPayloadEnvelope);
-                  // Keep track of envelope counts by type
-                  switch (openWpmPayloadEnvelope.type) {
-                    case "http_requests":
-                      navigationBatch.httpRequestCount++;
-                      break;
-                    case "http_responses":
-                      navigationBatch.httpResponseCount++;
-                      break;
-                    case "http_redirects":
-                      navigationBatch.httpRedirectCount++;
-                      break;
-                    case "javascript":
-                      navigationBatch.javascriptOperationCount++;
-                      break;
-                    case "openwpm_captured_content":
-                      navigationBatch.capturedContentCount++;
-                      break;
-                    case "ui_interactions":
-                      navigationBatch.uiInteractionCount++;
-                      break;
-                    case "ui_states":
-                      navigationBatch.uiStateCount++;
-                      break;
-                  }
+                  setEnvelopeCounts(navigationBatch);
                 }
+                // Remove from queue since it has been adopted by a navigation batch
                 removeItemFromArray(
                   openWpmPayloadEnvelopeProcessQueue,
                   openWpmPayloadEnvelope,
                 );
-                return true;
               }
-              return false;
             },
           );
 
-          // console.log("openWpmPayloadEnvelopesAssignedToThisNavigation.length", openWpmPayloadEnvelopesAssignedToThisNavigation.length);
+          // console.log("navigationBatch.childEnvelopes.length", navigationBatch.childEnvelopes.length);
 
           if (purge) {
             // Remove from navigationBatchesByNavigationUuid
@@ -505,28 +505,8 @@ export class NavigationBatchPreprocessor {
                 childEnvelopes: existingNavigationBatch.childEnvelopes.concat(
                   navigationBatch.childEnvelopes,
                 ),
-                httpRequestCount:
-                  existingNavigationBatch.httpRequestCount +
-                  navigationBatch.httpRequestCount,
-                httpResponseCount:
-                  existingNavigationBatch.httpResponseCount +
-                  navigationBatch.httpResponseCount,
-                httpRedirectCount:
-                  existingNavigationBatch.httpRedirectCount +
-                  navigationBatch.httpRedirectCount,
-                javascriptOperationCount:
-                  existingNavigationBatch.javascriptOperationCount +
-                  navigationBatch.javascriptOperationCount,
-                capturedContentCount:
-                  existingNavigationBatch.capturedContentCount +
-                  navigationBatch.capturedContentCount,
-                uiInteractionCount:
-                  existingNavigationBatch.uiInteractionCount +
-                  navigationBatch.uiInteractionCount,
-                uiStateCount:
-                  existingNavigationBatch.uiStateCount +
-                  navigationBatch.uiStateCount,
               };
+              setEnvelopeCounts(updatedNavigationBatch);
             } else {
               updatedNavigationBatch = navigationBatch;
             }

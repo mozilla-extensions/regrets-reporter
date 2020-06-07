@@ -243,12 +243,7 @@ export class ReportSummarizer {
       const httpRequestEnvelope = topFrameNavigationBatch.childEnvelopes
         .slice()
         .reverse()
-        .find(
-          childEnvelope =>
-            childEnvelope.type === "http_requests" &&
-            childEnvelope.httpRequest.request_id ===
-              currentHttpResponseEnvelope.httpResponse.request_id,
-        );
+        .find(httpRequestEnvelopeMatcher);
       // console.log({ httpRequestEnvelope });
 
       if (!httpRequestEnvelope) {
