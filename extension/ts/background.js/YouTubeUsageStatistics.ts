@@ -176,7 +176,7 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       if (
         this.reportSummarizer.viaSearchResultsFromYouTubeNavigation(
           youTubeNavigation,
-        )
+        ) === 1
       ) {
         this.seenYouTubeWatchPage(
           "via_search_results",
@@ -188,7 +188,7 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       if (
         this.reportSummarizer.viaNonSearchAlgorithmicRecommendationsContentFromYouTubeNavigation(
           youTubeNavigation,
-        )
+        ) === 1
       ) {
         this.seenYouTubeWatchPage(
           "via_non_search_algorithmic_recommendations_content",
@@ -200,7 +200,7 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
       if (
         this.reportSummarizer.viaRecommendationsWithAnExplicitQueryOrConstraintToOptimizeForFromYouTubeNavigation(
           youTubeNavigation,
-        )
+        ) === 1
       ) {
         this.seenYouTubeWatchPage(
           "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for",
