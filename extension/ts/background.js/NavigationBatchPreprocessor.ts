@@ -185,6 +185,7 @@ const removeItemFromArray = (ar, el) => {
 
 interface NavigationBatchPreprocessorOptions {
   navigationAgeThresholdInSeconds: number;
+  navigationBatchChildEnvelopeAgeThresholdInSeconds: number;
   orphanAgeThresholdInSeconds: number;
 }
 /**
@@ -196,14 +197,17 @@ interface NavigationBatchPreprocessorOptions {
  */
 export class NavigationBatchPreprocessor {
   public navigationAgeThresholdInSeconds: number;
+  public navigationBatchChildEnvelopeAgeThresholdInSeconds: number;
   public orphanAgeThresholdInSeconds: number;
 
   constructor(options: NavigationBatchPreprocessorOptions) {
     const {
       navigationAgeThresholdInSeconds,
+      navigationBatchChildEnvelopeAgeThresholdInSeconds,
       orphanAgeThresholdInSeconds,
     } = options;
     this.navigationAgeThresholdInSeconds = navigationAgeThresholdInSeconds;
+    this.navigationBatchChildEnvelopeAgeThresholdInSeconds = navigationBatchChildEnvelopeAgeThresholdInSeconds;
     this.orphanAgeThresholdInSeconds = orphanAgeThresholdInSeconds;
   }
 
@@ -348,6 +352,16 @@ export class NavigationBatchPreprocessor {
       );
     };
 
+    const navigationBatchChildEnvelopeIsOldEnoughToBePurged = (
+      navigationBatchChildPayload: BatchableChildOpenWPMPayload,
+    ) => {
+      return !isoDateTimeStringsWithinFutureSecondThreshold(
+        navigationBatchChildPayload.time_stamp,
+        nowDateTime.toISOString(),
+        this.navigationBatchChildEnvelopeAgeThresholdInSeconds,
+      );
+    };
+
     const sameFrame = (
       subject: BatchableChildOpenWPMPayload | Navigation,
       navigation: Navigation,
@@ -407,7 +421,7 @@ export class NavigationBatchPreprocessor {
             webNavigationOpenWpmPayloadEnvelope.navigation;
           const purge = navigationIsOldEnoughToBePurged(navigation);
 
-          // console.log({ navigation, purge });
+          // console.log(`Purge check for navigation with uuid ${navigation.uuid}`, {purge, navigation});
 
           const navigationBatch: NavigationBatch = {
             navigationEnvelope: webNavigationOpenWpmPayloadEnvelope,
@@ -474,6 +488,7 @@ export class NavigationBatchPreprocessor {
 
           // console.log("childCandidates.length", childCandidates.length);
 
+          // Assign children to this navigation batch if relevant
           childCandidates.forEach(
             (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
               // Which are found in the same frame and navigation event ordinal bounds
@@ -536,6 +551,7 @@ export class NavigationBatchPreprocessor {
 
           if (purge) {
             // Remove from navigationBatchesByNavigationUuid
+            // console.log(`Removing expired navigation with uuid ${navigation.uuid}`);
             delete this.navigationBatchesByNavigationUuid[navigation.uuid];
             delete httpResponseEnvelopesMissingTheirRequestCounterpartsByNavigationUuid[
               navigation.uuid
@@ -556,6 +572,18 @@ export class NavigationBatchPreprocessor {
             } else {
               updatedNavigationBatch = navigationBatch;
             }
+            // Only include young enough child envelopes
+            updatedNavigationBatch.childEnvelopes = updatedNavigationBatch.childEnvelopes.filter(
+              openWpmPayloadEnvelope => {
+                const payload: BatchableChildOpenWPMPayload = batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope(
+                  openWpmPayloadEnvelope,
+                ) as BatchableChildOpenWPMPayload;
+                return !navigationBatchChildEnvelopeIsOldEnoughToBePurged(
+                  payload,
+                );
+              },
+            );
+            // Run the general callback for trimming navigation batches further
             updatedNavigationBatch = await this.processedNavigationBatchTrimmer(
               updatedNavigationBatch,
             );
@@ -657,7 +685,7 @@ export class NavigationBatchPreprocessor {
       this.openWpmPayloadEnvelopeProcessQueue.unshift(openWpmPayloadEnvelope);
     });
 
-    // Drop only old orphaned items (assumption: whose navigation batches have already
+    // Drop old orphaned items (assumption: whose navigation batches have already
     // been purged and thus not sorted into a queued navigation event above)
 
     const childIsOldEnoughToBeAnOrphan = (
@@ -676,7 +704,7 @@ export class NavigationBatchPreprocessor {
 
     openWpmPayloadEnvelopesWithoutMatchingNavigations
       .reverse()
-      .map(openWpmPayloadEnvelope => {
+      .forEach(openWpmPayloadEnvelope => {
         const payload: BatchableChildOpenWPMPayload = batchableChildOpenWpmPayloadFromOpenWpmPayloadEnvelope(
           openWpmPayloadEnvelope,
         );
@@ -690,6 +718,6 @@ export class NavigationBatchPreprocessor {
         }
       });
 
-    // console.log("Orphaned items debug", orphanedOpenWpmPayloadEnvelopes);
+    // console.debug("Orphaned items debug", orphanedOpenWpmPayloadEnvelopes);
   }
 }

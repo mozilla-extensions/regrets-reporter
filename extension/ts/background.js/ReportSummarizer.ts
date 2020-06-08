@@ -1185,7 +1185,9 @@ export class ReportSummarizer {
     skipWindowAndTabIdFilter = false,
   ): Promise<YouTubeNavigationSpecificRegretReportData> {
     if (youTubeNavigations.length === 0) {
-      throw new Error("No YouTube navigations captured yet");
+      throw new Error(
+        "No YouTube navigations captured yet (or they have expired)",
+      );
     }
     const matchingYouTubeNavigations = youTubeNavigations.filter(
       youTubeNavigation =>
@@ -1201,7 +1203,7 @@ export class ReportSummarizer {
       .pop();
     if (!mostRecentYouTubeNavigation) {
       throw new Error(
-        `No YouTube navigations matching window id ${windowId}, tab id ${tabId} captured yet`,
+        `No YouTube navigations matching window id ${windowId}, tab id ${tabId} captured yet (or they have expired)`,
       );
     }
     // console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
