@@ -183,6 +183,10 @@ const removeItemFromArray = (ar, el) => {
   ar.splice(ar.indexOf(el), 1);
 };
 
+interface NavigationBatchPreprocessorOptions {
+  navigationAgeThresholdInSeconds: number;
+  orphanAgeThresholdInSeconds: number;
+}
 /**
  * Groups incoming payloads by navigation.
  * The strange implementation of the processing is mainly
@@ -194,18 +198,13 @@ export class NavigationBatchPreprocessor {
   public navigationAgeThresholdInSeconds: number;
   public orphanAgeThresholdInSeconds: number;
 
-  constructor({
-    navigationAgeThresholdInSeconds,
-    orphanAgeThresholdInSeconds,
-  }) {
-    this.navigationAgeThresholdInSeconds =
-      navigationAgeThresholdInSeconds !== undefined
-        ? navigationAgeThresholdInSeconds
-        : 60 * 60 * 5;
-    this.orphanAgeThresholdInSeconds =
-      orphanAgeThresholdInSeconds !== undefined
-        ? orphanAgeThresholdInSeconds
-        : 25;
+  constructor(options: NavigationBatchPreprocessorOptions) {
+    const {
+      navigationAgeThresholdInSeconds,
+      orphanAgeThresholdInSeconds,
+    } = options;
+    this.navigationAgeThresholdInSeconds = navigationAgeThresholdInSeconds;
+    this.orphanAgeThresholdInSeconds = orphanAgeThresholdInSeconds;
   }
 
   /**

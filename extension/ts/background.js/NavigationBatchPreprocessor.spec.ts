@@ -12,15 +12,20 @@ import { exampleDotComVisitFollowedByMoreInformationLinkClickQueue } from "./fix
 import { exampleDotComVisitQueueWithSavedContent } from "./fixtures/NavigationBatchPreprocessor/exampleDotComVisitQueueWithSavedContent";
 import { youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigations } from "./fixtures/NavigationBatchPreprocessor/youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigations";
 import { youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest } from "./fixtures/NavigationBatchPreprocessor/youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest";
+import { config } from "../config";
 
 describe("NavigationBatchPreprocessor", function() {
   it("should exist", function() {
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     assert.isNotEmpty(navigationBatchPreprocessor);
   });
 
   describe("Example.com visit", function() {
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     exampleDotComVisitQueue.map(
       (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
         if (
@@ -64,8 +69,11 @@ describe("NavigationBatchPreprocessor", function() {
       });
     });
 
-    describe("Queue processing 10 hours after the visit", function() {
-      const nowDateTime = addSeconds(firstVisitDateTime, 10 * 60 * 60);
+    describe("Queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
       it("should have purged all navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
@@ -82,7 +90,9 @@ describe("NavigationBatchPreprocessor", function() {
   });
 
   describe("Example.com visit with saved content", function() {
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     exampleDotComVisitQueueWithSavedContent.map(
       (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
         if (
@@ -126,8 +136,11 @@ describe("NavigationBatchPreprocessor", function() {
       });
     });
 
-    describe("Queue processing 10 hours after the visit", function() {
-      const nowDateTime = addSeconds(firstVisitDateTime, 10 * 60 * 60);
+    describe("Queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
       it("should have purged all navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
@@ -144,7 +157,9 @@ describe("NavigationBatchPreprocessor", function() {
   });
 
   describe("Example.com visit followed by 'More information' link click", function() {
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     exampleDotComVisitFollowedByMoreInformationLinkClickQueue.map(
       (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
         if (
@@ -213,8 +228,11 @@ describe("NavigationBatchPreprocessor", function() {
       });
     });
 
-    describe("Subsequent queue processing 10 hours after after the visits", function() {
-      const nowDateTime = addSeconds(firstVisitDateTime, 10 * 60 * 60);
+    describe("Subsequent queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
       it("should have purged all navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
@@ -231,7 +249,9 @@ describe("NavigationBatchPreprocessor", function() {
   });
 
   describe("OpenWPM http://localtest.me:8000/test_pages/canvas_fingerprinting.html", function() {
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     openwpmTestPagesCanvasFingerprintingQueue.map(
       (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
         if (
@@ -285,8 +305,11 @@ describe("NavigationBatchPreprocessor", function() {
       });
     });
 
-    describe("Queue processing 10 hours after the visit", function() {
-      const nowDateTime = addSeconds(firstVisitDateTime, 10 * 60 * 60);
+    describe("Queue processing long after the visit", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
       it("should have purged all navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
@@ -311,7 +334,9 @@ describe("NavigationBatchPreprocessor", function() {
     largeOpenwpmTestPagesCanvasFingerprintingQueue[3].javascriptOperation.value = str300kb;
     largeOpenwpmTestPagesCanvasFingerprintingQueue[10].javascriptOperation.value = str300kb;
 
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     largeOpenwpmTestPagesCanvasFingerprintingQueue.map(
       (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
         if (
@@ -365,8 +390,11 @@ describe("NavigationBatchPreprocessor", function() {
       });
     });
 
-    describe("Queue processing 10 hours after the visit", function() {
-      const nowDateTime = addSeconds(firstVisitDateTime, 10 * 60 * 60);
+    describe("Queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
       it("should have purged all navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
@@ -383,7 +411,9 @@ describe("NavigationBatchPreprocessor", function() {
   });
 
   describe("youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigations", function() {
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigations.map(
       (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
         if (
@@ -446,8 +476,11 @@ describe("NavigationBatchPreprocessor", function() {
       });
     });
 
-    describe("Subsequent queue processing 10 hours after after the visits", function() {
-      const nowDateTime = addSeconds(firstVisitDateTime, 10 * 60 * 60);
+    describe("Subsequent queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
       it("should have purged all navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
@@ -464,7 +497,9 @@ describe("NavigationBatchPreprocessor", function() {
   });
 
   describe("youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest", function() {
-    const navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
     youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest.map(
       (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
         if (
@@ -527,8 +562,11 @@ describe("NavigationBatchPreprocessor", function() {
       });
     });
 
-    describe("Subsequent queue processing 10 hours after after the visits", function() {
-      const nowDateTime = addSeconds(firstVisitDateTime, 10 * 60 * 60);
+    describe("Subsequent queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
       it("should have purged all navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
