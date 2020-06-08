@@ -247,9 +247,8 @@ export class ReportSummarizer {
       // console.log({ httpRequestEnvelope });
 
       if (!httpRequestEnvelope) {
-        throw new Error(
-          `The matching httpRequestEnvelope was not found for request id ${currentHttpResponseEnvelope.httpResponse.request_id}`,
-        );
+        // Ignore this http response and continue with the rest
+        continue;
       }
 
       // ... and the corresponding captured content

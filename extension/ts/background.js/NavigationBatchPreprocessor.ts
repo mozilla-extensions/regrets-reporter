@@ -10,6 +10,7 @@ import {
 } from "@openwpm/webext-instrumentation";
 import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
+import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 
 declare namespace browser.alarms {
   function create(
@@ -566,6 +567,9 @@ export class NavigationBatchPreprocessor {
             httpResponseEnvelopesMissingTheirRequestCounterpartsByNavigationUuid[
               navUuidWithMissingCounterparts
             ];
+          const navigationBatch = this.navigationBatchesByNavigationUuid[
+            navUuidWithMissingCounterparts
+          ];
 
           httpResponseEnvelopesMissingTheirRequestCounterparts.forEach(
             (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
@@ -582,6 +586,7 @@ export class NavigationBatchPreprocessor {
                 navUuidToCheck =>
                   navUuidToCheck !== navUuidWithMissingCounterparts,
               );
+              let correspondingHttpRequestFound = false;
               navUuidsToCheck.some(navUuidToCheck => {
                 const candidateNavigationBatch = this
                   .navigationBatchesByNavigationUuid[navUuidToCheck];
@@ -596,18 +601,38 @@ export class NavigationBatchPreprocessor {
                   );
                   setEnvelopeCounts(candidateNavigationBatch);
                   // add the stray envelope to this navigation batch
-                  const navigationBatch = this
-                    .navigationBatchesByNavigationUuid[
-                    navUuidWithMissingCounterparts
-                  ];
                   navigationBatch.childEnvelopes.unshift(
                     matchingHttpRequestEnvelope,
                   );
                   setEnvelopeCounts(navigationBatch);
+                  correspondingHttpRequestFound = true;
                   return true;
                 }
                 return false;
               });
+              if (!correspondingHttpRequestFound) {
+                console.error(
+                  `The matching httpRequestEnvelope was not found for request id ${currentHttpResponseEnvelope.httpResponse.request_id}`,
+                  {
+                    currentHttpResponseEnvelope,
+                  },
+                );
+                captureExceptionWithExtras(
+                  new Error(
+                    `The matching httpRequestEnvelope was not found for request id ${currentHttpResponseEnvelope.httpResponse.request_id}`,
+                  ),
+                  {
+                    request_id:
+                      currentHttpResponseEnvelope.httpResponse.request_id,
+                  },
+                );
+                // remove the http response since it will cause issues downstream if it is kept
+                removeItemFromArray(
+                  navigationBatch.childEnvelopes,
+                  currentHttpResponseEnvelope,
+                );
+                setEnvelopeCounts(navigationBatch);
+              }
             },
           );
         },
