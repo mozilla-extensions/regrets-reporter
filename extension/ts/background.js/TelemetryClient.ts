@@ -17,9 +17,6 @@ declare namespace browser.telemetry {
 
 const MS_IN_A_MINUTE = 60 * 1000;
 
-// Timeout after which we consider a ping submission failed.
-const PING_SUBMIT_TIMEOUT_MS = 1.5 * MS_IN_A_MINUTE;
-
 // https://stackoverflow.com/a/57888548/682317
 const fetchWithTimeout = (url, ms, options: any = {}): Promise<Response> => {
   const controller = new AbortController();
@@ -29,6 +26,16 @@ const fetchWithTimeout = (url, ms, options: any = {}): Promise<Response> => {
 };
 
 export class TelemetryClient {
+  /**
+   * Timeout after which we consider a ping submission failed.
+   */
+  private pingSubmitTimeoutMs: number = 1.5 * MS_IN_A_MINUTE;
+  constructor(pingSubmitTimeoutMs: number = null) {
+    if (pingSubmitTimeoutMs) {
+      this.pingSubmitTimeoutMs = pingSubmitTimeoutMs;
+    }
+  }
+
   /**
    * See https://docs.telemetry.mozilla.org/concepts/pipeline/http_edge_spec.html
    *
@@ -82,7 +89,7 @@ export class TelemetryClient {
 
     const dataResponse = await fetchWithTimeout(
       this.composeSubmitUrl(namespace, docType, docVersion, docId),
-      PING_SUBMIT_TIMEOUT_MS,
+      this.pingSubmitTimeoutMs,
       {
         method: "POST",
         headers: {

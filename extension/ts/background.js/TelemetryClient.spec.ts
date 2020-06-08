@@ -7,7 +7,7 @@ import { Store } from "./Store";
 import { mockLocalStorage } from "./lib/mockLocalStorage";
 
 describe("TelemetryClient", function() {
-  const telemetryClient = new TelemetryClient();
+  const telemetryClient = new TelemetryClient(500);
 
   it("successful submitPayload request results in a sent request, flushed from the send queue", async function() {
     nock.disableNetConnect();
@@ -39,11 +39,32 @@ describe("TelemetryClient", function() {
     assert.strictEqual(submitPayloadReturnValue, "");
   });
 
-  /* TODO
-  it("unsuccessful submitPayload request results in an unsent request in the queue", async function() {
+  it("unsuccessful submitPayload request results in an unsent request in the queue, which is later sent upon retry", async function() {
     nock.disableNetConnect();
     nock(config.telemetryServer)
-      .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.* /)
+      .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
+      .query(true)
+      .replyWithError("Error");
+
+    const store = new Store(mockLocalStorage);
+    const dataSharer = new DataSharer(store);
+    const annotatedData: AnnotatedSharedData = await dataSharer.annotateSharedData(
+      {},
+      0,
+    );
+
+    const submitPayloadReturnValue = await telemetryClient.submitPayload(
+      annotatedData,
+    );
+
+    assert.strictEqual(submitPayloadReturnValue, "");
+  });
+
+  it("timed out submitPayload request results in an unsent request in the queue, which is later sent upon retry", async function() {
+    nock.disableNetConnect();
+    nock(config.telemetryServer)
+      .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
+      .delayConnection(10000)
       .query(true)
       .reply(
         200,
@@ -69,5 +90,4 @@ describe("TelemetryClient", function() {
 
     assert.strictEqual(submitPayloadReturnValue, "");
   });
-  */
 });
