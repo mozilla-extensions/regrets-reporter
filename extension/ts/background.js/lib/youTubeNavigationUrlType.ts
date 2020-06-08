@@ -52,6 +52,7 @@ export const classifyYouTubeNavigationUrlType = (
     "/notifications_ajax",
     "/yts/",
     "/list_ajax",
+    "/service_ajax",
   ];
   for (const startWith of miscXhrRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
