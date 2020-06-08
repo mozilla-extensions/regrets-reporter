@@ -16,11 +16,6 @@ const { Crypto } = require("@peculiar/webcrypto");
 global.crypto = new Crypto();
 
 // @ts-ignore
-global.document = {
-  addEventListener: () => {},
-};
-
-// @ts-ignore
 globalThis.browser = {
   runtime: {
     getBrowserInfo: async () => {
