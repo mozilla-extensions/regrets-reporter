@@ -55,8 +55,6 @@ export class TelemetryClient {
    * @param payload
    */
   validatePayload = (payload: AnnotatedSharedData) => {
-    console.debug("Telemetry about to be validated:", payload);
-
     const validationResult = validateSchema(payload);
 
     if (!validationResult.valid) {
@@ -72,6 +70,7 @@ export class TelemetryClient {
   };
 
   submitPayload = async (payload: AnnotatedSharedData) => {
+    console.debug("Telemetry about to be validated and sent:", payload);
     if (!this.validatePayload(payload)) {
       return false;
     }
@@ -92,8 +91,7 @@ export class TelemetryClient {
           Date: new Date().toUTCString(),
           "Content-Encoding": "gzip",
           "X-Client-Type": "RegretsReporter",
-          "X-Client-Version": await globalThis.browser.runtime.getManifest()
-            .version,
+          "X-Client-Version": globalThis.browser.runtime.getManifest().version,
         },
         body: await gzip(JSON.stringify(payload)),
       },
@@ -118,7 +116,7 @@ export class TelemetryClient {
       return false;
     }
     const response = dataResponse === true ? true : await dataResponse.text();
-    console.debug("Telemetry submitted", { response });
+    console.debug("Telemetry submitted");
     return response;
   };
 }

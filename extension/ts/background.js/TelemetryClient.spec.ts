@@ -36,7 +36,7 @@ describe("TelemetryClient", function() {
       annotatedData,
     );
 
-    assert.equal(submitPayloadReturnValue, "");
+    assert.strictEqual(submitPayloadReturnValue, "");
   });
 
   /* TODO
@@ -67,7 +67,7 @@ describe("TelemetryClient", function() {
       annotatedData,
     );
 
-    assert.equal(submitPayloadReturnValue, "");
+    assert.strictEqual(submitPayloadReturnValue, "");
   });
   */
 });
