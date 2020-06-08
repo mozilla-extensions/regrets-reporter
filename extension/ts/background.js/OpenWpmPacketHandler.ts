@@ -4,6 +4,7 @@ import { HttpResponse } from "@openwpm/webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
 import { classifyYouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
+import { config } from "../config";
 
 export interface LogEntry {
   level: string;
@@ -35,7 +36,9 @@ export class OpenWpmPacketHandler {
 
   constructor() {
     // Setup study payload processor singleton
-    this.navigationBatchPreprocessor = new NavigationBatchPreprocessor();
+    this.navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
   }
 
   logDebug = async msg => {

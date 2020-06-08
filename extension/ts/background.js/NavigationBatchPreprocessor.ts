@@ -191,6 +191,23 @@ const removeItemFromArray = (ar, el) => {
  * the corresponding navigation.
  */
 export class NavigationBatchPreprocessor {
+  public navigationAgeThresholdInSeconds: number;
+  public orphanAgeThresholdInSeconds: number;
+
+  constructor({
+    navigationAgeThresholdInSeconds,
+    orphanAgeThresholdInSeconds,
+  }) {
+    this.navigationAgeThresholdInSeconds =
+      navigationAgeThresholdInSeconds !== undefined
+        ? navigationAgeThresholdInSeconds
+        : 60 * 60 * 5;
+    this.orphanAgeThresholdInSeconds =
+      orphanAgeThresholdInSeconds !== undefined
+        ? orphanAgeThresholdInSeconds
+        : 25;
+  }
+
   /**
    * Optionally overrided hook that allows for inspection and/or modification of
    * navigation batches at the end of the processing flow.
@@ -311,9 +328,6 @@ export class NavigationBatchPreprocessor {
    * @param nowDateTime
    */
   public async processQueue(nowDateTime: Date = new Date()) {
-    const navigationAgeThresholdInSeconds: number = 60 * 60 * 5;
-    const orphanAgeThresholdInSeconds: number = 25;
-
     // Flush current queue for processing (we will later put back
     // elements that should be processed in an upcoming iteration)
     const { openWpmPayloadEnvelopeProcessQueue } = this;
@@ -331,7 +345,7 @@ export class NavigationBatchPreprocessor {
       return !isoDateTimeStringsWithinFutureSecondThreshold(
         navigation.committed_time_stamp,
         nowDateTime.toISOString(),
-        navigationAgeThresholdInSeconds,
+        this.navigationAgeThresholdInSeconds,
       );
     };
 
@@ -476,7 +490,7 @@ export class NavigationBatchPreprocessor {
               const isWithinNavigationEventAgeThreshold = isoDateTimeStringsWithinFutureSecondThreshold(
                 navigation.committed_time_stamp,
                 payload.time_stamp,
-                navigationAgeThresholdInSeconds,
+                this.navigationAgeThresholdInSeconds,
               );
               // console.log("openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold", openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold);
               if (isSameFrame && isWithinNavigationEventOrdinalBounds) {
@@ -653,7 +667,7 @@ export class NavigationBatchPreprocessor {
       return !isoDateTimeStringsWithinFutureSecondThreshold(
         payload.time_stamp,
         nowDateTime.toISOString(),
-        orphanAgeThresholdInSeconds,
+        this.orphanAgeThresholdInSeconds,
       );
     };
 
