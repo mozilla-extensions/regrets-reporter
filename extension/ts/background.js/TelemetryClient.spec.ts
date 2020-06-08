@@ -44,7 +44,7 @@ describe("TelemetryClient", function() {
     nock(config.telemetryServer)
       .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
       .query(true)
-      .replyWithError("Error");
+      .replyWithError("Error enforced by test");
 
     const store = new Store(mockLocalStorage);
     const dataSharer = new DataSharer(store);
@@ -64,7 +64,7 @@ describe("TelemetryClient", function() {
     nock.disableNetConnect();
     nock(config.telemetryServer)
       .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
-      .delayConnection(10000)
+      .delayConnection(1000)
       .query(true)
       .reply(
         200,

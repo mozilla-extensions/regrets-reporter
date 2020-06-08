@@ -76,12 +76,42 @@ export class TelemetryClient {
     return true;
   };
 
-  submitPayload = async (payload: AnnotatedSharedData) => {
+  submitPayload = async (
+    payload: AnnotatedSharedData,
+  ): Promise<string | false> => {
     console.debug("Telemetry about to be validated and sent:", payload);
     if (!this.validatePayload(payload)) {
       return false;
     }
+    const onError = error => {
+      if (error.name === "AbortError") {
+        // fetch aborted due to timeout
+      } else {
+        // network error or other error
+      }
 
+      captureExceptionWithExtras(error, {
+        msg:
+          "Error encountered when submitting a telemetry payload. Returning an empty result",
+      });
+      console.error(
+        "Error encountered when submitting a telemetry payload. Returning an empty result",
+      );
+      console.error({ error });
+    };
+
+    let result;
+    try {
+      result = await this.uploadPayload(payload).catch(onError);
+    } catch (err) {
+      onError(err);
+      return false;
+    }
+    console.debug("Telemetry submitted");
+    return result;
+  };
+
+  uploadPayload = async (payload: AnnotatedSharedData): Promise<string> => {
     const namespace = "regrets-reporter";
     const docType = "regrets-reporter-update";
     const docVersion = 1;
@@ -103,27 +133,12 @@ export class TelemetryClient {
         body: await gzip(JSON.stringify(payload)),
       },
     ).catch(async error => {
-      if (error.name === "AbortError") {
-        // fetch aborted due to timeout
-      } else {
-        // network error or json parsing error
-      }
-      captureExceptionWithExtras(error, {
-        msg:
-          "Error encountered when submitting a telemetry payload. Returning an empty result",
-      });
-      console.error(
-        "Error encountered when submitting a telemetry payload. Returning an empty result",
-      );
-      console.error({ error });
-      return false;
+      return Promise.reject(error);
     });
 
-    if (dataResponse === false) {
-      return false;
+    if (!dataResponse.ok) {
+      throw new Error("Data response failed");
     }
-    const response = dataResponse === true ? true : await dataResponse.text();
-    console.debug("Telemetry submitted");
-    return response;
+    return await dataResponse.text();
   };
 }
