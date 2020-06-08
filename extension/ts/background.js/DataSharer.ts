@@ -33,7 +33,7 @@ export class DataSharer {
 
   constructor(store) {
     this.store = store;
-    this.telemetryClient = new TelemetryClient();
+    this.telemetryClient = new TelemetryClient(store);
   }
 
   async annotateSharedData(

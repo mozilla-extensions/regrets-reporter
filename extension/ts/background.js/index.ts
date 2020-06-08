@@ -223,6 +223,9 @@ class ExtensionGlue {
 
     // Periodic submission of YouTube usage statistics
     await youTubeUsageStatistics.run(dataSharer);
+
+    // Attempt telemetry uploads periodically
+    await dataSharer.telemetryClient.run();
   }
 
   async startOpenWPMInstrumentation(config) {
@@ -326,6 +329,9 @@ class ExtensionGlue {
     }
     if (openWpmPacketHandler.navigationBatchPreprocessor) {
       await youTubeUsageStatistics.cleanup();
+    }
+    if (dataSharer && dataSharer.telemetryClient) {
+      await dataSharer.telemetryClient.cleanup();
     }
   }
 }

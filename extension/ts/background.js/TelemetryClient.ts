@@ -1,19 +1,10 @@
 import { config } from "../config";
-import { AnnotatedSharedData } from "./DataSharer";
+import { AnnotatedSharedData, DataSharer } from "./DataSharer";
 import { validateSchema } from "./lib/validateSchema";
 import { gzip } from "pako";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
-
-declare namespace browser.telemetry {
-  function submitPing(
-    type: string,
-    message: any,
-    options: {
-      addClientId: boolean;
-      addEnvironment: boolean;
-    },
-  ): void;
-}
+import { Store } from "./Store";
+import { browser } from "webextension-polyfill-ts";
 
 const MS_IN_A_MINUTE = 60 * 1000;
 
@@ -25,12 +16,17 @@ const fetchWithTimeout = (url, ms, options: any = {}): Promise<Response> => {
   return promise.finally(() => clearTimeout(timeout));
 };
 
+type UploadResult = string | false;
+
 export class TelemetryClient {
+  private store: Store;
+
   /**
    * Timeout after which we consider a ping submission failed.
    */
   private pingSubmitTimeoutMs: number = 1.5 * MS_IN_A_MINUTE;
-  constructor(pingSubmitTimeoutMs: number = null) {
+  constructor(store: Store, pingSubmitTimeoutMs: number = null) {
+    this.store = store;
     if (pingSubmitTimeoutMs) {
       this.pingSubmitTimeoutMs = pingSubmitTimeoutMs;
     }
@@ -44,11 +40,16 @@ export class TelemetryClient {
    * @param docVersion
    * @param docId
    */
-  composeSubmitRequestPath = (namespace, docType, docVersion, docId) => {
+  private composeSubmitRequestPath = (
+    namespace,
+    docType,
+    docVersion,
+    docId,
+  ) => {
     return `/submit/${namespace}/${docType}/${docVersion}/${docId}`;
   };
 
-  composeSubmitUrl = (namespace, docType, docVersion, docId) => {
+  private composeSubmitUrl = (namespace, docType, docVersion, docId) => {
     return `${config.telemetryServer}${this.composeSubmitRequestPath(
       namespace,
       docType,
@@ -61,7 +62,7 @@ export class TelemetryClient {
    * Validate the payload using the compiled ajv validate() function
    * @param payload
    */
-  validatePayload = (payload: AnnotatedSharedData) => {
+  public validatePayload = (payload: AnnotatedSharedData) => {
     const validationResult = validateSchema(payload);
 
     if (!validationResult.valid) {
@@ -76,42 +77,83 @@ export class TelemetryClient {
     return true;
   };
 
-  submitPayload = async (
+  public submitPayload = async (
     payload: AnnotatedSharedData,
-  ): Promise<string | false> => {
-    console.debug("Telemetry about to be validated and sent:", payload);
+  ): Promise<UploadResult> => {
+    console.debug(
+      "Telemetry about to be validated and queued for upload (if valid):",
+      payload,
+    );
     if (!this.validatePayload(payload)) {
       return false;
     }
-    const onError = error => {
+    await this.queueUpload(payload);
+  };
+
+  private queueUpload = async (payload: AnnotatedSharedData): Promise<void> => {
+    const queuedUploads = await this.getQueuedUploads();
+    queuedUploads.push(payload);
+    await this.store.set({ queuedUploads });
+    console.debug("Telemetry payload queued for upload");
+  };
+
+  private removeUploadFromQueue = async (
+    payload: AnnotatedSharedData,
+  ): Promise<void> => {
+    const queuedUploads = await this.getQueuedUploads();
+    const filteredQueuedUploads = queuedUploads.filter(
+      ($payload: AnnotatedSharedData) =>
+        $payload.event_metadata.event_uuid !==
+        payload.event_metadata.event_uuid,
+    );
+    await this.store.set({ queuedUploads: filteredQueuedUploads });
+  };
+
+  private uploadPayload = async (
+    payload: AnnotatedSharedData,
+  ): Promise<UploadResult> => {
+    let result: UploadResult;
+    const onError = (error): false => {
       if (error.name === "AbortError") {
         // fetch aborted due to timeout
+        this.queueUpload(payload);
+      } else if (
+        error.name === "TypeError" &&
+        error.message.indexOf(
+          "NetworkError when attempting to fetch resource",
+        ) === 0
+      ) {
+        // network error
+        this.queueUpload(payload);
+      } else if (error.name === "FetchError") {
+        // some other request error
+        this.queueUpload(payload);
       } else {
-        // network error or other error
+        // other error (note: not storing the payload for retry)
+        captureExceptionWithExtras(error, {
+          msg: "Unexpected encountered when submitting a telemetry payload",
+        });
+        console.error(
+          "Unexpected encountered when submitting a telemetry payload",
+        );
+        console.error({ error });
       }
-
-      captureExceptionWithExtras(error, {
-        msg:
-          "Error encountered when submitting a telemetry payload. Returning an empty result",
-      });
-      console.error(
-        "Error encountered when submitting a telemetry payload. Returning an empty result",
-      );
-      console.error({ error });
-    };
-
-    let result;
-    try {
-      result = await this.uploadPayload(payload).catch(onError);
-    } catch (err) {
-      onError(err);
       return false;
+    };
+    try {
+      result = await this.sendUploadPayloadRequest(payload).catch(onError);
+      if (result !== false) {
+        console.debug("Telemetry uploaded");
+      }
+    } catch (err) {
+      result = onError(err);
     }
-    console.debug("Telemetry submitted");
     return result;
   };
 
-  uploadPayload = async (payload: AnnotatedSharedData): Promise<string> => {
+  private sendUploadPayloadRequest = async (
+    payload: AnnotatedSharedData,
+  ): Promise<string> => {
     const namespace = "regrets-reporter";
     const docType = "regrets-reporter-update";
     const docVersion = 1;
@@ -141,4 +183,51 @@ export class TelemetryClient {
     }
     return await dataResponse.text();
   };
+
+  public getQueuedUploads = async (): Promise<AnnotatedSharedData[]> => {
+    const { queuedUploads } = await this.store.get("queuedUploads");
+    return queuedUploads || [];
+  };
+
+  sendQueuedUploads = async (): Promise<UploadResult[]> => {
+    const queuedUploads = await this.getQueuedUploads();
+    const uploadResults: UploadResult[] = [];
+    for (const queuedUpload of queuedUploads) {
+      await this.removeUploadFromQueue(queuedUpload);
+      uploadResults.push(await this.uploadPayload(queuedUpload));
+    }
+    return uploadResults;
+  };
+
+  private sendQueuedUploadsAlarmName: string;
+
+  public async run() {
+    await this.sendQueuedUploadsPeriodically();
+  }
+
+  public async sendQueuedUploadsPeriodically() {
+    this.sendQueuedUploadsAlarmName = `${browser.runtime.id}:telemetryClientSendQueuedUploadsAlarm`;
+    const action = async () => {
+      console.info(`Uploading queued telemetry payloads`);
+      await this.sendQueuedUploads();
+    };
+    const alarmListener = async _alarm => {
+      if (_alarm.name !== this.sendQueuedUploadsAlarmName) {
+        return false;
+      }
+      await action();
+    };
+    browser.alarms.onAlarm.addListener(alarmListener);
+    browser.alarms.create(this.sendQueuedUploadsAlarmName, {
+      periodInMinutes: 60, // every hour
+    });
+    // Also execute immediately
+    await action();
+  }
+
+  public async cleanup() {
+    if (this.sendQueuedUploadsAlarmName) {
+      await browser.alarms.clear(this.sendQueuedUploadsAlarmName);
+    }
+  }
 }
