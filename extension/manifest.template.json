@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Regrets Reporter",
+  "name": "RegretsReporter",
   "description": "__MSG_extensionDescription__",
   "version": "${package.version}",
   "hidden": false,
