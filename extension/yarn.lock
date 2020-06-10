@@ -12516,10 +12516,10 @@ webcrypto-core@^1.0.18:
     pvtsutils "^1.0.10"
     tslib "^1.11.1"
 
-webextension-polyfill-ts@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/webextension-polyfill-ts/-/webextension-polyfill-ts-0.13.0.tgz#2a55837fd626736758523cdae6c10ac8b6684edc"
-  integrity sha512-L5kCTh0koc/F8QYgIowr6009oR1QXqQPJbball8xs7Ltmv7ORfda95OEozTmCHLyrb1ZKSjCFofrvzlrLHKrkg==
+webextension-polyfill-ts@^0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/webextension-polyfill-ts/-/webextension-polyfill-ts-0.17.0.tgz#40c7b82469401527a5cff9c53c88ba08cebf3927"
+  integrity sha512-VTk36aYicwPCM+qh7LPAWAZMeYASB7GqGcJ+f39kRO6l39NmoIakkX6L9rqAPwDxoIfLK0UpxtfkxXGfB5lEfA==
   dependencies:
     webextension-polyfill "^0.6.0"
 
