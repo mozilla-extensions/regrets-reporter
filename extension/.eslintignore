@@ -1,4 +1,5 @@
 # do not lint/format generated artifacts
+test/build/
 test/results/coverage/
 dist/
 package-lock.json
