@@ -29,7 +29,10 @@ export const classifyYouTubeNavigationUrlType = (
     return "prefetch";
   }
   const miscXhrRequestStartWiths = [
+    /*
     "/api/stats",
+    */
+    "/api",
     /*
     "/youtubei/v1/log_event",
     "/youtubei/v1/guide",
@@ -57,6 +60,7 @@ export const classifyYouTubeNavigationUrlType = (
   "/related_ajax",
   "/notifications_ajax",
   "/list_ajax",
+  "/browse_ajax",
   "/service_ajax",
    */
   if (parsedUrl.pathname.match(/^\/[a-z_]+_ajax/)) {
