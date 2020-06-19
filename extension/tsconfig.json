@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./debug/ts-compiled-to-js-by-tsc",
     "sourceMap": true,
     "inlineSources": true,
     "sourceRoot": "/",
@@ -11,5 +12,4 @@
     "esModuleInterop": true,
     "allowJs": true
   },
-  "include": ["ts/**/*.ts"]
 }

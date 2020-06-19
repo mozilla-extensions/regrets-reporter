@@ -2,7 +2,7 @@ import * as React from "react";
 import { Component, MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
 import "../shared-resources/photon-components-web/index.css";
-import "../shared-resources/photon-components-web/attributes";
+import "../shared-resources/photon-components-web/attributes/index.css";
 import "../shared-resources/tailwind.css";
 import "./index.css";
 import { Checkbox } from "../shared-resources/photon-components-web/photon-components/Checkbox";

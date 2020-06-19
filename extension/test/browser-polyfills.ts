@@ -26,6 +26,7 @@ globalThis.browser = {
         version: "1.2.3",
       };
     },
+    // @ts-ignore
     getManifest: () => {
       return { version: "0.0.0" };
     },

@@ -1,5 +1,5 @@
 import { config } from "../config";
-import { AnnotatedSharedData, DataSharer } from "./DataSharer";
+import { AnnotatedSharedData } from "./DataSharer";
 import { validateSchema } from "./lib/validateSchema";
 import { gzip } from "pako";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";

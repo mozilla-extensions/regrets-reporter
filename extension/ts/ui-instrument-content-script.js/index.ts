@@ -2,7 +2,9 @@ import { initErrorReportingInContentScript } from "../shared-resources/ErrorRepo
 import { injectUiInstrumentPageScript } from "@openwpm/webext-instrumentation";
 
 const init = async () => {
-  await initErrorReportingInContentScript("port-from-report-regret-form:index");
+  await initErrorReportingInContentScript(
+    "port-from-ui-instrument-content-script:index",
+  );
   injectUiInstrumentPageScript(
     (window as any).openWpmUiInstrumentContentScriptConfig || {},
   );

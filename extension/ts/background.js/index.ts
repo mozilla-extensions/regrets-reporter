@@ -23,7 +23,7 @@ import {
   TrimmedNavigationBatch,
 } from "./NavigationBatchPreprocessor";
 import { YouTubeUsageStatistics } from "./YouTubeUsageStatistics";
-import { OpenWpmPacketHandler } from "./openWpmPacketHandler";
+import { OpenWpmPacketHandler } from "./OpenWpmPacketHandler";
 import { DataSharer } from "./DataSharer";
 import { Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";

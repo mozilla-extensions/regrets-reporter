@@ -29,9 +29,6 @@ export const classifyYouTubeNavigationUrlType = (
     return "prefetch";
   }
   const miscXhrRequestStartWiths = [
-    "/comment_service_ajax",
-    "/get_video_info",
-    "/get_midroll_info",
     "/api/stats",
     /*
     "/youtubei/v1/log_event",
@@ -46,18 +43,31 @@ export const classifyYouTubeNavigationUrlType = (
     "/live_chat/get_live_chat",
      */
     "/live_chat/",
-    "/related_ajax",
     "/heartbeat",
     "/error_204",
-    "/notifications_ajax",
     "/yts/",
-    "/list_ajax",
-    "/service_ajax",
   ];
   for (const startWith of miscXhrRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
       return "misc_xhr";
     }
+  }
+  /*
+  "/comment_service_ajax",
+  "/related_ajax",
+  "/notifications_ajax",
+  "/list_ajax",
+  "/service_ajax",
+   */
+  if (parsedUrl.pathname.match(/^\/[a-z_]+_ajax/)) {
+    return "misc_xhr";
+  }
+  /*
+  "/get_video_info",
+  "/get_midroll_info",
+   */
+  if (parsedUrl.pathname.match(/^\/get_[a-z_]+_info/)) {
+    return "misc_xhr";
   }
   const watchPageStartWiths = ["/watch"];
   for (const startWith of watchPageStartWiths) {

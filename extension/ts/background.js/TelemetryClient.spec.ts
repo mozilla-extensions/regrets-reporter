@@ -87,6 +87,8 @@ describe("TelemetryClient", function() {
       .replyWithError("Error enforced by test");
     const submitPayloadReturnValues = await telemetryClient.sendQueuedUploads();
     assert.deepStrictEqual(submitPayloadReturnValues, [false]);
+    const queuedUploadsAfterFailure = await telemetryClient.getQueuedUploads();
+    assert.strictEqual(queuedUploadsAfterFailure.length, 1);
 
     nock(config.telemetryServer)
       .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
@@ -119,6 +121,8 @@ describe("TelemetryClient", function() {
       .reply(successfulResponseNockCallback);
     const submitPayloadReturnValues = await telemetryClient.sendQueuedUploads();
     assert.deepStrictEqual(submitPayloadReturnValues, [false]);
+    const queuedUploadsAfterFailure = await telemetryClient.getQueuedUploads();
+    assert.strictEqual(queuedUploadsAfterFailure.length, 1);
 
     nock(config.telemetryServer)
       .post(/\/submit\/regrets-reporter\/regrets-reporter-update\/1\/.*/)
