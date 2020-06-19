@@ -29,6 +29,11 @@ export const toggleErrorReportingBasedAsPerExtensionPreferences = (
 ) => {
   if (extensionPreferences.enableErrorReporting) {
     enableErrorReporting();
+    Sentry.configureScope(function(scope) {
+      scope.setUser({
+        id: extensionPreferences.extensionInstallationErrorReportingUuid,
+      });
+    });
     console.info("Enabled error reporting");
   } else {
     disableErrorReporting();

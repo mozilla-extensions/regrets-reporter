@@ -12,11 +12,8 @@ export type ConsentStatus = null | "given" | "withdrawn";
 
 export interface ExtensionPreferences {
   enableErrorReporting: boolean;
+  extensionInstallationErrorReportingUuid: string;
 }
-
-export const defaultExtensionPreferences = {
-  enableErrorReporting: true,
-};
 
 export class Store implements LocalStorageWrapper {
   public localStorageWrapper: LocalStorageWrapper;
@@ -37,6 +34,13 @@ export class Store implements LocalStorageWrapper {
   }> => ({});
   set = async (items: StorageAreaSetItemsType): Promise<void> => {};
 
+  initialExtensionPreferences = async (): Promise<ExtensionPreferences> => {
+    return {
+      enableErrorReporting: true,
+      extensionInstallationErrorReportingUuid: await this.extensionInstallationErrorReportingUuid(),
+    };
+  };
+
   /**
    * Returns a persistent unique identifier of the extension installation
    * sent with each report. Not related to the Firefox client id
@@ -53,10 +57,27 @@ export class Store implements LocalStorageWrapper {
     return generatedUuid;
   };
 
+  /**
+   * Returns a persistent unique identifier of the extension installation
+   * sent with each error report. Not related to the Firefox client id
+   * nor the extension installation uuid that identifies shared data.
+   */
+  extensionInstallationErrorReportingUuid = async () => {
+    const { extensionInstallationErrorReportingUuid } = await this.get(
+      "extensionInstallationErrorReportingUuid",
+    );
+    if (extensionInstallationErrorReportingUuid) {
+      return extensionInstallationErrorReportingUuid;
+    }
+    const generatedUuid = makeUUID();
+    await this.set({ extensionInstallationErrorReportingUuid: generatedUuid });
+    return generatedUuid;
+  };
+
   getExtensionPreferences = async (): Promise<ExtensionPreferences> => {
     const { extensionPreferences } = await this.get("extensionPreferences");
     return {
-      ...defaultExtensionPreferences,
+      ...(await this.initialExtensionPreferences()),
       ...extensionPreferences,
     };
   };
