@@ -11,30 +11,7 @@ import {
 import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
-
-declare namespace browser.alarms {
-  function create(
-    name: string,
-    alarmInfo: {
-      /** Time when the alarm is scheduled to first fire, in milliseconds past the epoch. */
-      when?: number;
-      /** Number of minutes from the current time after which the alarm should first fire. */
-      delayInMinutes?: number;
-      /** Number of minutes after which the alarm should recur repeatedly. */
-      periodInMinutes?: number;
-    },
-  ): void;
-  function clear(name: string): boolean;
-}
-
-declare namespace browser.alarms.onAlarm {
-  function addListener(listener: any);
-  function removeListener(listener: any);
-}
-
-declare namespace browser.runtime {
-  const id: any;
-}
+import { browser } from "webextension-polyfill-ts";
 
 export interface NavigationBatch {
   navigationEnvelope: OpenWpmPayloadEnvelope;

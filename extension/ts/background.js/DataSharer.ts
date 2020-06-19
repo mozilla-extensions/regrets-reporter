@@ -3,6 +3,17 @@ import { makeUUID } from "./lib/uuid";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
 import { Store } from "./Store";
 import { TelemetryClient } from "./TelemetryClient";
+import { browser } from "webextension-polyfill-ts";
+import { getChromiumBrowserInfo } from "./lib/getChromiumBrowserInfo";
+
+// The `browser` global object can't be set via the global object in test/browser-polyfills.ts
+// thus, it sets globalThis.browser instead, which we have to move to `browser` during tests.
+// TL;DR: This is necessary for the unit tests to run
+if (!browser.runtime) {
+  // @ts-ignore
+  // noinspection JSConstantReassignment
+  browser = globalThis.browser;
+}
 
 export interface SharedDataEventMetadata {
   client_timestamp: string;
@@ -40,13 +51,17 @@ export class DataSharer {
     data: SharedData,
     amount_of_regret_reports_since_consent_was_given,
   ): Promise<AnnotatedSharedData> {
-    const browserInfo = await globalThis.browser.runtime.getBrowserInfo();
+    const browserInfo = browser.runtime.getBrowserInfo
+      ? await browser.runtime.getBrowserInfo()
+      : getChromiumBrowserInfo();
+    const extensionPreferences = await this.store.getExtensionPreferences();
 
     return {
       ...data,
       event_metadata: {
         client_timestamp: new Date().toISOString(),
-        extension_installation_uuid: await this.store.extensionInstallationUuid(),
+        extension_installation_uuid:
+          extensionPreferences.extensionInstallationUuid,
         event_uuid: makeUUID(),
         amount_of_regret_reports_since_consent_was_given,
         browser_info: {
@@ -55,7 +70,7 @@ export class DataSharer {
           version: browserInfo.version,
           name: browserInfo.name,
         },
-        extension_version: globalThis.browser.runtime.getManifest().version,
+        extension_version: browser.runtime.getManifest().version,
       },
     };
   }
