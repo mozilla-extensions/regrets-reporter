@@ -124,9 +124,15 @@ export class TelemetryClient {
         ) === 0
       ) {
         // network error
+        console.info(
+          "Telemetry upload attempt failed temporarily - re-adding to upload queue for a future delivery attempt",
+        );
         this.queueUpload(payload);
       } else if (error.name === "FetchError") {
         // some other request error
+        console.info(
+          "Telemetry upload attempt failed temporarily - re-adding to upload queue for a future delivery attempt",
+        );
         this.queueUpload(payload);
       } else {
         // other error (note: not storing the payload for retry)
@@ -143,7 +149,7 @@ export class TelemetryClient {
     try {
       result = await this.sendUploadPayloadRequest(payload).catch(onError);
       if (result !== false) {
-        console.debug("Telemetry uploaded");
+        console.debug("Telemetry payload uploaded");
       }
     } catch (err) {
       result = onError(err);
