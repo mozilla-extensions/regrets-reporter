@@ -25,7 +25,7 @@ const plugins = [
 ];
 
 // Don't upload sources to Sentry for karma tests
-if (process.env.NODE_ENV !== "test") {
+if (process.env.NODE_ENV !== "test" && process.env.OFFLINE !== "1") {
   plugins.push(
     new SentryWebpackPlugin({
       include: "./src/",
