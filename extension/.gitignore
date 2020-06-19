@@ -8,6 +8,7 @@ src/manifest.json
 src/options-ui.js
 ts/background.js/lib/validate.js
 .env
+test/build
 test/results/coverage
 /firefox-*
 stats.json
