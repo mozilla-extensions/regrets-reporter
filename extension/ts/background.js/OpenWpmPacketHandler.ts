@@ -1,6 +1,6 @@
 import { humanFileSize } from "./lib/humanFileSize";
 import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
-import { HttpResponse } from "@openwpm/webext-instrumentation";
+import { HttpResponse, UiState } from "@openwpm/webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
 import { classifyYouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
@@ -234,7 +234,8 @@ export class OpenWpmPacketHandler {
       return record.frame_id === 0;
     }
     if (instrument === "ui_states") {
-      return record.frame_id === 0;
+      const uiState: UiState = record;
+      return uiState.frame_id === 0 && uiState.document_hidden === 0;
     }
     if (instrument === "http_redirects") {
       return false;
