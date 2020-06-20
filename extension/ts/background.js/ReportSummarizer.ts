@@ -118,6 +118,7 @@ export interface YouTubeNavigationSpecificRegretReportData {
 export interface RegretReportData
   extends YouTubeNavigationSpecificRegretReportData {
   youtube_usage_statistics_update: YouTubeUsageStatisticsUpdate;
+  report_data_uuid: string;
 }
 
 export interface RegretReport {
@@ -126,6 +127,7 @@ export interface RegretReport {
   user_supplied_other_regret_category: string;
   user_supplied_severity: number;
   user_supplied_optional_comment: string;
+  form_step: number;
 }
 
 export class ReportSummarizer {

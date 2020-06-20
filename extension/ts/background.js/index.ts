@@ -28,6 +28,7 @@ import { DataSharer } from "./DataSharer";
 import { Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";
 import { getCurrentTab } from "./lib/getCurrentTab";
+import { makeUUID } from "./lib/uuid";
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const store = new Store(localStorageWrapper);
@@ -154,9 +155,11 @@ class ExtensionGlue {
               skipWindowAndTabIdFilter,
             );
             const youtube_usage_statistics_update = await youTubeUsageStatistics.summarizeUpdate();
+            const report_data_uuid = makeUUID();
             const regretReportData: RegretReportData = {
               ...youTubeNavigationSpecificRegretReportData,
               youtube_usage_statistics_update,
+              report_data_uuid,
             };
             portFromReportRegretForm.postMessage({
               regretReportData,

@@ -22,6 +22,9 @@
     },
     "RegretReport": {
       "properties": {
+        "form_step": {
+          "type": "number"
+        },
         "report_data": {
           "$ref": "#/definitions/RegretReportData"
         },
@@ -50,6 +53,9 @@
             "$ref": "#/definitions/YouTubeNavigationMetadata"
           },
           "type": "array"
+        },
+        "report_data_uuid": {
+          "type": "string"
         },
         "youtube_navigation_metadata": {
           "$ref": "#/definitions/YouTubeNavigationMetadata"

@@ -78,12 +78,16 @@ export class DataSharer {
   async share(data: SharedData) {
     const { sharedData } = await this.store.get("sharedData");
 
+    const countsAsRegretReport = ($annotatedData: SharedData) =>
+      $annotatedData.regret_report &&
+      $annotatedData.regret_report.form_step !== 2;
+
     let amount_of_regret_reports_since_consent_was_given = sharedData
-      ? sharedData.filter($annotatedData => $annotatedData.regretReport).length
+      ? sharedData.filter(countsAsRegretReport).length
       : 0;
 
     // If this is a regret report, include it in the statistic
-    if (data.regret_report) {
+    if (countsAsRegretReport(data)) {
       amount_of_regret_reports_since_consent_was_given++;
     }
 
