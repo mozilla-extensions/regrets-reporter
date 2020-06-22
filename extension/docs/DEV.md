@@ -46,7 +46,7 @@ From the background context:
 
 ```javascript
 browser.runtime.getURL(
-  `report-regret-form/report-regret-form.html?skipWindowAndTabIdFilter=1`
+  `report-regret-form/report-regret-form.html?skipWindowAndTabIdFilter=1`,
 );
 ```
 
@@ -60,7 +60,7 @@ browser.runtime.getURL(`get-started/get-started.html`);
 await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
 await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
   openWpmPacketHandler.navigationBatchPreprocessor
-    .navigationBatchesByNavigationUuid
+    .navigationBatchesByNavigationUuid,
 );
 ```
 
@@ -92,7 +92,7 @@ await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 await triggerClientDownloadOfData(
   openWpmPacketHandler.navigationBatchPreprocessor
     .openWpmPayloadEnvelopeProcessQueue,
-  "navigationBatchPreprocessorFixture.json"
+  "navigationBatchPreprocessorFixture.json",
 );
 ```
 
@@ -117,7 +117,7 @@ await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
 await triggerClientDownloadOfData(
   openWpmPacketHandler.navigationBatchPreprocessor
     .navigationBatchesByNavigationUuid,
-  "reportSummarizerFixture.json"
+  "reportSummarizerFixture.json",
 );
 ```
 
