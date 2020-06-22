@@ -1,3 +1,5 @@
+# don't lint/format data docs
+telemetry-schema/data-review-request.md
 # do not lint/format generated artifacts
 test/build/
 test/results/coverage/
