@@ -174,6 +174,26 @@ _[1] Related projects_
         </td>
     </tr>
     <tr>
+        <td>Report data UUID (A UUID of the summarized report data, for connecting reports sent from different form steps with each other)</td>
+        <td>Category 2</td>
+        <td>Active (Shared via a form)</td>
+        <td>
+            <ul>
+                <li>(For data payload parsing)</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Form Step (From which step in the regret report form this report was sent from)</td>
+        <td>Category 2</td>
+        <td>Active (Shared via a form)</td>
+        <td>
+            <ul>
+                <li>(For data payload parsing)</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
         <td>User-selected regret categories (false, offensive, bizarre, other)</td>
         <td>Closed-ended multiple-choice survey response.<p>Category 4 (Highly sensitive data)</td>
         <td>Active (Shared via a form)</td>
