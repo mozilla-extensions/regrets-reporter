@@ -156,6 +156,8 @@
 "@openwpm/webext-instrumentation@../instrumentation/OpenWPM/automation/Extension/webext-instrumentation":
   version "0.4.0"
   dependencies:
+    content-scripts-register-polyfill "^1.0.1"
+    webext-patterns "^0.9.0"
     webextension-polyfill-ts "^0.17.0"
     xhook "github:jpillora/xhook#es6-2020-refactor"
 
@@ -336,6 +338,11 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
   integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
+
+"@types/firefox-webext-browser@^70.0.1":
+  version "70.0.1"
+  resolved "https://registry.yarnpkg.com/@types/firefox-webext-browser/-/firefox-webext-browser-70.0.1.tgz#53a3915bfbe25e2c5ec439dbdbe6e303610012bb"
+  integrity sha512-hjHsTR9vKs+yikWbNS/s7TVCx15M/MEn+VYx47wtT/W/wORsIZDD75gfUfP7lkzi+IxRvKMQBB/5/wMFlfgvgQ==
 
 "@types/json-schema@^7.0.3":
   version "7.0.4"
@@ -2818,6 +2825,14 @@ contains-path@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/contains-path/-/contains-path-0.1.0.tgz#fe8cf184ff6670b6baef01a9d4861a5cbec4120a"
   integrity sha1-/ozxhP9mcLa67wGp1IYaXL7EEgo=
+
+content-scripts-register-polyfill@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/content-scripts-register-polyfill/-/content-scripts-register-polyfill-1.0.1.tgz#c090ce6cc130e60ab2534d7644730719fafd6b3f"
+  integrity sha512-VuL9uPNlUTgkn2Q2EepkK8FGh+AtIDtpCNglWioZRibFK2BFDQC/FKWIXKoiibh2tYdMiHjI5LvPyotZcNcUlw==
+  dependencies:
+    "@types/firefox-webext-browser" "^70.0.1"
+    webext-patterns "^0.9.0"
 
 content-type@~1.0.4:
   version "1.0.4"
@@ -12505,6 +12520,11 @@ webcrypto-core@^1.0.18:
   dependencies:
     pvtsutils "^1.0.10"
     tslib "^1.11.1"
+
+webext-patterns@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/webext-patterns/-/webext-patterns-0.9.0.tgz#4d475f0f8fab94438529c04b35d70185311ff403"
+  integrity sha512-eJDQjdJ8QmbURZtmRVnkLm4xHoG3YUNJzpIIJPmBKC4rjfT89IzZvUn70qJSKM9+S3sqefI1hzQIvSLp2uGWfw==
 
 webextension-polyfill-ts@^0.17.0:
   version "0.17.0"

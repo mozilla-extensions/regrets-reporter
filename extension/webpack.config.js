@@ -37,6 +37,8 @@ module.exports = {
   entry: {
     "ui-instrument-content-script":
       "./ts/ui-instrument-content-script.js/index.ts",
+    "response-body-listener-content-script":
+      "./ts/response-body-listener-content-script.js/index.ts",
     background: "./ts/background.js/index.ts",
     "get-started": "./ts/get-started.js/index.tsx",
     "report-regret-form": "./ts/report-regret-form.js/index.tsx",

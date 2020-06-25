@@ -11,6 +11,7 @@ import {
   HttpInstrument,
   NavigationInstrument,
   UiInstrument,
+  ResponseBodyListener,
 } from "@openwpm/webext-instrumentation";
 import {
   RegretReport,
@@ -65,6 +66,7 @@ class ExtensionGlue {
         "port-from-options-ui:form",
         "port-from-get-started:index",
         "port-from-ui-instrument-content-script:index",
+        "port-from-response-body-listener-content-script:index",
       ],
     );
   }
@@ -214,6 +216,9 @@ class ExtensionGlue {
       js_instrument: false,
       http_instrument: true,
       save_content: "main_frame,xmlhttprequest",
+      save_content_method: browser.webRequest.filterResponseData
+        ? "filter_response_data"
+        : "injected_page_script",
       http_instrument_resource_types: "main_frame,xmlhttprequest",
       http_instrument_urls: "*://*.youtube.com/*|*://*.youtu.be/*",
       ui_instrument: true,
@@ -256,9 +261,23 @@ class ExtensionGlue {
       this.httpInstrument.run(
         config["crawl_id"],
         config["save_content"],
+        config["save_content_method"],
         config["http_instrument_resource_types"],
         config["http_instrument_urls"],
       );
+      if (config["save_content_method"] === "injected_page_script") {
+        const registerContentScriptOptions = {
+          matches: ["*://*.youtube.com/*"],
+          allFrames: false,
+          matchAboutBlank: false,
+        };
+        await ResponseBodyListener.registerContentScript(
+          {
+            testing: config["testing"],
+          },
+          registerContentScriptOptions,
+        );
+      }
     }
     if (config["ui_instrument"]) {
       await openWpmPacketHandler.logDebug("UI instrumentation enabled");
