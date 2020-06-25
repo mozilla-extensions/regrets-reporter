@@ -512,6 +512,22 @@ export class ReportSummarizer {
     let view_count_at_navigation_short;
     let view_count_at_navigation;
 
+    interface YouTubeRun {
+      text: string;
+      navigationEndpoint?: { urlEndpoint: { url: string } };
+    }
+
+    const runsToMarkdown = (runs: YouTubeRun[]) => {
+      return runs
+        .map((run: YouTubeRun) => {
+          if (run.navigationEndpoint) {
+            return `[${run.text}](${run.navigationEndpoint.urlEndpoint.url})`;
+          }
+          return run.text;
+        })
+        .join("");
+    };
+
     try {
       const twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer = ytInitialData.contents.twoColumnWatchNextResults.results.results.contents.find(
         contents => {
@@ -520,9 +536,10 @@ export class ReportSummarizer {
       );
 
       try {
-        video_title =
+        video_title = runsToMarkdown(
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
-            .videoPrimaryInfoRenderer.title.runs[0].text;
+            .videoPrimaryInfoRenderer.title.runs,
+        );
       } catch (err) {
         captureExceptionWithExtras(err, { attribute: "video_title" });
         console.error("video_title", err.message);
@@ -582,9 +599,10 @@ export class ReportSummarizer {
           return contents.videoSecondaryInfoRenderer !== undefined;
         },
       );
-      video_description =
+      video_description = runsToMarkdown(
         twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer
-          .videoSecondaryInfoRenderer.description.runs[0].text;
+          .videoSecondaryInfoRenderer.description.runs,
+      );
     } catch (err) {
       captureExceptionWithExtras(err, { attribute: "video_description" });
       console.error("video_description", err.message);
