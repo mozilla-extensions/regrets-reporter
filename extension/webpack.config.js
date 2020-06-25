@@ -3,7 +3,11 @@
 const path = require("path");
 
 const Dotenv = require("dotenv-webpack");
+const CopyPlugin = require("copy-webpack-plugin");
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+
+const targetBrowser = process.env.TARGET_BROWSER || "firefox";
+const destPath = path.join(__dirname, "build", targetBrowser);
 
 const dotEnvPath =
   process.env.NODE_ENV === "production"
@@ -14,13 +18,12 @@ const dotEnvPath =
 const fs = require("fs");
 fs.createReadStream(dotEnvPath).pipe(fs.createWriteStream("./.env"));
 
-// Build manifest.json
-const { buildManifest } = require("./buildManifest");
-buildManifest({ dotEnvPath });
-
 const plugins = [
   new Dotenv({
     path: dotEnvPath,
+  }),
+  new CopyPlugin({
+    patterns: [{ from: "src", to: destPath }],
   }),
 ];
 
@@ -28,7 +31,7 @@ const plugins = [
 if (process.env.NODE_ENV !== "test" && process.env.OFFLINE !== "1") {
   plugins.push(
     new SentryWebpackPlugin({
-      include: "./src/",
+      include: destPath,
     }),
   );
 }
@@ -45,7 +48,7 @@ module.exports = {
     "options-ui": "./ts/options-ui.js/index.tsx",
   },
   output: {
-    path: path.resolve(__dirname, "src"),
+    path: destPath,
     filename: "[name].js",
     sourceMapFilename: "[name].js.map",
     pathinfo: true,

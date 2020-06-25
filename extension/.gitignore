@@ -1,11 +1,6 @@
 dist/*
 node_modules/
-src/*content-script.js
-src/background.js
-src/get-started.js
-src/report-regret-form.js
-src/manifest.json
-src/options-ui.js
+build/
 ts/background.js/lib/validate.js
 .env
 test/build

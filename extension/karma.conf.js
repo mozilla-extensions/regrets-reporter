@@ -46,7 +46,7 @@ module.exports = function(config) {
     webpack: webpackConfig,
     preprocessors: {
       "ts/**/*.ts": ["webpack"],
-      "src/**/*.js": ["babel"],
+      "build/**/*.js": ["babel"],
     },
     plugins: [
       "karma-babel-preprocessor",

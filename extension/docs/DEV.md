@@ -34,10 +34,16 @@ cp .env.production .env
 npx sentry-cli info
 ```
 
-To launch Firefox, install the extension and start Webpack in watch mode:
+To build for and launch Firefox, install the extension and start Webpack in watch mode:
 
 ```
 yarn watch
+```
+
+For Chrome:
+
+```
+TARGET_BROWSER=chrome yarn watch
 ```
 
 ## Opening up specific add-on pages
