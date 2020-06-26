@@ -89,7 +89,7 @@
     "typescript": "^3.8.3",
     "typescript-eslint-parser": "^20.0.0",
     "typescript-json-schema": "^0.42.0",
-    "web-ext": "^4.2.0",
+    "web-ext": "^4.3.0",
     "webpack": "^4.1.0",
     "webpack-cli": "^3.1.1",
     "yamljs": "^0.3.0"
@@ -123,10 +123,9 @@
     "lint:web-ext-lint": "web-ext lint",
     "postformat": "npm run docformat && npm run eslint-fix && fixpack",
     "postinstall": "cd node_modules/@openwpm/webext-instrumentation && npm install",
-    "prebuild": "npm-run-all clean generate-manifest webext-instrumentation:submodule-rsync webext-instrumentation:build compile-schema",
+    "prebuild:development": "npm-run-all clean generate-manifest webext-instrumentation:adjacent-submodule-directory-as-node-module webext-instrumentation:build compile-schema",
     "prestart": "node ./ensure_minimum_node_version.js && npm run build:development",
     "pretest:unit:mocha": "NODE_ENV=test npx webpack --entry ./test/all-tests.ts --output-path test/build --output-filename all-tests.js --target node",
-    "prewatch": "npm run prebuild",
     "start": "web-ext run",
     "test": "npm-run-all -n test:unit # test:func",
     "test:unit": "npm-run-all -n test:unit:mocha test:unit:karma",
@@ -134,7 +133,7 @@
     "test:unit:mocha": "DOTENV_CONFIG_PATH=.env.development mocha -r source-map-support/register -r sinon/pkg/sinon -r ./test/browser-polyfills.ts -r dotenv/config --globals global test/build/all-tests.js",
     "watch": "npm-run-all build:development && concurrently 'webpack --watch' 'web-ext run'",
     "webext-instrumentation:build": "cd node_modules/@openwpm/webext-instrumentation && npm run build && cd -",
-    "webext-instrumentation:submodule-rsync": "rsync -r -t -p -o -g -x --stats --delete -l -D ../instrumentation/OpenWPM/automation/Extension/webext-instrumentation/ node_modules/@openwpm/webext-instrumentation/",
+    "webext-instrumentation:adjacent-submodule-directory-as-node-module": "rsync -r -t -p -o -g -x --stats --delete -l -D ../instrumentation/OpenWPM/automation/Extension/webext-instrumentation/ node_modules/@openwpm/webext-instrumentation/",
     "webpack:stats": "webpack --profile --json --mode=production > stats.json"
   }
 }
