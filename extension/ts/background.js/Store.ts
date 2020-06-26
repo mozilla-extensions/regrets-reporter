@@ -13,6 +13,7 @@ export type ConsentStatus = null | "given" | "withdrawn";
 export interface ExtensionPreferences {
   enableErrorReporting: boolean;
   extensionInstallationErrorReportingUuid: string;
+  extensionInstallationUuid: string;
 }
 
 export class Store implements LocalStorageWrapper {
@@ -38,6 +39,7 @@ export class Store implements LocalStorageWrapper {
     return {
       enableErrorReporting: true,
       extensionInstallationErrorReportingUuid: await this.extensionInstallationErrorReportingUuid(),
+      extensionInstallationUuid: await this.extensionInstallationUuid(),
     };
   };
 
