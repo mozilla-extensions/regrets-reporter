@@ -39,10 +39,6 @@ async function generateManifest({ dotEnvPath }) {
       "alarms",
     ],
     icons: {},
-    page_action: {
-      default_title: "__MSG_pageActionButtonTitle__",
-      default_popup: "report-regret-form/report-regret-form.html",
-    },
     browser_action: {
       default_title: "__MSG_pageActionButtonTitle__",
       default_popup: "report-regret-form/report-regret-form.html",
@@ -52,12 +48,10 @@ async function generateManifest({ dotEnvPath }) {
     },
   };
   if (targetBrowser === "firefox") {
-    manifest.page_action.browser_style = true;
     manifest.browser_action.browser_style = true;
     manifest.options_ui.browser_style = true;
   }
   if (targetBrowser === "chrome") {
-    manifest.page_action.chrome_style = true;
     manifest.browser_action.chrome_style = true;
     manifest.options_ui.chrome_style = true;
   }
