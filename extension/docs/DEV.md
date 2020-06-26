@@ -43,7 +43,7 @@ yarn watch
 For Chrome:
 
 ```
-TARGET_BROWSER=chrome yarn watch
+yarn watch:chrome
 ```
 
 ## Opening up specific add-on pages
