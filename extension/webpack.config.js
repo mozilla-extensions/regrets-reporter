@@ -27,7 +27,7 @@ const plugins = [
   }),
 ];
 
-// Don't upload sources to Sentry for karma tests
+// Don't upload sources to Sentry when running unit tests or offline development is specified
 if (process.env.NODE_ENV !== "test" && process.env.OFFLINE !== "1") {
   plugins.push(
     new SentryWebpackPlugin({

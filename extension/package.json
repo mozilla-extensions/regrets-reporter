@@ -100,10 +100,8 @@
     "node": ">=10.18.0"
   },
   "keywords": [
-    "firefox",
     "mozilla",
-    "youtube",
-    "youtube-regrets"
+    "regrets-reporter"
   ],
   "license": "MPL-2.0",
   "private": true,
@@ -126,7 +124,7 @@
     "postformat": "npm run docformat && npm run eslint-fix && fixpack",
     "postinstall": "cd node_modules/@openwpm/webext-instrumentation && npm install",
     "prebuild": "npm-run-all clean generate-manifest webext-instrumentation:submodule-rsync webext-instrumentation:build compile-schema",
-    "prestart": "node ./ensure_minimum_node_version.js && npm run build",
+    "prestart": "node ./ensure_minimum_node_version.js && npm run build:development",
     "pretest:unit:mocha": "NODE_ENV=test npx webpack --entry ./test/all-tests.ts --output-path test/build --output-filename all-tests.js --target node",
     "prewatch": "npm run prebuild",
     "start": "web-ext run",
