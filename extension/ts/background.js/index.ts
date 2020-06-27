@@ -368,15 +368,15 @@ class ExtensionGlue {
    */
   async cleanup() {
     if (this.getStartedPortListener) {
-      browser.runtime.onMessage.removeListener(this.getStartedPortListener);
+      browser.runtime.onConnect.removeListener(this.getStartedPortListener);
     }
     if (this.extensionPreferencesPortListener) {
-      browser.runtime.onMessage.removeListener(
+      browser.runtime.onConnect.removeListener(
         this.extensionPreferencesPortListener,
       );
     }
     if (this.reportRegretFormPortListener) {
-      browser.runtime.onMessage.removeListener(
+      browser.runtime.onConnect.removeListener(
         this.reportRegretFormPortListener,
       );
     }
