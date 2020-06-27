@@ -12,12 +12,15 @@ import Port = Runtime.Port;
 import { DisplayError } from "../shared-resources/DisplayError";
 import { ExtensionPreferences } from "../background.js/Store";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
+import Button from "../shared-resources/photon-components-web/photon-components/Button";
+import { config } from "../config";
 
 export interface ExtensionPreferencesFormProps {}
 
 export interface ExtensionPreferencesFormState {
   loading: boolean;
   extensionPreferences: ExtensionPreferences | null;
+  dataDeletionRequested: boolean;
   error: boolean;
   reported: boolean;
 }
@@ -29,6 +32,7 @@ export class ExtensionPreferencesForm extends Component<
   public state = {
     loading: true,
     extensionPreferences: null,
+    dataDeletionRequested: false,
     error: false,
     reported: false,
   };
@@ -66,6 +70,26 @@ export class ExtensionPreferencesForm extends Component<
         });
       },
     );
+
+    // Data deletion requests
+    this.backgroundContextPort.onMessage.addListener(
+      async (m: { dataDeletionRequested: boolean }) => {
+        if (m.dataDeletionRequested) {
+          const { dataDeletionRequested } = m;
+          await this.setState({
+            loading: false,
+            dataDeletionRequested: true,
+          });
+          return null;
+        }
+        captureExceptionWithExtras(new Error("Unexpected message"), { m });
+        console.error("Unexpected message", { m });
+        await this.setState({
+          loading: false,
+          error: true,
+        });
+      },
+    );
   }
 
   cancel(event: MouseEvent) {
@@ -89,6 +113,12 @@ export class ExtensionPreferencesForm extends Component<
     });
   };
 
+  requestDataDeletion = async () => {
+    this.backgroundContextPort.postMessage({
+      requestDataDeletion: true,
+    });
+  };
+
   render() {
     if (this.state.loading || this.state.extensionPreferences === null) {
       return (
@@ -102,13 +132,36 @@ export class ExtensionPreferencesForm extends Component<
     return (
       <>
         <div className="panel-section panel-section-formElements p-0 mx-0 my-4">
-          <div className="panel-formElements-item">
+          <div className="panel-formElements-item my-4">
             <Checkbox
               label="Allow RegretsReporter to send information about encountered errors to Mozilla"
               value="enable_error_reporting"
               checked={this.state.extensionPreferences.enableErrorReporting}
               onChange={this.handleEnableErrorReportingChange}
             />
+          </div>
+          <div className="panel-formElements-item my-4">
+            {(this.state.dataDeletionRequested &&
+              "Success! Data deletion has been requested.") || (
+              <Button
+                onClick={this.requestDataDeletion}
+                className="btn btn-grey"
+              >
+                Request that my RegretsReporter data is deleted from Mozilla's
+                servers
+              </Button>
+            )}
+          </div>
+          <div className="panel-formElements-item my-4">
+            Please review the{" "}
+            <a
+              href={config.privacyNoticeUrl}
+              target="_blank"
+              className="underline mx-1"
+            >
+              privacy notice
+            </a>{" "}
+            for more information about the above options.
           </div>
         </div>
       </>

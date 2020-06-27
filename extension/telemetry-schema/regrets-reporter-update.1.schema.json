@@ -20,6 +20,17 @@
       },
       "type": "object"
     },
+    "DataDeletionRequest": {
+      "properties": {
+        "extension_installation_error_reporting_uuid": {
+          "type": "string"
+        },
+        "extension_installation_uuid": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "RegretReport": {
       "properties": {
         "form_step": {
@@ -223,6 +234,9 @@
     }
   },
   "properties": {
+    "data_deletion_request": {
+      "$ref": "#/definitions/DataDeletionRequest"
+    },
     "event_metadata": {
       "$ref": "#/definitions/SharedDataEventMetadata"
     },

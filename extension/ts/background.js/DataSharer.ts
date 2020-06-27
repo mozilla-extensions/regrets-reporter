@@ -29,9 +29,15 @@ export interface SharedDataEventMetadata {
   extension_version: string;
 }
 
+interface DataDeletionRequest {
+  extension_installation_uuid: string;
+  extension_installation_error_reporting_uuid: string;
+}
+
 export interface SharedData {
   regret_report?: RegretReport;
   youtube_usage_statistics_update?: YouTubeUsageStatisticsUpdate;
+  data_deletion_request?: DataDeletionRequest;
 }
 
 export interface AnnotatedSharedData extends SharedData {
@@ -108,6 +114,18 @@ export class DataSharer {
 
     // Queue for external upload
     await this.telemetryClient.submitPayload(annotatedData);
+  }
+
+  async requestDataDeletion() {
+    const extensionPreferences = await this.store.getExtensionPreferences();
+    await this.share({
+      data_deletion_request: {
+        extension_installation_uuid:
+          extensionPreferences.extensionInstallationUuid,
+        extension_installation_error_reporting_uuid:
+          extensionPreferences.extensionInstallationErrorReportingUuid,
+      },
+    });
   }
 
   async export() {

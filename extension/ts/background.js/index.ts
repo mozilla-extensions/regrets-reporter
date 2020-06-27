@@ -4,7 +4,7 @@ import {
   captureExceptionWithExtras,
   initErrorReportingInBackgroundScript,
 } from "../shared-resources/ErrorReporting";
-import { browser } from "webextension-polyfill-ts";
+import { browser, Runtime } from "webextension-polyfill-ts";
 import {
   CookieInstrument,
   JavascriptInstrument,
@@ -26,10 +26,11 @@ import {
 import { YouTubeUsageStatistics } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./OpenWpmPacketHandler";
 import { DataSharer } from "./DataSharer";
-import { Store } from "./Store";
+import { ExtensionPreferences, Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";
 import { getCurrentTab } from "./lib/getCurrentTab";
 import { makeUUID } from "./lib/uuid";
+import Port = Runtime.Port;
 const openWpmPacketHandler = new OpenWpmPacketHandler();
 const reportSummarizer = new ReportSummarizer();
 const store = new Store(localStorageWrapper);
@@ -52,6 +53,7 @@ class ExtensionGlue {
   private openwpmCrawlId: string;
   private getStartedPortListener;
   private extensionPreferencesPortListener;
+  private dataDeletionRequestsPortListener;
   private reportRegretFormPortListener;
 
   constructor() {}
@@ -68,6 +70,27 @@ class ExtensionGlue {
         "port-from-ui-instrument-content-script:index",
         "port-from-response-body-listener-content-script:index",
       ],
+    );
+    // Listen for data deletion requests
+    this.dataDeletionRequestsPortListener = (port: Port) => {
+      if (port.name !== "port-from-options-ui:form") {
+        return;
+      }
+      port.onMessage.addListener(async function(m) {
+        console.debug(
+          `dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`,
+          { m },
+        );
+        if (m.requestDataDeletion) {
+          await dataSharer.requestDataDeletion();
+          port.postMessage({
+            dataDeletionRequested: true,
+          });
+        }
+      });
+    };
+    browser.runtime.onConnect.addListener(
+      this.dataDeletionRequestsPortListener,
     );
   }
 

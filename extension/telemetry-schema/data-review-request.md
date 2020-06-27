@@ -365,6 +365,16 @@ _[1] Related projects_
         </td>
     </tr>
     <tr>
+        <td>Data deletion requests</td>
+        <td>Category 2</td>
+        <td>Active (Shared via a user interaction)</td>
+        <td>
+            <ul>
+                <li>(To allow users to request that their contributed data be deleted from our servers)</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
         <td>Information about encountered errors</td>
         <td>Category 3 (Since the host and pathname of previously unencountered YouTube URLs are submitted if encountered to be able to classify urls better as the YouTube API / protocol changes over time)</td>
         <td>Passive (Submitted when errors are encountered)</td>

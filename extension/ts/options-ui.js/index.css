@@ -2,6 +2,16 @@ body {
   background-color: #fff;
 }
 
+.btn {
+  @apply font-bold py-2 px-4 rounded;
+}
+.btn-grey {
+  @apply bg-grey-20;
+}
+.btn-grey:hover {
+  @apply bg-grey-40;
+}
+
 /* To align with the current font size */
 .checkbox {
   margin: -3px 5px;
