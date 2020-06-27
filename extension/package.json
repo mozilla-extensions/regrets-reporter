@@ -1,7 +1,7 @@
 {
   "name": "regrets-reporter",
   "description": "Content Recommendation Engine Regrets Reporter",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": "Mozilla",
   "dependencies": {
     "@openwpm/webext-instrumentation": "../instrumentation/OpenWPM/automation/Extension/webext-instrumentation",
