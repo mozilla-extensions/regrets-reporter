@@ -514,14 +514,33 @@ export class ReportSummarizer {
 
     interface YouTubeRun {
       text: string;
-      navigationEndpoint?: { urlEndpoint: { url: string } };
+      navigationEndpoint?: {
+        urlEndpoint?: { url: string };
+        commandMetadata?: { webCommandMetadata: { url: string } };
+      };
     }
 
     const runsToMarkdown = (runs: YouTubeRun[]) => {
       return runs
         .map((run: YouTubeRun) => {
           if (run.navigationEndpoint) {
-            return `[${run.text}](${run.navigationEndpoint.urlEndpoint.url})`;
+            if (run.navigationEndpoint.urlEndpoint) {
+              return `[${run.text}](${run.navigationEndpoint.urlEndpoint.url})`;
+            } else if (
+              run.navigationEndpoint.commandMetadata &&
+              run.navigationEndpoint.commandMetadata.webCommandMetadata
+            ) {
+              return `[${run.text}](${run.navigationEndpoint.commandMetadata.webCommandMetadata.url})`;
+            } else {
+              console.debug("Unexpected YouTube runs structure encountered", {
+                run,
+              });
+              captureExceptionWithExtras(
+                new Error("Unexpected YouTube runs structure encountered"),
+                { run },
+              );
+              return run.text;
+            }
           }
           return run.text;
         })
