@@ -68,9 +68,6 @@
     },
     "SharedDataEventMetadata": {
       "properties": {
-        "amount_of_regret_reports_since_consent_was_given": {
-          "type": "number"
-        },
         "browser_info": {
           "properties": {
             "build_id": {
@@ -99,6 +96,9 @@
         },
         "extension_version": {
           "type": "string"
+        },
+        "total_amount_of_regret_reports": {
+          "type": "number"
         }
       },
       "type": "object"

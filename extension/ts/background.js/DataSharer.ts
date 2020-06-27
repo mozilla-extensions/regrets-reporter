@@ -19,7 +19,7 @@ export interface SharedDataEventMetadata {
   client_timestamp: string;
   extension_installation_uuid: string;
   event_uuid: string;
-  amount_of_regret_reports_since_consent_was_given: number;
+  total_amount_of_regret_reports: number;
   browser_info: {
     build_id: string;
     name: string;
@@ -49,7 +49,7 @@ export class DataSharer {
 
   async annotateSharedData(
     data: SharedData,
-    amount_of_regret_reports_since_consent_was_given,
+    total_amount_of_regret_reports,
   ): Promise<AnnotatedSharedData> {
     const browserInfo = browser.runtime.getBrowserInfo
       ? await browser.runtime.getBrowserInfo()
@@ -63,7 +63,7 @@ export class DataSharer {
         extension_installation_uuid:
           extensionPreferences.extensionInstallationUuid,
         event_uuid: makeUUID(),
-        amount_of_regret_reports_since_consent_was_given,
+        total_amount_of_regret_reports,
         browser_info: {
           build_id: browserInfo.buildID,
           vendor: browserInfo.vendor,
@@ -82,18 +82,18 @@ export class DataSharer {
       $annotatedData.regret_report &&
       $annotatedData.regret_report.form_step !== 2;
 
-    let amount_of_regret_reports_since_consent_was_given = sharedData
+    let total_amount_of_regret_reports = sharedData
       ? sharedData.filter(countsAsRegretReport).length
       : 0;
 
     // If this is a regret report, include it in the statistic
     if (countsAsRegretReport(data)) {
-      amount_of_regret_reports_since_consent_was_given++;
+      total_amount_of_regret_reports++;
     }
 
     const annotatedData: AnnotatedSharedData = await this.annotateSharedData(
       data,
-      amount_of_regret_reports_since_consent_was_given,
+      total_amount_of_regret_reports,
     );
 
     // Store a copy of the data for local introspection

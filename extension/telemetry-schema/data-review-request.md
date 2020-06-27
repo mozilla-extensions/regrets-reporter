@@ -310,7 +310,7 @@ _[1] Related projects_
         </td>
     </tr>
     <tr>
-        <td>Amount of regret reports since consent was given</td>
+        <td>Total amount of regret reports</td>
         <td>Category 1 or 2</td>
         <td>Passive & Active (included in all shared events)</td>
         <td>
