@@ -7,6 +7,7 @@ import "../shared-resources/tailwind.css";
 import { ReportRegretInstructions } from "./inc/ReportRegretInstructions";
 import { YourPrivacy } from "./inc/YourPrivacy";
 import { config } from "../config";
+import { YouMakeTheInternetHealther } from "./inc/YouMakeTheInternetHealthier";
 
 export interface GetStartedFlowProps {}
 
@@ -120,6 +121,7 @@ export class GetStartedFlow extends Component<
                 .
               </p>
             </section>
+            <YouMakeTheInternetHealther />
           </div>
           <footer className="footer">
             <img className="mozilla-logo m-auto" src="./img/mozilla.svg" />
