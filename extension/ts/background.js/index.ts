@@ -79,19 +79,13 @@ class ExtensionGlue {
   }
 
   async start() {
-    // Only show report-regret page action on YouTube watch pages
-    const showPageActionOnWatchPagesOnly = (tabId, changeInfo, tab) => {
-      function onExecuted(result) {
-        const url = result ? result[0] : false;
-        if (url && url.match(/:\/\/[^\/]*\.?youtube.com\/watch/)) {
-          browser.pageAction.show(tab.id);
-        } else {
-          browser.pageAction.hide(tab.id);
-        }
-      }
-      function onError(_error) {
+    const showSpecificExtensionIconOnWatchPages = async () => {
+      const tab = await getCurrentTab();
+      function setActiveExtensionIcon() {
         try {
-          browser.pageAction.hide(tab.id);
+          browser.browserAction.setIcon({
+            path: "icons/green-extensionsicon.svg",
+          });
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
             // do nothing, the tab does not exist anymore
@@ -99,18 +93,50 @@ class ExtensionGlue {
           throw e;
         }
       }
-      const executing = browser.tabs.executeScript({
-        code: "location.href",
-      });
-      executing.then(onExecuted, onError);
+      function setInactiveExtensionIcon() {
+        try {
+          browser.browserAction.setIcon({
+            path: "icons/gray-extensionsicon.svg",
+          });
+        } catch (e) {
+          if (e.message.indexOf("Invalid tab ID") === 0) {
+            // do nothing, the tab does not exist anymore
+          }
+          throw e;
+        }
+      }
+
+      // tab.url is not available in Firefox unless the tabs permission is granted
+      if (tab.url) {
+        if (tab.url.match(/:\/\/[^\/]*\.?youtube.com\/watch/)) {
+          setActiveExtensionIcon();
+        } else {
+          setInactiveExtensionIcon();
+        }
+      } else {
+        function onExecuted(result) {
+          const url = result ? result[0] : false;
+          if (url && url.match(/:\/\/[^\/]*\.?youtube.com\/watch/)) {
+            setActiveExtensionIcon();
+          } else {
+            setInactiveExtensionIcon();
+          }
+        }
+        const executing = browser.tabs.executeScript({
+          code: "location.href",
+        });
+        executing.then(onExecuted, setInactiveExtensionIcon);
+      }
     };
-    browser.tabs.onUpdated.addListener(showPageActionOnWatchPagesOnly);
+    browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      showSpecificExtensionIconOnWatchPages();
+    });
+    browser.tabs.onActivated.addListener(({ tabId }) => {
+      showSpecificExtensionIconOnWatchPages();
+    });
 
     // Make the page action show on watch pages also in case extension is loaded/reloaded while on one
-    const currentTab = await getCurrentTab();
-    if (currentTab) {
-      showPageActionOnWatchPagesOnly(currentTab.id, null, currentTab);
-    }
+    await showSpecificExtensionIconOnWatchPages();
 
     // Restore persisted youTubeUsageStatistics
     await youTubeUsageStatistics.hydrate();
