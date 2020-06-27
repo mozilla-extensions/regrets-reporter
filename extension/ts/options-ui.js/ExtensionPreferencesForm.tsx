@@ -50,7 +50,10 @@ export class ExtensionPreferencesForm extends Component<
     });
 
     this.backgroundContextPort.onMessage.addListener(
-      async (m: { extensionPreferences: ExtensionPreferences }) => {
+      async (m: {
+        extensionPreferences?: ExtensionPreferences;
+        dataDeletionRequested?: boolean;
+      }) => {
         if (m.extensionPreferences) {
           const { extensionPreferences } = m;
           console.log("Options UI received extension preferences", {
@@ -62,18 +65,6 @@ export class ExtensionPreferencesForm extends Component<
           });
           return null;
         }
-        captureExceptionWithExtras(new Error("Unexpected message"), { m });
-        console.error("Unexpected message", { m });
-        await this.setState({
-          loading: false,
-          error: true,
-        });
-      },
-    );
-
-    // Data deletion requests
-    this.backgroundContextPort.onMessage.addListener(
-      async (m: { dataDeletionRequested: boolean }) => {
         if (m.dataDeletionRequested) {
           const { dataDeletionRequested } = m;
           await this.setState({
@@ -147,7 +138,7 @@ export class ExtensionPreferencesForm extends Component<
                 onClick={this.requestDataDeletion}
                 className="btn btn-grey"
               >
-                Request that my RegretsReporter data is deleted from Mozilla's
+                Request that my RegretsReporter data gets deleted from Mozilla's
                 servers
               </Button>
             )}

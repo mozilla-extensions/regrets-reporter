@@ -37,7 +37,7 @@ export class GetStartedFlow extends Component<
               <div className="icon-container hidden md:block">
                 <img
                   className="icon h-16 m-4 mb-8"
-                  src="./img/green-extensionsicon.svg"
+                  src="./../icons/green-extensionsicon.svg"
                 />
               </div>
               <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
