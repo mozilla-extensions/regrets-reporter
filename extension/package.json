@@ -134,8 +134,8 @@
     "test:unit:mocha": "DOTENV_CONFIG_PATH=.env.development mocha -r source-map-support/register -r sinon/pkg/sinon -r ./test/browser-polyfills.ts -r dotenv/config --globals global test/build/all-tests.js",
     "watch": "TARGET_BROWSER=firefox npm-run-all build:development && TARGET_BROWSER=firefox concurrently 'webpack --watch' 'web-ext run'",
     "watch:chrome": "TARGET_BROWSER=chrome npm-run-all build:development && TARGET_BROWSER=chrome concurrently 'webpack --watch' 'web-ext run -t chromium'",
-    "webext-instrumentation:build": "cd node_modules/@openwpm/webext-instrumentation && npm run build && cd -",
     "webext-instrumentation:adjacent-submodule-directory-as-node-module": "rsync -r -t -p -o -g -x --stats --delete -l -D ../instrumentation/OpenWPM/automation/Extension/webext-instrumentation/ node_modules/@openwpm/webext-instrumentation/",
+    "webext-instrumentation:build": "cd node_modules/@openwpm/webext-instrumentation && npm run build && cd -",
     "webpack:stats": "webpack --profile --json --mode=production > stats.json"
   }
 }
