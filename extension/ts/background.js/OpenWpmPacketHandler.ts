@@ -224,9 +224,13 @@ export class OpenWpmPacketHandler {
         const parsedUrl = new URL(url);
         captureExceptionWithExtras(
           new Error("Encountered an unknown YouTube URL"),
-          { url, parsedUrl },
+          { host: parsedUrl.host, pathname: parsedUrl.pathname },
         );
-        console.warn("Encountered an unknown YouTube URL", { url });
+        console.warn("Encountered an unknown YouTube URL", {
+          url,
+          host: parsedUrl.host,
+          pathname: parsedUrl.pathname,
+        });
       }
       return false;
     }
