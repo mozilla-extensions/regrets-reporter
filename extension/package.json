@@ -124,6 +124,7 @@
     "postformat": "npm run docformat && npm run eslint-fix && fixpack",
     "postinstall": "cd node_modules/@openwpm/webext-instrumentation && npm install",
     "prebuild:development": "npm-run-all clean generate-manifest webext-instrumentation:adjacent-submodule-directory-as-node-module webext-instrumentation:build compile-schema",
+    "prebuild:production": "NODE_ENV=production npm-run-all clean generate-manifest webext-instrumentation:adjacent-submodule-directory-as-node-module webext-instrumentation:build compile-schema",
     "prestart": "node ./ensure_minimum_node_version.js && npm run build:development",
     "pretest:unit:mocha": "NODE_ENV=test npx webpack --entry ./test/all-tests.ts --output-path test/build --output-filename all-tests.js --target node",
     "start": "TARGET_BROWSER=firefox web-ext run",
