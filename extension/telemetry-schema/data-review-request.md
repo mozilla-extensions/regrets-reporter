@@ -364,6 +364,16 @@ _[1] Related projects_
             </ul>
         </td>
     </tr>
+    <tr>
+        <td>Information about encountered errors</td>
+        <td>Category 3 (Since the host and pathname of previously unencountered YouTube URLs are submitted if encountered to be able to classify urls better as the YouTube API / protocol changes over time)</td>
+        <td>Passive (Submitted when errors are encountered)</td>
+        <td>
+            <ul>
+                <li>(To improve the extension in general, the extension uses Mozilla’s Sentry service for automatic error reporting. This means that reasons for errors, UI interactions preceding errors, stacktrace and various console log messages may be sent when errors occur in the extension. The extension has been configured not to send any personally identifiable information. A separate randomly generated ID is used to identify the user in error reports, separate from the one that identifies data submitted via telemetry. Server-side scrubbing of sensitive data is enabled and collection of user IP addresses is disabled. Full opt-out from error reporting is possible via the extension’s preferences.)</li>
+            </ul>
+        </td>
+    </tr>
 </table>
 
 (None of the measurements have specific tracking bugs, so that column has been left out)
