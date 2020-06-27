@@ -355,7 +355,7 @@ _[1] Related projects_
         </td>
     </tr>
     <tr>
-        <td>The answer to “What would you like to give us feedback about?” + the actual feedback</td>
+        <td>The answer to “What would you like to give us feedback about?” + The actual feedback + Optional Net Promoter Score</td>
         <td>Category 4</td>
         <td>Active (Shared via a survey)</td>
         <td>
