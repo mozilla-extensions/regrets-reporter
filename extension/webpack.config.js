@@ -27,8 +27,11 @@ const plugins = [
   }),
 ];
 
-// Don't upload sources to Sentry when running unit tests or offline development is specified
-if (process.env.NODE_ENV !== "test" && process.env.OFFLINE !== "1") {
+// Only upload sources to Sentry if building a production build or testing the sentry plugin
+if (
+  process.env.NODE_ENV === "production" ||
+  process.env.TEST_SENTRY_WEBPACK_PLUGIN === "1"
+) {
   plugins.push(
     new SentryWebpackPlugin({
       include: destPath,
