@@ -25,7 +25,7 @@ import {
   MdSentimentVeryDissatisfied,
   MdHelp,
 } from "react-icons/md";
-import { DisplayError } from "../shared-resources/DisplayError";
+import { DisplayError } from "./DisplayError";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 import { config } from "../config";

@@ -9,7 +9,7 @@ import { Checkbox } from "../shared-resources/photon-components-web/photon-compo
 import "../shared-resources/photon-components-web/photon-components/Checkbox/light-theme.css";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
-import { DisplayError } from "../shared-resources/DisplayError";
+import { DisplayError } from "./DisplayError";
 import { ExtensionPreferences } from "../background.js/Store";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 import Button from "../shared-resources/photon-components-web/photon-components/Button";

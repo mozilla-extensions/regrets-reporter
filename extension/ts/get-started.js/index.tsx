@@ -7,11 +7,12 @@ import { ErrorBoundary } from "../shared-resources/ErrorBoundary";
 import { GetStartedFlow } from "./GetStartedFlow";
 
 import "./index.css";
+import { DisplayError } from "./DisplayError";
 
 const init = async () => {
   await initErrorReportingInContentScript("port-from-get-started:index");
   ReactDOM.render(
-    <ErrorBoundary>
+    <ErrorBoundary displayErrorComponent={DisplayError}>
       <GetStartedFlow />
     </ErrorBoundary>,
     document.getElementById("app"),
