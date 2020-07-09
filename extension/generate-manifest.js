@@ -48,11 +48,11 @@ async function generateManifest({ dotEnvPath }) {
     },
   };
   if (targetBrowser === "firefox") {
-    manifest.browser_action.browser_style = true;
+    manifest.browser_action.browser_style = false;
     manifest.options_ui.browser_style = true;
   }
   if (targetBrowser === "chrome") {
-    manifest.browser_action.chrome_style = true;
+    manifest.browser_action.chrome_style = false;
     manifest.options_ui.chrome_style = true;
   }
   const targetPath = path.join(destPath, "manifest.json");

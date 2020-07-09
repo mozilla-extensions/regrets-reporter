@@ -1,5 +1,6 @@
 import * as React from "react";
 import { MouseEvent } from "react";
+import { DoorHanger } from "./DoorHanger";
 
 export class DisplayError extends React.Component<
   {
@@ -19,19 +20,10 @@ export class DisplayError extends React.Component<
 
   render() {
     return (
-      <>
-        <header className="panel-section panel-section-header">
-          <div className="icon-section-header">
-            <img
-              src="../icons/green-extensionsicon.svg"
-              width="32"
-              height="32"
-            />
-          </div>
-          <div className="text-section-header">
-            {this.props.message || "An error occurred"}
-          </div>
-        </header>
+      <DoorHanger
+        title={this.props.message || "An error occurred"}
+        loading={false}
+      >
         <div className="panel-section panel-section-formElements">
           <span className="text-center">
             Try reloading the page and try again
@@ -42,7 +34,7 @@ export class DisplayError extends React.Component<
             Close
           </div>
         </footer>
-      </>
+      </DoorHanger>
     );
   }
 }
