@@ -447,7 +447,10 @@ export class NavigationBatchPreprocessor {
           // console.log("subsequentNavigationsMatchingThisNavigationsFrame.length", subsequentNavigationsMatchingThisNavigationsFrame.length,);
 
           // Assign matching children to this navigation
-          const fromEventOrdinal = navigation.before_navigate_event_ordinal;
+          const fromEventOrdinal =
+            navigation.before_navigate_event_ordinal !== undefined
+              ? navigation.before_navigate_event_ordinal
+              : navigation.committed_event_ordinal;
           const toEventOrdinal =
             subsequentNavigationsMatchingThisNavigationsFrame.length === 0
               ? Number.MAX_SAFE_INTEGER
@@ -463,7 +466,7 @@ export class NavigationBatchPreprocessor {
             },
           );
 
-          // console.log("childCandidates.length", childCandidates.length);
+          // console.log("childCandidates.length", childCandidates.length, {fromEventOrdinal, toEventOrdinal});
 
           // Assign children to this navigation batch if relevant
           childCandidates.forEach(
@@ -597,6 +600,8 @@ export class NavigationBatchPreprocessor {
                 childEnvelope.httpRequest.request_id ===
                   currentHttpResponseEnvelope.httpResponse.request_id;
 
+              let correspondingHttpRequest;
+
               // check other navigation batches for the stray envelopes
               const navUuidsToCheck = Object.keys(
                 this.navigationBatchesByNavigationUuid,
@@ -604,7 +609,6 @@ export class NavigationBatchPreprocessor {
                 navUuidToCheck =>
                   navUuidToCheck !== navUuidWithMissingCounterparts,
               );
-              let correspondingHttpRequestFound = false;
               navUuidsToCheck.some(navUuidToCheck => {
                 const candidateNavigationBatch = this
                   .navigationBatchesByNavigationUuid[navUuidToCheck];
@@ -612,23 +616,36 @@ export class NavigationBatchPreprocessor {
                   .reverse()
                   .find(httpRequestEnvelopeMatcher);
                 if (matchingHttpRequestEnvelope) {
+                  correspondingHttpRequest = matchingHttpRequestEnvelope;
                   // remove from candidateNavigationBatch
                   removeItemFromArray(
                     candidateNavigationBatch.childEnvelopes,
                     matchingHttpRequestEnvelope,
                   );
                   setEnvelopeCounts(candidateNavigationBatch);
-                  // add the stray envelope to this navigation batch
-                  navigationBatch.childEnvelopes.unshift(
-                    matchingHttpRequestEnvelope,
-                  );
-                  setEnvelopeCounts(navigationBatch);
-                  correspondingHttpRequestFound = true;
                   return true;
                 }
                 return false;
               });
-              if (!correspondingHttpRequestFound) {
+              // check the unprocessed queue for the stray envelopes
+              const matchingHttpRequestEnvelope = openWpmPayloadEnvelopeProcessQueue
+                .reverse()
+                .find(httpRequestEnvelopeMatcher);
+              if (matchingHttpRequestEnvelope) {
+                correspondingHttpRequest = matchingHttpRequestEnvelope;
+                // remove from the unprocessed queue
+                removeItemFromArray(
+                  openWpmPayloadEnvelopeProcessQueue,
+                  matchingHttpRequestEnvelope,
+                );
+              }
+              // add the stray envelope to this navigation batch if it was found
+              if (correspondingHttpRequest) {
+                navigationBatch.childEnvelopes.unshift(
+                  correspondingHttpRequest,
+                );
+                setEnvelopeCounts(navigationBatch);
+              } else {
                 console.error(
                   `The matching httpRequestEnvelope was not found for request id ${currentHttpResponseEnvelope.httpResponse.request_id}`,
                   {

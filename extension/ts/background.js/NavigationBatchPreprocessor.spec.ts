@@ -13,6 +13,7 @@ import { exampleDotComVisitQueueWithSavedContent } from "./fixtures/NavigationBa
 import { youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigations } from "./fixtures/NavigationBatchPreprocessor/youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigations";
 import { youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest } from "./fixtures/NavigationBatchPreprocessor/youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest";
 import { config } from "../config";
+import { youTubeReloadWatchPageChromium } from "./fixtures/NavigationBatchPreprocessor/youTubeReloadWatchPageChromium";
 
 describe("NavigationBatchPreprocessor", function() {
   it("should exist", function() {
@@ -558,6 +559,78 @@ describe("NavigationBatchPreprocessor", function() {
             anotherNavigationBatch.capturedContentCount,
           ],
           [0, 0, 0, 1],
+        );
+      });
+    });
+
+    describe("Subsequent queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
+      it("should have purged all navigation batches", async function() {
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          0,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 0);
+      });
+    });
+  });
+
+  describe("youTubeReloadWatchPageChromium", function() {
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
+    youTubeReloadWatchPageChromium.map(
+      (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+        if (
+          navigationBatchPreprocessor.shouldBeBatched(openWpmPayloadEnvelope)
+        ) {
+          navigationBatchPreprocessor.queueForProcessing(
+            openWpmPayloadEnvelope,
+          );
+        }
+      },
+    );
+
+    const firstVisitIsoDateTimeString = "2020-07-09T17:44:21.180Z";
+    const firstVisitDateTime = parseIsoDateTimeString(
+      firstVisitIsoDateTimeString,
+    );
+
+    describe("Subsequent queue processing 12 seconds after the visit", function() {
+      const nowDateTime = addSeconds(firstVisitDateTime, 12);
+      it("should have found one navigation batch", async function() {
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          1,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 1);
+        const oneNavigationBatch: NavigationBatch =
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
+            "e38e161c-3825-4f20-96a6-a3b66d294def"
+          ];
+        assert.equal(oneNavigationBatch.childEnvelopes.length, 5);
+        assert.deepStrictEqual(
+          [
+            oneNavigationBatch.httpRequestCount,
+            oneNavigationBatch.httpResponseCount,
+            oneNavigationBatch.httpRedirectCount,
+            oneNavigationBatch.capturedContentCount,
+            oneNavigationBatch.uiStateCount,
+          ],
+          [1, 1, 0, 1, 2],
         );
       });
     });
