@@ -51,7 +51,7 @@ yarn watch:chrome
 From the background context:
 
 ```javascript
-browser.runtime.getURL(
+(typeof browser !== "undefined" ? browser : chrome).runtime.getURL(
   `report-regret-form/report-regret-form.html?skipWindowAndTabIdFilter=1`,
 );
 ```
@@ -95,11 +95,18 @@ await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 3. Download the current set of collected navigations:
 
 ```javascript
-await triggerClientDownloadOfData(
+const fileInfo = await triggerClientDownloadOfData(
   openWpmPacketHandler.navigationBatchPreprocessor
     .openWpmPayloadEnvelopeProcessQueue,
   "navigationBatchPreprocessorFixture.json",
 );
+console.log(fileInfo.url);
+```
+
+In Firefox, the URL above can be opened in a new tab to inspect and save the JSON data. For Chrome, run below to display the JSON:
+
+```javascript
+await (await fetch(fileInfo.url)).text();
 ```
 
 Restart the browser before collecting data for a new fixture.
@@ -120,11 +127,18 @@ await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 
 ```javascript
 await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
-await triggerClientDownloadOfData(
+const fileInfo = await triggerClientDownloadOfData(
   openWpmPacketHandler.navigationBatchPreprocessor
     .navigationBatchesByNavigationUuid,
   "reportSummarizerFixture.json",
 );
+console.log(fileInfo.url);
+```
+
+In Firefox, the URL above can be opened in a new tab to inspect and save the JSON data. For Chrome, run below to display the JSON:
+
+```javascript
+await (await fetch(fileInfo2.url)).text();
 ```
 
 Restart the browser before collecting data for a new fixture.
