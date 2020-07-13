@@ -108,7 +108,7 @@
   "scripts": {
     "build:development": "webpack && web-ext build",
     "build:production": "NODE_ENV=production webpack --mode=production && web-ext build",
-    "clean": "trash build test/build",
+    "clean": "trash build/${TARGET_BROWSER}/ test/build",
     "compile-schema": "ajv compile -s telemetry-schema/regrets-reporter-update.1.schema.json -o ts/background.js/lib/validate.js",
     "dev-telemetry-server": "docker run -p 80:8000 -v \"$(pwd)/../../../mozilla-pipeline-schemas\"/schemas:/app/resources/schemas -it mozilla/edge-validator:latest",
     "docformat": "doctoc --title '**Contents**' docs/*.md && prettier '**/*.md' --trailing-comma=all --ignore-path=.eslintignore --write",
