@@ -402,7 +402,7 @@ export class ReportRegretForm extends Component<
                       />
                     </div>
                     <div className="mt-4">
-                      <h4 className="font-sans overflow-y-auto h-6 leading-none">
+                      <h4 className="font-sans text-base overflow-y-auto h-6 leading-none">
                         {youTubeNavigationMetadata.video_metadata.video_title}
                       </h4>
                       <p className="mt-0 font-sans text-grey-50 text-xs overflow-y-auto h-4 leading-none">
@@ -419,61 +419,64 @@ export class ReportRegretForm extends Component<
                     </div>
                   </div>
                 </div>
-                <div className="col-span-6 p-5 bg-white">
-                  <div>
-                    <div className="text-lg font-serif font-semibold leading-none mb-3">
-                      The path that led you here
-                    </div>
-                    <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-48">
-                      <li className="inline">
-                        {
-                          youTubePageEntryPointLabels[
-                            oldestReachEntry.page_entry_point
-                          ]
-                        }
-                      </li>
-                      {howTheVideoWasReached.map(
-                        (
-                          youTubeVisitMetadata: YouTubeNavigationMetadata,
-                          index: number,
-                        ) => (
-                          <React.Fragment key={index}>
-                            {(youTubeVisitMetadata.video_metadata && (
-                              <li
-                                className="inline"
-                                title={
-                                  youTubeVisitMetadata.video_metadata
-                                    .video_title
-                                }
-                              >
-                                <img
-                                  className="h-4 inline"
-                                  src={`https://img.youtube.com/vi/${youTubeVisitMetadata.video_metadata.video_id}/default.jpg`}
-                                  alt=""
-                                />
-                              </li>
-                            )) || (
-                              <li className="inline">
-                                {
-                                  youTubeNavigationUrlTypeLabels[
-                                    youTubeVisitMetadata.url_type
-                                  ]
-                                }
-                              </li>
-                            )}
-                          </React.Fragment>
-                        ),
-                      )}
-                      <li
-                        className="inline"
-                        title={
-                          youTubeNavigationMetadata.video_metadata.video_title
-                        }
-                      >
-                        This Video
-                      </li>
-                    </ul>
+                <div className="col-span-6 p-5 bg-white flex flex-col">
+                  <div className="flex-none text-lg font-serif font-semibold leading-none mb-3">
+                    The path that led you here
                   </div>
+                  {howTheVideoWasReached.length > 0 && (
+                    <div className="timeline">
+                      <ul className="h-full">
+                        <li className="text-sm">
+                          {
+                            youTubePageEntryPointLabels[
+                              oldestReachEntry.page_entry_point
+                            ]
+                          }
+                        </li>
+                        {howTheVideoWasReached.map(
+                          (
+                            youTubeVisitMetadata: YouTubeNavigationMetadata,
+                            index: number,
+                          ) => (
+                            <React.Fragment key={index}>
+                              {(youTubeVisitMetadata.video_metadata && (
+                                <li
+                                  className=""
+                                  title={
+                                    youTubeVisitMetadata.video_metadata
+                                      .video_title
+                                  }
+                                >
+                                  <img
+                                    className="h-4"
+                                    src={`https://img.youtube.com/vi/${youTubeVisitMetadata.video_metadata.video_id}/default.jpg`}
+                                    alt=""
+                                  />
+                                </li>
+                              )) || (
+                                <li className="">
+                                  {
+                                    youTubeNavigationUrlTypeLabels[
+                                      youTubeVisitMetadata.url_type
+                                    ]
+                                  }
+                                </li>
+                              )}
+                            </React.Fragment>
+                          ),
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {howTheVideoWasReached.length === 0 && (
+                    <div className="flex-none text-sm">
+                      You visited this video directly. There are no other
+                      activities to report at this time.
+                    </div>
+                  )}
+                  {howTheVideoWasReached.length === 0 && (
+                    <div className="flex-1 img-no-path" />
+                  )}
                 </div>
               </div>
             </div>
@@ -507,7 +510,7 @@ export class ReportRegretForm extends Component<
             <footer className="mt-2">
               <div
                 onClick={this.submitStep1}
-                className="leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
+                className="cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
               >
                 Report
               </div>

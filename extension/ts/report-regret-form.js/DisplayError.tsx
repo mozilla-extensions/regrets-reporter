@@ -32,7 +32,7 @@ export class DisplayError extends React.Component<
         <footer className="mt-5">
           <div
             onClick={this.cancel}
-            className="leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
+            className="cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
           >
             Close
           </div>
