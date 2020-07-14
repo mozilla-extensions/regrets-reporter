@@ -107,7 +107,7 @@ class ExtensionGlue {
       function setActiveExtensionIcon() {
         try {
           browser.browserAction.setIcon({
-            path: "icons/green-extensionsicon.svg",
+            path: "icons/icon-toolbar-active.svg",
           });
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
@@ -119,7 +119,7 @@ class ExtensionGlue {
       function setInactiveExtensionIcon() {
         try {
           browser.browserAction.setIcon({
-            path: "icons/gray-extensionsicon.svg",
+            path: "icons/icon-toolbar-inactive.svg",
           });
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {

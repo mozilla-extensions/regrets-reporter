@@ -38,8 +38,12 @@ async function generateManifest({ dotEnvPath }) {
       "storage",
       "alarms",
     ],
-    icons: {},
+    icons: {
+      48: "icons/extension-icon.svg.48x48.png",
+      96: "icons/extension-icon.svg.96x96.png",
+    },
     browser_action: {
+      default_icon: "icons/icon-toolbar-inactive.svg",
       default_title: "__MSG_pageActionButtonTitle__",
       default_popup: "report-regret-form/report-regret-form.html",
     },
