@@ -209,11 +209,6 @@ export class ReportRegretForm extends Component<
       userSuppliedOptionalComment,
       formStep,
     });
-    /*
-    setTimeout(() => {
-      window.close();
-    }, 2500);
-    */
     return this.persistFormState();
   };
 
@@ -290,7 +285,7 @@ export class ReportRegretForm extends Component<
       );
     }
     if (this.state.loading) {
-      return <DoorHanger title="" loading={true} />;
+      return <DoorHanger loading={true} />;
     }
     if (this.state.reported) {
       return (

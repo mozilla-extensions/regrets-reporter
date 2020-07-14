@@ -6,8 +6,8 @@ import "typeface-zilla-slab";
 import "typeface-nunito-sans";
 
 export interface DoorHangerProps {
-  title: string;
-  loading: boolean;
+  title?: string;
+  loading?: boolean;
 }
 
 export interface DoorHangerState {}
