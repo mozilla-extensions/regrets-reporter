@@ -290,7 +290,7 @@ export class NavigationBatchPreprocessor {
     };
     browser.alarms.onAlarm.addListener(alarmListener);
     browser.alarms.create(this.alarmName, {
-      periodInMinutes: 10 / 60, // every 10 seconds
+      periodInMinutes: 1, // every minute
     });
   }
 
