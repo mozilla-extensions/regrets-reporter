@@ -15,14 +15,7 @@ async function generateManifest({ dotEnvPath }) {
     }`,
     description: "__MSG_extensionDescription__",
     version: `${packageJson.version}`,
-    hidden: false,
     incognito: "not_allowed",
-    applications: {
-      gecko: {
-        id: "regrets-reporter@mozillafoundation.org",
-        strict_min_version: "76.0a1",
-      },
-    },
     default_locale: "en_US",
     background: {
       scripts: ["background.js"],
@@ -52,6 +45,12 @@ async function generateManifest({ dotEnvPath }) {
     },
   };
   if (targetBrowser === "firefox") {
+    manifest.applications = {
+      gecko: {
+        id: "regrets-reporter@mozillafoundation.org",
+        strict_min_version: "76.0a1",
+      },
+    };
     manifest.browser_action.browser_style = false;
     manifest.options_ui.browser_style = true;
   }
