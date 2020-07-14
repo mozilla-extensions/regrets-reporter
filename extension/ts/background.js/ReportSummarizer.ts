@@ -51,6 +51,18 @@ type FailedStringAttribute = "<failed>";
 type FailedIntegerAttribute = -1;
 type FailedBooleanAttribute = null;
 
+class UnexpectedContentParseError extends Error {
+  public errorReportContext: any;
+  constructor(errorReportContext, ...params) {
+    super(...params);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, UnexpectedContentParseError);
+    }
+    this.name = "UnexpectedContentParseError";
+    this.errorReportContext = errorReportContext;
+  }
+}
+
 export interface VideoMetadata {
   video_id: string | FailedStringAttribute;
   video_title: string | FailedStringAttribute;
@@ -311,30 +323,44 @@ export class ReportSummarizer {
         )
         .reduce((a, b) => a + b, 0);
 
-      // Extract video metadata from the captured content if available
+      // Extract page metadata from the captured content if available
       let youtubePageMetadata: YouTubePageMetadata = {
         video_metadata: undefined,
         outgoing_video_ids_by_category: {},
       };
       if (capturedContentEnvelope) {
-        // Check what kind of page was visited and run the appropriate extraction methods
-        if (url_type === "watch_page") {
-          youtubePageMetadata = this.extractYouTubePageMetadataFromCapturedWatchPageContent(
-            httpRequestEnvelope,
-            capturedContentEnvelope,
-          );
-        } else if (url_type === "search_results_page") {
-          youtubePageMetadata = this.extractYouTubePageMetadataFromCapturedSearchResultsPageContent(
-            httpRequestEnvelope,
-            capturedContentEnvelope,
-          );
-        } else {
-          /*
+        try {
+          // Check what kind of page was visited and run the appropriate extraction methods
+          if (url_type === "watch_page") {
+            youtubePageMetadata = this.extractYouTubePageMetadataFromCapturedWatchPageContent(
+              httpRequestEnvelope,
+              capturedContentEnvelope,
+            );
+          } else if (url_type === "search_results_page") {
+            youtubePageMetadata = this.extractYouTubePageMetadataFromCapturedSearchResultsPageContent(
+              httpRequestEnvelope,
+              capturedContentEnvelope,
+            );
+          } else {
+            /*
           console.warn("No video metadata is extracted for this url type", {
             url,
             url_type,
           });
           */
+          }
+        } catch (error) {
+          if (error.name === "UnexpectedContentParseError") {
+            // report it
+            captureExceptionWithExtras(error, error.errorReportContext);
+            console.error(error.message, {
+              errorReportContext: error.errorReportContext,
+            });
+            // try the next one instead
+            continue;
+          }
+          // else throw the error
+          throw error;
         }
       }
 
@@ -463,13 +489,14 @@ export class ReportSummarizer {
         /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
       );
       if (!matchArray) {
-        captureExceptionWithExtras(
-          new Error("No match of ytInitialData in htmlContent"),
-          { matchArray },
+        console.dir(
+          { httpRequestEnvelope, capturedContentEnvelope, matchArray },
+          { depth: 4 },
         );
-        console.error("No match of ytInitialData in htmlContent", {
-          matchArray,
-        });
+        throw new UnexpectedContentParseError(
+          { matchArray },
+          "No match of ytInitialData in htmlContent",
+        );
       }
       ytInitialData = JSON.parse(matchArray[1]);
     } else {
@@ -483,18 +510,26 @@ export class ReportSummarizer {
         },
       );
       if (!xhrResponseItemWithYtInitialData) {
-        captureExceptionWithExtras(
-          new Error("No xhrResponseItemWithYtInitialData"),
+        console.dir(
+          { httpRequestEnvelope, capturedContentEnvelope, xhrResponse },
+          { depth: 4 },
         );
-        console.error("No xhrResponseItemWithYtInitialData");
-        console.dir({ xhrResponse }, { depth: 4 });
+        throw new UnexpectedContentParseError(
+          {},
+          "No xhrResponseItemWithYtInitialData",
+        );
       }
       ytInitialData = xhrResponseItemWithYtInitialData.response;
-      // console.dir({ ytInitialData }, {depth: 5});
     }
 
+    // console.dir({ ytInitialData }, {depth: 5});
+
     if (!ytInitialData) {
-      console.warn("ytInitialData is empty");
+      console.dir(
+        { httpRequestEnvelope, capturedContentEnvelope },
+        { depth: 4 },
+      );
+      throw new UnexpectedContentParseError({}, "ytInitialData is empty");
     }
 
     let video_id;
