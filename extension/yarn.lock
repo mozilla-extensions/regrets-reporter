@@ -12291,6 +12291,21 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+typeface-changa@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/typeface-changa/-/typeface-changa-1.1.4.tgz#687792d7b4076f2d2facf9e86a2996760d70da55"
+  integrity sha512-Mp38U5wF9hn2/hqmwmkHEzSivHqzL6VHGgK7dHcuiFF1Lt2nA1AdRzs1lfjoiOplmNZsXNcIZNaJeurFMcAxWg==
+
+typeface-nunito-sans@^0.0.72:
+  version "0.0.72"
+  resolved "https://registry.yarnpkg.com/typeface-nunito-sans/-/typeface-nunito-sans-0.0.72.tgz#c99198a8d62ebdda0399dbe8cd81586a0976a01c"
+  integrity sha512-b58R4movZchZJNe5pWvqMVoJzKRs7GP09iIri4WWQOs9+G+yjoTSIpOUMU2xtLmxuyXUo1F8XhnOHY06kSDhuQ==
+
+typeface-zilla-slab@^0.0.72:
+  version "0.0.72"
+  resolved "https://registry.yarnpkg.com/typeface-zilla-slab/-/typeface-zilla-slab-0.0.72.tgz#6d101393e3137b3c8217a0b73ce189165e75a2a0"
+  integrity sha512-sX85tUKZfb62DsrPcRC3tQIAm1bhA5+3O17yvAvfXKGaLYNBAHaj8aLmurCsHvLKAeivrjWgCjVokk2Oepbeyw==
+
 typescript-eslint-parser@^20.0.0:
   version "20.1.1"
   resolved "https://registry.yarnpkg.com/typescript-eslint-parser/-/typescript-eslint-parser-20.1.1.tgz#a09f3e2f1924dd9e0369835f496ccde31eedfb8b"

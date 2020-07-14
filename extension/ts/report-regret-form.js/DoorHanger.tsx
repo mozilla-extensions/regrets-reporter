@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import { DoorHangerHeader } from "./DoorHangerHeader";
+import "./DoorHanger.css";
+import "typeface-changa";
+import "typeface-zilla-slab";
+import "typeface-nunito-sans";
 
 export interface DoorHangerProps {
   title: string;
@@ -16,7 +20,11 @@ export class DoorHanger extends Component<DoorHangerProps, DoorHangerState> {
     return (
       <>
         <DoorHangerHeader title={this.props.title} />
-        <div className="bg-white">{this.props.children}</div>
+        <div className="doorhanger-content-gradient p-0">
+          <div className="doorhanger-content-circles p-5 font-sans">
+            {this.props.children}
+          </div>
+        </div>
       </>
     );
   }

@@ -21,17 +21,14 @@ export class DoorHangerHeader extends Component<
 
   render() {
     return (
-      <header className="bg-black text-white p-6 flex">
-        <img
-          className="mr-4"
-          src="../icons/green-extensionsicon.svg"
-          width="23"
-          height="20"
-        />
-        <span className="text-2xl">{this.props.title}</span>
+      <header className="bg-black text-white px-5 py-2 flex">
+        <div className="mr-4.5 mt-0.88 img-doorhanger-icon" />
+        <span className="text-2.5xl font-changa font-light">
+          {this.props.title}
+        </span>
         <div
           onClick={this.close}
-          className="ml-auto cursor-pointer img-close-doorhanger"
+          className="ml-auto cursor-pointer img-icon-close-white"
         ></div>
       </header>
     );

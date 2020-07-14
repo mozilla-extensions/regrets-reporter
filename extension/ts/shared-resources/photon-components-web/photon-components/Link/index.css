@@ -1,15 +1,15 @@
 .link {
-  color: #0a84ff;
+  /* color: #0a84ff; */
   text-decoration: none;
   cursor: pointer;
 }
 
 .link:visited {
-  color: #0060df;
+  /* color: #0060df; */
 }
 
 .link:hover {
-  color: #0c0c0d;
+  /* color: #0c0c0d; */
   text-decoration: underline;
 }
 

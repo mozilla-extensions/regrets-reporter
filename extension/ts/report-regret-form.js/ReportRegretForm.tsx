@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
-import "../shared-resources/photon-components-web/index.css";
 import "../shared-resources/photon-components-web/attributes/index.css";
 import "../shared-resources/tailwind.css";
 import { Input } from "../shared-resources/photon-components-web/photon-components/Input";
@@ -349,6 +348,16 @@ export class ReportRegretForm extends Component<
               constitutes abuse under YouTube’s policies, please report it to
               YouTube via its abuse-reporting platform.
             </span>
+
+            <a
+              href={config.feedbackSurveyUrl}
+              rel="noreferrer noopener"
+              target="_blank"
+              className="inline feedback-link"
+            >
+              {" "}
+              Feedback
+            </a>
           </div>{" "}
           <footer className="panel-section panel-section-footer">
             <div
@@ -378,132 +387,111 @@ export class ReportRegretForm extends Component<
           loading={this.state.loading}
         >
           <form>
-            <header className="panel-section panel-section-header">
-              <div className="icon-section-header">
-                <img
-                  src="../icons/green-extensionsicon.svg"
-                  width="32"
-                  height="32"
-                />
-              </div>
-              <div className="text-section-header">
-                Report a "YouTube Regret" to Mozilla
-              </div>
-            </header>
             <div className="px-0">
-              <div className="grid grid-cols-5 gap-4 -mx-0">
-                <div className="col-span-2 row-span-3 px-0">
-                  <div className="panel-section panel-section-formElements">
-                    <div className="panel-formElements-item">
-                      <div className="flex-1 mr-1">
-                        <div>
-                          <img
-                            className="w-full"
-                            src={this.state.videoThumbUrl}
-                            alt=""
-                          />
-                        </div>
-                        <div className="mb-4 mt-1">
-                          <h4 className="text-md font-medium text-sm overflow-y-auto h-5">
-                            {
-                              youTubeNavigationMetadata.video_metadata
-                                .video_title
-                            }
-                          </h4>
-                          <p className="mt-1 font-hairline text-sm text-grey-darker text-sm overflow-y-auto h-5">
-                            {
-                              youTubeNavigationMetadata.video_metadata
-                                .view_count_at_navigation_short
-                            }{" "}
-                            ·{" "}
-                            {
-                              youTubeNavigationMetadata.video_metadata
-                                .video_posting_date
-                            }
-                          </p>
-                        </div>
-                        <div>
-                          <label className="label-bold">
-                            How you arrived at this video:
-                          </label>
-                          <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-48">
-                            <li className="inline">
-                              {
-                                youTubePageEntryPointLabels[
-                                  oldestReachEntry.page_entry_point
-                                ]
-                              }
-                            </li>
-                            {howTheVideoWasReached.map(
-                              (
-                                youTubeVisitMetadata: YouTubeNavigationMetadata,
-                                index: number,
-                              ) => (
-                                <React.Fragment key={index}>
-                                  {(youTubeVisitMetadata.video_metadata && (
-                                    <li
-                                      className="inline"
-                                      title={
-                                        youTubeVisitMetadata.video_metadata
-                                          .video_title
-                                      }
-                                    >
-                                      <img
-                                        className="h-4 inline"
-                                        src={`https://img.youtube.com/vi/${youTubeVisitMetadata.video_metadata.video_id}/default.jpg`}
-                                        alt=""
-                                      />
-                                    </li>
-                                  )) || (
-                                    <li className="inline">
-                                      {
-                                        youTubeNavigationUrlTypeLabels[
-                                          youTubeVisitMetadata.url_type
-                                        ]
-                                      }
-                                    </li>
-                                  )}
-                                </React.Fragment>
-                              ),
-                            )}
-                            <li
-                              className="inline"
-                              title={
-                                youTubeNavigationMetadata.video_metadata
-                                  .video_title
-                              }
-                            >
-                              This Video
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
+              <div className="grid grid-cols-13 gap-5 -mx-0">
+                <div className="col-span-7 p-5 bg-white">
+                  <div className="flex-1">
+                    <div className="text-1.5xl font-serif font-bold leading-none mb-3">
+                      The video being reported
+                    </div>
+                    <div>
+                      <img
+                        className="w-full"
+                        src={this.state.videoThumbUrl}
+                        alt=""
+                      />
+                    </div>
+                    <div className="mt-4">
+                      <h4 className="font-sans overflow-y-auto h-6 leading-none">
+                        {youTubeNavigationMetadata.video_metadata.video_title}
+                      </h4>
+                      <p className="mt-0 font-sans text-grey-50 text-xs overflow-y-auto h-4 leading-none">
+                        {
+                          youTubeNavigationMetadata.video_metadata
+                            .view_count_at_navigation_short
+                        }{" "}
+                        -{" "}
+                        {
+                          youTubeNavigationMetadata.video_metadata
+                            .video_posting_date
+                        }
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div className="col-span-3 px-0"></div>
-                <div className="col-span-3 px-0"></div>
-                <div className="col-span-3 px-0"></div>
+                <div className="col-span-6 p-5 bg-white">
+                  <div>
+                    <div className="text-lg font-serif font-semibold leading-none mb-3">
+                      The path that led you here
+                    </div>
+                    <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-48">
+                      <li className="inline">
+                        {
+                          youTubePageEntryPointLabels[
+                            oldestReachEntry.page_entry_point
+                          ]
+                        }
+                      </li>
+                      {howTheVideoWasReached.map(
+                        (
+                          youTubeVisitMetadata: YouTubeNavigationMetadata,
+                          index: number,
+                        ) => (
+                          <React.Fragment key={index}>
+                            {(youTubeVisitMetadata.video_metadata && (
+                              <li
+                                className="inline"
+                                title={
+                                  youTubeVisitMetadata.video_metadata
+                                    .video_title
+                                }
+                              >
+                                <img
+                                  className="h-4 inline"
+                                  src={`https://img.youtube.com/vi/${youTubeVisitMetadata.video_metadata.video_id}/default.jpg`}
+                                  alt=""
+                                />
+                              </li>
+                            )) || (
+                              <li className="inline">
+                                {
+                                  youTubeNavigationUrlTypeLabels[
+                                    youTubeVisitMetadata.url_type
+                                  ]
+                                }
+                              </li>
+                            )}
+                          </React.Fragment>
+                        ),
+                      )}
+                      <li
+                        className="inline"
+                        title={
+                          youTubeNavigationMetadata.video_metadata.video_title
+                        }
+                      >
+                        This Video
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="panel-section-separator" />
-
-            <div className="panel-section panel-section-formElements">
-              <ul className="flex flex-col md:flex-row items-start items-center justify-between">
+            <div className="mt-2">
+              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs text-grey-50 leading-relaxed">
                 <li>
                   Your report is shared with Mozilla according to our{" "}
                   <Link
-                    className="inline"
+                    className="inline text-red"
                     target="_blank"
                     href={config.privacyNoticeUrl}
                   >
                     Privacy Notice
                   </Link>
-                  . <br />
-                  More information:{" "}
+                  . More information:{" "}
                   <Link
-                    className="inline"
+                    className="inline text-red"
                     target="_blank"
                     href={browser.runtime.getURL(
                       `get-started/get-started.html`,
@@ -511,43 +499,15 @@ export class ReportRegretForm extends Component<
                   >
                     RegretReporter Instructions
                   </Link>
-                </li>
-                <li>
-                  <a
-                    href={config.feedbackSurveyUrl}
-                    rel="noreferrer noopener"
-                    target="_blank"
-                    className="inline feedback-link"
-                  >
-                    {" "}
-                    Feedback
-                  </a>
-                  {/*
-            </li>
-            <li className="m-2">
-              <a
-                className="link inline"
-                target="_blank"
-                href="./report-regret-form.html?skipWindowAndTabIdFilter=1"
-              >
-                Debug
-              </a>
-            */}
+                  .
                 </li>
               </ul>
             </div>
 
-            <footer className="panel-section panel-section-footer">
-              <div
-                onClick={this.cancel}
-                className="panel-section-footer-button"
-              >
-                Cancel
-              </div>
-              <div className="panel-section-footer-separator"></div>
+            <footer className="mt-2">
               <div
                 onClick={this.submitStep1}
-                className="panel-section-footer-button default"
+                className="leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
               >
                 Report
               </div>

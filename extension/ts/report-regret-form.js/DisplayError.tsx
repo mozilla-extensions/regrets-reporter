@@ -24,13 +24,16 @@ export class DisplayError extends React.Component<
         title={this.props.message || "An error occurred"}
         loading={false}
       >
-        <div className="panel-section panel-section-formElements">
-          <span className="text-center">
+        <div className="p-5 bg-white">
+          <div className="text-1.5xl font-serif font-bold leading-none">
             Try reloading the page and try again
-          </span>
+          </div>
         </div>
-        <footer className="panel-section panel-section-footer">
-          <div onClick={this.cancel} className="panel-section-footer-button">
+        <footer className="mt-5">
+          <div
+            onClick={this.cancel}
+            className="leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
+          >
             Close
           </div>
         </footer>

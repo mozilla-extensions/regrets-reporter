@@ -55,6 +55,7 @@ module.exports = {
     filename: "[name].js",
     sourceMapFilename: "[name].js.map",
     pathinfo: true,
+    publicPath: "/",
   },
   module: {
     rules: [
@@ -82,6 +83,10 @@ module.exports = {
           loader: "svg-url-loader",
           options: {},
         },
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf)$/,
+        use: [{ loader: "file-loader" }],
       },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {

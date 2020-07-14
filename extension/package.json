@@ -18,6 +18,9 @@
     "react-dom": "^16.13.1",
     "react-icons": "^3.9.0",
     "react-modal": "^3.11.2",
+    "typeface-changa": "^1.1.4",
+    "typeface-nunito-sans": "^0.0.72",
+    "typeface-zilla-slab": "^0.0.72",
     "webextension-polyfill-ts": "^0.17.0"
   },
   "devDependencies": {

@@ -22,7 +22,7 @@ const colors = {
   "red-80": "#5a0002",
   "red-70": "#a4000f",
   "red-60": "#d70022",
-  red: "#d70022",
+  red: "#EA0B12",
   "red-50": "#ff0039",
   // unspec
   "red-40": "#ff3363",
@@ -104,6 +104,23 @@ const colors = {
   violet: "hsl(258, 57%, 35%)",
 };
 
+const sans = [
+  "Nunito Sans",
+  "Inter",
+  "system-ui",
+  "BlinkMacSystemFont",
+  "-apple-system",
+  "Segoe UI",
+  "Roboto",
+  "Oxygen",
+  "Ubuntu",
+  "Cantarell",
+  "Fira Sans",
+  "Droid Sans",
+  "Helvetica Neue",
+  "sans-serif",
+];
+
 module.exports = {
   theme: {
     colors,
@@ -115,22 +132,10 @@ module.exports = {
       dark: { raw: "(prefers-color-scheme: dark)" },
     },
     fontFamily: {
-      sans: [
-        "Inter",
-        "system-ui",
-        "BlinkMacSystemFont",
-        "-apple-system",
-        "Segoe UI",
-        "Roboto",
-        "Oxygen",
-        "Ubuntu",
-        "Cantarell",
-        "Fira Sans",
-        "Droid Sans",
-        "Helvetica Neue",
-        "sans-serif",
-      ],
+      changa: ["Changa", ...sans],
+      sans,
       serif: [
+        "Zilla Slab",
         "Constantia",
         "Lucida Bright",
         "Lucidabright",
@@ -154,12 +159,16 @@ module.exports = {
       ],
     },
     fontSize: {
+      xxs: ".6875rem", // 11px
       xs: ".75rem", // 12px
       sm: ".875rem", // 14px
+      m: ".9375rem", // 15px
       base: "1rem", // 16px
       lg: "1.125rem", // 18px
       xl: "1.25rem", // 20px
+      "1.5xl": "1.375rem", // 22px
       "2xl": "1.5rem", // 24px
+      "2.5xl": "1.75rem", // 28px
       "3xl": "2rem", // 32px
       "4xl": "2.25rem", // 36px
       "5xl": "3rem", // 48px
@@ -180,6 +189,7 @@ module.exports = {
       tight: 1.25,
       normal: 1.5,
       loose: 1.75,
+      "doorhanger-footer-button": 1.7,
     },
     letterSpacing: {
       tight: "-0.05em",
@@ -219,6 +229,7 @@ module.exports = {
       "4": "1rem",
       "5": "1.25rem",
       "6": "1.5rem",
+      "7": "1.75rem",
       "8": "2rem",
       "10": "2.5rem",
       "12": "3rem",
@@ -252,6 +263,7 @@ module.exports = {
       "4": "1rem",
       "5": "1.25rem",
       "6": "1.5rem",
+      "7": "1.75rem",
       "8": "2rem",
       "10": "2.5rem",
       "12": "3rem",
@@ -263,6 +275,32 @@ module.exports = {
       "64": "16rem",
       full: "100%",
       screen: "100vh",
+    },
+    gap: {
+      auto: "auto",
+      px: "1px",
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "7": "1.75rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "14": "3.5rem",
+      "16": "4rem",
+      "24": "6rem",
+      "32": "8rem",
+      "48": "12rem",
+      "64": "16rem",
+      full: "100%",
+      screen: "100vh",
+    },
+    gridTemplateColumns: {
+      "13": "repeat(13, minmax(0, 1fr))",
     },
     minWidth: {
       "0": "0",
@@ -299,6 +337,7 @@ module.exports = {
       "4": "1rem",
       "5": "1.25rem",
       "6": "1.5rem",
+      "7": "1.75rem",
       "8": "2rem",
       "10": "2.5rem",
       "12": "3rem",
@@ -311,10 +350,12 @@ module.exports = {
       auto: "auto",
       px: "1px",
       "0": "0",
+      "0.88": "0.22rem",
       "1": "0.25rem",
       "2": "0.5rem",
       "3": "0.75rem",
       "4": "1rem",
+      "4.5": "1.1rem",
       "5": "1.25rem",
       "6": "1.5rem",
       "8": "2rem",
