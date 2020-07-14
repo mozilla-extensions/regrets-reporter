@@ -26,42 +26,10 @@ import {
 } from "react-icons/md";
 import { DisplayError } from "./DisplayError";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
-import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigationUrlType";
 import { config } from "../config";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 import { DoorHanger } from "./DoorHanger";
-
-const youTubePageEntryPointLabels: {
-  [k in YouTubePageEntryPoint]: string;
-} = {
-  direct_navigation: "Direct visit",
-  page_reload: "Direct visit",
-  search_results_page: "Search Results",
-  watch_page: "Video Page",
-  user_page: "User Page",
-  channel_page: "Channel Page",
-  other: "Other",
-  youtube_main_page: "YouTube.com",
-  not_a_youtube_page: "Somewhere outside of YouTube",
-  "<failed>": "(Unknown)",
-};
-const youTubeNavigationUrlTypeLabels: {
-  [k in YouTubeNavigationUrlType]: string;
-} = {
-  search_results_page: "Search Results",
-  search_results_page_load_more_results: "Load More Search Results",
-  watch_page: "Video Page",
-  user_page: "User Page",
-  channel_page: "Channel Page",
-  other: "Other Page",
-  unknown: "Unknown Page",
-  youtube_main_page: "YouTube.com",
-  misc_xhr: "Misc XHR Request",
-  not_a_youtube_page: "Somewhere outside of YouTube",
-  empty: "(Empty)",
-  prefetch: "(Pre-fetch)",
-  "<failed>": "(Unknown Page)",
-};
+import { TimeLine } from "./TimeLine";
 
 export interface ReportRegretFormProps {}
 
@@ -377,8 +345,6 @@ export class ReportRegretForm extends Component<
     const howTheVideoWasReached = parentYouTubeNavigationsMetadata
       .slice()
       .reverse();
-    const oldestReachEntry =
-      howTheVideoWasReached.slice().shift() || youTubeNavigationMetadata;
 
     if (this.state.formStep === 1 || !this.state.formStep) {
       return (
@@ -424,49 +390,10 @@ export class ReportRegretForm extends Component<
                     The path that led you here
                   </div>
                   {howTheVideoWasReached.length > 0 && (
-                    <div className="timeline">
-                      <ul className="h-full">
-                        <li className="text-sm">
-                          {
-                            youTubePageEntryPointLabels[
-                              oldestReachEntry.page_entry_point
-                            ]
-                          }
-                        </li>
-                        {howTheVideoWasReached.map(
-                          (
-                            youTubeVisitMetadata: YouTubeNavigationMetadata,
-                            index: number,
-                          ) => (
-                            <React.Fragment key={index}>
-                              {(youTubeVisitMetadata.video_metadata && (
-                                <li
-                                  className=""
-                                  title={
-                                    youTubeVisitMetadata.video_metadata
-                                      .video_title
-                                  }
-                                >
-                                  <img
-                                    className="h-4"
-                                    src={`https://img.youtube.com/vi/${youTubeVisitMetadata.video_metadata.video_id}/default.jpg`}
-                                    alt=""
-                                  />
-                                </li>
-                              )) || (
-                                <li className="">
-                                  {
-                                    youTubeNavigationUrlTypeLabels[
-                                      youTubeVisitMetadata.url_type
-                                    ]
-                                  }
-                                </li>
-                              )}
-                            </React.Fragment>
-                          ),
-                        )}
-                      </ul>
-                    </div>
+                    <TimeLine
+                      youTubeNavigationMetadata={youTubeNavigationMetadata}
+                      howTheVideoWasReached={howTheVideoWasReached}
+                    />
                   )}
                   {howTheVideoWasReached.length === 0 && (
                     <div className="flex-none text-sm">
@@ -570,60 +497,27 @@ export class ReportRegretForm extends Component<
                             }
                           </p>
                         </div>
-                        <div>
-                          <label className="label-bold">
-                            How you arrived at this video:
-                          </label>
-                          <ul className="list-breadcrumb my-2 text-sm overflow-y-auto h-48">
-                            <li className="inline">
-                              {
-                                youTubePageEntryPointLabels[
-                                  oldestReachEntry.page_entry_point
-                                ]
+                        <div className="col-span-6 p-5 bg-white flex flex-col">
+                          <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
+                            The path that led you here
+                          </div>
+                          {howTheVideoWasReached.length > 0 && (
+                            <TimeLine
+                              youTubeNavigationMetadata={
+                                youTubeNavigationMetadata
                               }
-                            </li>
-                            {howTheVideoWasReached.map(
-                              (
-                                youTubeVisitMetadata: YouTubeNavigationMetadata,
-                                index: number,
-                              ) => (
-                                <React.Fragment key={index}>
-                                  {(youTubeVisitMetadata.video_metadata && (
-                                    <li
-                                      className="inline"
-                                      title={
-                                        youTubeVisitMetadata.video_metadata
-                                          .video_title
-                                      }
-                                    >
-                                      <img
-                                        className="h-4 inline"
-                                        src={`https://img.youtube.com/vi/${youTubeVisitMetadata.video_metadata.video_id}/default.jpg`}
-                                        alt=""
-                                      />
-                                    </li>
-                                  )) || (
-                                    <li className="inline">
-                                      {
-                                        youTubeNavigationUrlTypeLabels[
-                                          youTubeVisitMetadata.url_type
-                                        ]
-                                      }
-                                    </li>
-                                  )}
-                                </React.Fragment>
-                              ),
-                            )}
-                            <li
-                              className="inline"
-                              title={
-                                youTubeNavigationMetadata.video_metadata
-                                  .video_title
-                              }
-                            >
-                              This Video
-                            </li>
-                          </ul>
+                              howTheVideoWasReached={howTheVideoWasReached}
+                            />
+                          )}
+                          {howTheVideoWasReached.length === 0 && (
+                            <div className="flex-none text-sm">
+                              You visited this video directly. There are no
+                              other activities to report at this time.
+                            </div>
+                          )}
+                          {howTheVideoWasReached.length === 0 && (
+                            <div className="flex-1 img-no-path" />
+                          )}
                         </div>
                       </div>
                     </div>

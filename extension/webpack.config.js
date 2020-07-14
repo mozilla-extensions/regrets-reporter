@@ -85,7 +85,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(woff|woff2|eot|ttf)$/,
+        test: /\.(woff|woff2|eot|ttf|png|jpeg|jpg)$/,
         use: [{ loader: "file-loader" }],
       },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
