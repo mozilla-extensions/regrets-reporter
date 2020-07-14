@@ -212,6 +212,27 @@ export class ReportRegretForm extends Component<
     return this.persistFormState();
   };
 
+  skipStep2 = async (event: MouseEvent) => {
+    event.preventDefault();
+    // Reset form state
+    const {
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+      formStep,
+    } = this.defaultFormState;
+    await this.setState({
+      reported: true,
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+      formStep,
+    });
+    return this.persistFormState();
+  };
+
   handleChange = async changeEvent => {
     const { name, value } = changeEvent.target;
     switch (name) {
@@ -448,215 +469,205 @@ export class ReportRegretForm extends Component<
           loading={this.state.loading}
         >
           <form>
-            <header className="panel-section panel-section-header">
-              <div className="icon-section-header">
-                <img
-                  src="../icons/green-extensionsicon.svg"
-                  width="32"
-                  height="32"
-                />
-              </div>
-              <div className="text-section-header">
-                Thank you! Send additional comments:
-              </div>
-            </header>
             <div className="px-0">
-              <div className="grid grid-cols-5 gap-4 -mx-0">
-                <div className="col-span-2 row-span-3 px-0">
-                  <div className="panel-section panel-section-formElements">
-                    <div className="panel-formElements-item">
-                      <div className="flex-1 mr-1">
-                        <div>
-                          <img
-                            className="w-full"
-                            src={this.state.videoThumbUrl}
-                            alt=""
-                          />
-                        </div>
-                        <div className="mb-4 mt-1">
-                          <h4 className="text-md font-medium text-sm overflow-y-auto h-5">
-                            {
-                              youTubeNavigationMetadata.video_metadata
-                                .video_title
-                            }
-                          </h4>
-                          <p className="mt-1 font-hairline text-sm text-grey-darker text-sm overflow-y-auto h-5">
-                            {
-                              youTubeNavigationMetadata.video_metadata
-                                .view_count_at_navigation_short
-                            }{" "}
-                            ·{" "}
-                            {
-                              youTubeNavigationMetadata.video_metadata
-                                .video_posting_date
-                            }
-                          </p>
-                        </div>
-                        <div className="col-span-6 p-5 bg-white flex flex-col">
-                          <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
-                            The path that led you here
-                          </div>
-                          {howTheVideoWasReached.length > 0 && (
-                            <TimeLine
-                              youTubeNavigationMetadata={
-                                youTubeNavigationMetadata
-                              }
-                              howTheVideoWasReached={howTheVideoWasReached}
-                            />
-                          )}
-                          {howTheVideoWasReached.length === 0 && (
-                            <div className="flex-none text-sm">
-                              You visited this video directly. There are no
-                              other activities to report at this time.
+              <div className="grid grid-cols-13 gap-5 -mx-0">
+                <div className="col-span-7 p-5 bg-white">
+                  <div className="">Thank you! Send additional comments:</div>
+                  <div className="px-0">
+                    <div className="grid grid-cols-5 gap-4 -mx-0">
+                      <div className="col-span-3 px-0">
+                        <div className="pb-0 panel-section panel-section-formElements">
+                          <div className="panel-formElements-item mb-6">
+                            <div>
+                              <p className="mb-3">
+                                <span className="label-bold">
+                                  Tell us why you regret watching this content{" "}
+                                  <MdHelp
+                                    className="inline text-grey-50 align-middle"
+                                    title="The categories below were the most commonly reported by users in a previous YouTube Regrets study; if your report falls into a different category, please indicate that in the “Other” field."
+                                  />
+                                </span>
+                              </p>
+                              <ul className="list-none">
+                                {[
+                                  {
+                                    value: "false",
+                                    label: "False",
+                                  },
+                                  {
+                                    value: "offensive",
+                                    label: "Offensive",
+                                  },
+                                  {
+                                    value: "bizarre",
+                                    label: "Bizarre",
+                                  },
+                                ].map(item => (
+                                  <li key={item.value} className="mb-2">
+                                    <Checkbox
+                                      name="user_supplied_regret_categories"
+                                      value={item.value}
+                                      label={item.label}
+                                      checked={
+                                        this.state.userSuppliedRegretCategories.indexOf(
+                                          item.value,
+                                        ) > -1
+                                      }
+                                      onChange={this.handleChange}
+                                    />
+                                  </li>
+                                ))}
+                                <li className="mb-2">
+                                  <Checkbox
+                                    name="user_supplied_regret_categories"
+                                    value="other"
+                                    label="Other: "
+                                    checked={
+                                      this.state.userSuppliedRegretCategories.indexOf(
+                                        "other",
+                                      ) > -1
+                                    }
+                                    onChange={this.handleChange}
+                                  />
+                                  <Input
+                                    className="input__field w-full my-3"
+                                    id="user_supplied_other_regret_category"
+                                    name="user_supplied_other_regret_category"
+                                    placeholder=""
+                                    disabled={
+                                      this.state.userSuppliedRegretCategories.indexOf(
+                                        "other",
+                                      ) === -1
+                                    }
+                                    value={
+                                      this.state.userSuppliedOtherRegretCategory
+                                    }
+                                    onChange={this.handleChange}
+                                  />
+                                </li>
+                              </ul>
                             </div>
-                          )}
-                          {howTheVideoWasReached.length === 0 && (
-                            <div className="flex-1 img-no-path" />
-                          )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-span-3 px-0">
-                  <div className="pb-0 panel-section panel-section-formElements">
-                    <div className="panel-formElements-item mb-6">
-                      <div>
-                        <p className="mb-3">
-                          <span className="label-bold">
-                            Tell us why you regret watching this content{" "}
-                            <MdHelp
-                              className="inline text-grey-50 align-middle"
-                              title="The categories below were the most commonly reported by users in a previous YouTube Regrets study; if your report falls into a different category, please indicate that in the “Other” field."
-                            />
-                          </span>
-                        </p>
-                        <ul className="list-none">
-                          {[
-                            {
-                              value: "false",
-                              label: "False",
-                            },
-                            {
-                              value: "offensive",
-                              label: "Offensive",
-                            },
-                            {
-                              value: "bizarre",
-                              label: "Bizarre",
-                            },
-                          ].map(item => (
-                            <li key={item.value} className="mb-2">
-                              <Checkbox
-                                name="user_supplied_regret_categories"
-                                value={item.value}
-                                label={item.label}
-                                checked={
-                                  this.state.userSuppliedRegretCategories.indexOf(
-                                    item.value,
-                                  ) > -1
-                                }
+                      <div className="col-span-3 px-0">
+                        <div className="pt-0 panel-section panel-section-formElements">
+                          <div className="">
+                            <div className="w-full">
+                              <span>
+                                <LikertScale
+                                  reviews={[
+                                    {
+                                      question: "How severe is your regret?",
+                                      review: this.state.userSuppliedSeverity,
+                                    },
+                                  ]}
+                                  icons={[
+                                    <MdSentimentNeutral key="3" />,
+                                    <MdSentimentDissatisfied key="2" />,
+                                    <MdSentimentVeryDissatisfied key="1" />,
+                                  ]}
+                                  onClick={async (q, n) => {
+                                    await this.setState({
+                                      userSuppliedSeverity: n,
+                                    });
+                                    return this.persistFormState();
+                                  }}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-span-3 px-0">
+                        <div className="pt-0 panel-section panel-section-formElements">
+                          <div className="">
+                            <div className="w-full">
+                              <TextArea
+                                className="textarea__field w-full form-textarea mt-1 block w-full"
+                                rows={2}
+                                id="user_supplied_optional_comment"
+                                name="user_supplied_optional_comment"
+                                placeholder=""
+                                label="Will you tell us more about why you regret watching the
+                        video? (Optional)"
+                                value={this.state.userSuppliedOptionalComment}
                                 onChange={this.handleChange}
                               />
-                            </li>
-                          ))}
-                          <li className="mb-2">
-                            <Checkbox
-                              name="user_supplied_regret_categories"
-                              value="other"
-                              label="Other: "
-                              checked={
-                                this.state.userSuppliedRegretCategories.indexOf(
-                                  "other",
-                                ) > -1
-                              }
-                              onChange={this.handleChange}
-                            />
-                            <Input
-                              className="input__field w-full my-3"
-                              id="user_supplied_other_regret_category"
-                              name="user_supplied_other_regret_category"
-                              placeholder=""
-                              disabled={
-                                this.state.userSuppliedRegretCategories.indexOf(
-                                  "other",
-                                ) === -1
-                              }
-                              value={this.state.userSuppliedOtherRegretCategory}
-                              onChange={this.handleChange}
-                            />
-                          </li>
-                        </ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-span-3 px-0">
-                  <div className="pt-0 panel-section panel-section-formElements">
-                    <div className="">
-                      <div className="w-full">
-                        <span>
-                          <LikertScale
-                            reviews={[
-                              {
-                                question: "How severe is your regret?",
-                                review: this.state.userSuppliedSeverity,
-                              },
-                            ]}
-                            icons={[
-                              <MdSentimentNeutral key="3" />,
-                              <MdSentimentDissatisfied key="2" />,
-                              <MdSentimentVeryDissatisfied key="1" />,
-                            ]}
-                            onClick={async (q, n) => {
-                              await this.setState({ userSuppliedSeverity: n });
-                              return this.persistFormState();
-                            }}
-                          />
-                        </span>
-                      </div>
+                <div className="col-span-6 p-5 bg-white flex flex-col">
+                  <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
+                    sdf sdfsdfsd fsdf
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="text-1.5xl font-serif font-bold leading-none mb-3">
+                      The video being reported
+                    </div>
+                    <div>
+                      <img
+                        className="w-full"
+                        src={this.state.videoThumbUrl}
+                        alt=""
+                      />
+                    </div>
+                    <div className="mt-4">
+                      <h4 className="font-sans text-base truncate h-6 leading-none">
+                        {youTubeNavigationMetadata.video_metadata.video_title}
+                      </h4>
+                      <p className="mt-0 font-sans text-grey-50 text-xs truncate h-4 leading-none">
+                        {
+                          youTubeNavigationMetadata.video_metadata
+                            .view_count_at_navigation_short
+                        }{" "}
+                        -{" "}
+                        {
+                          youTubeNavigationMetadata.video_metadata
+                            .video_posting_date
+                        }
+                      </p>
                     </div>
                   </div>
-                </div>
-                <div className="col-span-3 px-0">
-                  <div className="pt-0 panel-section panel-section-formElements">
-                    <div className="">
-                      <div className="w-full">
-                        <TextArea
-                          className="textarea__field w-full form-textarea mt-1 block w-full"
-                          rows={2}
-                          id="user_supplied_optional_comment"
-                          name="user_supplied_optional_comment"
-                          placeholder=""
-                          label="Will you tell us more about why you regret watching the
-                        video? (Optional)"
-                          value={this.state.userSuppliedOptionalComment}
-                          onChange={this.handleChange}
-                        />
-                      </div>
+
+                  {howTheVideoWasReached.length > 0 && (
+                    <TimeLine
+                      youTubeNavigationMetadata={youTubeNavigationMetadata}
+                      howTheVideoWasReached={howTheVideoWasReached}
+                    />
+                  )}
+                  {howTheVideoWasReached.length === 0 && (
+                    <div className="flex-none text-sm">
+                      You visited this video directly. There are no other
+                      activities to report at this time.
                     </div>
-                  </div>
+                  )}
+                  {howTheVideoWasReached.length === 0 && (
+                    <div className="flex-1 img-no-path" />
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="panel-section-separator" />
-
-            <div className="panel-section panel-section-formElements">
-              <ul className="flex flex-col md:flex-row items-start items-center justify-between">
+            <div className="mt-2">
+              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs text-grey-50 leading-relaxed">
                 <li>
                   Your report is shared with Mozilla according to our{" "}
                   <Link
-                    className="inline"
+                    className="inline text-red"
                     target="_blank"
                     href={config.privacyNoticeUrl}
                   >
                     Privacy Notice
                   </Link>
-                  . <br />
-                  More information:{" "}
+                  . More information:{" "}
                   <Link
-                    className="inline"
+                    className="inline text-red"
                     target="_blank"
                     href={browser.runtime.getURL(
                       `get-started/get-started.html`,
@@ -664,45 +675,23 @@ export class ReportRegretForm extends Component<
                   >
                     RegretReporter Instructions
                   </Link>
-                </li>
-                <li>
-                  <a
-                    href={config.feedbackSurveyUrl}
-                    rel="noreferrer noopener"
-                    target="_blank"
-                    className="inline feedback-link"
-                  >
-                    {" "}
-                    Feedback
-                  </a>
-                  {/*
-            </li>
-            <li className="m-2">
-              <a
-                className="link inline"
-                target="_blank"
-                href="./report-regret-form.html?skipWindowAndTabIdFilter=1"
-              >
-                Debug
-              </a>
-            */}
+                  .
                 </li>
               </ul>
             </div>
 
-            <footer className="panel-section panel-section-footer">
-              <div
-                onClick={this.cancel}
-                className="panel-section-footer-button"
-              >
-                Cancel
-              </div>
-              <div className="panel-section-footer-separator"></div>
+            <footer className="mt-2 flex">
               <div
                 onClick={this.submitStep2}
-                className="panel-section-footer-button default"
+                className="flex-1 cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
               >
                 Report
+              </div>
+              <div
+                onClick={this.skipStep2}
+                className="w-40 ml-5 cursor-pointer leading-doorhanger-footer-button border border-red bg-transparent hover:bg-red-transparent text-red font-sans font-semibold py-1 px-5 text-xl text-center"
+              >
+                Skip
               </div>
             </footer>
           </form>

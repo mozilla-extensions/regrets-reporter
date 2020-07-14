@@ -23,6 +23,7 @@ const colors = {
   "red-70": "#a4000f",
   "red-60": "#d70022",
   red: "#EA0B12",
+  "red-transparent": "rgba(234, 11, 18, 0.10)",
   "red-50": "#ff0039",
   // unspec
   "red-40": "#ff3363",
@@ -238,6 +239,7 @@ module.exports = {
       "16": "4rem",
       "24": "6rem",
       "32": "8rem",
+      "40": "10rem",
       "48": "12rem",
       "64": "16rem",
       "128": "32rem",
