@@ -48,10 +48,12 @@ export class TimeLineElement extends Component<
               src={`https://img.youtube.com/vi/${youTubeNavigationMetadata.video_metadata.video_id}/mqdefault.jpg`}
               alt=""
             />
-            <div className="flex-1 text-sm h-9 overflow-y-hidden leading-tight">
-              {youTubeNavigationMetadata.video_metadata.video_title}
+            <div className="flex-1 text-sm h-9 overflow-y-hidden leading-tight flex items-center">
+              <span className="max-h-9">
+                {youTubeNavigationMetadata.video_metadata.video_title}
+              </span>
             </div>
-            <div className="flex-none ml-3 img-icon-close-grey cursor-pointer"></div>
+            <div className="flex-none ml-3 img-icon-close-grey cursor-pointer" />
           </li>
         )) || (
           <li className="">

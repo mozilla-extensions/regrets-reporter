@@ -368,10 +368,10 @@ export class ReportRegretForm extends Component<
                       />
                     </div>
                     <div className="mt-4">
-                      <h4 className="font-sans text-base overflow-y-auto h-6 leading-none">
+                      <h4 className="font-sans text-base truncate h-6 leading-none">
                         {youTubeNavigationMetadata.video_metadata.video_title}
                       </h4>
-                      <p className="mt-0 font-sans text-grey-50 text-xs overflow-y-auto h-4 leading-none">
+                      <p className="mt-0 font-sans text-grey-50 text-xs truncate h-4 leading-none">
                         {
                           youTubeNavigationMetadata.video_metadata
                             .view_count_at_navigation_short
@@ -386,7 +386,7 @@ export class ReportRegretForm extends Component<
                   </div>
                 </div>
                 <div className="col-span-6 p-5 bg-white flex flex-col">
-                  <div className="flex-none text-lg font-serif font-semibold leading-none mb-3">
+                  <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
                     The path that led you here
                   </div>
                   {howTheVideoWasReached.length > 0 && (
