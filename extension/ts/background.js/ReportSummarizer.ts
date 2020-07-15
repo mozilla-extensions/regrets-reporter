@@ -647,24 +647,24 @@ export class ReportSummarizer {
     }
 
     let video_description;
-    let errorContext;
     try {
       const twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer = ytInitialData.contents.twoColumnWatchNextResults.results.results.contents.find(
         contents => {
           return contents.videoSecondaryInfoRenderer !== undefined;
         },
       );
-      errorContext = {
-        twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer,
-      };
-      video_description = runsToMarkdown(
-        twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer
-          .videoSecondaryInfoRenderer.description.runs,
-      );
+      const {
+        description,
+      } = twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer.videoSecondaryInfoRenderer;
+      if (description) {
+        video_description = runsToMarkdown(description.runs);
+      } else {
+        // Some videos don't have descriptions
+        video_description = "";
+      }
     } catch (err) {
       captureExceptionWithExtras(err, {
         attribute: "video_description",
-        errorContext,
       });
       console.error("video_description", err.message);
       video_description = "<failed>";
