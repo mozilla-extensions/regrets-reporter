@@ -2,6 +2,8 @@ import * as React from "react";
 import { MouseEvent } from "react";
 import { DoorHanger } from "./DoorHanger";
 import { config } from "../config";
+import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
+import { browser } from "webextension-polyfill-ts";
 
 export class DisplayError extends React.Component<
   {
@@ -21,25 +23,26 @@ export class DisplayError extends React.Component<
 
   render() {
     return (
-      <DoorHanger
-        title={this.props.message || "An error occurred"}
-        loading={false}
-      >
+      <DoorHanger title="Mozilla RegretsReporter" loading={false}>
         <div className="p-8 border-b border-grey-30 bg-white">
           <div className="text-lg font-serif font-semibold leading-none mb-5">
-            Don't worry
+            {this.props.message || "An error occurred"}
           </div>
           <div className="text-base">
-            Usually this means that the current YouTube visit started before
-            RegretsReporter was installed or reloaded. Reload the YouTube page
-            and try opening this again.
+            Don't worry. Usually this means that the current YouTube visit
+            started before RegretsReporter was installed or reloaded.
+          </div>
+          <div className="text-base mt-5">
+            <span className="italic">
+              Hint: Reload the YouTube page and try opening RegretsReporter
+              again.
+            </span>
           </div>
         </div>
 
         <div className="p-5 bg-white">
           <div className="text-xs">
-            Do you have feedback about the RegretsReporter? We would love to
-            hear it.{" "}
+            If this problem persists, help us fix it!{" "}
             <a
               href={config.feedbackSurveyUrl}
               rel="noreferrer noopener"
@@ -48,7 +51,14 @@ export class DisplayError extends React.Component<
             >
               Send us feedback
             </a>
-            .
+            . Information about this extension:{" "}
+            <Link
+              className="inline text-red"
+              target="_blank"
+              href={browser.runtime.getURL(`get-started/get-started.html`)}
+            >
+              RegretReporter Instructions
+            </Link>
           </div>
         </div>
 

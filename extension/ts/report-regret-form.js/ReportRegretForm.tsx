@@ -297,7 +297,7 @@ export class ReportRegretForm extends Component<
   render() {
     if (this.state.error) {
       return (
-        <DisplayError message={`Could not display the "YouTube Regret" form`} />
+        <DisplayError message={`We were unable to show the report form`} />
       );
     }
     if (this.state.loading) {
