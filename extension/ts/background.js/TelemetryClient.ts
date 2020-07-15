@@ -119,9 +119,10 @@ export class TelemetryClient {
         this.queueUpload(payload);
       } else if (
         error.name === "TypeError" &&
-        error.message.indexOf(
+        (error.message.indexOf(
           "NetworkError when attempting to fetch resource",
-        ) === 0
+        ) === 0 ||
+          error.message.indexOf("Failed to fetch") === 0)
       ) {
         // network error
         console.info(
@@ -137,12 +138,14 @@ export class TelemetryClient {
       } else {
         // other error (note: not storing the payload for retry)
         captureExceptionWithExtras(error, {
-          msg: "Unexpected encountered when submitting a telemetry payload",
+          comment: "Unexpected encountered when submitting a telemetry payload",
+          errorName: error.name,
+          errorMessage: error.message,
         });
         console.error(
           "Unexpected encountered when submitting a telemetry payload",
+          { error },
         );
-        console.error({ error });
       }
       return false;
     };
