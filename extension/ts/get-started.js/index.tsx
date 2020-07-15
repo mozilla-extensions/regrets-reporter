@@ -7,6 +7,10 @@ import { ErrorBoundary } from "../shared-resources/ErrorBoundary";
 import { GetStartedFlow } from "./GetStartedFlow";
 
 import "./index.css";
+import "typeface-changa";
+import "typeface-zilla-slab";
+import "typeface-nunito-sans";
+
 import { DisplayError } from "./DisplayError";
 
 const init = async () => {

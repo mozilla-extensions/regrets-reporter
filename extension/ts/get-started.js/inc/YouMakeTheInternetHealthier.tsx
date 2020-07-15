@@ -11,8 +11,8 @@ export class YouMakeTheInternetHealther extends Component<
 > {
   render() {
     return (
-      <section className="program-thanks">
-        <h2 className="program-header">You Help Make The Internet Healthier</h2>
+      <section>
+        <h2>You Help Make The Internet Healthier</h2>
         <p>
           At Mozilla, we pride ourselves on making the internet healthier for
           you, the user! That’s why we need your help.

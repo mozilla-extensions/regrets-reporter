@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Component, MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
-import "../shared-resources/photon-components-web/index.css";
 import "../shared-resources/photon-components-web/attributes/index.css";
 import "../shared-resources/tailwind.css";
 import { ReportRegretInstructions } from "./inc/ReportRegretInstructions";
@@ -26,52 +25,36 @@ export class GetStartedFlow extends Component<
 
   render() {
     return (
-      <div className={`app-container enrolled`}>
-        <div className="page-container">
+      <div>
+        <div>
           <header>
-            <div className="layout-wrapper p-12 m-auto">
-              <img className="wordmark" src="./img/mozilla.svg" alt="Mozilla" />
+            <div className="m-auto">
+              <img
+                className="img-mozilla-regrets-reporter"
+                alt="Mozilla RegretsReporter"
+              />
+            </div>
+            <div>Welcome!</div>
+            <div>
+              You can now contribute to a body of evidence about regrettable
+              video recommendations on YouTube.
             </div>
           </header>
-          <div className="banner">
-            <div className="layout-wrapper px-12 m-auto">
-              <div className="icon-container hidden md:block">
-                <img
-                  className="icon h-16 m-4 mb-8"
-                  src="./../icons/green-extensionsicon.svg"
-                />
-              </div>
-              <div className="text-2xl sm:text-3xl md:text-5xl font-bold ">
-                RegretsReporter: Welcome!
-              </div>
-            </div>
-          </div>
-          <div className="layout-wrapper px-12 m-auto">
-            <section className="program-instructions">
-              <h2 className="program-header">Next Steps</h2>
-              <ol className="get-started-list">
-                <li>
-                  Continue using Firefox as you normally would, and whenever you{" "}
-                  <strong>regret watching a specific YouTube video</strong>,
-                  please <strong>follow the steps below</strong> to report it to
-                  our researchers.
-                </li>
-                <li>
-                  Remember, we will periodically share insights based on the
-                  anonymous data sent from this extension with regulators,
-                  journalists and YouTube employees. Please review the{" "}
-                  <a
-                    href={config.privacyNoticeUrl}
-                    target="_blank"
-                    className="underline"
-                  >
-                    full privacy notice
-                  </a>{" "}
-                  for more information.
-                </li>
-              </ol>
-            </section>
+          <div>
             <ReportRegretInstructions />
+
+            <section>
+              <h2>Don't change your YouTube behavior</h2>
+              <p>
+                We ask users not to modify their YouTube behavior when using
+                this extension. Don’t seek out regrettable content. Instead, use
+                YouTube as you normally do. That is the only way that we can
+                collectively understand whether YouTube’s problem with
+                recommending regrettable content is improving, and which areas
+                they need to do better on.
+              </p>
+            </section>
+
             <YourPrivacy />
             <section>
               <p>
@@ -86,26 +69,19 @@ export class GetStartedFlow extends Component<
                 .
               </p>
             </section>
-            <section className="program-leaving">
-              <h2 className="program-header">Uninstalling</h2>
+
+            <section>
+              <h2>Uninstalling</h2>
               <p>
                 Users are welcome to opt out at any point by uninstalling the
                 extension:
               </p>
-              <ol className="get-started-list">
+              <ul>
                 <li>
-                  Type <code>about:addons</code> into the location bar and press{" "}
-                  <code>Enter</code>.
+                  Right-click on the toolbar icon and select{" "}
+                  <span className="font-semibold">Remove Extension</span>.
                 </li>
-                <li>
-                  Select <code>Extensions</code> on the left side if it is not
-                  already selected.
-                </li>
-                <li>
-                  If you see an addon called <code>RegretsReporter</code>, click{" "}
-                  <strong>Remove</strong>.
-                </li>
-              </ol>
+              </ul>
 
               <p>
                 Uninstalling the extension will stop all ongoing data
@@ -121,10 +97,11 @@ export class GetStartedFlow extends Component<
                 .
               </p>
             </section>
+
             <YouMakeTheInternetHealther />
           </div>
-          <footer className="footer">
-            <img className="mozilla-logo m-auto" src="./img/mozilla.svg" />
+          <footer>
+            <img className="img-mozilla-logo m-auto" src="./img/mozilla.svg" />
           </footer>
         </div>
       </div>

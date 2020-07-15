@@ -11,30 +11,14 @@ export class ReportRegretInstructions extends Component<
 > {
   render() {
     return (
-      <section className="program-instructions">
-        <h2 className="program-header">Reporting a "YouTube Regret":</h2>
-        <ol className="get-started-list">
-          <li>
-            Whenever you regret watching a specific YouTube video, click the
-            [icon description] icon in the browser bar:
-            <br />
-            <img
-              className="instruction-form my-6"
-              src="./img/instruction-icon.png"
-              alt="Image of icon"
-            />
-          </li>
-          <li>
-            Fill out the form:
-            <br />
-            <img
-              className="instruction-form my-6 w-full max-w-xl border-gray-500 border border-solid"
-              src="./img/instruction-form.png"
-              alt="Image of report regret form"
-            />
-          </li>
-          <li>Click “Report”</li>
-        </ol>
+      <section>
+        <h2>Reporting a "YouTube Regret"</h2>
+        <div>It’s easy! Just follow these 3 steps.</div>
+        <ul className="flex">
+          <li>Click the extension icon in the browser bar</li>
+          <li>Report the video and recommendations that led you to it</li>
+          <li>Send any extra details you would like Mozilla to know</li>
+        </ul>
       </section>
     );
   }

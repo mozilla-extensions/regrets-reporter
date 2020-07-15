@@ -8,16 +8,16 @@ export interface YourPrivacyState {}
 export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
   render() {
     return (
-      <section className="program-privacy">
-        <h2 className="program-header">Your Privacy</h2>
+      <section>
+        <h2>Your Privacy</h2>
         <p>
           Mozilla understands the sensitivity of the data that is collected and
           works hard to keep your data private and secure:
         </p>
-        <ul className="get-started-list">
+        <ul>
           <li>
             <strong>General data collection principles</strong>
-            <ul className="get-started-list">
+            <ul>
               <li>
                 No data is collected from inside Private Browsing windows.
               </li>
@@ -35,7 +35,7 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
           </li>
           <li>
             <strong>Understand how your data is used</strong>
-            <ul className="get-started-list">
+            <ul>
               <li>
                 Only a small number of researchers will have access to raw data.
                 When we share results from the study, we will disclose it in a
