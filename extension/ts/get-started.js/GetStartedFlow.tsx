@@ -76,7 +76,7 @@ export class GetStartedFlow extends Component<
                 Users are welcome to opt out at any point by uninstalling the
                 extension:
               </p>
-              <ul>
+              <ul className="triangle-bullets">
                 <li>
                   Right-click on the toolbar icon and select{" "}
                   <span className="font-semibold">Remove Extension</span>.

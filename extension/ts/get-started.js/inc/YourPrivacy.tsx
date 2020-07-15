@@ -17,7 +17,7 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
         <ul>
           <li>
             <strong>General data collection principles</strong>
-            <ul>
+            <ul className="triangle-bullets">
               <li>
                 No data is collected from inside Private Browsing windows.
               </li>
@@ -35,7 +35,7 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
           </li>
           <li>
             <strong>Understand how your data is used</strong>
-            <ul>
+            <ul className="triangle-bullets">
               <li>
                 Only a small number of researchers will have access to raw data.
                 When we share results from the study, we will disclose it in a

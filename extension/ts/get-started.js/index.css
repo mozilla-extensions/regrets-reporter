@@ -1,3 +1,20 @@
 /* purgecss start ignore */
 
+ul.triangle-bullets {
+  padding-left: 1.5rem;
+  list-style: none;
+}
+ul.triangle-bullets li:before {
+  content: "";
+  border-color: transparent #000;
+  border-style: solid;
+  border-width: 0.3em 0 0.3em 0.55em;
+  display: block;
+  height: 0;
+  width: 0;
+  left: -1.3em;
+  top: 1em;
+  position: relative;
+}
+
 /* purgecss end ignore */
