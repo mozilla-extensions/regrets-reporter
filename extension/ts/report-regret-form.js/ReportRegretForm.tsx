@@ -309,43 +309,40 @@ export class ReportRegretForm extends Component<
           title="Mozilla RegretsReporter"
           loading={this.state.loading}
         >
-          <header className="panel-section panel-section-header">
-            <div className="icon-section-header">
-              <img
-                src="../icons/green-extensionsicon.svg"
-                width="32"
-                height="32"
-              />
+          <div className="p-8 border-b border-grey-30 bg-white">
+            <div className="text-lg font-serif font-semibold leading-none mb-5">
+              Thank you for your submission.
             </div>
-            <div className="text-section-header text-nowrap">
-              We greatly appreciate your contribution!
-            </div>
-          </header>
-          <div className="panel-section panel-section-formElements">
-            <span>
+            <div className="text-base">
               If you believe that the content you identified in this submission
-              constitutes abuse under YouTube’s policies, please report it to
-              YouTube via its abuse-reporting platform.
-            </span>
-
-            <a
-              href={config.feedbackSurveyUrl}
-              rel="noreferrer noopener"
-              target="_blank"
-              className="inline feedback-link"
-            >
-              {" "}
-              Feedback
-            </a>
-          </div>{" "}
-          <footer className="panel-section panel-section-footer">
-            <div
-              onClick={this.cancel}
-              className="panel-section-footer-button default"
-            >
-              Close
+              constitutes abuse under YouTube’s policies, please report it
+              directly to YouTube via its{" "}
+              <a
+                className="text-red"
+                rel="noreferrer noopener"
+                target="_blank"
+                href="https://support.google.com/youtube/answer/2802027"
+              >
+                abuse-reporting platform
+              </a>
+              .
             </div>
-          </footer>
+          </div>
+          <div className="p-5 bg-white">
+            <div className="text-xs">
+              Do you have feedback about the RegretsReporter? We would love to
+              hear it.{" "}
+              <a
+                href={config.feedbackSurveyUrl}
+                rel="noreferrer noopener"
+                target="_blank"
+                className="text-red underline"
+              >
+                Send us feedback
+              </a>
+              .
+            </div>
+          </div>
         </DoorHanger>
       );
     }
@@ -698,16 +695,16 @@ export class ReportRegretForm extends Component<
 
             <footer className="mt-2 flex">
               <div
-                onClick={this.submitStep2}
-                className="flex-1 cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
-              >
-                Send Additional Info
-              </div>
-              <div
                 onClick={this.skipStep2}
-                className="w-40 ml-5 cursor-pointer leading-doorhanger-footer-button border border-red bg-transparent hover:bg-red-transparent text-red font-sans font-semibold py-1 px-5 text-xl text-center"
+                className="w-40 cursor-pointer leading-doorhanger-footer-button border border-red bg-transparent hover:bg-red-transparent text-red font-sans font-semibold py-1 px-5 text-xl text-center"
               >
                 Skip
+              </div>
+              <div
+                onClick={this.submitStep2}
+                className="flex-1 ml-5 cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
+              >
+                Send Additional Info
               </div>
             </footer>
           </form>
