@@ -25,6 +25,9 @@ export const classifyYouTubeNavigationUrlType = (
   if (parsedUrl.origin.indexOf("youtube.com") === -1) {
     return "not_a_youtube_page";
   }
+  if (parsedUrl.origin.indexOf("img.youtube.com") > -1) {
+    return "other";
+  }
   if (url.indexOf("prefetch=1") > 0) {
     return "prefetch";
   }
