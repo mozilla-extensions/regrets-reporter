@@ -401,6 +401,8 @@ export class ReportRegretForm extends Component<
                     <TimeLine
                       youTubeNavigationMetadata={youTubeNavigationMetadata}
                       howTheVideoWasReached={howTheVideoWasReached}
+                      editable={true}
+                      onEdit={() => {}}
                     />
                   )}
                   {howTheVideoWasReached.length === 0 && (
@@ -475,7 +477,7 @@ export class ReportRegretForm extends Component<
                       Tell us more about your regret
                     </div>
                     <div className="font-sans text-base mt-2">
-                      <div className="mb-0 font-semibold">
+                      <div className="mb-2 font-semibold">
                         Why do you regret watching this video?
                       </div>
                       <ul className="list-none">
@@ -493,9 +495,9 @@ export class ReportRegretForm extends Component<
                             label: "It was bizarre",
                           },
                         ].map(item => (
-                          <li key={item.value} className="">
+                          <li key={item.value} className="mb-2">
                             <label className="flex">
-                              <span className="checkbox__label__text">
+                              <span className="checkbox__label__text flex">
                                 <input
                                   className="checkbox h-4"
                                   type="checkbox"
@@ -507,15 +509,17 @@ export class ReportRegretForm extends Component<
                                     ) > -1
                                   }
                                   onChange={this.handleChange}
-                                />{" "}
-                                {item.label}
+                                />
+                                <span className="ml-1 leading-none">
+                                  {item.label}
+                                </span>
                               </span>
                             </label>
                           </li>
                         ))}
                         <li className="">
-                          <label className="flex">
-                            <span className="checkbox__label__text">
+                          <label className="flex mb-1">
+                            <span className="checkbox__label__text flex">
                               <input
                                 className="checkbox h-4"
                                 type="checkbox"
@@ -527,8 +531,8 @@ export class ReportRegretForm extends Component<
                                   ) > -1
                                 }
                                 onChange={this.handleChange}
-                              />{" "}
-                              Other:
+                              />
+                              <span className="ml-1 leading-none">Other:</span>
                             </span>
                           </label>
                           <label className="input">
@@ -653,6 +657,7 @@ export class ReportRegretForm extends Component<
                     <TimeLine
                       youTubeNavigationMetadata={youTubeNavigationMetadata}
                       howTheVideoWasReached={howTheVideoWasReached}
+                      editable={false}
                     />
                   )}
                   {howTheVideoWasReached.length === 0 && (

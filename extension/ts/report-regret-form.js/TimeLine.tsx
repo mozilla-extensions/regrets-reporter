@@ -8,6 +8,8 @@ import { TimeLineElement } from "./TimeLineElement";
 export interface TimeLineProps {
   youTubeNavigationMetadata: YouTubeNavigationMetadata;
   howTheVideoWasReached: YouTubeNavigationMetadata[];
+  editable: boolean;
+  onEdit?: () => void;
 }
 
 export interface TimeLineState {}
@@ -32,9 +34,16 @@ const youTubePageEntryPointLabels: {
 
 export class TimeLine extends Component<TimeLineProps, TimeLineState> {
   render() {
-    const { howTheVideoWasReached, youTubeNavigationMetadata } = this.props;
+    const {
+      howTheVideoWasReached,
+      youTubeNavigationMetadata,
+      editable,
+      onEdit,
+    } = this.props;
+    /*
     const oldestReachEntry =
       howTheVideoWasReached.slice().shift() || youTubeNavigationMetadata;
+    */
     return (
       <div className="timeline">
         <ul className="h-full">
@@ -47,18 +56,21 @@ export class TimeLine extends Component<TimeLineProps, TimeLineState> {
             }
           </li>
           */}
-          {howTheVideoWasReached.map(
-            (
-              youTubeNavigationMetadata: YouTubeNavigationMetadata,
-              index: number,
-            ) => (
-              <TimeLineElement
-                key={index}
-                youTubeNavigationMetadata={youTubeNavigationMetadata}
-                editable={true}
-              />
-            ),
-          )}
+          {howTheVideoWasReached
+            .reverse()
+            .map(
+              (
+                youTubeNavigationMetadata: YouTubeNavigationMetadata,
+                index: number,
+              ) => (
+                <TimeLineElement
+                  key={index}
+                  youTubeNavigationMetadata={youTubeNavigationMetadata}
+                  editable={editable}
+                  onEdit={onEdit}
+                />
+              ),
+            )}
         </ul>
       </div>
     );

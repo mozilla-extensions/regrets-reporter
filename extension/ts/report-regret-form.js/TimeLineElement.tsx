@@ -10,6 +10,7 @@ export interface TimeLineElementProps {
   youTubeNavigationMetadata: YouTubeNavigationMetadata;
   bold?: boolean;
   editable?: boolean;
+  onEdit?: () => void;
 }
 
 export interface TimeLineElementState {}
