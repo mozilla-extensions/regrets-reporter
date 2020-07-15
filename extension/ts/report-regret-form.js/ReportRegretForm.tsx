@@ -497,46 +497,46 @@ export class ReportRegretForm extends Component<
                           },
                         ].map(item => (
                           <li key={item.value} className="">
-                            <label className="">
-                              <input
-                                className="checkbox"
-                                type="checkbox"
-                                name="user_supplied_regret_categories"
-                                value={item.value}
-                                checked={
-                                  this.state.userSuppliedRegretCategories.indexOf(
-                                    item.value,
-                                  ) > -1
-                                }
-                                onChange={this.handleChange}
-                              />{" "}
+                            <label className="flex">
                               <span className="checkbox__label__text">
+                                <input
+                                  className="checkbox h-4"
+                                  type="checkbox"
+                                  name="user_supplied_regret_categories"
+                                  value={item.value}
+                                  checked={
+                                    this.state.userSuppliedRegretCategories.indexOf(
+                                      item.value,
+                                    ) > -1
+                                  }
+                                  onChange={this.handleChange}
+                                />{" "}
                                 {item.label}
                               </span>
                             </label>
                           </li>
                         ))}
                         <li className="">
-                          <label className="">
-                            <input
-                              className="checkbox"
-                              type="checkbox"
-                              name="user_supplied_regret_categories"
-                              value="other"
-                              checked={
-                                this.state.userSuppliedRegretCategories.indexOf(
-                                  "other",
-                                ) > -1
-                              }
-                              onChange={this.handleChange}
-                            />{" "}
+                          <label className="flex">
                             <span className="checkbox__label__text">
+                              <input
+                                className="checkbox h-4"
+                                type="checkbox"
+                                name="user_supplied_regret_categories"
+                                value="other"
+                                checked={
+                                  this.state.userSuppliedRegretCategories.indexOf(
+                                    "other",
+                                  ) > -1
+                                }
+                                onChange={this.handleChange}
+                              />{" "}
                               Other:
                             </span>
                           </label>
                           <label className="input">
                             <input
-                              className="input__field w-full mt-1 leading-none border p-1 text-sm border-grey-30"
+                              className="input__field w-full mt-1 leading-none border rounded p-1 text-sm border-grey-30 disabled:bg-grey-10"
                               type="text"
                               id="user_supplied_other_regret_category"
                               name="user_supplied_other_regret_category"
@@ -552,7 +552,7 @@ export class ReportRegretForm extends Component<
                           </label>
                         </li>
                       </ul>
-                      <div className="font-semibold mt-2">
+                      <div className="font-semibold mt-2 mb-1">
                         How severe is your regret?
                       </div>
                       <div className="inline-flex h-10 w-34 justify-between cursor-pointer">
@@ -568,7 +568,7 @@ export class ReportRegretForm extends Component<
                             this.state.userSuppliedSeverity === 1
                               ? "bg-red hover:bg-red-70 text-white border-red hover:border-red-70"
                               : "bg-white hover:bg-red-transparent text-black"
-                          } focus:outline-none rounded-l border border-l-0 px-2 py-1`}
+                          } focus:outline-none rounded-l border border-r-0 px-2 py-1`}
                         >
                           <div
                             className={`${
@@ -590,7 +590,7 @@ export class ReportRegretForm extends Component<
                             this.state.userSuppliedSeverity === 2
                               ? "bg-red hover:bg-red-70 text-white border-red hover:border-red-70"
                               : "bg-white hover:bg-red-transparent text-black"
-                          } focus:outline-none border border-l-0 px-2 py-1`}
+                          } focus:outline-none border border-r-0 px-2 py-1`}
                         >
                           <div
                             className={`${
@@ -612,7 +612,7 @@ export class ReportRegretForm extends Component<
                             this.state.userSuppliedSeverity === 3
                               ? "bg-red hover:bg-red-70 text-white border-red hover:border-red-70"
                               : "bg-white hover:bg-red-transparent text-black"
-                          } focus:outline-none rounded-r border border-l-0 px-2 py-1`}
+                          } focus:outline-none rounded-r border px-2 py-1`}
                         >
                           <div
                             className={`${
@@ -626,7 +626,7 @@ export class ReportRegretForm extends Component<
                       <div className="font-semibold mt-2">Tell us more:</div>
                       <label className="textarea">
                         <textarea
-                          className="w-full form-textarea mt-0 block w-full border p-2 rounded text-sm border-grey-30"
+                          className="w-full form-textarea mt-0 block w-full border p-1 rounded text-sm border-grey-30"
                           rows={2}
                           id="user_supplied_optional_comment"
                           name="user_supplied_optional_comment"
@@ -701,7 +701,7 @@ export class ReportRegretForm extends Component<
                 onClick={this.submitStep2}
                 className="flex-1 cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
               >
-                Report
+                Send Additional Info
               </div>
               <div
                 onClick={this.skipStep2}
