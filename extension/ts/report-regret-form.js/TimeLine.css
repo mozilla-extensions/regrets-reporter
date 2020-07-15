@@ -34,8 +34,16 @@
   width: 0.6875rem;
   height: 100%;
 }
+/* Different since the last one has no padding */
 .timeline ul li:last-child:after {
   top: calc(50% - 0.8rem);
+}
+/* Chrome-specifics */
+.timeline:not(*:root) ul li:after {
+  top: calc(50% - 0.9rem);
+}
+.timeline:not(*:root) ul li:last-child:after {
+  top: calc(50% - 0.5rem);
 }
 
 .timeline ul li:before {
@@ -61,6 +69,7 @@
   height: calc(
     50% - 0.8rem
   ); /* shorten the line so it goes only up to the bullet. Is equal to first-child:before's top */
+  top: 0.6875rem;
 }
 
 /* purgecss end ignore */
