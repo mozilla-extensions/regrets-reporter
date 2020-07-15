@@ -8,6 +8,7 @@ import { Checkbox } from "../shared-resources/photon-components-web/photon-compo
 import "../shared-resources/photon-components-web/photon-components/Checkbox/light-theme.css";
 import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
 import { TextArea } from "../shared-resources/photon-components-web/photon-components/TextArea";
+import "./ReportRegretForm.css";
 import "./index.css";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
@@ -15,21 +16,15 @@ import {
   RegretReport,
   RegretReportData,
   YouTubeNavigationMetadata,
-  YouTubePageEntryPoint,
 } from "../background.js/ReportSummarizer";
 import LikertScale from "likert-react";
-import {
-  MdSentimentDissatisfied,
-  MdSentimentNeutral,
-  MdSentimentVeryDissatisfied,
-  MdHelp,
-} from "react-icons/md";
 import { DisplayError } from "./DisplayError";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 import { config } from "../config";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 import { DoorHanger } from "./DoorHanger";
 import { TimeLine } from "./TimeLine";
+import { TimeLineElement } from "./TimeLineElement";
 
 export interface ReportRegretFormProps {}
 
@@ -253,25 +248,25 @@ export class ReportRegretForm extends Component<
     return this.persistFormState();
   };
 
-  handleUserSuppliedRegretCategoryOptionChange = changeEvent => {
-    const newValue = changeEvent.target.value;
+  handleUserSuppliedRegretCategoryOptionChange = async changeEvent => {
+    const value = changeEvent.target.value;
     const userSuppliedRegretCategories = this.state
       .userSuppliedRegretCategories;
-    const index = userSuppliedRegretCategories.indexOf(newValue);
+    const index = userSuppliedRegretCategories.indexOf(value);
     const checked = changeEvent.target.checked;
     if (checked) {
       if (index === -1) {
-        this.setState({
+        await this.setState({
           userSuppliedRegretCategories: [
             ...userSuppliedRegretCategories,
-            newValue,
+            value,
           ],
         });
       }
     } else {
       if (index > -1) {
         userSuppliedRegretCategories.splice(index, 1);
-        this.setState({
+        await this.setState({
           userSuppliedRegretCategories: userSuppliedRegretCategories,
         });
       }
@@ -425,7 +420,7 @@ export class ReportRegretForm extends Component<
             </div>
 
             <div className="mt-2">
-              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs text-grey-50 leading-relaxed">
+              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs leading-relaxed">
                 <li>
                   Your report is shared with Mozilla according to our{" "}
                   <Link
@@ -471,169 +466,191 @@ export class ReportRegretForm extends Component<
           <form>
             <div className="px-0">
               <div className="grid grid-cols-13 gap-5 -mx-0">
-                <div className="col-span-7 p-5 bg-white">
-                  <div className="">Thank you! Send additional comments:</div>
-                  <div className="px-0">
-                    <div className="grid grid-cols-5 gap-4 -mx-0">
-                      <div className="col-span-3 px-0">
-                        <div className="pb-0 panel-section panel-section-formElements">
-                          <div className="panel-formElements-item mb-6">
-                            <div>
-                              <p className="mb-3">
-                                <span className="label-bold">
-                                  Tell us why you regret watching this content{" "}
-                                  <MdHelp
-                                    className="inline text-grey-50 align-middle"
-                                    title="The categories below were the most commonly reported by users in a previous YouTube Regrets study; if your report falls into a different category, please indicate that in the “Other” field."
-                                  />
-                                </span>
-                              </p>
-                              <ul className="list-none">
-                                {[
-                                  {
-                                    value: "false",
-                                    label: "False",
-                                  },
-                                  {
-                                    value: "offensive",
-                                    label: "Offensive",
-                                  },
-                                  {
-                                    value: "bizarre",
-                                    label: "Bizarre",
-                                  },
-                                ].map(item => (
-                                  <li key={item.value} className="mb-2">
-                                    <Checkbox
-                                      name="user_supplied_regret_categories"
-                                      value={item.value}
-                                      label={item.label}
-                                      checked={
-                                        this.state.userSuppliedRegretCategories.indexOf(
-                                          item.value,
-                                        ) > -1
-                                      }
-                                      onChange={this.handleChange}
-                                    />
-                                  </li>
-                                ))}
-                                <li className="mb-2">
-                                  <Checkbox
-                                    name="user_supplied_regret_categories"
-                                    value="other"
-                                    label="Other: "
-                                    checked={
-                                      this.state.userSuppliedRegretCategories.indexOf(
-                                        "other",
-                                      ) > -1
-                                    }
-                                    onChange={this.handleChange}
-                                  />
-                                  <Input
-                                    className="input__field w-full my-3"
-                                    id="user_supplied_other_regret_category"
-                                    name="user_supplied_other_regret_category"
-                                    placeholder=""
-                                    disabled={
-                                      this.state.userSuppliedRegretCategories.indexOf(
-                                        "other",
-                                      ) === -1
-                                    }
-                                    value={
-                                      this.state.userSuppliedOtherRegretCategory
-                                    }
-                                    onChange={this.handleChange}
-                                  />
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
+                <div className="col-span-7 p-0 bg-white">
+                  <div className="uppercase bg-indigo text-white pt-1.5 pb-1 px-2 flex">
+                    <span className="flex-none img-check" />
+                    <span className="pl-1.5 text-m font-bold">
+                      Thank you. Your report has been sent!
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <div className="text-1.5xl font-serif font-bold leading-none">
+                      Tell us more about your regret
+                    </div>
+                    <div className="font-sans text-base mt-2">
+                      <div className="mb-0 font-semibold">
+                        Why do you regret watching this video?
                       </div>
-                      <div className="col-span-3 px-0">
-                        <div className="pt-0 panel-section panel-section-formElements">
-                          <div className="">
-                            <div className="w-full">
-                              <span>
-                                <LikertScale
-                                  reviews={[
-                                    {
-                                      question: "How severe is your regret?",
-                                      review: this.state.userSuppliedSeverity,
-                                    },
-                                  ]}
-                                  icons={[
-                                    <MdSentimentNeutral key="3" />,
-                                    <MdSentimentDissatisfied key="2" />,
-                                    <MdSentimentVeryDissatisfied key="1" />,
-                                  ]}
-                                  onClick={async (q, n) => {
-                                    await this.setState({
-                                      userSuppliedSeverity: n,
-                                    });
-                                    return this.persistFormState();
-                                  }}
-                                />
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-span-3 px-0">
-                        <div className="pt-0 panel-section panel-section-formElements">
-                          <div className="">
-                            <div className="w-full">
-                              <TextArea
-                                className="textarea__field w-full form-textarea mt-1 block w-full"
-                                rows={2}
-                                id="user_supplied_optional_comment"
-                                name="user_supplied_optional_comment"
-                                placeholder=""
-                                label="Will you tell us more about why you regret watching the
-                        video? (Optional)"
-                                value={this.state.userSuppliedOptionalComment}
+                      <ul className="list-none">
+                        {[
+                          {
+                            value: "untrue",
+                            label: "It was untrue",
+                          },
+                          {
+                            value: "offensive",
+                            label: "It was offensive",
+                          },
+                          {
+                            value: "bizarre",
+                            label: "It was bizarre",
+                          },
+                        ].map(item => (
+                          <li key={item.value} className="">
+                            <label className="">
+                              <input
+                                className="checkbox"
+                                type="checkbox"
+                                name="user_supplied_regret_categories"
+                                value={item.value}
+                                checked={
+                                  this.state.userSuppliedRegretCategories.indexOf(
+                                    item.value,
+                                  ) > -1
+                                }
                                 onChange={this.handleChange}
-                              />
-                            </div>
-                          </div>
-                        </div>
+                              />{" "}
+                              <span className="checkbox__label__text">
+                                {item.label}
+                              </span>
+                            </label>
+                          </li>
+                        ))}
+                        <li className="">
+                          <label className="">
+                            <input
+                              className="checkbox"
+                              type="checkbox"
+                              name="user_supplied_regret_categories"
+                              value="other"
+                              checked={
+                                this.state.userSuppliedRegretCategories.indexOf(
+                                  "other",
+                                ) > -1
+                              }
+                              onChange={this.handleChange}
+                            />{" "}
+                            <span className="checkbox__label__text">
+                              Other:
+                            </span>
+                          </label>
+                          <label className="input">
+                            <input
+                              className="input__field w-full mt-1 leading-none border p-1 text-sm border-grey-30"
+                              type="text"
+                              id="user_supplied_other_regret_category"
+                              name="user_supplied_other_regret_category"
+                              placeholder=""
+                              disabled={
+                                this.state.userSuppliedRegretCategories.indexOf(
+                                  "other",
+                                ) === -1
+                              }
+                              value={this.state.userSuppliedOtherRegretCategory}
+                              onChange={this.handleChange}
+                            />
+                          </label>
+                        </li>
+                      </ul>
+                      <div className="font-semibold mt-2">
+                        How severe is your regret?
                       </div>
+                      <div className="inline-flex h-10 w-34 justify-between cursor-pointer">
+                        <button
+                          onClick={async event => {
+                            event.preventDefault();
+                            await this.setState({
+                              userSuppliedSeverity: 1,
+                            });
+                            this.persistFormState();
+                          }}
+                          className={`${
+                            this.state.userSuppliedSeverity === 1
+                              ? "bg-red hover:bg-red-70 text-white border-red hover:border-red-70"
+                              : "bg-white hover:bg-red-transparent text-black"
+                          } focus:outline-none rounded-l border border-l-0 px-2 py-1`}
+                        >
+                          <div
+                            className={`${
+                              this.state.userSuppliedSeverity === 1
+                                ? "invert"
+                                : ""
+                            } img-icon-face-1`}
+                          />
+                        </button>
+                        <button
+                          onClick={async event => {
+                            event.preventDefault();
+                            await this.setState({
+                              userSuppliedSeverity: 2,
+                            });
+                            this.persistFormState();
+                          }}
+                          className={`${
+                            this.state.userSuppliedSeverity === 2
+                              ? "bg-red hover:bg-red-70 text-white border-red hover:border-red-70"
+                              : "bg-white hover:bg-red-transparent text-black"
+                          } focus:outline-none border border-l-0 px-2 py-1`}
+                        >
+                          <div
+                            className={`${
+                              this.state.userSuppliedSeverity === 2
+                                ? "invert"
+                                : ""
+                            } img-icon-face-2`}
+                          />
+                        </button>
+                        <button
+                          onClick={async event => {
+                            event.preventDefault();
+                            await this.setState({
+                              userSuppliedSeverity: 3,
+                            });
+                            this.persistFormState();
+                          }}
+                          className={`${
+                            this.state.userSuppliedSeverity === 3
+                              ? "bg-red hover:bg-red-70 text-white border-red hover:border-red-70"
+                              : "bg-white hover:bg-red-transparent text-black"
+                          } focus:outline-none rounded-r border border-l-0 px-2 py-1`}
+                        >
+                          <div
+                            className={`${
+                              this.state.userSuppliedSeverity === 3
+                                ? "invert"
+                                : ""
+                            } img-icon-face-3`}
+                          />
+                        </button>
+                      </div>
+                      <div className="font-semibold mt-2">Tell us more:</div>
+                      <label className="textarea">
+                        <textarea
+                          className="w-full form-textarea mt-0 block w-full border p-2 rounded text-sm border-grey-30"
+                          rows={2}
+                          id="user_supplied_optional_comment"
+                          name="user_supplied_optional_comment"
+                          placeholder=""
+                          onChange={this.handleChange}
+                        >
+                          {this.state.userSuppliedOptionalComment}
+                        </textarea>
+                      </label>
                     </div>
                   </div>
                 </div>
                 <div className="col-span-6 p-5 bg-white flex flex-col">
                   <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
-                    sdf sdfsdfsd fsdf
+                    The video and history reported
                   </div>
 
-                  <div className="flex-1">
-                    <div className="text-1.5xl font-serif font-bold leading-none mb-3">
-                      The video being reported
-                    </div>
-                    <div>
-                      <img
-                        className="w-full"
-                        src={this.state.videoThumbUrl}
-                        alt=""
-                      />
-                    </div>
-                    <div className="mt-4">
-                      <h4 className="font-sans text-base truncate h-6 leading-none">
-                        {youTubeNavigationMetadata.video_metadata.video_title}
-                      </h4>
-                      <p className="mt-0 font-sans text-grey-50 text-xs truncate h-4 leading-none">
-                        {
-                          youTubeNavigationMetadata.video_metadata
-                            .view_count_at_navigation_short
-                        }{" "}
-                        -{" "}
-                        {
-                          youTubeNavigationMetadata.video_metadata
-                            .video_posting_date
-                        }
-                      </p>
-                    </div>
-                  </div>
+                  <TimeLineElement
+                    youTubeNavigationMetadata={youTubeNavigationMetadata}
+                    bold={true}
+                    editable={false}
+                  />
+
+                  <hr className="my-5 border-grey-20" />
 
                   {howTheVideoWasReached.length > 0 && (
                     <TimeLine
@@ -643,8 +660,7 @@ export class ReportRegretForm extends Component<
                   )}
                   {howTheVideoWasReached.length === 0 && (
                     <div className="flex-none text-sm">
-                      You visited this video directly. There are no other
-                      activities to report at this time.
+                      You visited this video directly.
                     </div>
                   )}
                   {howTheVideoWasReached.length === 0 && (
@@ -655,7 +671,7 @@ export class ReportRegretForm extends Component<
             </div>
 
             <div className="mt-2">
-              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs text-grey-50 leading-relaxed">
+              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs leading-relaxed">
                 <li>
                   Your report is shared with Mozilla according to our{" "}
                   <Link

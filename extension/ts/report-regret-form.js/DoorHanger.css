@@ -20,15 +20,6 @@ body.doorhanger {
   background-position: center;
 }
 
-.img-no-path {
-  background-image: url(./img/no-path.jpg);
-  width: 100%;
-  height: auto;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 95%;
-}
-
 .doorhanger-content-circles {
   background-image: url(./img/doorhanger-circles.svg);
   background-repeat: no-repeat;

@@ -55,6 +55,7 @@ export class TimeLine extends Component<TimeLineProps, TimeLineState> {
               <TimeLineElement
                 key={index}
                 youTubeNavigationMetadata={youTubeNavigationMetadata}
+                editable={true}
               />
             ),
           )}

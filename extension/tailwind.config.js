@@ -11,7 +11,7 @@ const colors = {
   "grey-50": "#737373",
   grey: "#b1b1b3",
   "grey-40": "#b1b1b3",
-  "grey-30": "#d7d7db",
+  "grey-30": "#D1D1D4",
   "grey-banner": "#f0f0f4",
   "grey-transparent": "hsla(250, 13%, 9%, .2)",
   "grey-20": "#ededf0",
@@ -72,6 +72,8 @@ const colors = {
   "blue-40": "#45a1ff",
   "blue-30": "#99ccff",
   "blue-20": "#cce6ff",
+
+  indigo: "#595CF2",
 
   "ink-90": "#0f1126",
   "ink-80": "#202340",
@@ -239,6 +241,7 @@ module.exports = {
       "16": "4rem",
       "24": "6rem",
       "32": "8rem",
+      "34": "8.5rem",
       "40": "10rem",
       "48": "12rem",
       "64": "16rem",
@@ -337,7 +340,10 @@ module.exports = {
     padding: {
       px: "1px",
       "0": "0",
+      "0.5": "0.125rem",
+      "0.75": "0.1875rem",
       "1": "0.25rem",
+      "1.5": "0.375rem",
       "2": "0.5rem",
       "3": "0.75rem",
       "4": "1rem",

@@ -8,6 +8,8 @@ import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigation
 
 export interface TimeLineElementProps {
   youTubeNavigationMetadata: YouTubeNavigationMetadata;
+  bold?: boolean;
+  editable?: boolean;
 }
 
 export interface TimeLineElementState {}
@@ -35,7 +37,7 @@ export class TimeLineElement extends Component<
   TimeLineElementState
 > {
   render() {
-    const { youTubeNavigationMetadata } = this.props;
+    const { youTubeNavigationMetadata, bold, editable } = this.props;
     return (
       <>
         {(youTubeNavigationMetadata.video_metadata && (
@@ -49,11 +51,13 @@ export class TimeLineElement extends Component<
               alt=""
             />
             <div className="flex-1 text-sm h-9 overflow-y-hidden leading-tight flex items-center">
-              <span className="max-h-9">
+              <span className={`max-h-9 ${bold ? "font-bold" : ""}`}>
                 {youTubeNavigationMetadata.video_metadata.video_title}
               </span>
             </div>
-            <div className="flex-none ml-3 img-icon-close-grey cursor-pointer" />
+            {editable && (
+              <div className="flex-none ml-3 img-icon-close-grey cursor-pointer" />
+            )}
           </li>
         )) || (
           <li className="">

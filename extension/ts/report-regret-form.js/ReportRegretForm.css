@@ -1,0 +1,52 @@
+/* purgecss start ignore */
+
+.img-no-path {
+  background-image: url(./img/no-path.jpg);
+  width: 100%;
+  height: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 95%;
+}
+
+.img-check {
+  background-image: url(./img/check.svg);
+  width: 14px;
+  height: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.img-icon-face-1 {
+  background-image: url(./img/icon-face-1.svg);
+  width: 28px;
+  height: 28px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.img-icon-face-2 {
+  background-image: url(./img/icon-face-2.svg);
+  width: 28px;
+  height: 28px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.img-icon-face-3 {
+  background-image: url(./img/icon-face-3.svg);
+  width: 28px;
+  height: 28px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.invert {
+  filter: invert(1);
+}
+
+/* purgecss end ignore */
