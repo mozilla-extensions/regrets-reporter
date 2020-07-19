@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1446px" height="1450px" viewBox="0 0 1446 1450" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>D089677B-0A9B-4858-8DB6-5C5D20E13033</title>
+    <defs>
+        <filter x="-0.2%" y="-0.2%" width="100.4%" height="100.4%" filterUnits="objectBoundingBox" id="filter-1">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-0.1%" y="-0.1%" width="100.2%" height="100.2%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-0.1%" y="-0.1%" width="100.1%" height="100.1%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="Design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.3">
+        <g id="Extension-Doorhanger-Confirmation" transform="translate(-29.000000, 336.000000)" stroke="#FFFFFF">
+            <g id="Group-13" transform="translate(-18.000000, -335.000000)">
+                <g id="doorhanger-circles" transform="translate(48.000000, 0.000000)">
+                    <g id="Circles-Copy-2" transform="translate(0.000000, 0.173077)">
+                        <g id="Group" transform="translate(0.816129, 0.128205)">
+                            <g id="Circles">
+                                <ellipse id="Oval" filter="url(#filter-1)" cx="720" cy="720" rx="117.422581" ry="117.525641"></ellipse>
+                                <ellipse id="Oval" filter="url(#filter-2)" cx="720" cy="720" rx="234.845161" ry="235.051282"></ellipse>
+                              <ellipse id="Oval" filter="url(#filter-3)" cx="720" cy="720" rx="360" ry="360"></ellipse>
+                              <ellipse id="Oval" filter="url(#filter-3)" cx="720" cy="720" rx="480.183871" ry="480.5"></ellipse>
+                              <ellipse id="Oval" filter="url(#filter-3)" cx="720" cy="720" rx="600.183871" ry="600.5"></ellipse>
+                              <ellipse id="Oval" filter="url(#filter-3)" cx="720" cy="720" rx="720.183871" ry="720.5"></ellipse>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -171,10 +171,13 @@ module.exports = {
       xl: "1.25rem", // 20px
       "1.5xl": "1.375rem", // 22px
       "2xl": "1.5rem", // 24px
+      "2.25xl": "1.625rem", // 26px
       "2.5xl": "1.75rem", // 28px
       "3xl": "2rem", // 32px
       "4xl": "2.25rem", // 36px
-      "5xl": "3rem", // 48px
+      huge: "2.375rem", // 38px
+      enormous: "3rem", // 48px
+      giant: "5.625rem", // 90px
     },
     fontWeight: {
       hairline: 100,
@@ -236,6 +239,7 @@ module.exports = {
       "8": "2rem",
       "9": "2.25rem",
       "10": "2.5rem",
+      "11": "2.75rem",
       "12": "3rem",
       "15": "3.75rem",
       "16": "4rem",
@@ -274,6 +278,7 @@ module.exports = {
       "8": "2rem",
       "9": "2.25rem",
       "10": "2.5rem",
+      "11": "2.75rem",
       "12": "3rem",
       "15": "3.75rem",
       "16": "4rem",
@@ -308,6 +313,7 @@ module.exports = {
       screen: "100vh",
     },
     gridTemplateColumns: {
+      "12": "repeat(12, minmax(0, 1fr))",
       "13": "repeat(13, minmax(0, 1fr))",
     },
     minWidth: {
@@ -367,17 +373,28 @@ module.exports = {
       "2": "0.5rem",
       "2.5": "0.625rem",
       "3": "0.75rem",
+      "3.25": "0.8125rem",
       "4": "1rem",
       "4.5": "1.1rem",
       "5": "1.25rem",
+      "5.25": "1.3125rem",
       "6": "1.5rem",
+      "7": "1.75rem",
       "8": "2rem",
+      "8.75": "2.1875rem",
       "10": "2.5rem",
+      "11": "2.75rem",
       "12": "3rem",
+      "12.5": "3.125rem",
       "16": "4rem",
       "20": "5rem",
+      "21": "5.25rem",
+      "22.5": "5.65rem",
       "24": "6rem",
       "32": "8rem",
+      "33": "8.25rem",
+      "35": "8.75rem",
+      "36": "9rem",
       "-px": "-1px",
       "-1": "-0.25rem",
       "-2": "-0.5rem",
