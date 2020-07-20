@@ -38,7 +38,7 @@ async function generateManifest({ dotEnvPath }) {
     browser_action: {
       default_icon: "icons/icon-toolbar-inactive.svg",
       default_title: "__MSG_pageActionButtonTitle__",
-      default_popup: "report-regret-form/report-regret-form.html",
+      default_popup: "not-available/not-available.html",
     },
     options_ui: {
       page: "options-ui/options-ui.html",

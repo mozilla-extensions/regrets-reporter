@@ -67,6 +67,7 @@ class ExtensionGlue {
         "port-from-options-ui:index",
         "port-from-options-ui:form",
         "port-from-get-started:index",
+        "port-from-not-available-notice:index",
         "port-from-ui-instrument-content-script:index",
         "port-from-response-body-listener-content-script:index",
       ],
@@ -109,6 +110,9 @@ class ExtensionGlue {
           browser.browserAction.setIcon({
             path: "icons/icon-toolbar-active.svg",
           });
+          browser.browserAction.setPopup({
+            popup: "/report-regret-form/report-regret-form.html",
+          });
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
             // do nothing, the tab does not exist anymore
@@ -120,6 +124,9 @@ class ExtensionGlue {
         try {
           browser.browserAction.setIcon({
             path: "icons/icon-toolbar-inactive.svg",
+          });
+          browser.browserAction.setPopup({
+            popup: "/not-available-notice/not-available-notice.html",
           });
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {

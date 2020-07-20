@@ -47,6 +47,7 @@ module.exports = {
       "./ts/response-body-listener-content-script.js/index.ts",
     background: "./ts/background.js/index.ts",
     "get-started": "./ts/get-started.js/index.tsx",
+    "not-available-notice": "./ts/not-available-notice.js/index.tsx",
     "report-regret-form": "./ts/report-regret-form.js/index.tsx",
     "options-ui": "./ts/options-ui.js/index.tsx",
   },
