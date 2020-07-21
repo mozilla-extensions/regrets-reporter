@@ -3,11 +3,8 @@ import { Component, MouseEvent } from "react";
 import "photon-colors/photon-colors.css";
 import "../shared-resources/photon-components-web/attributes/index.css";
 import "../shared-resources/tailwind.css";
-import { Input } from "../shared-resources/photon-components-web/photon-components/Input";
-import { Checkbox } from "../shared-resources/photon-components-web/photon-components/Checkbox";
 import "../shared-resources/photon-components-web/photon-components/Checkbox/light-theme.css";
 import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
-import { TextArea } from "../shared-resources/photon-components-web/photon-components/TextArea";
 import "./ReportRegretForm.css";
 import "./index.css";
 import { browser, Runtime } from "webextension-polyfill-ts";
@@ -17,7 +14,6 @@ import {
   RegretReportData,
   YouTubeNavigationMetadata,
 } from "../background.js/ReportSummarizer";
-import LikertScale from "likert-react";
 import { DisplayError } from "./DisplayError";
 import { getCurrentTab } from "../background.js/lib/getCurrentTab";
 import { config } from "../config";

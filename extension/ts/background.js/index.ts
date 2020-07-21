@@ -26,7 +26,7 @@ import {
 import { YouTubeUsageStatistics } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./OpenWpmPacketHandler";
 import { DataSharer } from "./DataSharer";
-import { ExtensionPreferences, Store } from "./Store";
+import { Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";
 import { getCurrentTab } from "./lib/getCurrentTab";
 import { makeUUID } from "./lib/uuid";
