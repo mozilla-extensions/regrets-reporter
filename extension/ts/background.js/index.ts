@@ -116,8 +116,9 @@ class ExtensionGlue {
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
             // do nothing, the tab does not exist anymore
+          } else {
+            throw e;
           }
-          throw e;
         }
       }
       function setInactiveExtensionIcon() {
@@ -131,8 +132,9 @@ class ExtensionGlue {
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
             // do nothing, the tab does not exist anymore
+          } else {
+            throw e;
           }
-          throw e;
         }
       }
 
