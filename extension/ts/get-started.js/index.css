@@ -27,6 +27,15 @@ ul.triangle-bullets li:before {
   z-index: -100;
 }
 
+.img-circles {
+  background-image: url("./img/circles.svg");
+  width: 100%;
+  height: 1007px;
+  background-repeat: no-repeat;
+  background-position-x: center;
+  z-index: -100;
+}
+
 .img-mozilla-logo {
   background-image: url("./img/mozilla-logo.svg");
   width: 191px;

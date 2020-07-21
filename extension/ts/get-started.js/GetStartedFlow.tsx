@@ -26,6 +26,7 @@ export class GetStartedFlow extends Component<
     return (
       <>
         <div className="img-get-started-bg absolute" />
+        <div className="img-circles absolute" />
         <div className="px-16">
           <div className="mx-auto max-w-2xl grid grid-cols-12 gap-5 font-sans text-xl">
             <div className="col-span-1" />
