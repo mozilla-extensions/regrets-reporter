@@ -1,3 +1,5 @@
+/* purgecss start ignore */
+
 body {
   background-color: #fff;
 }
@@ -16,3 +18,5 @@ body {
 .checkbox {
   margin: -3px 5px;
 }
+
+/* purgecss end ignore */
