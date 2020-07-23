@@ -8,6 +8,7 @@ import { browser } from "webextension-polyfill-ts";
 export class DisplayError extends React.Component<
   {
     message?: string;
+    additionalInfo?: string;
     eventId?: string;
   },
   {}
@@ -29,14 +30,8 @@ export class DisplayError extends React.Component<
             {this.props.message || "An error occurred"}
           </div>
           <div className="text-base">
-            Don't worry. Usually this means that the current YouTube visit
-            started before RegretsReporter was installed or reloaded.
-          </div>
-          <div className="text-base mt-5">
-            <span className="italic">
-              Hint: Reload the YouTube page and try opening RegretsReporter
-              again.
-            </span>
+            {this.props.additionalInfo ||
+              "Don't worry. This may be a temporary glitch. Try reloading the YouTube page and click on the RegretsReporter icon again."}
           </div>
         </div>
 

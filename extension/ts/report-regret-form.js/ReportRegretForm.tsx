@@ -35,6 +35,7 @@ export interface ReportRegretFormState {
   userRemovedHistoryPositions: number[];
   formStep: number;
   error: boolean;
+  errorMessage: string;
   reported: boolean;
 }
 
@@ -57,6 +58,7 @@ export class ReportRegretForm extends Component<
     regretReportData: null,
     ...this.defaultFormState,
     error: false,
+    errorMessage: "",
     reported: false,
   };
 
@@ -140,6 +142,7 @@ export class ReportRegretForm extends Component<
           await this.setState({
             loading: false,
             error: true,
+            errorMessage: m.errorMessage,
           });
           return;
         }
@@ -337,9 +340,23 @@ export class ReportRegretForm extends Component<
 
   render() {
     if (this.state.error) {
-      return (
-        <DisplayError message={`We were unable to show the report form`} />
-      );
+      if (
+        this.state.errorMessage.indexOf("No YouTube navigations captured yet") >
+        -1
+      ) {
+        return (
+          <DisplayError
+            message={`Please reload the YouTube page`}
+            additionalInfo={
+              "The current YouTube session started before RegretsReporter was installed."
+            }
+          />
+        );
+      } else {
+        return (
+          <DisplayError message={`We were unable to show the report form`} />
+        );
+      }
     }
     if (this.state.loading) {
       return <DoorHanger loading={true} />;
