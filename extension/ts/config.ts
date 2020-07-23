@@ -9,5 +9,5 @@ export const config = {
   privacyNoticeUrl:
     "https://foundation.mozilla.org/campaigns/regretsreporter-privacy-notice",
   feedbackSurveyUrl:
-    "https://qsurvey.mozilla.com/s3/Regrets-Reporter-Product-Feedback",
+    "https://qsurvey.mozilla.com/s3/regrets-reporter-product-feedback",
 };
