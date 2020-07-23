@@ -32,6 +32,7 @@ export interface ReportRegretFormState {
   userSuppliedOtherRegretCategory: string;
   userSuppliedSeverity: number;
   userSuppliedOptionalComment: string;
+  userRemovedHistoryPositions: number[];
   formStep: number;
   error: boolean;
   reported: boolean;
@@ -46,6 +47,7 @@ export class ReportRegretForm extends Component<
     userSuppliedOtherRegretCategory: "",
     userSuppliedSeverity: -1,
     userSuppliedOptionalComment: "",
+    userRemovedHistoryPositions: [],
     formStep: 1,
   };
 
@@ -104,15 +106,22 @@ export class ReportRegretForm extends Component<
           // Hydrate draft contents from a previous form edit if available
           const storageKey = `report-regret-form-state:${videoId}`;
           const persistedState = localStorage.getItem(storageKey);
+
+          const state = persistedState
+            ? {
+                ...this.defaultFormState,
+                ...JSON.parse(persistedState),
+              }
+            : this.defaultFormState;
+
           const {
             userSuppliedRegretCategories,
             userSuppliedOtherRegretCategory,
             userSuppliedSeverity,
             userSuppliedOptionalComment,
+            userRemovedHistoryPositions,
             formStep,
-          } = persistedState
-            ? JSON.parse(persistedState)
-            : this.defaultFormState;
+          } = state;
 
           await this.setState({
             regretReportData,
@@ -121,6 +130,7 @@ export class ReportRegretForm extends Component<
             userSuppliedOtherRegretCategory,
             userSuppliedSeverity,
             userSuppliedOptionalComment,
+            userRemovedHistoryPositions,
             formStep,
             loading: false,
           });
@@ -154,8 +164,25 @@ export class ReportRegretForm extends Component<
   }
 
   getRegretReportFromState = (): RegretReport => {
+    // Filter report data based on userRemovedHistoryPositions
+    const filteredReportData = {
+      ...this.state.regretReportData,
+      parent_youtube_navigations_metadata: this.state.regretReportData.parent_youtube_navigations_metadata
+        .slice()
+        .map(
+          (
+            youTubeNavigationMetadata: YouTubeNavigationMetadata,
+            index: number,
+          ) => {
+            return this.state.userRemovedHistoryPositions.indexOf(index) > -1
+              ? {}
+              : youTubeNavigationMetadata;
+          },
+        ),
+    };
+
     return {
-      report_data: this.state.regretReportData,
+      report_data: filteredReportData,
       user_supplied_regret_categories: this.state.userSuppliedRegretCategories,
       user_supplied_other_regret_category: this.state
         .userSuppliedOtherRegretCategory,
@@ -178,49 +205,39 @@ export class ReportRegretForm extends Component<
     return this.persistFormState();
   };
 
+  resetFormState = async () => {
+    const {
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+      userRemovedHistoryPositions,
+      formStep,
+    } = this.defaultFormState;
+    await this.setState({
+      reported: true,
+      userSuppliedRegretCategories,
+      userSuppliedOtherRegretCategory,
+      userSuppliedSeverity,
+      userSuppliedOptionalComment,
+      userRemovedHistoryPositions,
+      formStep,
+    });
+  };
+
   submitStep2 = async (event: MouseEvent) => {
     event.preventDefault();
     const regretReport: RegretReport = this.getRegretReportFromState();
     this.backgroundContextPort.postMessage({
       regretReport,
     });
-    // Reset form state
-    const {
-      userSuppliedRegretCategories,
-      userSuppliedOtherRegretCategory,
-      userSuppliedSeverity,
-      userSuppliedOptionalComment,
-      formStep,
-    } = this.defaultFormState;
-    await this.setState({
-      reported: true,
-      userSuppliedRegretCategories,
-      userSuppliedOtherRegretCategory,
-      userSuppliedSeverity,
-      userSuppliedOptionalComment,
-      formStep,
-    });
+    await this.resetFormState();
     return this.persistFormState();
   };
 
   skipStep2 = async (event: MouseEvent) => {
     event.preventDefault();
-    // Reset form state
-    const {
-      userSuppliedRegretCategories,
-      userSuppliedOtherRegretCategory,
-      userSuppliedSeverity,
-      userSuppliedOptionalComment,
-      formStep,
-    } = this.defaultFormState;
-    await this.setState({
-      reported: true,
-      userSuppliedRegretCategories,
-      userSuppliedOtherRegretCategory,
-      userSuppliedSeverity,
-      userSuppliedOptionalComment,
-      formStep,
-    });
+    await this.resetFormState();
     return this.persistFormState();
   };
 
@@ -263,7 +280,33 @@ export class ReportRegretForm extends Component<
       if (index > -1) {
         userSuppliedRegretCategories.splice(index, 1);
         await this.setState({
-          userSuppliedRegretCategories: userSuppliedRegretCategories,
+          userSuppliedRegretCategories,
+        });
+      }
+    }
+  };
+
+  handleUserRemovedHistoryPositionsChange = async (
+    position: number,
+    removed: boolean,
+  ) => {
+    const userRemovedHistoryPositions = this.state.userRemovedHistoryPositions;
+    const index = userRemovedHistoryPositions.indexOf(position);
+    console.log({ userRemovedHistoryPositions, position, index });
+    if (removed) {
+      if (index === -1) {
+        await this.setState({
+          userRemovedHistoryPositions: [
+            ...userRemovedHistoryPositions,
+            position,
+          ],
+        });
+      }
+    } else {
+      if (index > -1) {
+        userRemovedHistoryPositions.splice(index, 1);
+        await this.setState({
+          userRemovedHistoryPositions,
         });
       }
     }
@@ -275,6 +318,7 @@ export class ReportRegretForm extends Component<
       userSuppliedOtherRegretCategory,
       userSuppliedSeverity,
       userSuppliedOptionalComment,
+      userRemovedHistoryPositions,
       formStep,
     } = this.state;
     const videoId = this.state.regretReportData.youtube_navigation_metadata
@@ -285,6 +329,7 @@ export class ReportRegretForm extends Component<
       userSuppliedOtherRegretCategory,
       userSuppliedSeverity,
       userSuppliedOptionalComment,
+      userRemovedHistoryPositions,
       formStep,
     });
     localStorage.setItem(storageKey, stateToPersist);
@@ -346,9 +391,6 @@ export class ReportRegretForm extends Component<
       .regretReportData.youtube_navigation_metadata;
     const parentYouTubeNavigationsMetadata: YouTubeNavigationMetadata[] = this
       .state.regretReportData.parent_youtube_navigations_metadata;
-    const howTheVideoWasReached = parentYouTubeNavigationsMetadata
-      .slice()
-      .reverse();
 
     if (this.state.formStep === 1 || !this.state.formStep) {
       return (
@@ -393,21 +435,25 @@ export class ReportRegretForm extends Component<
                   <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
                     The path that led you here
                   </div>
-                  {howTheVideoWasReached.length > 0 && (
+                  {parentYouTubeNavigationsMetadata.length > 0 && (
                     <TimeLine
-                      youTubeNavigationMetadata={youTubeNavigationMetadata}
-                      howTheVideoWasReached={howTheVideoWasReached}
+                      parentYouTubeNavigationsMetadata={
+                        parentYouTubeNavigationsMetadata
+                      }
                       editable={true}
-                      onEdit={() => {}}
+                      userRemovedHistoryPositions={
+                        this.state.userRemovedHistoryPositions
+                      }
+                      onEdit={this.handleUserRemovedHistoryPositionsChange}
                     />
                   )}
-                  {howTheVideoWasReached.length === 0 && (
+                  {parentYouTubeNavigationsMetadata.length === 0 && (
                     <div className="flex-none text-sm">
                       You visited this video directly. There are no other
                       activities to report at this time.
                     </div>
                   )}
-                  {howTheVideoWasReached.length === 0 && (
+                  {parentYouTubeNavigationsMetadata.length === 0 && (
                     <div className="flex-1 img-no-path" />
                   )}
                 </div>
@@ -643,25 +689,31 @@ export class ReportRegretForm extends Component<
 
                   <TimeLineElement
                     youTubeNavigationMetadata={youTubeNavigationMetadata}
+                    removed={false}
                     bold={true}
+                    position={-1}
                     editable={false}
                   />
 
                   <hr className="my-5 border-grey-20" />
 
-                  {howTheVideoWasReached.length > 0 && (
+                  {parentYouTubeNavigationsMetadata.length > 0 && (
                     <TimeLine
-                      youTubeNavigationMetadata={youTubeNavigationMetadata}
-                      howTheVideoWasReached={howTheVideoWasReached}
+                      parentYouTubeNavigationsMetadata={
+                        parentYouTubeNavigationsMetadata
+                      }
+                      userRemovedHistoryPositions={
+                        this.state.userRemovedHistoryPositions
+                      }
                       editable={false}
                     />
                   )}
-                  {howTheVideoWasReached.length === 0 && (
+                  {parentYouTubeNavigationsMetadata.length === 0 && (
                     <div className="flex-none text-sm">
                       You visited this video directly.
                     </div>
                   )}
-                  {howTheVideoWasReached.length === 0 && (
+                  {parentYouTubeNavigationsMetadata.length === 0 && (
                     <div className="flex-1 img-no-path" />
                   )}
                 </div>

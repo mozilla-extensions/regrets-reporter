@@ -8,9 +8,11 @@ import { YouTubeNavigationUrlType } from "../background.js/lib/youTubeNavigation
 
 export interface TimeLineElementProps {
   youTubeNavigationMetadata: YouTubeNavigationMetadata;
+  position: number;
+  removed?: boolean;
   bold?: boolean;
   editable?: boolean;
-  onEdit?: () => void;
+  onEdit?: (position: number, removed: boolean) => Promise<void>;
 }
 
 export interface TimeLineElementState {}
@@ -37,8 +39,16 @@ export class TimeLineElement extends Component<
   TimeLineElementProps,
   TimeLineElementState
 > {
+  remove = () => {
+    return this.props.onEdit(this.props.position, true);
+  };
+
+  restore = () => {
+    return this.props.onEdit(this.props.position, false);
+  };
+
   render() {
-    const { youTubeNavigationMetadata, bold, editable } = this.props;
+    const { youTubeNavigationMetadata, removed, bold, editable } = this.props;
     return (
       <>
         {(youTubeNavigationMetadata.video_metadata && (
@@ -47,17 +57,42 @@ export class TimeLineElement extends Component<
             title={youTubeNavigationMetadata.video_metadata.video_title}
           >
             <img
-              className="flex-none h-9 w-15 mr-3"
+              className={`flex-none h-9 w-15 mr-3 ${
+                removed ? "opacity-10" : ""
+              }`}
               src={`https://img.youtube.com/vi/${youTubeNavigationMetadata.video_metadata.video_id}/mqdefault.jpg`}
               alt=""
             />
             <div className="flex-1 text-sm h-9 overflow-y-hidden leading-tight flex items-center">
-              <span className={`max-h-9 ${bold ? "font-bold" : ""}`}>
+              <span
+                className={`max-h-9 ${bold ? "font-bold" : ""} ${
+                  removed ? "opacity-10" : ""
+                }`}
+              >
                 {youTubeNavigationMetadata.video_metadata.video_title}
               </span>
             </div>
-            {editable && (
-              <div className="flex-none ml-3 img-icon-close-grey cursor-pointer" />
+            {editable && !removed && (
+              <div
+                onClick={this.remove}
+                className="flex-none ml-3 mb-0.5 img-icon-close-grey cursor-pointer"
+              />
+            )}
+            {removed && (
+              <div className="absolute w-full h-9 flex items-center text-xxs font-sans font-bold text-red justify-between">
+                <div className="flex-1 flex justify-center">
+                  This video {editable ? "will be" : "was"} removed from the
+                  report.
+                </div>
+                {editable && (
+                  <div
+                    onClick={this.restore}
+                    className="font-normal flex-none cursor-pointer text-3xs"
+                  >
+                    UNDO
+                  </div>
+                )}
+              </div>
             )}
           </li>
         )) || (

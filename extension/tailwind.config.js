@@ -162,6 +162,7 @@ module.exports = {
       ],
     },
     fontSize: {
+      "3xs": ".5rem", // 8px
       xxs: ".6875rem", // 11px
       xs: ".75rem", // 12px
       sm: ".875rem", // 14px
@@ -369,6 +370,7 @@ module.exports = {
       auto: "auto",
       px: "1px",
       "0": "0",
+      "0.5": "0.125rem",
       "0.88": "0.22rem",
       "1": "0.25rem",
       "2": "0.5rem",
@@ -424,6 +426,7 @@ module.exports = {
     },
     opacity: {
       "0": "0",
+      "10": ".1",
       "25": ".25",
       "50": ".5",
       "75": ".75",

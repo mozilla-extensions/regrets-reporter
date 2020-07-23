@@ -73,7 +73,7 @@ await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
 ## Export shared data
 
 ```javascript
-await exportSharedData();
+await (await fetch((await exportSharedData()).url)).text();
 ```
 
 ## Collecting traffic data for test fixtures

@@ -2,75 +2,43 @@ import * as React from "react";
 import { Component } from "react";
 import { YouTubeNavigationMetadata } from "../background.js/ReportSummarizer";
 import "./TimeLine.css";
-// import {YouTubeNavigationUrlType} from "../background.js/lib/youTubeNavigationUrlType";
 import { TimeLineElement } from "./TimeLineElement";
 
 export interface TimeLineProps {
-  youTubeNavigationMetadata: YouTubeNavigationMetadata;
-  howTheVideoWasReached: YouTubeNavigationMetadata[];
+  parentYouTubeNavigationsMetadata: YouTubeNavigationMetadata[];
+  userRemovedHistoryPositions: number[];
   editable: boolean;
-  onEdit?: () => void;
+  onEdit?: (position: number, removed: boolean) => Promise<void>;
 }
 
 export interface TimeLineState {}
 
-/*
-const youTubePageEntryPointLabels: {
-  [k in YouTubePageEntryPoint]: string;
-} = {
-  direct_navigation: "Direct visit",
-  page_reload: "Direct visit",
-  search_results_page: "Search Results",
-  watch_page: "Video Page",
-  user_page: "User Page",
-  channel_page: "Channel Page",
-  other: "Other",
-  youtube_main_page: "YouTube.com",
-  not_a_youtube_page: "Somewhere outside of YouTube",
-  "<failed>": "(Unknown)",
-};
-
- */
-
 export class TimeLine extends Component<TimeLineProps, TimeLineState> {
   render() {
     const {
-      howTheVideoWasReached,
-      youTubeNavigationMetadata,
+      parentYouTubeNavigationsMetadata,
+      userRemovedHistoryPositions,
       editable,
       onEdit,
     } = this.props;
-    /*
-    const oldestReachEntry =
-      howTheVideoWasReached.slice().shift() || youTubeNavigationMetadata;
-    */
     return (
       <div className="timeline">
         <ul className="h-full">
-          {/*
-          <li className="text-sm">
-            {
-              youTubePageEntryPointLabels[
-                oldestReachEntry.page_entry_point
-                ]
-            }
-          </li>
-          */}
-          {howTheVideoWasReached
-            .reverse()
-            .map(
-              (
-                youTubeNavigationMetadata: YouTubeNavigationMetadata,
-                index: number,
-              ) => (
-                <TimeLineElement
-                  key={index}
-                  youTubeNavigationMetadata={youTubeNavigationMetadata}
-                  editable={editable}
-                  onEdit={onEdit}
-                />
-              ),
-            )}
+          {parentYouTubeNavigationsMetadata.map(
+            (
+              youTubeNavigationMetadata: YouTubeNavigationMetadata,
+              index: number,
+            ) => (
+              <TimeLineElement
+                key={index}
+                youTubeNavigationMetadata={youTubeNavigationMetadata}
+                removed={userRemovedHistoryPositions.indexOf(index) > -1}
+                position={index}
+                editable={editable}
+                onEdit={onEdit}
+              />
+            ),
+          )}
         </ul>
       </div>
     );
