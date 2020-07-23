@@ -56,7 +56,7 @@ export class GetStartedFlow extends Component<
             </div>
             <div className="col-span-1" />
             <div className="col-span-4 text-center">
-              <div className="img-step-1 m-auto" />
+              <div className="img-step-1 m-auto border border-grey-95" />
               <div className="mt-11 text-center">
                 <div className="m-auto rounded-full bg-red h-11 w-11 text-white font-semibold font-sans text-3xl flex items-center justify-center leading-none pt-1">
                   1
@@ -67,7 +67,7 @@ export class GetStartedFlow extends Component<
               </div>
             </div>
             <div className="col-span-4 text-center">
-              <div className="img-step-2 m-auto" />
+              <div className="img-step-2 m-auto border border-grey-95" />
               <div className="mt-11 text-center">
                 <div className="m-auto rounded-full bg-red h-11 w-11 text-white font-semibold font-sans text-3xl flex items-center justify-center leading-none pt-1">
                   2
@@ -78,7 +78,7 @@ export class GetStartedFlow extends Component<
               </div>
             </div>
             <div className="col-span-4 text-center">
-              <div className="img-step-3 m-auto" />
+              <div className="img-step-3 m-auto border border-grey-95" />
               <div className="mt-11 text-center">
                 <div className="m-auto rounded-full bg-red h-11 w-11 text-white font-semibold font-sans text-3xl flex items-center justify-center leading-none pt-1 pl-0.5">
                   3

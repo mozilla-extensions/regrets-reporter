@@ -47,12 +47,22 @@ ul.triangle-bullets li:before {
 .img-step-1,
 .img-step-2,
 .img-step-3 {
-  background-image: url("./img/instruction-form.png");
-  height: 250px;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: contain;
-  padding-bottom: 50%;
+  background-size: cover;
+  padding-bottom: 70.83%;
+}
+
+.img-step-1 {
+  background-image: url("./img/step_1.jpg");
+}
+
+.img-step-2 {
+  background-image: url("./img/step_2.jpg");
+}
+
+.img-step-3 {
+  background-image: url("./img/step_3.jpg");
 }
 
 /* purgecss end ignore */
