@@ -812,20 +812,11 @@ export class ReportSummarizer {
           if (el.videoRenderer) {
             return el.videoRenderer.videoId;
           }
-          if (el.channelRenderer) {
-            return "(channel)";
-          }
-          if (el.searchPyvRenderer) {
-            return "(ad)";
-          }
           if (el.playlistRenderer) {
             return el.playlistRenderer.navigationEndpoint.watchEndpoint.videoId;
           }
           if (el.radioRenderer) {
             return el.radioRenderer.navigationEndpoint.watchEndpoint.videoId;
-          }
-          if (el.horizontalCardListRenderer) {
-            return "(horizontal-card-list)";
           }
           // Assume shelf-rendered items are not direct search results
           if (el.shelfRenderer) {
@@ -839,7 +830,7 @@ export class ReportSummarizer {
                     new Error(
                       "search_results_page_other_indirect_videos unhandled el",
                     ),
-                    { el },
+                    { elObjectKeys: Object.keys(el) },
                   );
                   console.error(
                     "search_results_page_other_indirect_videos unhandled el:",
@@ -856,6 +847,13 @@ export class ReportSummarizer {
               search_results_page_other_indirect_videos = "<failed>";
             }
             return "(indirect-videos)";
+          }
+          const elObjectKeys = Object.keys(el);
+          const firstRendererElObjectKey = elObjectKeys.find(
+            (elObjectKey: string) => elObjectKey.indexOf("Renderer") > -1,
+          );
+          if (firstRendererElObjectKey) {
+            return `(${firstRendererElObjectKey})`;
           }
           captureExceptionWithExtras(new Error("search_results unhandled el"), {
             el,
