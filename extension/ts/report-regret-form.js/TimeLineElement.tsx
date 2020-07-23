@@ -49,58 +49,64 @@ export class TimeLineElement extends Component<
 
   render() {
     const { youTubeNavigationMetadata, removed, bold, editable } = this.props;
+
+    let _;
+    if (youTubeNavigationMetadata.video_metadata) {
+      _ = {
+        text: youTubeNavigationMetadata.video_metadata.video_title,
+        thumbClass: "",
+        thumbSrc: `https://img.youtube.com/vi/${youTubeNavigationMetadata.video_metadata.video_id}/mqdefault.jpg`,
+      };
+    } else {
+      _ = {
+        text:
+          youTubeNavigationUrlTypeLabels[youTubeNavigationMetadata.url_type],
+        thumbClass: `img-urltype-screenshot img-urltype-screenshot-${youTubeNavigationMetadata.url_type}`,
+        thumbSrc:
+          "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      };
+    }
+
     return (
-      <>
-        {(youTubeNavigationMetadata.video_metadata && (
-          <li
-            className="flex"
-            title={youTubeNavigationMetadata.video_metadata.video_title}
+      <li className="flex" title={_.text}>
+        <img
+          className={`flex-none h-9 w-15 mr-3 ${removed ? "opacity-10" : ""} ${
+            _.thumbClass
+          }`}
+          src={_.thumbSrc}
+          alt={_.text}
+        />
+        <div className="flex-1 text-sm h-9 overflow-y-hidden leading-tight flex items-center">
+          <span
+            className={`max-h-9 ${bold ? "font-bold" : ""} ${
+              removed ? "opacity-10" : ""
+            }`}
           >
-            <img
-              className={`flex-none h-9 w-15 mr-3 ${
-                removed ? "opacity-10" : ""
-              }`}
-              src={`https://img.youtube.com/vi/${youTubeNavigationMetadata.video_metadata.video_id}/mqdefault.jpg`}
-              alt=""
-            />
-            <div className="flex-1 text-sm h-9 overflow-y-hidden leading-tight flex items-center">
-              <span
-                className={`max-h-9 ${bold ? "font-bold" : ""} ${
-                  removed ? "opacity-10" : ""
-                }`}
-              >
-                {youTubeNavigationMetadata.video_metadata.video_title}
-              </span>
+            {_.text}
+          </span>
+        </div>
+        {editable && !removed && (
+          <div
+            onClick={this.remove}
+            className="flex-none ml-3 mb-0.5 img-icon-close-grey cursor-pointer"
+          />
+        )}
+        {removed && (
+          <div className="absolute w-full h-9 flex items-center text-xxs font-sans font-bold text-red justify-between">
+            <div className="flex-1 flex justify-center">
+              This {editable ? "will be" : "was"} removed from the report.
             </div>
-            {editable && !removed && (
+            {editable && (
               <div
-                onClick={this.remove}
-                className="flex-none ml-3 mb-0.5 img-icon-close-grey cursor-pointer"
-              />
-            )}
-            {removed && (
-              <div className="absolute w-full h-9 flex items-center text-xxs font-sans font-bold text-red justify-between">
-                <div className="flex-1 flex justify-center">
-                  This video {editable ? "will be" : "was"} removed from the
-                  report.
-                </div>
-                {editable && (
-                  <div
-                    onClick={this.restore}
-                    className="font-normal flex-none cursor-pointer text-3xs"
-                  >
-                    UNDO
-                  </div>
-                )}
+                onClick={this.restore}
+                className="font-normal flex-none cursor-pointer text-3xs"
+              >
+                UNDO
               </div>
             )}
-          </li>
-        )) || (
-          <li className="">
-            {youTubeNavigationUrlTypeLabels[youTubeNavigationMetadata.url_type]}
-          </li>
+          </div>
         )}
-      </>
+      </li>
     );
   }
 }

@@ -45,6 +45,33 @@
   background-size: 100%;
 }
 
+.img-urltype-screenshot {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.img-urltype-screenshot-channel_page {
+  background-image: url(./img/urltype-screenshot-channel_page.jpg);
+}
+
+.img-urltype-screenshot-search_results_page {
+  background-image: url(./img/urltype-screenshot-search_results_page.png);
+}
+
+.img-urltype-screenshot-user_page {
+  background-image: url(./img/urltype-screenshot-user_page.jpg);
+}
+
+.img-urltype-screenshot-youtube_main_page {
+  background-image: url(./img/urltype-screenshot-youtube_main_page.jpg);
+}
+
+.img-urltype-screenshot-other,
+.img-urltype-screenshot-unknown {
+  background-image: url(./img/urltype-screenshot-other.png);
+}
+
 .invert {
   filter: invert(1);
 }
