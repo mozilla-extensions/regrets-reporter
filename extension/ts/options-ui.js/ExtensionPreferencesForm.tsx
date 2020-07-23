@@ -120,6 +120,9 @@ export class ExtensionPreferencesForm extends Component<
         </>
       );
     }
+    if (this.state.error) {
+      return <DisplayError />;
+    }
     return (
       <>
         <div className="panel-section panel-section-formElements p-0 mx-0 my-4">
@@ -157,9 +160,5 @@ export class ExtensionPreferencesForm extends Component<
         </div>
       </>
     );
-
-    if (this.state.error) {
-      return <DisplayError />;
-    }
   }
 }
