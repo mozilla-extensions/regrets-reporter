@@ -104,7 +104,7 @@ export const classifyYouTubeNavigationUrlType = (
   if (parsedUrl.pathname === "/") {
     return "youtube_main_page";
   }
-  const otherRequestStartWiths = ["/accounts", "/redirect"];
+  const otherRequestStartWiths = ["/about", "/accounts", "/redirect"];
   for (const startWith of otherRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
       return "other";
