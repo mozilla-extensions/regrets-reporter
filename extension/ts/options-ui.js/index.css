@@ -5,13 +5,13 @@ body {
 }
 
 .btn {
-  @apply font-bold py-2 px-4 rounded;
+  @apply py-2 px-4 rounded;
 }
 .btn-grey {
   @apply bg-grey-20;
 }
 .btn-grey:hover {
-  @apply bg-grey-40;
+  @apply bg-grey-30;
 }
 
 /* To align with the current font size */

@@ -52,11 +52,11 @@ async function generateManifest({ dotEnvPath }) {
       },
     };
     manifest.browser_action.browser_style = false;
-    manifest.options_ui.browser_style = true;
+    manifest.options_ui.browser_style = false;
   }
   if (targetBrowser === "chrome") {
     manifest.browser_action.chrome_style = false;
-    manifest.options_ui.chrome_style = true;
+    manifest.options_ui.chrome_style = false;
   }
   const targetPath = path.join(destPath, "manifest.json");
   await fs.promises.mkdir(destPath, { recursive: true });

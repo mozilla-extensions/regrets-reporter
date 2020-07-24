@@ -57,7 +57,15 @@ From the background context:
 ```
 
 ```javascript
-browser.runtime.getURL(`get-started/get-started.html`);
+(typeof browser !== "undefined" ? browser : chrome).runtime.getURL(
+  `get-started/get-started.html`,
+);
+```
+
+```javascript
+(typeof browser !== "undefined" ? browser : chrome).runtime.getURL(
+  `options-ui/options-ui.html`,
+);
 ```
 
 ## Checking current report data
