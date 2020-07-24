@@ -14,9 +14,4 @@ body {
   @apply bg-grey-30;
 }
 
-/* To align with the current font size */
-.checkbox {
-  margin: -3px 5px;
-}
-
 /* purgecss end ignore */

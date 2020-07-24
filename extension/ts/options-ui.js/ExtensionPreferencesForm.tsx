@@ -125,7 +125,7 @@ export class ExtensionPreferencesForm extends Component<
     }
     return (
       <>
-        <div className="text-lg px-5 py-4 mx-0">
+        <div className="text-lg leading-snug px-5 py-4 mx-0">
           <div className="text-xl font-semibold">Error Reporting</div>
           <div className="my-4">
             <label className="flex items-center">
@@ -137,7 +137,7 @@ export class ExtensionPreferencesForm extends Component<
                   checked={this.state.extensionPreferences.enableErrorReporting}
                   onChange={this.handleEnableErrorReportingChange}
                 />
-                <span className="ml-1 leading-none">
+                <span className="ml-1">
                   Allow RegretsReporter to send information about encountered
                   errors to Mozilla
                 </span>
