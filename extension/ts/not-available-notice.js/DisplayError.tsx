@@ -1,10 +1,14 @@
 import * as React from "react";
 import { MouseEvent } from "react";
 import { browser } from "webextension-polyfill-ts";
+import { config } from "../config";
+import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
+import { GeneralErrorMessage } from "../shared-resources/GeneralErrorMessage";
 
 export class DisplayError extends React.Component<
   {
     message?: string;
+    additionalInfo?: string;
     eventId?: string;
   },
   {}
@@ -20,17 +24,12 @@ export class DisplayError extends React.Component<
 
   render() {
     return (
-      <div className="text-xs font-sans p-5 w-32">
-        <div>{this.props.message || "An error occurred"}</div>
-        <div>
-          <a
-            className="inline text-red underline"
-            target="_blank"
-            href={browser.runtime.getURL(`get-started/get-started.html`)}
-          >
-            View RegretReporter Instructions
-          </a>
-        </div>
+      <div className="text-xs font-sans p-4 w-73">
+        <GeneralErrorMessage
+          message={this.props.message}
+          additionalInfo={this.props.additionalInfo}
+          eventId={this.props.eventId}
+        />
       </div>
     );
   }
