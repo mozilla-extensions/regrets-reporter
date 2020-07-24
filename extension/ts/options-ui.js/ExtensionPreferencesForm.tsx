@@ -177,6 +177,32 @@ export class ExtensionPreferencesForm extends Component<
             </a>{" "}
             for more information about the above options.
           </div>
+          <div className="text-xl font-semibold mt-12">Instructions</div>
+          <div className="my-4">
+            General information on how to use this extension:{" "}
+            <a
+              className="text-red underline"
+              target="_blank"
+              href={browser.runtime.getURL(`get-started/get-started.html`)}
+            >
+              RegretReporter Instructions
+            </a>
+            .
+          </div>
+          <div className="text-xl font-semibold mt-12">Feedback</div>
+          <div className="my-4">
+            Do you have feedback about the RegretsReporter? We would love to
+            hear it.{" "}
+            <a
+              href={config.feedbackSurveyUrl}
+              rel="noreferrer noopener"
+              target="_blank"
+              className="text-red underline"
+            >
+              Send us feedback
+            </a>
+            .
+          </div>
         </div>
       </>
     );
