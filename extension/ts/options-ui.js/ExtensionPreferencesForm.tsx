@@ -22,7 +22,6 @@ export interface ExtensionPreferencesFormState {
   extensionPreferences: ExtensionPreferences | null;
   dataDeletionRequested: boolean;
   error: boolean;
-  reported: boolean;
 }
 
 export class ExtensionPreferencesForm extends Component<
@@ -34,7 +33,6 @@ export class ExtensionPreferencesForm extends Component<
     extensionPreferences: null,
     dataDeletionRequested: false,
     error: false,
-    reported: false,
   };
 
   private backgroundContextPort: Port;
@@ -66,7 +64,6 @@ export class ExtensionPreferencesForm extends Component<
           return null;
         }
         if (m.dataDeletionRequested) {
-          const { dataDeletionRequested } = m;
           await this.setState({
             loading: false,
             dataDeletionRequested: true,
@@ -125,84 +122,82 @@ export class ExtensionPreferencesForm extends Component<
     }
     return (
       <>
-        <div className="text-lg leading-snug px-5 py-4 mx-0">
-          <div className="text-xl font-semibold">Error Reporting</div>
-          <div className="my-4">
-            <label className="flex items-center">
-              <span className="checkbox__label__text flex items-center">
-                <Checkbox
-                  className="w-8 h-8 mr-2"
-                  label=""
-                  value="enable_error_reporting"
-                  checked={this.state.extensionPreferences.enableErrorReporting}
-                  onChange={this.handleEnableErrorReportingChange}
-                />
-                <span className="ml-1">
-                  Allow RegretsReporter to send information about encountered
-                  errors to Mozilla
-                </span>
+        <div className="text-xl font-semibold">Error Reporting</div>
+        <div className="my-4">
+          <label className="flex items-center">
+            <span className="checkbox__label__text flex items-center">
+              <Checkbox
+                className="w-8 h-8 mr-2"
+                label=""
+                value="enable_error_reporting"
+                checked={this.state.extensionPreferences.enableErrorReporting}
+                onChange={this.handleEnableErrorReportingChange}
+              />
+              <span className="ml-1">
+                Allow RegretsReporter to send information about encountered
+                errors to Mozilla
               </span>
-            </label>
-          </div>
-          <div className="text-xl font-semibold mt-12">Collected Data</div>
-          <div className="my-4 flex justify-between items-center">
-            <span className="">
-              Request that all your RegretsReporter data gets deleted from
-              Mozilla's servers
             </span>
-            {(this.state.dataDeletionRequested && (
-              <span className="text-center font-semibold">
-                Data deletion has been requested.
-              </span>
-            )) || (
-              <Button
-                onClick={this.requestDataDeletion}
-                className="btn btn-grey ml-4"
-              >
-                Send Data Deletion Request
-              </Button>
-            )}
-          </div>
-          <div className="text-xl font-semibold mt-12">
-            Additional information
-          </div>
-          <div className="my-4">
-            Please review the{" "}
-            <a
-              href={config.privacyNoticeUrl}
-              target="_blank"
-              className="text-red underline"
+          </label>
+        </div>
+        <div className="text-xl font-semibold mt-12">Collected Data</div>
+        <div className="my-4 flex justify-between items-center">
+          <span className="">
+            Request that all your RegretsReporter data gets deleted from
+            Mozilla's servers
+          </span>
+          {(this.state.dataDeletionRequested && (
+            <span className="text-center font-semibold">
+              Data deletion has been requested.
+            </span>
+          )) || (
+            <Button
+              onClick={this.requestDataDeletion}
+              className="btn btn-grey ml-4"
             >
-              privacy notice
-            </a>{" "}
-            for more information about the above options.
-          </div>
-          <div className="text-xl font-semibold mt-12">Instructions</div>
-          <div className="my-4">
-            General information on how to use this extension:{" "}
-            <a
-              className="text-red underline"
-              target="_blank"
-              href={browser.runtime.getURL(`get-started/get-started.html`)}
-            >
-              RegretReporter Instructions
-            </a>
-            .
-          </div>
-          <div className="text-xl font-semibold mt-12">Feedback</div>
-          <div className="my-4">
-            Do you have feedback about the RegretsReporter? We would love to
-            hear it.{" "}
-            <a
-              href={config.feedbackSurveyUrl}
-              rel="noreferrer noopener"
-              target="_blank"
-              className="text-red underline"
-            >
-              Send us feedback
-            </a>
-            .
-          </div>
+              Send Data Deletion Request
+            </Button>
+          )}
+        </div>
+        <div className="text-xl font-semibold mt-12">
+          Additional information
+        </div>
+        <div className="my-4">
+          Please review the{" "}
+          <a
+            href={config.privacyNoticeUrl}
+            target="_blank"
+            className="text-red underline"
+          >
+            privacy notice
+          </a>{" "}
+          for more information about the above options.
+        </div>
+        <div className="text-xl font-semibold mt-12">Instructions</div>
+        <div className="my-4">
+          General information on how to use this extension:{" "}
+          <a
+            className="text-red underline"
+            target="_blank"
+            href={browser.runtime.getURL(`get-started/get-started.html`)}
+          >
+            RegretReporter Instructions
+          </a>
+          .
+        </div>
+        <div className="text-xl font-semibold mt-12">Feedback</div>
+        <div className="my-4">
+          Do you have feedback about the RegretsReporter? We would love to hear
+          it.{" "}
+          <a
+            href={config.feedbackSurveyUrl}
+            rel="noreferrer noopener"
+            target="_blank"
+            className="text-red underline"
+          >
+            Send us feedback
+          </a>
+          .
         </div>
       </>
     );

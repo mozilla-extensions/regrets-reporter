@@ -21,13 +21,11 @@ export class DisplayError extends React.Component<
 
   render() {
     return (
-      <div className="text-lg leading-snug px-5 py-4 mx-0">
-        <GeneralErrorMessage
-          message={this.props.message}
-          additionalInfo={this.props.additionalInfo}
-          eventId={this.props.eventId}
-        />
-      </div>
+      <GeneralErrorMessage
+        message={this.props.message}
+        additionalInfo={this.props.additionalInfo}
+        eventId={this.props.eventId}
+      />
     );
   }
 }

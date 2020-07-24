@@ -10,9 +10,11 @@ import { DisplayError } from "./DisplayError";
 const init = async () => {
   await initErrorReportingInContentScript("port-from-options-ui:index");
   ReactDOM.render(
-    <ErrorBoundary displayErrorComponent={DisplayError}>
-      <ExtensionPreferencesForm />
-    </ErrorBoundary>,
+    <div className="text-lg leading-snug px-5 py-4 mx-0">
+      <ErrorBoundary displayErrorComponent={DisplayError}>
+        <ExtensionPreferencesForm />
+      </ErrorBoundary>
+    </div>,
     document.getElementById("app"),
   );
 };

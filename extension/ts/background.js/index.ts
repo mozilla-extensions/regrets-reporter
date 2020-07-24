@@ -72,27 +72,6 @@ class ExtensionGlue {
         "port-from-response-body-listener-content-script:index",
       ],
     );
-    // Listen for data deletion requests
-    this.dataDeletionRequestsPortListener = (port: Port) => {
-      if (port.name !== "port-from-options-ui:form") {
-        return;
-      }
-      port.onMessage.addListener(async function(m) {
-        console.debug(
-          `dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`,
-          { m },
-        );
-        if (m.requestDataDeletion) {
-          await dataSharer.requestDataDeletion();
-          port.postMessage({
-            dataDeletionRequested: true,
-          });
-        }
-      });
-    };
-    browser.runtime.onConnect.addListener(
-      this.dataDeletionRequestsPortListener,
-    );
   }
 
   async openGetStarted() {
@@ -240,6 +219,28 @@ class ExtensionGlue {
       });
     };
     browser.runtime.onConnect.addListener(this.reportRegretFormPortListener);
+
+    // Listen for data deletion requests
+    this.dataDeletionRequestsPortListener = (port: Port) => {
+      if (port.name !== "port-from-options-ui:form") {
+        return;
+      }
+      port.onMessage.addListener(async function(m) {
+        console.debug(
+          `dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`,
+          { m },
+        );
+        if (m.requestDataDeletion) {
+          await dataSharer.requestDataDeletion();
+          port.postMessage({
+            dataDeletionRequested: true,
+          });
+        }
+      });
+    };
+    browser.runtime.onConnect.addListener(
+      this.dataDeletionRequestsPortListener,
+    );
 
     // Add hooks to the navigation batch preprocessor
     openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
