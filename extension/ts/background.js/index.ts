@@ -53,8 +53,9 @@ class ExtensionGlue {
   private openwpmCrawlId: string;
   private getStartedPortListener;
   private extensionPreferencesPortListener;
-  private dataDeletionRequestsPortListener;
   private reportRegretFormPortListener;
+  private dataDeletionRequestsPortListener;
+  private sharedDataRequestPortListener;
 
   constructor() {}
 
@@ -66,6 +67,8 @@ class ExtensionGlue {
         "port-from-report-regret-form:index",
         "port-from-options-ui:index",
         "port-from-options-ui:form",
+        "port-from-data-viewer:index",
+        "port-from-data-viewer:component",
         "port-from-get-started:index",
         "port-from-not-available-notice:index",
         "port-from-ui-instrument-content-script:index",
@@ -241,6 +244,26 @@ class ExtensionGlue {
     browser.runtime.onConnect.addListener(
       this.dataDeletionRequestsPortListener,
     );
+
+    // Listen for shared data requests
+    this.sharedDataRequestPortListener = (port: Port) => {
+      if (port.name !== "port-from-data-viewer:component") {
+        return;
+      }
+      port.onMessage.addListener(async function(m) {
+        console.debug(
+          `sharedDataRequestPortListener message listener: Message from port "${port.name}"`,
+          { m },
+        );
+        if (m.exportSharedData) {
+          const sharedData = await dataSharer.export();
+          port.postMessage({
+            sharedData,
+          });
+        }
+      });
+    };
+    browser.runtime.onConnect.addListener(this.sharedDataRequestPortListener);
 
     // Add hooks to the navigation batch preprocessor
     openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (

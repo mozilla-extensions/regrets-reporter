@@ -143,6 +143,18 @@ export class ExtensionPreferencesForm extends Component<
         <div className="text-xl font-semibold mt-12">Collected Data</div>
         <div className="my-4 flex justify-between items-center">
           <span className="">
+            See what data RegretsReporter has collected so far
+          </span>
+          <a
+            className="btn btn-grey ml-4 text-center outline-none"
+            target="_blank"
+            href={browser.runtime.getURL(`data-viewer/data-viewer.html`)}
+          >
+            Inspect Collected Data
+          </a>
+        </div>
+        <div className="my-4 flex justify-between items-center">
+          <span className="">
             Request that all your RegretsReporter data gets deleted from
             Mozilla's servers
           </span>
