@@ -90,6 +90,11 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|png|jpeg|jpg)$/,
         use: [{ loader: "file-loader" }],
       },
+      {
+        test: /\.js$/,
+        exclude: /node_modules[/\\](?!react-data-grid[/\\]lib)/,
+        use: "babel-loader",
+      },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {
         enforce: "pre",
