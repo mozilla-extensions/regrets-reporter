@@ -15,72 +15,24 @@ import {
   flattenEventMetadata,
   SummaryRow,
 } from "./common";
-import { RegretReportData } from "../background.js/ReportSummarizer";
+import { YouTubeUsageStatisticsUpdate } from "../background.js/YouTubeUsageStatistics";
 
 interface Row extends EventMetadataColumns {
-  form_step: number;
-  report_data: RegretReportData;
-  user_supplied_regret_categories: string[];
-  user_supplied_other_regret_category: string;
-  user_supplied_severity: number;
-  user_supplied_optional_comment: string;
+  youtube_usage_statistics_update: YouTubeUsageStatisticsUpdate;
 }
 
 const columns: readonly Column<Row, SummaryRow>[] = [
   SelectColumn,
   {
-    key: "form_step",
-    name: "Form Step",
-    width: 150,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
-  {
-    key: "report_data",
-    name: "Report Data",
-    width: 350,
+    key: "youtube_usage_statistics_update",
+    name: "YouTube Usage Statistics Update",
+    width: 500,
     editable: false,
     resizable: true,
     sortable: true,
     formatter: ({ row }) => {
-      return <pre>{JSON.stringify(row.report_data)}</pre>;
+      return <pre>{JSON.stringify(row.youtube_usage_statistics_update)}</pre>;
     },
-  },
-  {
-    key: "user_supplied_regret_categories",
-    name: "user_supplied_regret_categories",
-    width: 250,
-    editable: false,
-    resizable: true,
-    sortable: true,
-    formatter: ({ row }) => {
-      return <>{row.user_supplied_regret_categories.join(", ")}</>;
-    },
-  },
-  {
-    key: "user_supplied_other_regret_category",
-    name: "user_supplied_other_regret_category",
-    width: 250,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
-  {
-    key: "user_supplied_severity",
-    name: "user_supplied_severity",
-    width: 250,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
-  {
-    key: "user_supplied_optional_comment",
-    name: "user_supplied_optional_comment",
-    width: 250,
-    editable: false,
-    resizable: true,
-    sortable: true,
   },
   ...eventMetadataColumns,
 ];
@@ -90,54 +42,55 @@ function createRows(
 ): readonly Row[] {
   const rows: Row[] = regretReportEntries.map(regretReportEntry => {
     return {
-      form_step: regretReportEntry.regret_report.form_step,
-      report_data: regretReportEntry.regret_report.report_data,
-      user_supplied_optional_comment:
-        regretReportEntry.regret_report.user_supplied_optional_comment,
-      user_supplied_other_regret_category:
-        regretReportEntry.regret_report.user_supplied_other_regret_category,
-      user_supplied_regret_categories:
-        regretReportEntry.regret_report.user_supplied_regret_categories,
-      user_supplied_severity:
-        regretReportEntry.regret_report.user_supplied_severity,
+      youtube_usage_statistics_update:
+        regretReportEntry.youtube_usage_statistics_update,
       ...flattenEventMetadata(regretReportEntry.event_metadata),
     };
   });
 
   /*
-  "regret_report": {
-      "form_step": 1,
-      "report_data": {
-        "parent_youtube_navigations_metadata": [
-          ...
-        ],
-        "report_data_uuid": "fe9ddd41-3092-4d6c-976f-099b26b87fe4",
-        "youtube_navigation_metadata": {
-          "document_visible_time": 0,
-          "page_entry_point": "page_reload",
-          "url_type": "watch_page",
-          "via_non_search_algorithmic_recommendations_content": 0,
-          "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
-          "via_search_results": 0,
-          "video_element_play_time": 0,
-          "video_metadata": {
-            "video_description": "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
-            "video_id": "g4mHPeMGTJM",
-            "video_posting_date": "20 Sep 2011",
-            "video_title": "10 hours of absolute silence (the original)",
-            "view_count_at_navigation": 4496886,
-            "view_count_at_navigation_short": "4.4M views"
-          }
-        },
+  "youtube_usage_statistics_update": {
+      "amount_of_days_of_at_least_one_video_played_on_a_youtube_watch_page": {
+        "in_total": 0,
+        "via_non_search_algorithmic_recommendations_content": 0,
+        "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
+        "via_search_results": 0
       },
-      "user_supplied_optional_comment": "",
-      "user_supplied_other_regret_category": "",
-      "user_supplied_regret_categories": [],
-      "user_supplied_severity": -1
+      "amount_of_days_with_at_least_one_youtube_visit": 0,
+      "amount_of_days_with_at_least_one_youtube_watch_page_load": {
+        "in_total": 0,
+        "via_non_search_algorithmic_recommendations_content": 0,
+        "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
+        "via_search_results": 0
+      },
+      "amount_of_time_with_an_active_youtube_tab": 0,
+      "amount_of_time_with_an_active_youtube_watch_page_tab": {
+        "in_total": 0,
+        "via_non_search_algorithmic_recommendations_content": 0,
+        "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
+        "via_search_results": 0
+      },
+      "amount_of_youtube_video_play_time": 0,
+      "amount_of_youtube_video_play_time_on_youtube_watch_pages": {
+        "in_total": 0,
+        "via_non_search_algorithmic_recommendations_content": 0,
+        "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
+        "via_search_results": 0
+      },
+      "amount_of_youtube_videos_played_on_youtube_watch_pages": {
+        "in_total": 0,
+        "via_non_search_algorithmic_recommendations_content": 0,
+        "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
+        "via_search_results": 0
+      },
+      "amount_of_youtube_watch_pages_loaded": {
+        "in_total": 0,
+        "via_non_search_algorithmic_recommendations_content": 0,
+        "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
+        "via_search_results": 0
+      }
     }
-
-
-   */
+*/
 
   for (let i = 0; i < 1000; i++) {
     rows.push();
@@ -146,7 +99,7 @@ function createRows(
   return rows;
 }
 
-export function RegretReportsDataGrid({
+export function YouTubeUsageStatisticsUpdateDataGrid({
   regretReportEntries,
 }: {
   regretReportEntries: AnnotatedSharedData[];

@@ -12,6 +12,8 @@ import { DisplayError } from "./DisplayError";
 import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
 import { AnnotatedSharedData } from "../background.js/DataSharer";
 import { RegretReportsDataGrid } from "./RegretReportsDataGrid";
+import { YouTubeUsageStatisticsUpdateDataGrid } from "./YouTubeUsageStatisticsUpdateDataGrid";
+import { DataDeletionRequestDataGrid } from "./DataDeletionRequestDataGrid";
 
 export interface DataViewerProps {}
 
@@ -169,7 +171,7 @@ export class DataViewer extends Component<DataViewerProps, DataViewerState> {
                   />
                 )}
                 {this.state.openTab === 2 && (
-                  <RegretReportsDataGrid
+                  <YouTubeUsageStatisticsUpdateDataGrid
                     regretReportEntries={
                       this.state.sharedData &&
                       this.state.sharedData.filter(
@@ -179,7 +181,7 @@ export class DataViewer extends Component<DataViewerProps, DataViewerState> {
                   />
                 )}
                 {this.state.openTab === 3 && (
-                  <RegretReportsDataGrid
+                  <DataDeletionRequestDataGrid
                     regretReportEntries={
                       this.state.sharedData &&
                       this.state.sharedData.filter(
