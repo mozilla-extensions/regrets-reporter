@@ -16,6 +16,7 @@ import {
   SummaryRow,
 } from "./common";
 import { YouTubeUsageStatisticsUpdate } from "../background.js/YouTubeUsageStatistics";
+import { ClickToViewFormatter } from "./ClickToViewFormatter";
 
 interface Row extends EventMetadataColumns {
   youtube_usage_statistics_update: YouTubeUsageStatisticsUpdate;
@@ -26,12 +27,32 @@ const columns: readonly Column<Row, SummaryRow>[] = [
   {
     key: "youtube_usage_statistics_update",
     name: "YouTube Usage Statistics Update",
-    width: 500,
+    width: 250,
     editable: false,
     resizable: true,
     sortable: true,
     formatter: ({ row }) => {
-      return <pre>{JSON.stringify(row.youtube_usage_statistics_update)}</pre>;
+      return (
+        <>
+          <ClickToViewFormatter
+            openNode={
+              <div className="my-2 py-1 px-2 rounded bg-grey-20 hover:bg-grey-30 text-sm leading-tight">
+                Click to show
+              </div>
+            }
+            closeNode={
+              <div className="my-2 py-1 px-2 rounded bg-grey-20 hover:bg-grey-30 text-sm leading-tight">
+                Close
+              </div>
+            }
+            cellContents={
+              <pre>
+                {JSON.stringify(row.youtube_usage_statistics_update, null, 2)}
+              </pre>
+            }
+          />
+        </>
+      );
     },
   },
   ...eventMetadataColumns,

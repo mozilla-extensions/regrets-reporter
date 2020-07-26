@@ -6,6 +6,7 @@ import DataGrid, {
   RowsUpdateEvent,
   SortDirection,
 } from "react-data-grid";
+import { ClickToViewFormatter } from "./ClickToViewFormatter";
 import "react-data-grid/dist/react-data-grid.css";
 import { AnnotatedSharedData } from "../background.js/DataSharer";
 import {
@@ -39,12 +40,28 @@ const columns: readonly Column<Row, SummaryRow>[] = [
   {
     key: "report_data",
     name: "Report Data",
-    width: 350,
+    width: 100,
     editable: false,
     resizable: true,
     sortable: true,
     formatter: ({ row }) => {
-      return <pre>{JSON.stringify(row.report_data)}</pre>;
+      return (
+        <>
+          <ClickToViewFormatter
+            openNode={
+              <div className="my-2 py-1 px-2 rounded bg-grey-20 hover:bg-grey-30 text-sm leading-tight">
+                Click to show
+              </div>
+            }
+            closeNode={
+              <div className="my-2 py-1 px-2 rounded bg-grey-20 hover:bg-grey-30 text-sm leading-tight">
+                Close
+              </div>
+            }
+            cellContents={<pre>{JSON.stringify(row.report_data, null, 2)}</pre>}
+          />
+        </>
+      );
     },
   },
   {
