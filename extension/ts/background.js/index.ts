@@ -86,7 +86,6 @@ class ExtensionGlue {
 
   async start() {
     const showSpecificExtensionIconOnWatchPages = async () => {
-      const tab = await getCurrentTab();
       function setActiveExtensionIcon() {
         try {
           browser.browserAction.setIcon({
@@ -118,6 +117,14 @@ class ExtensionGlue {
             throw e;
           }
         }
+      }
+
+      const tab = await getCurrentTab();
+
+      // Sometimes there is no current tab object. Assume not a YouTube watch page...
+      if (!tab) {
+        setInactiveExtensionIcon();
+        return;
       }
 
       // tab.url is not available in Firefox unless the tabs permission is granted
