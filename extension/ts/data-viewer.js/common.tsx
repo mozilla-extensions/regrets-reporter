@@ -51,7 +51,7 @@ export const eventMetadataColumns = [
   {
     key: "event_metadata_total_amount_of_regret_reports",
     name: "Regret Reports",
-    width: 150,
+    width: 140,
     editable: false,
     resizable: true,
     sortable: true,
@@ -67,7 +67,7 @@ export const eventMetadataColumns = [
   {
     key: "event_metadata_browser_name",
     name: "Browser Name",
-    width: 150,
+    width: 130,
     editable: false,
     resizable: true,
     sortable: true,
@@ -83,7 +83,7 @@ export const eventMetadataColumns = [
   {
     key: "event_metadata_browser_build_id",
     name: "Browser Build ID",
-    width: 180,
+    width: 150,
     editable: false,
     resizable: true,
     sortable: true,

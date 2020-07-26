@@ -346,9 +346,9 @@ export class ReportRegretForm extends Component<
       ) {
         return (
           <DisplayError
-            message={`Please reload the YouTube page`}
+            message={`Please wait for the YouTube page to load or, if it seems like it has loaded: Reload the page`}
             additionalInfo={
-              "The current YouTube session started before RegretsReporter was installed."
+              "Either the YouTube page has not finished loading or the current YouTube session started before RegretsReporter was installed."
             }
           />
         );

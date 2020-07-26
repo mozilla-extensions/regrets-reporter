@@ -159,6 +159,12 @@ After version bumping and setting the API_KEY and API_SECRET env vars:
 yarn build:production && npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
 ```
 
+For Chrome:
+
+```
+TARGET_BROWSER=chrome yarn build:production
+```
+
 ## Generating JSON schema for telemetry ingestion based on typings
 
 ```

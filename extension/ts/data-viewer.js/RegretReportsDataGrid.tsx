@@ -121,41 +121,6 @@ function createRows(
     };
   });
 
-  /*
-  "regret_report": {
-      "form_step": 1,
-      "report_data": {
-        "parent_youtube_navigations_metadata": [
-          ...
-        ],
-        "report_data_uuid": "fe9ddd41-3092-4d6c-976f-099b26b87fe4",
-        "youtube_navigation_metadata": {
-          "document_visible_time": 0,
-          "page_entry_point": "page_reload",
-          "url_type": "watch_page",
-          "via_non_search_algorithmic_recommendations_content": 0,
-          "via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for": 0,
-          "via_search_results": 0,
-          "video_element_play_time": 0,
-          "video_metadata": {
-            "video_description": "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
-            "video_id": "g4mHPeMGTJM",
-            "video_posting_date": "20 Sep 2011",
-            "video_title": "10 hours of absolute silence (the original)",
-            "view_count_at_navigation": 4496886,
-            "view_count_at_navigation_short": "4.4M views"
-          }
-        },
-      },
-      "user_supplied_optional_comment": "",
-      "user_supplied_other_regret_category": "",
-      "user_supplied_regret_categories": [],
-      "user_supplied_severity": -1
-    }
-
-
-   */
-
   for (let i = 0; i < 1000; i++) {
     rows.push();
   }
