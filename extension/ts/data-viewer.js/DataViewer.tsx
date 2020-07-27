@@ -191,7 +191,7 @@ export class DataViewer extends Component<DataViewerProps, DataViewerState> {
                   />
                 )}
                 {this.state.openTab === 4 && (
-                  <pre className="border border-grey-30">
+                  <pre className="border border-grey-30 p-4">
                     {JSON.stringify(this.state.sharedData, null, 2)}
                   </pre>
                 )}

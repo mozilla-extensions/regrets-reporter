@@ -99,10 +99,10 @@ export const flattenEventMetadata = (
     event_metadata_client_timestamp: new Date(event_metadata.client_timestamp),
     event_metadata_total_amount_of_regret_reports:
       event_metadata.total_amount_of_regret_reports,
-    event_metadata_browser_build_id: `${event_metadata.browser_info.build_id}`,
-    event_metadata_browser_vendor: `${event_metadata.browser_info.vendor}`,
-    event_metadata_browser_version: `${event_metadata.browser_info.version}`,
-    event_metadata_browser_name: `${event_metadata.browser_info.name}`,
+    event_metadata_browser_build_id: `${event_metadata.browser_info?.build_id}`,
+    event_metadata_browser_vendor: `${event_metadata.browser_info?.vendor}`,
+    event_metadata_browser_version: `${event_metadata.browser_info?.version}`,
+    event_metadata_browser_name: `${event_metadata.browser_info?.name}`,
     event_metadata_extension_version: `${event_metadata.extension_version}`,
   };
 };

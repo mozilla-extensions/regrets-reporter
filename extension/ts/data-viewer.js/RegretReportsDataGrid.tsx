@@ -66,18 +66,18 @@ const columns: readonly Column<Row, SummaryRow>[] = [
   },
   {
     key: "user_supplied_regret_categories",
-    name: "user_supplied_regret_categories",
+    name: "Why do you regret watching this video?",
     width: 250,
     editable: false,
     resizable: true,
     sortable: true,
     formatter: ({ row }) => {
-      return <>{row.user_supplied_regret_categories.join(", ")}</>;
+      return <>{row.user_supplied_regret_categories?.join(", ")}</>;
     },
   },
   {
     key: "user_supplied_other_regret_category",
-    name: "user_supplied_other_regret_category",
+    name: "Other category (if supplied)",
     width: 250,
     editable: false,
     resizable: true,
@@ -85,7 +85,7 @@ const columns: readonly Column<Row, SummaryRow>[] = [
   },
   {
     key: "user_supplied_severity",
-    name: "user_supplied_severity",
+    name: "How severe is your regret?",
     width: 250,
     editable: false,
     resizable: true,
@@ -93,7 +93,7 @@ const columns: readonly Column<Row, SummaryRow>[] = [
   },
   {
     key: "user_supplied_optional_comment",
-    name: "user_supplied_optional_comment",
+    name: "Tell us more",
     width: 250,
     editable: false,
     resizable: true,

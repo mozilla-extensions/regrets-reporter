@@ -1,5 +1,13 @@
 /* purgecss start ignore */
 
+html {
+  font-size: 12px;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
 body {
   background-color: #fff;
 }
