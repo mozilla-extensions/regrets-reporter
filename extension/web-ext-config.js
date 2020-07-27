@@ -26,6 +26,7 @@ const defaultConfig = {
     ],
     pref: ["browser.ctrlTab.recentlyUsedOrder=false"],
   },
+  filename: `{name}-{version}-${targetBrowser}.xpi`
 };
 
 if (targetBrowser === "firefox") {
