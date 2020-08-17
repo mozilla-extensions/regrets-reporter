@@ -175,6 +175,19 @@ export class ExtensionPreferencesForm extends Component<
           Additional information
         </div>
         <div className="my-4">
+          Extension version: {this.state.extensionPreferences.extensionVersion}.
+        </div>
+        <div className="my-4">
+          Your <code>Extension Installation ID</code> is{" "}
+          {this.state.extensionPreferences.extensionInstallationUuid} and your{" "}
+          <code>Error Reporting ID</code> is{" "}
+          {
+            this.state.extensionPreferences
+              .extensionInstallationErrorReportingUuid
+          }
+          .
+        </div>
+        <div className="my-4">
           Please review the{" "}
           <a
             href={config.privacyNoticeUrl}
@@ -183,7 +196,7 @@ export class ExtensionPreferencesForm extends Component<
           >
             privacy notice
           </a>{" "}
-          for more information about the above options.
+          for more information about the above.
         </div>
         <div className="text-xl font-semibold mt-12">Instructions</div>
         <div className="my-4">
