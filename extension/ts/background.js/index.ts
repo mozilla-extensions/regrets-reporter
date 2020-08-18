@@ -236,10 +236,7 @@ class ExtensionGlue {
         return;
       }
       port.onMessage.addListener(async function(m) {
-        console.debug(
-          `dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`,
-          { m },
-        );
+        // console.debug(`dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`, { m });
         if (m.requestDataDeletion) {
           await dataSharer.requestDataDeletion();
           port.postMessage({
@@ -278,6 +275,7 @@ class ExtensionGlue {
     ): Promise<TrimmedNavigationBatch> => {
       try {
         // Keep track of aggregated statistics
+        // TODO: Move this to a separate callback instead of piggybacking on processedNavigationBatchTrimmer
         await youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
       } catch (error) {
         captureExceptionWithExtras(error, {
