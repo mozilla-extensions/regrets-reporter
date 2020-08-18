@@ -151,9 +151,6 @@ export function YouTubeUsageStatisticsUpdateDataGrid({
             a[sortColumn].localeCompare(b[sortColumn]),
           );
           break;
-        case "event_metadata_total_amount_of_regret_reports":
-          sortedRows = sortedRows.sort((a, b) => a[sortColumn] - b[sortColumn]);
-          break;
         case "event_metadata_client_timestamp":
           sortedRows = sortedRows.sort(
             (a, b) => a[sortColumn].getTime() - b[sortColumn].getTime(),

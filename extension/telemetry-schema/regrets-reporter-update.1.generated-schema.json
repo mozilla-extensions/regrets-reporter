@@ -107,9 +107,6 @@
         },
         "extension_version": {
           "type": "string"
-        },
-        "total_amount_of_regret_reports": {
-          "type": "number"
         }
       },
       "type": "object"

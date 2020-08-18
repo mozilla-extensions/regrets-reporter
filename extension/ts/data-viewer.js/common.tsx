@@ -5,7 +5,6 @@ export interface EventMetadataColumns {
   event_metadata_event_uuid: string;
   event_metadata_client_timestamp: Date;
   event_metadata_extension_installation_uuid: string;
-  event_metadata_total_amount_of_regret_reports: number;
   event_metadata_browser_build_id: string;
   event_metadata_browser_vendor: string;
   event_metadata_browser_version: string;
@@ -44,14 +43,6 @@ export const eventMetadataColumns = [
     key: "event_metadata_extension_installation_uuid",
     name: "Extension Installation ID",
     width: 320,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
-  {
-    key: "event_metadata_total_amount_of_regret_reports",
-    name: "Regret Reports",
-    width: 140,
     editable: false,
     resizable: true,
     sortable: true,
@@ -97,8 +88,6 @@ export const flattenEventMetadata = (
     event_metadata_event_uuid: `${event_metadata.event_uuid}`,
     event_metadata_extension_installation_uuid: `${event_metadata.extension_installation_uuid}`,
     event_metadata_client_timestamp: new Date(event_metadata.client_timestamp),
-    event_metadata_total_amount_of_regret_reports:
-      event_metadata.total_amount_of_regret_reports,
     event_metadata_browser_build_id: `${event_metadata.browser_info?.build_id}`,
     event_metadata_browser_vendor: `${event_metadata.browser_info?.vendor}`,
     event_metadata_browser_version: `${event_metadata.browser_info?.version}`,

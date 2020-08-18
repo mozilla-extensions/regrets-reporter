@@ -27,7 +27,6 @@ describe("TelemetryClient", function() {
     const telemetryClient = new TelemetryClient(store, pingSubmitTimeoutMs);
     const annotatedData: AnnotatedSharedData = await dataSharer.annotateSharedData(
       {},
-      0,
     );
 
     await telemetryClient.submitPayload(annotatedData);
@@ -53,7 +52,6 @@ describe("TelemetryClient", function() {
     const annotatedData: AnnotatedSharedData = await dataSharer.annotateSharedData(
       // @ts-ignore
       { regret_report: "foo" },
-      0,
     );
 
     await telemetryClient.submitPayload(annotatedData);
@@ -74,7 +72,6 @@ describe("TelemetryClient", function() {
     const telemetryClient = new TelemetryClient(store, pingSubmitTimeoutMs);
     const annotatedData: AnnotatedSharedData = await dataSharer.annotateSharedData(
       {},
-      0,
     );
 
     await telemetryClient.submitPayload(annotatedData);
@@ -107,7 +104,6 @@ describe("TelemetryClient", function() {
     const telemetryClient = new TelemetryClient(store, pingSubmitTimeoutMs);
     const annotatedData: AnnotatedSharedData = await dataSharer.annotateSharedData(
       {},
-      0,
     );
 
     await telemetryClient.submitPayload(annotatedData);

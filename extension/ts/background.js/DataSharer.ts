@@ -19,7 +19,6 @@ export interface SharedDataEventMetadata {
   client_timestamp: string;
   extension_installation_uuid: string;
   event_uuid: string;
-  total_amount_of_regret_reports: number;
   browser_info: {
     build_id: string;
     name: string;
@@ -53,10 +52,7 @@ export class DataSharer {
     this.telemetryClient = new TelemetryClient(store);
   }
 
-  async annotateSharedData(
-    data: SharedData,
-    total_amount_of_regret_reports,
-  ): Promise<AnnotatedSharedData> {
+  async annotateSharedData(data: SharedData): Promise<AnnotatedSharedData> {
     const browserInfo = browser.runtime.getBrowserInfo
       ? await browser.runtime.getBrowserInfo()
       : getChromiumBrowserInfo();
@@ -69,7 +65,6 @@ export class DataSharer {
         extension_installation_uuid:
           extensionPreferences.extensionInstallationUuid,
         event_uuid: makeUUID(),
-        total_amount_of_regret_reports,
         browser_info: {
           build_id: browserInfo.buildID,
           vendor: browserInfo.vendor,
@@ -88,18 +83,8 @@ export class DataSharer {
       $annotatedData.regret_report &&
       $annotatedData.regret_report.form_step !== 2;
 
-    let total_amount_of_regret_reports = sharedData
-      ? sharedData.filter(countsAsRegretReport).length
-      : 0;
-
-    // If this is a regret report, include it in the statistic
-    if (countsAsRegretReport(data)) {
-      total_amount_of_regret_reports++;
-    }
-
     const annotatedData: AnnotatedSharedData = await this.annotateSharedData(
       data,
-      total_amount_of_regret_reports,
     );
 
     // Store a copy of the data for local introspection
