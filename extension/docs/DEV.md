@@ -46,6 +46,15 @@ For Chrome:
 yarn watch:chrome
 ```
 
+Note: The OpenWPM code (used for instrumentation of traffic data) is located in a submodule adjacent to the extension
+directory and needs to be copied/synced to the extension directory to be used by the extension. This is done before
+any build/start command, but not while in watch mode. After changing OpenWPM code, run the following to directly make
+use of changed OpenWPM code:
+
+```
+yarn openwpm-updated
+```
+
 ## Opening up specific add-on pages
 
 From the background context:
