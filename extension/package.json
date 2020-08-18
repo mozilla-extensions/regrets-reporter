@@ -108,7 +108,8 @@
   "scripts": {
     "build:development": "webpack && web-ext build",
     "build:production": "NODE_ENV=production webpack --mode=production && web-ext build",
-    "clean": "trash build/${TARGET_BROWSER}/ test/build",
+    "clean": "trash build/${TARGET_BROWSER}/",
+    "clean:test": "trash test/build",
     "compile-schema": "ajv compile -s telemetry-schema/regrets-reporter-update.1.deployed-schema.json -o ts/background.js/lib/validate.js",
     "dev-telemetry-server": "docker run -p 80:8000 -v \"$(pwd)/../../../mozilla-pipeline-schemas\"/schemas:/app/resources/schemas -it mozilla/edge-validator:latest",
     "docformat": "doctoc --title '**Contents**' docs/*.md && prettier '**/*.md' --trailing-comma=all --ignore-path=.eslintignore --write",
@@ -130,7 +131,7 @@
     "start": "TARGET_BROWSER=firefox web-ext run",
     "start:chrome": "TARGET_BROWSER=chrome web-ext run -t chromium",
     "test": "npm-run-all -n test:unit # test:func",
-    "test:unit": "npm-run-all -n test:unit:mocha",
+    "test:unit": "npm-run-all -n clean:test test:unit:mocha",
     "test:unit:mocha": "DOTENV_CONFIG_PATH=.env.development mocha -r source-map-support/register -r sinon/pkg/sinon -r ./test/browser-polyfills.ts -r dotenv/config --globals global test/build/all-tests.js",
     "watch": "TARGET_BROWSER=firefox npm-run-all build:development && TARGET_BROWSER=firefox concurrently 'webpack --watch' 'web-ext run'",
     "watch:chrome": "TARGET_BROWSER=chrome npm-run-all build:development && TARGET_BROWSER=chrome concurrently 'webpack --watch' 'web-ext run -t chromium'",
