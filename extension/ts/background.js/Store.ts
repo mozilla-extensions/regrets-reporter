@@ -1,4 +1,4 @@
-import { Storage } from "webextension-polyfill-ts";
+import { browser, Storage } from "webextension-polyfill-ts";
 import StorageArea = Storage.StorageArea;
 import StorageAreaSetItemsType = Storage.StorageAreaSetItemsType;
 import { makeUUID } from "./lib/uuid";
@@ -14,6 +14,7 @@ export interface ExtensionPreferences {
   enableErrorReporting: boolean;
   extensionInstallationErrorReportingUuid: string;
   extensionInstallationUuid: string;
+  extensionVersion: string;
 }
 
 export class Store implements LocalStorageWrapper {
@@ -38,8 +39,12 @@ export class Store implements LocalStorageWrapper {
   initialExtensionPreferences = async (): Promise<ExtensionPreferences> => {
     return {
       enableErrorReporting: true,
+      // The following are not editable extension preferences, but attributes
+      // that we want to display on the extension preferences dialog and/or
+      // add as context in error reports
       extensionInstallationErrorReportingUuid: await this.extensionInstallationErrorReportingUuid(),
       extensionInstallationUuid: await this.extensionInstallationUuid(),
+      extensionVersion: browser.runtime.getManifest().version,
     };
   };
 
