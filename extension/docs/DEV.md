@@ -7,6 +7,7 @@
   - [Get started](#get-started)
   - [Opening up specific add-on pages](#opening-up-specific-add-on-pages)
   - [Checking current report data](#checking-current-report-data)
+  - [Checking current YouTube usage statistics](#checking-current-youtube-usage-statistics)
   - [Export shared data](#export-shared-data)
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
@@ -84,6 +85,38 @@ await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
 await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
   openWpmPacketHandler.navigationBatchPreprocessor
     .navigationBatchesByNavigationUuid,
+);
+```
+
+## Checking current YouTube usage statistics
+
+To check the current usage statistics:
+
+```javascript
+await youTubeUsageStatistics.summarizeUpdate();
+```
+
+To force re-calculating usage statistics for the currently available navigationBatchesByNavigationUuid
+(less than 5 hours old), to see if any errors occur:
+
+```javascript
+const summarizeUpdate = async (
+  navigationBatchesByUuid,
+  youTubeUsageStatistics,
+) => {
+  const navUuids = Object.keys(navigationBatchesByUuid);
+  for (const navUuid of navUuids) {
+    await youTubeUsageStatistics.seenNavigationBatch(
+      navigationBatchesByUuid[navUuid],
+    );
+  }
+  return await youTubeUsageStatistics.summarizeUpdate();
+};
+await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
+await summarizeUpdate(
+  openWpmPacketHandler.navigationBatchPreprocessor
+    .navigationBatchesByNavigationUuid,
+  youTubeUsageStatistics,
 );
 ```
 

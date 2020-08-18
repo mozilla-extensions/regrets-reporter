@@ -454,6 +454,7 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 // the extension background context so that we as developers can collect fixture data
 (window as any).openWpmPacketHandler = openWpmPacketHandler;
 (window as any).reportSummarizer = reportSummarizer;
+(window as any).youTubeUsageStatistics = youTubeUsageStatistics;
 (window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
 (window as any).exportSharedData = async () => {
   const sharedData = await dataSharer.export();
