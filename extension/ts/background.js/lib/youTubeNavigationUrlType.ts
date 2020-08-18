@@ -26,11 +26,14 @@ export const classifyYouTubeNavigationUrlType = (
     return "not_a_youtube_page";
   }
   /*
-  // any subdomain, eg:
+  // any subdomain other than www, eg:
   img.youtube.com
   r3---sn-ab5l6ndy.c.youtube.com/videoplayback
    */
-  if (parsedUrl.origin.indexOf(".youtube.com") > -1) {
+  if (
+    parsedUrl.origin.indexOf("www.youtube.com") === -1 &&
+    parsedUrl.origin.indexOf(".youtube.com") > -1
+  ) {
     return "other";
   }
   if (url.indexOf("prefetch=1") > 0) {
