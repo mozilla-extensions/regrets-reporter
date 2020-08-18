@@ -180,7 +180,8 @@ export class ExtensionPreferencesForm extends Component<
             className="text-red underline"
           >
             privacy notice
-          </a>.
+          </a>
+          .
         </div>
         <div className="text-xl font-semibold mt-12">Instructions</div>
         <div className="my-4">
@@ -212,13 +213,23 @@ export class ExtensionPreferencesForm extends Component<
           Additional information
         </div>
         <div className="my-4">
-          Extension version: <code>{this.state.extensionPreferences.extensionVersion}</code>
+          Extension version:{" "}
+          <code>{this.state.extensionPreferences.extensionVersion}</code>
         </div>
         <div className="my-4">
-          Extension Installation ID: <code>{this.state.extensionPreferences.extensionInstallationUuid}</code>
+          Extension Installation ID:{" "}
+          <code>
+            {this.state.extensionPreferences.extensionInstallationUuid}
+          </code>
         </div>
         <div className="my-4">
-          Error Reporting ID: <code>{this.state.extensionPreferences.extensionInstallationErrorReportingUuid}</code>
+          Error Reporting ID:{" "}
+          <code>
+            {
+              this.state.extensionPreferences
+                .extensionInstallationErrorReportingUuid
+            }
+          </code>
         </div>
       </>
     );

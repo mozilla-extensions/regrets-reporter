@@ -103,18 +103,19 @@ await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 3. Download the current set of collected navigations:
 
 ```javascript
-const fileInfo = await triggerClientDownloadOfData(
+let nbpFixtureFileInfo;
+nbpFixtureFileInfo = await triggerClientDownloadOfData(
   openWpmPacketHandler.navigationBatchPreprocessor
     .openWpmPayloadEnvelopeProcessQueue,
   "navigationBatchPreprocessorFixture.json",
 );
-console.log(fileInfo.url);
+console.log(nbpFixtureFileInfo.url);
 ```
 
 In Firefox, the URL above can be opened in a new tab to inspect and save the JSON data. For Chrome, run below to display the JSON:
 
 ```javascript
-await (await fetch(fileInfo.url)).text();
+await (await fetch(nbpFixtureFileInfo.url)).text();
 ```
 
 Restart the browser before collecting data for a new fixture.
@@ -135,18 +136,19 @@ await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
 
 ```javascript
 await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
-const fileInfo = await triggerClientDownloadOfData(
+let rsFixtureFileInfo;
+rsFixtureFileInfo = await triggerClientDownloadOfData(
   openWpmPacketHandler.navigationBatchPreprocessor
     .navigationBatchesByNavigationUuid,
   "reportSummarizerFixture.json",
 );
-console.log(fileInfo.url);
+console.log(rsFixtureFileInfo.url);
 ```
 
 In Firefox, the URL above can be opened in a new tab to inspect and save the JSON data. For Chrome, run below to display the JSON:
 
 ```javascript
-await (await fetch(fileInfo2.url)).text();
+await (await fetch(rsFixtureFileInfo.url)).text();
 ```
 
 Restart the browser before collecting data for a new fixture.
