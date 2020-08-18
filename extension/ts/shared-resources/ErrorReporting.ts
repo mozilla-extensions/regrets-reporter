@@ -86,9 +86,6 @@ export const captureExceptionWithExtras = (
   });
 };
 
-/**
- * Required for Sentry to map source-map paths properly
- */
 Sentry.configureScope(scope => {
   scope.addEventProcessor(async (event: any) => {
     // console.log("Unprocessed sentry event", Object.assign({}, { event }));
@@ -100,27 +97,48 @@ Sentry.configureScope(scope => {
       );
     };
 
-    if (event.culprit) {
-      event.culprit = normalizeUrl(event.culprit);
-    }
-
     if (
       event.exception &&
       event.exception.values &&
-      event.exception.values[0] &&
-      event.exception.values[0].stacktrace &&
-      event.exception.values[0].stacktrace.frames
+      event.exception.values[0]
     ) {
-      event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames.map(
-        frame => {
-          frame.filename = normalizeUrl(frame.filename);
-          return frame;
-        },
-      );
-    }
+      // Change some messages that includes id numbers so that
+      // they are considered the same event regardless of the ID
 
-    // console.log("Processed sentry event", { event });
-    return event;
+      if (event.exception.values[0].value.indexOf("Invalid tab ID: ") === 0) {
+        event.exception.values[0].value = "Invalid tab ID: #";
+      }
+
+      if (
+        event.exception.values[0].value.indexOf(
+          "The matching httpRequestEnvelope was not found for request id ",
+        ) === 0
+      ) {
+        event.exception.values[0].value =
+          "The matching httpRequestEnvelope was not found for request id #";
+      }
+
+      // Required for Sentry to map web extension sourcemap paths properly
+
+      if (event.culprit) {
+        event.culprit = normalizeUrl(event.culprit);
+      }
+
+      if (
+        event.exception.values[0].stacktrace &&
+        event.exception.values[0].stacktrace.frames
+      ) {
+        event.exception.values[0].stacktrace.frames = event.exception.values[0].stacktrace.frames.map(
+          frame => {
+            frame.filename = normalizeUrl(frame.filename);
+            return frame;
+          },
+        );
+      }
+
+      // console.log("Processed sentry event", { event });
+      return event;
+    }
   });
 });
 
