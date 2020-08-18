@@ -25,7 +25,12 @@ export const classifyYouTubeNavigationUrlType = (
   if (parsedUrl.origin.indexOf("youtube.com") === -1) {
     return "not_a_youtube_page";
   }
-  if (parsedUrl.origin.indexOf("img.youtube.com") > -1) {
+  /*
+  // any subdomain, eg:
+  img.youtube.com
+  r3---sn-ab5l6ndy.c.youtube.com/videoplayback
+   */
+  if (parsedUrl.origin.indexOf(".youtube.com") > -1) {
     return "other";
   }
   if (url.indexOf("prefetch=1") > 0) {
@@ -88,7 +93,7 @@ export const classifyYouTubeNavigationUrlType = (
       return "user_page";
     }
   }
-  const channelPageStartWiths = ["/channel"];
+  const channelPageStartWiths = ["/channel", "/c/", "/snl/"];
   for (const startWith of channelPageStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
       return "channel_page";
@@ -101,6 +106,19 @@ export const classifyYouTubeNavigationUrlType = (
     }
     return "search_results_page";
   }
+  /*
+  /feed/trending
+  /feed/subscriptions
+  /feed/library
+  /feed/history
+  /feed/guide_builder
+  */
+  const youTubeMainPageStartWiths = ["/feed/"];
+  for (const startWith of youTubeMainPageStartWiths) {
+    if (parsedUrl.pathname.indexOf(startWith) === 0) {
+      return "youtube_main_page";
+    }
+  }
   if (parsedUrl.pathname === "/") {
     return "youtube_main_page";
   }
@@ -109,6 +127,10 @@ export const classifyYouTubeNavigationUrlType = (
     "/playlist",
     "/accounts",
     "/redirect",
+    "/premium",
+    "/reporthistory",
+    "/account",
+    "/ptracking",
   ];
   for (const startWith of otherRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
