@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/browser";
+import { Severity } from "@sentry/types";
 import { config } from "../config";
 import { ExtensionPreferences, Store } from "../background.js/Store";
 import {
@@ -69,10 +70,17 @@ export const initErrorReportingInContentScript = async (portName: string) => {
   );
 };
 
-export const captureExceptionWithExtras = (exception, extras = null) => {
+export const captureExceptionWithExtras = (
+  exception,
+  extras = null,
+  level: Severity = null,
+) => {
   Sentry.withScope(scope => {
     if (extras !== null) {
       scope.setExtras(flatten(extras));
+    }
+    if (level !== null) {
+      scope.setLevel(level);
     }
     Sentry.captureException(exception);
   });

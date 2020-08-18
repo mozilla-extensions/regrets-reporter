@@ -10,7 +10,10 @@ import {
   YouTubeNavigationUrlType,
 } from "./lib/youTubeNavigationUrlType";
 import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
-import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
+import {
+  captureExceptionWithExtras,
+  Sentry,
+} from "../shared-resources/ErrorReporting";
 
 type YouTubeNavigationLinkPosition =
   | "search_results"
@@ -352,7 +355,11 @@ export class ReportSummarizer {
         } catch (error) {
           if (error.name === "UnexpectedContentParseError") {
             // report it
-            captureExceptionWithExtras(error, error.errorReportContext);
+            captureExceptionWithExtras(
+              error,
+              error.errorReportContext,
+              Sentry.Severity.Warning,
+            );
             console.error(error.message, {
               errorReportContext: error.errorReportContext,
             });
@@ -536,7 +543,11 @@ export class ReportSummarizer {
     try {
       video_id = ytInitialData.currentVideoEndpoint.watchEndpoint.videoId;
     } catch (err) {
-      captureExceptionWithExtras(err, { attribute: "video_id" });
+      captureExceptionWithExtras(
+        err,
+        { attribute: "video_id" },
+        Sentry.Severity.Warning,
+      );
       console.error("video_id", err.message);
       // console.dir({ ytInitialData }, {depth: 5});
       video_id = "<failed>";
@@ -573,6 +584,7 @@ export class ReportSummarizer {
               captureExceptionWithExtras(
                 new Error("Unexpected YouTube runs structure encountered"),
                 { run },
+                Sentry.Severity.Warning,
               );
               return run.text;
             }
@@ -595,7 +607,11 @@ export class ReportSummarizer {
             .videoPrimaryInfoRenderer.title.runs,
         );
       } catch (err) {
-        captureExceptionWithExtras(err, { attribute: "video_title" });
+        captureExceptionWithExtras(
+          err,
+          { attribute: "video_title" },
+          Sentry.Severity.Warning,
+        );
         console.error("video_title", err.message);
         video_title = "<failed>";
       }
@@ -605,7 +621,11 @@ export class ReportSummarizer {
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
             .videoPrimaryInfoRenderer.dateText.simpleText;
       } catch (err) {
-        captureExceptionWithExtras(err, { attribute: "video_posting_date" });
+        captureExceptionWithExtras(
+          err,
+          { attribute: "video_posting_date" },
+          Sentry.Severity.Warning,
+        );
         console.error("video_posting_date", err.message);
         video_posting_date = "";
       }
@@ -619,9 +639,13 @@ export class ReportSummarizer {
           10,
         );
       } catch (err) {
-        captureExceptionWithExtras(err, {
-          attribute: "view_count_at_navigation",
-        });
+        captureExceptionWithExtras(
+          err,
+          {
+            attribute: "view_count_at_navigation",
+          },
+          Sentry.Severity.Warning,
+        );
         console.error("view_count_at_navigation", err.message);
         view_count_at_navigation = -1;
       }
@@ -632,16 +656,24 @@ export class ReportSummarizer {
             .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
             .shortViewCount.simpleText;
       } catch (err) {
-        captureExceptionWithExtras(err, {
-          attribute: "view_count_at_navigation_short",
-        });
+        captureExceptionWithExtras(
+          err,
+          {
+            attribute: "view_count_at_navigation_short",
+          },
+          Sentry.Severity.Warning,
+        );
         console.error("view_count_at_navigation_short", err.message);
         view_count_at_navigation_short = "<failed>";
       }
     } catch (err) {
-      captureExceptionWithExtras(err, {
-        attribute: "video_* within videoPrimaryInfoRenderer",
-      });
+      captureExceptionWithExtras(
+        err,
+        {
+          attribute: "video_* within videoPrimaryInfoRenderer",
+        },
+        Sentry.Severity.Warning,
+      );
       console.error("video_* within videoPrimaryInfoRenderer", err.message);
       video_title = "<failed>";
     }
@@ -663,9 +695,13 @@ export class ReportSummarizer {
         video_description = "";
       }
     } catch (err) {
-      captureExceptionWithExtras(err, {
-        attribute: "video_description",
-      });
+      captureExceptionWithExtras(
+        err,
+        {
+          attribute: "video_description",
+        },
+        Sentry.Severity.Warning,
+      );
       console.error("video_description", err.message);
       video_description = "<failed>";
     }
@@ -831,6 +867,7 @@ export class ReportSummarizer {
                       "search_results_page_other_indirect_videos unhandled el",
                     ),
                     { elObjectKeys: Object.keys(el) },
+                    Sentry.Severity.Warning,
                   );
                   console.error(
                     "search_results_page_other_indirect_videos unhandled el:",
@@ -855,15 +892,19 @@ export class ReportSummarizer {
           if (firstRendererElObjectKey) {
             return `(${firstRendererElObjectKey})`;
           }
-          captureExceptionWithExtras(new Error("search_results unhandled el"), {
-            el,
-          });
+          captureExceptionWithExtras(
+            new Error("search_results unhandled el"),
+            {
+              el,
+            },
+            Sentry.Severity.Warning,
+          );
           console.error("search_results unhandled el:");
           console.dir({ el }, { depth: 4 });
         },
       );
     } catch (err) {
-      captureExceptionWithExtras(err);
+      captureExceptionWithExtras(err, null, Sentry.Severity.Warning);
       console.error("search_results", err.message);
       console.dir({ ytInitialData }, { depth: 4 });
       search_results = "<failed>";

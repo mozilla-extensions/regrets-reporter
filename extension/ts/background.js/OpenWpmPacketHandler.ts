@@ -3,7 +3,10 @@ import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
 import { HttpResponse, UiState } from "@openwpm/webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
 import { classifyYouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
-import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
+import {
+  captureExceptionWithExtras,
+  Sentry,
+} from "../shared-resources/ErrorReporting";
 import { config } from "../config";
 
 export interface LogEntry {
@@ -76,6 +79,11 @@ export class OpenWpmPacketHandler {
     }
     const level = "warn";
     const logEntry: LogEntry = { level, msg };
+    captureExceptionWithExtras(
+      new Error("OpenWPM WARN log message"),
+      { msg },
+      Sentry.Severity.Warning,
+    );
     console.warn(`OpenWPM WARN log message: ${msg}`);
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       "openwpm_log",

@@ -10,7 +10,10 @@ import {
 } from "@openwpm/webext-instrumentation";
 import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
-import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
+import {
+  captureExceptionWithExtras,
+  Sentry,
+} from "../shared-resources/ErrorReporting";
 import { browser } from "webextension-polyfill-ts";
 
 export interface NavigationBatch {
@@ -660,6 +663,7 @@ export class NavigationBatchPreprocessor {
                     request_id:
                       currentHttpResponseEnvelope.httpResponse.request_id,
                   },
+                  Sentry.Severity.Warning,
                 );
                 // remove the http response since it will cause issues downstream if it is kept
                 removeItemFromArray(
