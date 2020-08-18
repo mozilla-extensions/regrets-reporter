@@ -171,22 +171,7 @@ export class ExtensionPreferencesForm extends Component<
             </Button>
           )}
         </div>
-        <div className="text-xl font-semibold mt-12">
-          Additional information
-        </div>
-        <div className="my-4">
-          Extension version: {this.state.extensionPreferences.extensionVersion}.
-        </div>
-        <div className="my-4">
-          Your <code>Extension Installation ID</code> is{" "}
-          {this.state.extensionPreferences.extensionInstallationUuid} and your{" "}
-          <code>Error Reporting ID</code> is{" "}
-          {
-            this.state.extensionPreferences
-              .extensionInstallationErrorReportingUuid
-          }
-          .
-        </div>
+        <div className="text-xl font-semibold mt-12">Privacy</div>
         <div className="my-4">
           Please review the{" "}
           <a
@@ -195,8 +180,7 @@ export class ExtensionPreferencesForm extends Component<
             className="text-red underline"
           >
             privacy notice
-          </a>{" "}
-          for more information about the above.
+          </a>.
         </div>
         <div className="text-xl font-semibold mt-12">Instructions</div>
         <div className="my-4">
@@ -223,6 +207,18 @@ export class ExtensionPreferencesForm extends Component<
             Send us feedback
           </a>
           .
+        </div>
+        <div className="text-xl font-semibold mt-12">
+          Additional information
+        </div>
+        <div className="my-4">
+          Extension version: <code>{this.state.extensionPreferences.extensionVersion}</code>
+        </div>
+        <div className="my-4">
+          Extension Installation ID: <code>{this.state.extensionPreferences.extensionInstallationUuid}</code>
+        </div>
+        <div className="my-4">
+          Error Reporting ID: <code>{this.state.extensionPreferences.extensionInstallationErrorReportingUuid}</code>
         </div>
       </>
     );
