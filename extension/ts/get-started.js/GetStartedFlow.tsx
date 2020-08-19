@@ -40,23 +40,32 @@ export class GetStartedFlow extends Component<
       <>
         <div className="img-get-started-bg absolute" />
         <div className="img-circles absolute" />
-        <div className="bg-grey-90 text-center py-4 px-16 lg:px-64">
+        <div className="bg-grey-90 text-center py-4 px-16">
           <div
-            className="p-3 bg-grey-80 items-center text-grey-10 leading-tight rounded-xl lg:rounded-2xl flex flex-rows"
+            className="max-w-216 m-auto p-3 bg-grey-80 items-center text-grey-10 leading-tight rounded-xl lg:rounded-2xl flex flex-rows"
             role="alert"
           >
-            <div className="font-normal text-m mr-2 text-center flex-auto">
+            <div className="font-normal text-m text-center flex-auto">
               <div>
-                RegretsReporter will periodically submit YouTube usage
-                statistics, browser information and crash reports to Mozilla.{" "}
+                RegretsReporter will by default submit usage statistics and
+                crash reports to Mozilla. <br />
+                If you specifically choose to submit a Regret report, Mozilla
+                will receive additional information.
                 <br />
-                Scroll down to read more about the privacy implications of
-                having this extension installed.
+                For details, see our{" "}
+                <a
+                  href={config.privacyNoticeUrl}
+                  target="_blank"
+                  className="underline"
+                >
+                  privacy notice
+                </a>
+                .
               </div>
             </div>
             <div
               onClick={this.removeExtension}
-              className="flex rounded-full bg-grey-70 hover:bg-grey-50 uppercase px-2 py-1 text-xs font-bold mr-3 cursor-pointer"
+              className="ml-2 flex rounded-full bg-grey-70 hover:bg-grey-50 uppercase px-3 py-2 text-xs font-bold mr-4 cursor-pointer"
             >
               Remove Extension
             </div>
@@ -168,12 +177,12 @@ export class GetStartedFlow extends Component<
                 <ul className="triangle-bullets">
                   <li>
                     Or, click this button:
-                    <div
+                    <button
                       onClick={this.removeExtension}
-                      className="flex-inline ml-2 rounded-full bg-grey-30 hover:bg-grey-50 uppercase px-2 py-1 text-sm font-bold mr-3 cursor-pointer"
+                      className="ml-2 rounded-full bg-grey-30 hover:bg-grey-50 uppercase px-2 py-1 text-sm font-bold mr-3 cursor-pointer"
                     >
                       Remove Extension
-                    </div>
+                    </button>
                   </li>
                 </ul>
 
