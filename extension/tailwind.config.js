@@ -225,6 +225,7 @@ module.exports = {
       default: ".25rem",
       lg: ".5rem",
       xl: "1rem",
+      "2xl": "2rem",
       full: "9999px",
     },
     width: {
@@ -366,6 +367,7 @@ module.exports = {
       "20": "5rem",
       "24": "6rem",
       "32": "8rem",
+      "64": "16rem",
     },
     margin: {
       auto: "auto",

@@ -6,6 +6,8 @@ import "../shared-resources/tailwind.css";
 import { YourPrivacy } from "./inc/YourPrivacy";
 import { config } from "../config";
 import { YouMakeTheInternetHealther } from "./inc/YouMakeTheInternetHealthier";
+import { browser, Runtime } from "webextension-polyfill-ts";
+import Port = Runtime.Port;
 
 export interface GetStartedFlowProps {}
 
@@ -17,16 +19,49 @@ export class GetStartedFlow extends Component<
 > {
   public state = {};
 
-  cancel(event: MouseEvent) {
-    event.preventDefault();
-    window.close();
+  private backgroundContextPort: Port;
+
+  async componentDidMount(): Promise<void> {
+    // console.log("Connecting to the background script");
+    this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
+      name: "port-from-get-started:component",
+    });
   }
+
+  removeExtension = (event: MouseEvent) => {
+    event.preventDefault();
+    this.backgroundContextPort.postMessage({
+      removeExtension: true,
+    });
+  };
 
   render() {
     return (
       <>
         <div className="img-get-started-bg absolute" />
         <div className="img-circles absolute" />
+        <div className="bg-grey-90 text-center py-4 px-16 lg:px-64">
+          <div
+            className="p-3 bg-grey-80 items-center text-grey-10 leading-tight rounded-xl lg:rounded-2xl flex flex-rows"
+            role="alert"
+          >
+            <div className="font-normal text-m mr-2 text-center flex-auto">
+              <div>
+                RegretsReporter will periodically submit YouTube usage
+                statistics, browser information and crash reports to Mozilla.{" "}
+                <br />
+                Scroll down to read more about the privacy implications of
+                having this extension installed.
+              </div>
+            </div>
+            <div
+              onClick={this.removeExtension}
+              className="flex rounded-full bg-grey-70 hover:bg-grey-50 uppercase px-2 py-1 text-xs font-bold mr-3 cursor-pointer"
+            >
+              Remove Extension
+            </div>
+          </div>
+        </div>
         <div className="px-16">
           <div className="mx-auto max-w-2xl grid grid-cols-12 gap-5 font-sans text-xl">
             <div className="col-span-1" />
@@ -128,6 +163,17 @@ export class GetStartedFlow extends Component<
                   <li>
                     Right-click on the toolbar icon and select{" "}
                     <span className="font-semibold">Remove Extension</span>.
+                  </li>
+                </ul>
+                <ul className="triangle-bullets">
+                  <li>
+                    Or, click this button:
+                    <div
+                      onClick={this.removeExtension}
+                      className="flex-inline ml-2 rounded-full bg-grey-30 hover:bg-grey-50 uppercase px-2 py-1 text-sm font-bold mr-3 cursor-pointer"
+                    >
+                      Remove Extension
+                    </div>
                   </li>
                 </ul>
 

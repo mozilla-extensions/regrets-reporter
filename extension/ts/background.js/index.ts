@@ -56,6 +56,7 @@ class ExtensionGlue {
   private reportRegretFormPortListener;
   private dataDeletionRequestsPortListener;
   private sharedDataRequestPortListener;
+  private extensionRemovalRequestPortListener;
 
   constructor() {}
 
@@ -269,6 +270,26 @@ class ExtensionGlue {
     };
     browser.runtime.onConnect.addListener(this.sharedDataRequestPortListener);
 
+    // Listen for extension removal requests
+    this.extensionRemovalRequestPortListener = (port: Port) => {
+      if (port.name !== "port-from-get-started:component") {
+        return;
+      }
+      port.onMessage.addListener(async m => {
+        console.debug(
+          `extensionRemovalRequestPortListener message listener: Message from port "${port.name}"`,
+          { m },
+        );
+        if (m.removeExtension) {
+          await this.cleanup();
+          await browser.management.uninstallSelf();
+        }
+      });
+    };
+    browser.runtime.onConnect.addListener(
+      this.extensionRemovalRequestPortListener,
+    );
+
     // Add hooks to the navigation batch preprocessor
     openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
       navigationBatch: NavigationBatch,
@@ -401,46 +422,117 @@ class ExtensionGlue {
     }
   }
 
-  /**
-   * Called at end of study, and if the user disables the study or it gets uninstalled by other means.
-   */
   async cleanup() {
     if (this.getStartedPortListener) {
-      browser.runtime.onConnect.removeListener(this.getStartedPortListener);
+      try {
+        browser.runtime.onConnect.removeListener(this.getStartedPortListener);
+      } catch (err) {
+        console.warn("extensionRemovalRequestPortListener removal error", err);
+      }
+    }
+    if (this.extensionRemovalRequestPortListener) {
+      try {
+        browser.runtime.onConnect.removeListener(
+          this.extensionRemovalRequestPortListener,
+        );
+      } catch (err) {
+        console.warn("extensionRemovalRequestPortListener removal error", err);
+      }
+    }
+    if (this.dataDeletionRequestsPortListener) {
+      try {
+        browser.runtime.onConnect.removeListener(
+          this.dataDeletionRequestsPortListener,
+        );
+      } catch (err) {
+        console.warn("dataDeletionRequestsPortListener removal error", err);
+      }
+    }
+    if (this.sharedDataRequestPortListener) {
+      try {
+        browser.runtime.onConnect.removeListener(
+          this.sharedDataRequestPortListener,
+        );
+      } catch (err) {
+        console.warn("sharedDataRequestPortListener removal error", err);
+      }
     }
     if (this.extensionPreferencesPortListener) {
-      browser.runtime.onConnect.removeListener(
-        this.extensionPreferencesPortListener,
-      );
+      try {
+        browser.runtime.onConnect.removeListener(
+          this.extensionPreferencesPortListener,
+        );
+      } catch (err) {
+        console.warn("extensionPreferencesPortListener removal error", err);
+      }
     }
     if (this.reportRegretFormPortListener) {
-      browser.runtime.onConnect.removeListener(
-        this.reportRegretFormPortListener,
-      );
+      try {
+        browser.runtime.onConnect.removeListener(
+          this.reportRegretFormPortListener,
+        );
+      } catch (err) {
+        console.warn("reportRegretFormPortListener removal error", err);
+      }
     }
     if (this.navigationInstrument) {
-      await this.navigationInstrument.cleanup();
+      try {
+        await this.navigationInstrument.cleanup();
+      } catch (err) {
+        console.warn("navigationInstrument cleanup error", err);
+      }
     }
     if (this.cookieInstrument) {
-      await this.cookieInstrument.cleanup();
+      try {
+        await this.cookieInstrument.cleanup();
+      } catch (err) {
+        console.warn("cookieInstrument cleanup error", err);
+      }
     }
     if (this.jsInstrument) {
-      await this.jsInstrument.cleanup();
+      try {
+        await this.jsInstrument.cleanup();
+      } catch (err) {
+        console.warn("jsInstrument cleanup error", err);
+      }
     }
     if (this.httpInstrument) {
-      await this.httpInstrument.cleanup();
+      try {
+        await this.httpInstrument.cleanup();
+      } catch (err) {
+        console.warn("httpInstrument cleanup error", err);
+      }
     }
     if (this.uiInstrument) {
-      await this.uiInstrument.cleanup();
+      try {
+        await this.uiInstrument.cleanup();
+      } catch (err) {
+        console.warn("uiInstrument cleanup error", err);
+      }
     }
     if (openWpmPacketHandler.navigationBatchPreprocessor) {
-      await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
+      try {
+        await openWpmPacketHandler.navigationBatchPreprocessor.cleanup();
+      } catch (err) {
+        console.warn(
+          "openWpmPacketHandler.navigationBatchPreprocessor cleanup error",
+          err,
+        );
+      }
     }
-    if (openWpmPacketHandler.navigationBatchPreprocessor) {
-      await youTubeUsageStatistics.cleanup();
+    if (youTubeUsageStatistics) {
+      try {
+        await youTubeUsageStatistics.cleanup();
+      } catch (err) {
+        console.warn("youTubeUsageStatistics cleanup error", err);
+      }
     }
     if (dataSharer && dataSharer.telemetryClient) {
-      await dataSharer.telemetryClient.cleanup();
+      try {
+        await dataSharer.telemetryClient.cleanup();
+      } catch (err) {
+        console.warn("dataSharer.telemetryClient cleanup error", err);
+      }
     }
   }
 }
