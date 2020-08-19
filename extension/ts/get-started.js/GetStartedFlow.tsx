@@ -170,8 +170,13 @@ export class GetStartedFlow extends Component<
                 </p>
                 <ul className="triangle-bullets">
                   <li>
-                    Right-click on the toolbar icon and select{" "}
-                    <span className="font-semibold">Remove Extension</span>.
+                    Right-click on the extension's toolbar icon and select{" "}
+                    <span className="font-semibold">
+                      {window.navigator.userAgent.indexOf("Firefox/") > -1
+                        ? "Remove Extension"
+                        : "Remove From Chrome..."}
+                    </span>
+                    .
                   </li>
                 </ul>
                 <ul className="triangle-bullets">
