@@ -71,6 +71,7 @@ class ExtensionGlue {
         "port-from-data-viewer:index",
         "port-from-data-viewer:component",
         "port-from-get-started:index",
+        "port-from-get-started:component",
         "port-from-not-available-notice:index",
         "port-from-ui-instrument-content-script:index",
         "port-from-response-body-listener-content-script:index",

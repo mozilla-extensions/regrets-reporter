@@ -8,10 +8,16 @@ import { config } from "../config";
 import { YouMakeTheInternetHealther } from "./inc/YouMakeTheInternetHealthier";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import Port = Runtime.Port;
+import { ExtensionPreferences } from "../background.js/Store";
+import { captureExceptionWithExtras } from "../shared-resources/ErrorReporting";
+import { DisplayError } from "../options-ui.js/DisplayError";
 
 export interface GetStartedFlowProps {}
 
 export interface GetStartedFlowState {
+  loading: boolean;
+  error: boolean;
+  extensionPreferences: ExtensionPreferences | null;
   bannerOpen: boolean;
 }
 
@@ -20,6 +26,9 @@ export class GetStartedFlow extends Component<
   GetStartedFlowState
 > {
   public state = {
+    loading: true,
+    error: false,
+    extensionPreferences: null,
     bannerOpen: true,
   };
 
@@ -30,12 +39,58 @@ export class GetStartedFlow extends Component<
     this.backgroundContextPort = browser.runtime.connect(browser.runtime.id, {
       name: "port-from-get-started:component",
     });
+
+    this.backgroundContextPort.postMessage({
+      requestExtensionPreferences: true,
+    });
+
+    this.backgroundContextPort.onMessage.addListener(
+      async (m: { extensionPreferences?: ExtensionPreferences }) => {
+        if (m.extensionPreferences) {
+          const { extensionPreferences } = m;
+          console.log("Get started UI received extension preferences", {
+            extensionPreferences,
+          });
+          await this.setState({
+            loading: false,
+            extensionPreferences,
+          });
+          return null;
+        }
+        captureExceptionWithExtras(new Error("Unexpected message"), { m });
+        console.error("Unexpected message", { m });
+        await this.setState({
+          loading: false,
+          error: true,
+        });
+      },
+    );
   }
 
   closeBanner = (event: MouseEvent) => {
     event.preventDefault();
     this.setState({
       bannerOpen: false,
+    });
+  };
+
+  saveExtensionPreferences = async (
+    updatedExtensionPreferences: ExtensionPreferences,
+  ) => {
+    this.backgroundContextPort.postMessage({
+      saveExtensionPreferences: { updatedExtensionPreferences },
+    });
+  };
+
+  handleEnableErrorReportingChange = async () => {
+    const shouldBeEnabled = !(
+      this.state.extensionPreferences.enableErrorReporting ||
+      this.state.extensionPreferences.enableAnalytics
+    );
+    await this.saveExtensionPreferences({
+      ...this.state.extensionPreferences,
+      enableErrorReporting: shouldBeEnabled,
+      enableAnalytics: shouldBeEnabled,
     });
   };
 
@@ -46,68 +101,71 @@ export class GetStartedFlow extends Component<
     });
   };
 
-  turnOffAnalyticsAndErrorReports = (event: MouseEvent) => {
-    event.preventDefault();
-    this.backgroundContextPort.postMessage({
-      turnOffAnalyticsAndErrorReports: true,
-    });
-  };
-
   render() {
+    if (this.state.error) {
+      return <DisplayError />;
+    }
     return (
       <>
         <div className="img-get-started-bg absolute" />
         <div className="img-circles absolute" />
-        {this.state.bannerOpen && (
-          <div className="bg-grey-90 text-center py-4 px-16">
-            <div
-              className="max-w-lg m-auto p-3 bg-grey-70 items-center text-grey-10 leading-tight rounded-xl lg:rounded-full flex flex-col"
-              role="alert"
-            >
-              <div className="font-normal text-m text-center flex-auto">
-                <div>
-                  RegretsReporter will by default submit YouTube usage
-                  statistics, analytics and error reports to Mozilla.
+        {!this.state.loading &&
+          this.state.extensionPreferences &&
+          this.state.bannerOpen && (
+            <div className="bg-grey-90 text-center py-4 px-16">
+              <div
+                className="max-w-lg m-auto p-3 bg-grey-70 items-center text-grey-10 leading-tight rounded-xl lg:rounded-full flex flex-col"
+                role="alert"
+              >
+                <div className="font-normal text-m text-center flex-auto">
+                  <div>
+                    RegretsReporter will by default submit YouTube usage
+                    statistics, analytics and error reports to Mozilla.
+                  </div>
+                  <div>
+                    If you choose to submit a Regret report, Mozilla will also
+                    receive a subset of your YouTube watch history.
+                  </div>
+                  <div>
+                    For details, see our{" "}
+                    <a
+                      href={config.privacyNoticeUrl}
+                      target="_blank"
+                      className="underline"
+                    >
+                      privacy notice
+                    </a>
+                    .
+                  </div>
                 </div>
-                <div>
-                  If you choose to submit a Regret report, Mozilla will also
-                  receive a subset of your YouTube watch history.
-                </div>
-                <div>
-                  For details, see our{" "}
-                  <a
-                    href={config.privacyNoticeUrl}
-                    target="_blank"
-                    className="underline"
+                <div className="flex mt-4 mb-1">
+                  <div
+                    onClick={this.closeBanner}
+                    className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
                   >
-                    privacy notice
-                  </a>
-                  .
-                </div>
-              </div>
-              <div className="flex mt-4 mb-1">
-                <div
-                  onClick={this.closeBanner}
-                  className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
-                >
-                  I understand
-                </div>
-                <div
-                  onClick={this.removeExtension}
-                  className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
-                >
-                  Turn off analytics and error reports
-                </div>
-                <div
-                  onClick={this.removeExtension}
-                  className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
-                >
-                  Remove RegretsReporter
+                    I understand
+                  </div>
+                  <div
+                    onClick={this.handleEnableErrorReportingChange}
+                    className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
+                  >
+                    Turn{" "}
+                    {this.state.extensionPreferences.enableErrorReporting ||
+                    this.state.extensionPreferences.enableAnalytics
+                      ? "off"
+                      : "on"}{" "}
+                    analytics and error reports
+                  </div>
+                  <div
+                    onClick={this.removeExtension}
+                    className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
+                  >
+                    Remove RegretsReporter
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         <div className="px-16">
           <div className="mx-auto max-w-2xl grid grid-cols-12 gap-5 font-sans text-xl">
             <div className="col-span-1" />
