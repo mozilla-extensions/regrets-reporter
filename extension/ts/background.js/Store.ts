@@ -8,8 +8,6 @@ export interface LocalStorageWrapper {
   set: StorageArea["set"];
 }
 
-export type ConsentStatus = null | "given" | "withdrawn";
-
 export interface ExtensionPreferences {
   enableAnalytics: boolean;
   enableErrorReporting: boolean;
