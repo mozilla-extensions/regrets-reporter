@@ -150,6 +150,13 @@ export class TelemetryClient {
       return false;
     };
     try {
+      // Remove browser info from queued payload metadata if analytics have been disabled
+      // between the time of a payload being queued and upload attempt
+      const extensionPreferences = await this.store.getExtensionPreferences();
+      if (!extensionPreferences.enableAnalytics) {
+        delete payload.event_metadata.browser_info;
+      }
+      // Upload
       result = await this.sendUploadPayloadRequest(payload).catch(onError);
       if (result !== false) {
         console.debug("Telemetry payload uploaded");

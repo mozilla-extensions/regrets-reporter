@@ -19,7 +19,7 @@ export interface SharedDataEventMetadata {
   client_timestamp: string;
   extension_installation_uuid: string;
   event_uuid: string;
-  browser_info: {
+  browser_info?: {
     build_id: string;
     name: string;
     vendor: string;
@@ -65,12 +65,16 @@ export class DataSharer {
         extension_installation_uuid:
           extensionPreferences.extensionInstallationUuid,
         event_uuid: makeUUID(),
-        browser_info: {
-          build_id: browserInfo.buildID,
-          vendor: browserInfo.vendor,
-          version: browserInfo.version,
-          name: browserInfo.name,
-        },
+        ...(extensionPreferences.enableAnalytics
+          ? {
+              browser_info: {
+                build_id: browserInfo.buildID,
+                vendor: browserInfo.vendor,
+                version: browserInfo.version,
+                name: browserInfo.name,
+              },
+            }
+          : {}),
         extension_version: browser.runtime.getManifest().version,
       },
     };

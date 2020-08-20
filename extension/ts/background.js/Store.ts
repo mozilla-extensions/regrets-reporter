@@ -11,6 +11,7 @@ export interface LocalStorageWrapper {
 export type ConsentStatus = null | "given" | "withdrawn";
 
 export interface ExtensionPreferences {
+  enableAnalytics: boolean;
   enableErrorReporting: boolean;
   extensionInstallationErrorReportingUuid: string;
   extensionInstallationUuid: string;
@@ -38,6 +39,7 @@ export class Store implements LocalStorageWrapper {
 
   initialExtensionPreferences = async (): Promise<ExtensionPreferences> => {
     return {
+      enableAnalytics: true,
       enableErrorReporting: true,
       // The following are not editable extension preferences, but attributes
       // that we want to display on the extension preferences dialog and/or
