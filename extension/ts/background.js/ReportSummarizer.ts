@@ -492,18 +492,26 @@ export class ReportSummarizer {
       // Handle ordinary full page loads
       const htmlContent =
         capturedContentEnvelope.capturedContent.decoded_content;
-      const matchArray = htmlContent.match(
-        /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
+      let matchArray;
+      // Most recently know style of markup
+      matchArray = htmlContent.match(
+        /var\sytInitialData\s*=\s*(.*);\s?<\/script>/,
       );
       if (!matchArray) {
-        console.dir(
-          { httpRequestEnvelope, capturedContentEnvelope, matchArray },
-          { depth: 4 },
+        // Older style of markup
+        matchArray = htmlContent.match(
+          /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
         );
-        throw new UnexpectedContentParseError(
-          { matchArray },
-          "No match of ytInitialData in htmlContent",
-        );
+        if (!matchArray) {
+          console.dir(
+            { httpRequestEnvelope, capturedContentEnvelope, matchArray },
+            { depth: 4 },
+          );
+          throw new UnexpectedContentParseError(
+            { matchArray },
+            "No match of ytInitialData in htmlContent",
+          );
+        }
       }
       ytInitialData = JSON.parse(matchArray[1]);
     } else {

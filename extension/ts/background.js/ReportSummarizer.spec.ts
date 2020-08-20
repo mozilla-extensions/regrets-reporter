@@ -9,6 +9,7 @@ import { youtubeVisitWatchPageOfADifferentType } from "./fixtures/ReportSummariz
 import { youtubeVisitMainPageSearchClickUserClickVideo } from "./fixtures/ReportSummarizer/youtubeVisitMainPageSearchClickUserClickVideo";
 import { youtubeVisitWatchPageAndSearchClickUserSearchResultVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndSearchClickUserSearchResultVideo";
 import { youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile";
+import { youtubeVisitWatchPageChrome20200820 } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageChrome20200820";
 
 const firstEncounteredWindowAndTabIds = (
   navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
@@ -123,6 +124,50 @@ describe("ReportSummarizer", function() {
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
         video_element_play_time: 0,
         document_visible_time: 0,
+      },
+      parent_youtube_navigations_metadata: [],
+    });
+  });
+
+  it("fixture: youtubeVisitWatchPageChrome20200820", async function() {
+    const reportSummarizer = new ReportSummarizer();
+    const fixture = youtubeVisitWatchPageChrome20200820;
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      fixture,
+    );
+
+    assert.equal(
+      youTubeNavigations.length,
+      1,
+      "should have found one youtube navigation",
+    );
+
+    // console.dir({ youTubeNavigations }, { depth: 5 });
+
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
+    const youTubeNavigationSpecificRegretReportData1 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_id: "g4mHPeMGTJM",
+          video_title: "10 hours of absolute silence (the original)",
+          video_description:
+            "10 hours of comfortable silence. Only watch the original, everything else may contain sound ;-)",
+          video_posting_date: "20 Sep 2011",
+          view_count_at_navigation: 4571365,
+          view_count_at_navigation_short: "4.5M views",
+        },
+        page_entry_point: "page_reload",
+        url_type: "watch_page",
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+        video_element_play_time: 4000,
+        document_visible_time: 4000,
       },
       parent_youtube_navigations_metadata: [],
     });
