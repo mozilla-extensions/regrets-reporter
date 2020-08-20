@@ -11,13 +11,17 @@ import Port = Runtime.Port;
 
 export interface GetStartedFlowProps {}
 
-export interface GetStartedFlowState {}
+export interface GetStartedFlowState {
+  bannerOpen: boolean;
+}
 
 export class GetStartedFlow extends Component<
   GetStartedFlowProps,
   GetStartedFlowState
 > {
-  public state = {};
+  public state = {
+    bannerOpen: true,
+  };
 
   private backgroundContextPort: Port;
 
@@ -28,10 +32,24 @@ export class GetStartedFlow extends Component<
     });
   }
 
+  closeBanner = (event: MouseEvent) => {
+    event.preventDefault();
+    this.setState({
+      bannerOpen: false,
+    });
+  };
+
   removeExtension = (event: MouseEvent) => {
     event.preventDefault();
     this.backgroundContextPort.postMessage({
       removeExtension: true,
+    });
+  };
+
+  turnOffAnalyticsAndErrorReports = (event: MouseEvent) => {
+    event.preventDefault();
+    this.backgroundContextPort.postMessage({
+      turnOffAnalyticsAndErrorReports: true,
     });
   };
 
@@ -40,37 +58,56 @@ export class GetStartedFlow extends Component<
       <>
         <div className="img-get-started-bg absolute" />
         <div className="img-circles absolute" />
-        <div className="bg-grey-90 text-center py-4 px-16">
-          <div
-            className="max-w-216 m-auto p-3 bg-grey-80 items-center text-grey-10 leading-tight rounded-xl lg:rounded-2xl flex flex-rows"
-            role="alert"
-          >
-            <div className="font-normal text-m text-center flex-auto">
-              <div>
-                RegretsReporter will by default submit usage statistics and
-                crash reports to Mozilla. <br />
-                If you specifically choose to submit a Regret report, Mozilla
-                will receive additional information.
-                <br />
-                For details, see our{" "}
-                <a
-                  href={config.privacyNoticeUrl}
-                  target="_blank"
-                  className="underline"
+        {this.state.bannerOpen && (
+          <div className="bg-grey-90 text-center py-4 px-16">
+            <div
+              className="max-w-lg m-auto p-3 bg-grey-70 items-center text-grey-10 leading-tight rounded-xl lg:rounded-full flex flex-col"
+              role="alert"
+            >
+              <div className="font-normal text-m text-center flex-auto">
+                <div>
+                  RegretsReporter will by default submit YouTube usage
+                  statistics, analytics and error reports to Mozilla.
+                </div>
+                <div>
+                  If you choose to submit a Regret report, Mozilla will also
+                  receive a subset of your YouTube watch history.
+                </div>
+                <div>
+                  For details, see our{" "}
+                  <a
+                    href={config.privacyNoticeUrl}
+                    target="_blank"
+                    className="underline"
+                  >
+                    privacy notice
+                  </a>
+                  .
+                </div>
+              </div>
+              <div className="flex mt-4 mb-1">
+                <div
+                  onClick={this.closeBanner}
+                  className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
                 >
-                  privacy notice
-                </a>
-                .
+                  I understand
+                </div>
+                <div
+                  onClick={this.removeExtension}
+                  className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
+                >
+                  Turn off analytics and error reports
+                </div>
+                <div
+                  onClick={this.removeExtension}
+                  className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
+                >
+                  Remove RegretsReporter
+                </div>
               </div>
             </div>
-            <div
-              onClick={this.removeExtension}
-              className="ml-2 flex rounded-full bg-grey-70 hover:bg-grey-50 uppercase px-3 py-2 text-xs font-bold mr-4 cursor-pointer"
-            >
-              Remove Extension
-            </div>
           </div>
-        </div>
+        )}
         <div className="px-16">
           <div className="mx-auto max-w-2xl grid grid-cols-12 gap-5 font-sans text-xl">
             <div className="col-span-1" />

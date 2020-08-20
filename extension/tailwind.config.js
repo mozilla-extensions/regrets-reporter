@@ -226,6 +226,7 @@ module.exports = {
       lg: ".5rem",
       xl: "1rem",
       "2xl": "2rem",
+      "3xl": "3rem",
       full: "9999px",
     },
     width: {
