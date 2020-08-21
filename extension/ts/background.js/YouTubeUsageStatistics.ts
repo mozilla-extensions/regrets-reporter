@@ -135,7 +135,7 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     });
     // Then update the statistics related to this navigation batch
     for (const youTubeNavigation of youTubeNavigations) {
-      this.seenYouTubeNavigation(youTubeNavigation, navigationBatchUuid);
+      await this.seenYouTubeNavigation(youTubeNavigation, navigationBatchUuid);
     }
   };
 
