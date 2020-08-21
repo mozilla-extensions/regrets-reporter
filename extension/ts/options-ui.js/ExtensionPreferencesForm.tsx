@@ -108,6 +108,14 @@ export class ExtensionPreferencesForm extends Component<
     });
   };
 
+  handleHidePrivacySummaryBannerChange = async changeEvent => {
+    await this.saveExtensionPreferences({
+      ...this.state.extensionPreferences,
+      hidePrivacySummaryBanner: !this.state.extensionPreferences
+        .hidePrivacySummaryBanner,
+    });
+  };
+
   requestDataDeletion = async () => {
     this.backgroundContextPort.postMessage({
       requestDataDeletion: true,
@@ -196,6 +204,31 @@ export class ExtensionPreferencesForm extends Component<
           )}
         </div>
         <div className="text-xl font-semibold mt-12">Privacy</div>
+        <div className="my-4">
+          <label className="flex items-center">
+            <span className="checkbox__label__text flex items-center">
+              <Checkbox
+                className="w-8 h-8 mr-2"
+                label=""
+                value="enable_error_reporting"
+                checked={
+                  this.state.extensionPreferences.hidePrivacySummaryBanner
+                }
+                onChange={this.handleHidePrivacySummaryBannerChange}
+              />
+              <span className="ml-1">
+                Hide the privacy summary banner on the{" "}
+                <a
+                  className="text-red underline"
+                  target="_blank"
+                  href={browser.runtime.getURL(`get-started/get-started.html`)}
+                >
+                  instructions page
+                </a>
+              </span>
+            </span>
+          </label>
+        </div>
         <div className="my-4">
           Please review the{" "}
           <a

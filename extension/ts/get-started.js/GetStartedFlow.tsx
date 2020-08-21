@@ -18,7 +18,6 @@ export interface GetStartedFlowState {
   loading: boolean;
   error: boolean;
   extensionPreferences: ExtensionPreferences | null;
-  bannerOpen: boolean;
 }
 
 export class GetStartedFlow extends Component<
@@ -29,7 +28,6 @@ export class GetStartedFlow extends Component<
     loading: true,
     error: false,
     extensionPreferences: null,
-    bannerOpen: true,
   };
 
   private backgroundContextPort: Port;
@@ -67,10 +65,11 @@ export class GetStartedFlow extends Component<
     );
   }
 
-  closeBanner = (event: MouseEvent) => {
+  hideBanner = async (event: MouseEvent) => {
     event.preventDefault();
-    this.setState({
-      bannerOpen: false,
+    await this.saveExtensionPreferences({
+      ...this.state.extensionPreferences,
+      hidePrivacySummaryBanner: true,
     });
   };
 
@@ -82,7 +81,8 @@ export class GetStartedFlow extends Component<
     });
   };
 
-  handleEnableErrorReportingChange = async () => {
+  handleEnableErrorReportingChange = async (event: MouseEvent) => {
+    event.preventDefault();
     const shouldBeEnabled = !(
       this.state.extensionPreferences.enableErrorReporting ||
       this.state.extensionPreferences.enableAnalytics
@@ -111,7 +111,7 @@ export class GetStartedFlow extends Component<
         <div className="img-circles absolute" />
         {!this.state.loading &&
           this.state.extensionPreferences &&
-          this.state.bannerOpen && (
+          !this.state.extensionPreferences.hidePrivacySummaryBanner && (
             <div className="bg-grey-90 text-center py-4 px-16">
               <div
                 className="max-w-lg m-auto p-3 bg-grey-70 items-center text-grey-10 leading-tight rounded-xl lg:rounded-full flex flex-col"
@@ -140,7 +140,7 @@ export class GetStartedFlow extends Component<
                 </div>
                 <div className="flex mt-4 mb-1">
                   <div
-                    onClick={this.closeBanner}
+                    onClick={this.hideBanner}
                     className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
                   >
                     I understand

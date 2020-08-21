@@ -11,6 +11,7 @@ export interface LocalStorageWrapper {
 export interface ExtensionPreferences {
   enableAnalytics: boolean;
   enableErrorReporting: boolean;
+  hidePrivacySummaryBanner: boolean;
   extensionInstallationErrorReportingUuid: string;
   extensionInstallationUuid: string;
   extensionVersion: string;
@@ -39,6 +40,7 @@ export class Store implements LocalStorageWrapper {
     return {
       enableAnalytics: true,
       enableErrorReporting: true,
+      hidePrivacySummaryBanner: false,
       // The following are not editable extension preferences, but attributes
       // that we want to display on the extension preferences dialog and/or
       // add as context in error reports
