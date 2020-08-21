@@ -21,7 +21,7 @@ export class DoorHanger extends Component<DoorHangerProps, DoorHangerState> {
       <>
         <DoorHangerHeader title={this.props.title} />
         <div className="doorhanger-content-gradient p-0">
-          <div className="doorhanger-content-circles p-5 font-sans">
+          <div className="doorhanger-content-circles p-4 font-sans">
             {this.props.children}
           </div>
         </div>

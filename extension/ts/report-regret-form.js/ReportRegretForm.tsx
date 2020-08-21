@@ -417,7 +417,7 @@ export class ReportRegretForm extends Component<
         >
           <form>
             <div className="px-0">
-              <div className="grid grid-cols-13 gap-5 -mx-0">
+              <div className="grid grid-cols-13 gap-4 -mx-0">
                 <div className="col-span-7 p-5 bg-white">
                   <div className="flex-1">
                     <div className="text-1.5xl font-serif font-bold leading-none mb-3">
@@ -446,71 +446,80 @@ export class ReportRegretForm extends Component<
                         }
                       </p>
                     </div>
+
+                    <footer className="mt-2">
+                      <div
+                        onClick={this.submitStep1}
+                        className="cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
+                      >
+                        Report Video{" "}
+                        {parentYouTubeNavigationsMetadata.length > 0 &&
+                          "& History"}
+                      </div>
+                    </footer>
                   </div>
                 </div>
-                <div className="col-span-6 p-5 bg-white flex flex-col">
-                  <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
-                    The path that led you here
-                  </div>
-                  {parentYouTubeNavigationsMetadata.length > 0 && (
-                    <TimeLine
-                      parentYouTubeNavigationsMetadata={
-                        parentYouTubeNavigationsMetadata
-                      }
-                      editable={true}
-                      userRemovedHistoryPositions={
-                        this.state.userRemovedHistoryPositions
-                      }
-                      onEdit={this.handleUserRemovedHistoryPositionsChange}
-                    />
-                  )}
-                  {parentYouTubeNavigationsMetadata.length === 0 && (
-                    <div className="flex-none text-sm">
-                      You visited this video directly. There are no other
-                      activities to report at this time.
+                <div className="col-span-6 flex flex-col">
+                  <div className="flex-1 p-5 bg-white flex flex-col">
+                    <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
+                      Video history for this session
                     </div>
-                  )}
-                  {parentYouTubeNavigationsMetadata.length === 0 && (
-                    <div className="flex-1 img-no-path" />
-                  )}
+                    {parentYouTubeNavigationsMetadata.length > 0 && (
+                      <TimeLine
+                        parentYouTubeNavigationsMetadata={
+                          parentYouTubeNavigationsMetadata
+                        }
+                        editable={true}
+                        userRemovedHistoryPositions={
+                          this.state.userRemovedHistoryPositions
+                        }
+                        onEdit={this.handleUserRemovedHistoryPositionsChange}
+                      />
+                    )}
+                    {parentYouTubeNavigationsMetadata.length === 0 && (
+                      <div className="flex-none text-sm">
+                        You visited this video directly. There are no other
+                        activities to report at this time.
+                      </div>
+                    )}
+                    {parentYouTubeNavigationsMetadata.length === 0 && (
+                      <div className="flex-1 img-no-path" />
+                    )}
+                  </div>
+                  <div className="mt-2 mb-10">
+                    <ul className="flex flex-col md:flex-row text-grey-90 items-start items-center justify-between text-xxs leading-relaxed">
+                      <li>
+                        <a
+                          className="inline mr-1.5 underline hover:text-grey-60"
+                          target="_blank"
+                          href={config.privacyNoticeUrl}
+                        >
+                          Privacy Notice
+                        </a>
+                        |
+                        <a
+                          className="inline mx-1.5 underline hover:text-grey-60"
+                          target="_blank"
+                          href={browser.runtime.getURL(
+                            `get-started/get-started.html`,
+                          )}
+                        >
+                          Instructions
+                        </a>
+                        |
+                        <a
+                          className="inline ml-1.5 underline hover:text-grey-60"
+                          target="_blank"
+                          href={config.feedbackSurveyUrl}
+                        >
+                          Send Us Feedback
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div className="mt-2">
-              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs leading-relaxed">
-                <li>
-                  Your report is shared with Mozilla according to our{" "}
-                  <Link
-                    className="inline text-red"
-                    target="_blank"
-                    href={config.privacyNoticeUrl}
-                  >
-                    Privacy Notice
-                  </Link>
-                  . More information:{" "}
-                  <Link
-                    className="inline text-red"
-                    target="_blank"
-                    href={browser.runtime.getURL(
-                      `get-started/get-started.html`,
-                    )}
-                  >
-                    RegretReporter Instructions
-                  </Link>
-                  .
-                </li>
-              </ul>
-            </div>
-
-            <footer className="mt-2">
-              <div
-                onClick={this.submitStep1}
-                className="cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
-              >
-                Report
-              </div>
-            </footer>
           </form>
         </DoorHanger>
       );
@@ -523,21 +532,24 @@ export class ReportRegretForm extends Component<
         >
           <form>
             <div className="px-0">
-              <div className="grid grid-cols-13 gap-5 -mx-0">
+              <div className="bg-indigo text-white pt-1.5 pb-1 px-3 flex mb-4">
+                <span className="flex-none img-check" />
+                <span className="pl-2 text-2xl font-bold tracking-wide">
+                  Thank you. Your report has been sent to Mozilla!
+                </span>
+              </div>
+              <div className="grid grid-cols-13 gap-4 -mx-0">
                 <div className="col-span-7 p-0 bg-white">
-                  <div className="uppercase bg-indigo text-white pt-1.5 pb-1 px-2 flex">
-                    <span className="flex-none img-check" />
-                    <span className="pl-1.5 text-m font-bold">
-                      Thank you. Your report has been sent!
-                    </span>
-                  </div>
                   <div className="p-5">
                     <div className="text-1.5xl font-serif font-bold leading-none">
                       Tell us more about your regret
                     </div>
                     <div className="font-sans text-base mt-2">
                       <div className="mb-2 font-semibold">
-                        Why do you regret watching this video?
+                        Why do you regret watching this video?{" "}
+                        <span className="uppercase text-grey-50 text-3xs font-light">
+                          Optional
+                        </span>
                       </div>
                       <ul className="list-none">
                         {[
@@ -613,7 +625,10 @@ export class ReportRegretForm extends Component<
                         </li>
                       </ul>
                       <div className="font-semibold mt-2 mb-1">
-                        How severe is your regret?
+                        How severe is your regret?{" "}
+                        <span className="uppercase text-grey-50 text-3xs font-light">
+                          Optional
+                        </span>
                       </div>
                       <div className="inline-flex h-10 w-34 justify-between cursor-pointer">
                         <button
@@ -683,7 +698,12 @@ export class ReportRegretForm extends Component<
                           />
                         </button>
                       </div>
-                      <div className="font-semibold mt-2">Tell us more:</div>
+                      <div className="font-semibold mt-2">
+                        Tell us more:{" "}
+                        <span className="uppercase text-grey-50 text-3xs font-light">
+                          Optional
+                        </span>
+                      </div>
                       <label className="textarea">
                         <textarea
                           className="w-full form-textarea mt-0 block w-full border p-1 rounded text-sm border-grey-30"
@@ -697,86 +717,87 @@ export class ReportRegretForm extends Component<
                         </textarea>
                       </label>
                     </div>
+
+                    <footer className="mt-4 flex">
+                      <div
+                        onClick={this.submitStep2}
+                        className="flex-1 cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
+                      >
+                        Send Additional Info
+                      </div>
+                    </footer>
                   </div>
                 </div>
-                <div className="col-span-6 p-5 bg-white flex flex-col">
-                  <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
-                    The video and history reported
-                  </div>
+                <div className="col-span-6 flex flex-col">
+                  <div className="flex-1 p-5 bg-white flex flex-col">
+                    <div className="flex-none text-lg font-serif font-semibold leading-none mb-5">
+                      The video and history reported
+                    </div>
 
-                  <TimeLineElement
-                    youTubeNavigationMetadata={youTubeNavigationMetadata}
-                    removed={false}
-                    bold={true}
-                    position={-1}
-                    editable={false}
-                  />
-
-                  <hr className="my-5 border-grey-20" />
-
-                  {parentYouTubeNavigationsMetadata.length > 0 && (
-                    <TimeLine
-                      parentYouTubeNavigationsMetadata={
-                        parentYouTubeNavigationsMetadata
-                      }
-                      userRemovedHistoryPositions={
-                        this.state.userRemovedHistoryPositions
-                      }
+                    <TimeLineElement
+                      youTubeNavigationMetadata={youTubeNavigationMetadata}
+                      removed={false}
+                      bold={true}
+                      position={-1}
                       editable={false}
                     />
-                  )}
-                  {parentYouTubeNavigationsMetadata.length === 0 && (
-                    <div className="flex-none text-sm">
-                      You visited this video directly.
-                    </div>
-                  )}
-                  {parentYouTubeNavigationsMetadata.length === 0 && (
-                    <div className="flex-1 img-no-path" />
-                  )}
+
+                    <hr className="my-5 border-grey-20" />
+
+                    {parentYouTubeNavigationsMetadata.length > 0 && (
+                      <TimeLine
+                        parentYouTubeNavigationsMetadata={
+                          parentYouTubeNavigationsMetadata
+                        }
+                        userRemovedHistoryPositions={
+                          this.state.userRemovedHistoryPositions
+                        }
+                        editable={false}
+                      />
+                    )}
+                    {parentYouTubeNavigationsMetadata.length === 0 && (
+                      <div className="flex-none text-sm">
+                        You visited this video directly.
+                      </div>
+                    )}
+                    {parentYouTubeNavigationsMetadata.length === 0 && (
+                      <div className="flex-1 img-no-path" />
+                    )}
+                  </div>
+                  <div className="mt-2 mb-8">
+                    <ul className="flex flex-col md:flex-row text-grey-90 items-start items-center justify-between text-xxs leading-relaxed">
+                      <li>
+                        <a
+                          className="inline mr-1.5 underline hover:text-grey-60"
+                          target="_blank"
+                          href={config.privacyNoticeUrl}
+                        >
+                          Privacy Notice
+                        </a>
+                        |
+                        <a
+                          className="inline mx-1.5 underline hover:text-grey-60"
+                          target="_blank"
+                          href={browser.runtime.getURL(
+                            `get-started/get-started.html`,
+                          )}
+                        >
+                          Instructions
+                        </a>
+                        |
+                        <a
+                          className="inline ml-1.5 underline hover:text-grey-60"
+                          target="_blank"
+                          href={config.feedbackSurveyUrl}
+                        >
+                          Send Us Feedback
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div className="mt-2">
-              <ul className="flex flex-col md:flex-row items-start items-center justify-between text-xxs leading-relaxed">
-                <li>
-                  Your report is shared with Mozilla according to our{" "}
-                  <Link
-                    className="inline text-red"
-                    target="_blank"
-                    href={config.privacyNoticeUrl}
-                  >
-                    Privacy Notice
-                  </Link>
-                  . More information:{" "}
-                  <Link
-                    className="inline text-red"
-                    target="_blank"
-                    href={browser.runtime.getURL(
-                      `get-started/get-started.html`,
-                    )}
-                  >
-                    RegretReporter Instructions
-                  </Link>
-                  .
-                </li>
-              </ul>
-            </div>
-
-            <footer className="mt-2 flex">
-              <div
-                onClick={this.skipStep2}
-                className="w-40 cursor-pointer leading-doorhanger-footer-button border border-red bg-transparent hover:bg-red-transparent text-red font-sans font-semibold py-1 px-5 text-xl text-center"
-              >
-                Skip
-              </div>
-              <div
-                onClick={this.submitStep2}
-                className="flex-1 ml-5 cursor-pointer leading-doorhanger-footer-button bg-red hover:bg-red-70 text-white font-sans font-semibold py-1 px-5 text-xl text-center"
-              >
-                Send Additional Info
-              </div>
-            </footer>
           </form>
         </DoorHanger>
       );

@@ -163,7 +163,8 @@ module.exports = {
       ],
     },
     fontSize: {
-      "3xs": ".5rem", // 8px
+      "4xs": ".5rem", // 8px
+      "3xs": ".625rem", // 8px
       xxs: ".6875rem", // 11px
       xs: ".75rem", // 12px
       sm: ".875rem", // 14px
@@ -200,9 +201,9 @@ module.exports = {
       "doorhanger-footer-button": 1.7,
     },
     letterSpacing: {
-      tight: "-0.05em",
+      tight: "-0.02em",
       normal: "0",
-      wide: "0.05em",
+      wide: "0.02em",
     },
     textColor: colors,
     backgroundColor: colors,
@@ -358,6 +359,7 @@ module.exports = {
       "1": "0.25rem",
       "1.5": "0.375rem",
       "2": "0.5rem",
+      "2.5": "0.625rem",
       "3": "0.75rem",
       "4": "1rem",
       "5": "1.25rem",
@@ -381,6 +383,7 @@ module.exports = {
       "0.5": "0.125rem",
       "0.88": "0.22rem",
       "1": "0.25rem",
+      "1.5": "0.375rem",
       "2": "0.5rem",
       "2.5": "0.625rem",
       "3": "0.75rem",
