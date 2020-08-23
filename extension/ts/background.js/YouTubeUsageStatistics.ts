@@ -489,27 +489,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   };
 
   private shareDataAlarmName: string;
-  private persistDataAlarmName: string;
 
   public async run(dataSharer: DataSharer) {
-    await this.persistDataPeriodically();
     await this.shareDataPeriodically(dataSharer);
-  }
-
-  public async persistDataPeriodically() {
-    this.persistDataAlarmName = `${browser.runtime.id}:youTubeUsageStatisticsPersistDataAlarm`;
-    const alarmListener = async _alarm => {
-      if (_alarm.name !== this.persistDataAlarmName) {
-        return false;
-      }
-      await this.persist();
-    };
-    browser.alarms.onAlarm.addListener(alarmListener);
-    browser.alarms.create(this.persistDataAlarmName, {
-      periodInMinutes: 5, // every 5 minutes
-    });
-    // Persist the current data immediately
-    await this.persist();
   }
 
   public async shareDataPeriodically(dataSharer: DataSharer) {
@@ -538,9 +520,6 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
   public async cleanup() {
     if (this.shareDataAlarmName) {
       await browser.alarms.clear(this.shareDataAlarmName);
-    }
-    if (this.persistDataAlarmName) {
-      await browser.alarms.clear(this.persistDataAlarmName);
     }
   }
 }

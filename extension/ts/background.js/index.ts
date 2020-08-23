@@ -299,6 +299,8 @@ class ExtensionGlue {
         // Keep track of aggregated statistics
         // TODO: Move this to a separate callback instead of piggybacking on processedNavigationBatchTrimmer
         await youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
+        // Persist the data immediately
+        await youTubeUsageStatistics.persist();
       } catch (error) {
         captureExceptionWithExtras(error, {
           msg:
