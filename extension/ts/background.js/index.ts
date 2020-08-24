@@ -263,10 +263,7 @@ class ExtensionGlue {
         return;
       }
       port.onMessage.addListener(async function(m) {
-        console.debug(
-          `sharedDataRequestPortListener message listener: Message from port "${port.name}"`,
-          { m },
-        );
+        // console.debug(`sharedDataRequestPortListener message listener: Message from port "${port.name}"`, { m });
         if (m.exportSharedData) {
           const sharedData = await dataSharer.export();
           port.postMessage({
@@ -283,10 +280,7 @@ class ExtensionGlue {
         return;
       }
       port.onMessage.addListener(async m => {
-        console.debug(
-          `extensionRemovalRequestPortListener message listener: Message from port "${port.name}"`,
-          { m },
-        );
+        // console.debug(`extensionRemovalRequestPortListener message listener: Message from port "${port.name}"`, { m });
         if (m.removeExtension) {
           await this.cleanup();
           await browser.management.uninstallSelf();
