@@ -240,6 +240,13 @@ class ExtensionGlue {
       port.onMessage.addListener(async function(m) {
         // console.debug(`dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`, { m });
         if (m.requestDataDeletion) {
+          // Reset client data so that subsequently reported statistics start fresh
+          await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
+          openWpmPacketHandler.navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue = [];
+          openWpmPacketHandler.navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+          youTubeUsageStatistics.reset();
+          await youTubeUsageStatistics.persist();
+          // Send the data deletion request
           await dataSharer.requestDataDeletion();
           port.postMessage({
             dataDeletionRequested: true,

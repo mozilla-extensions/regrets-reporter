@@ -412,6 +412,18 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
 
   private hydrated = false;
 
+  reset = () => {
+    this.dates_with_at_least_one_youtube_visit = [];
+    this.amount_of_youtube_watch_pages_loaded_by_category_and_navigation_batch_uuid = emptyAmountsByCategoryAndStringAttributes();
+    this.amount_of_time_with_an_active_youtube_tab_by_navigation_batch_uuid = {};
+    this.dates_with_at_least_one_youtube_watch_page_load_by_category = emptyDatesByCategory();
+    this.amount_of_time_with_an_active_youtube_watch_page_tab_by_category_and_navigation_batch_uuid = emptyAmountsByCategoryAndStringAttributes();
+    this.dates_with_at_least_one_video_played_on_a_youtube_watch_page_by_category = emptyDatesByCategory();
+    this.amount_of_youtube_videos_played_on_youtube_watch_pages_by_category_and_navigation_batch_uuid = emptyAmountsByCategoryAndStringAttributes();
+    this.amount_of_youtube_video_play_time_by_navigation_batch_uuid = {};
+    this.amount_of_youtube_video_play_time_on_youtube_watch_pages_by_category_and_navigation_batch_uuid = emptyAmountsByCategoryAndStringAttributes();
+  };
+
   hydrate = async () => {
     const {
       dates_with_at_least_one_youtube_visit,
