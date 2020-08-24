@@ -101,13 +101,6 @@ export class ExtensionPreferencesForm extends Component<
     });
   };
 
-  handleEnableAnalyticsChange = async changeEvent => {
-    await this.saveExtensionPreferences({
-      ...this.state.extensionPreferences,
-      enableAnalytics: !this.state.extensionPreferences.enableAnalytics,
-    });
-  };
-
   handleHidePrivacySummaryBannerChange = async changeEvent => {
     await this.saveExtensionPreferences({
       ...this.state.extensionPreferences,
@@ -137,9 +130,7 @@ export class ExtensionPreferencesForm extends Component<
     }
     return (
       <>
-        <div className="text-xl font-semibold">
-          Analytics and Error Reporting
-        </div>
+        <div className="text-xl font-semibold">Error Reporting</div>
         <div className="my-4">
           <label className="flex items-center">
             <span className="checkbox__label__text flex items-center">
@@ -153,21 +144,6 @@ export class ExtensionPreferencesForm extends Component<
               <span className="ml-1">
                 Allow RegretsReporter to send information about encountered
                 errors to Mozilla
-              </span>
-            </span>
-          </label>
-          <label className="flex items-center">
-            <span className="checkbox__label__text flex items-center">
-              <Checkbox
-                className="w-8 h-8 mr-2"
-                label=""
-                value="enable_error_reporting"
-                checked={this.state.extensionPreferences.enableAnalytics}
-                onChange={this.handleEnableAnalyticsChange}
-              />
-              <span className="ml-1">
-                Allow RegretsReporter to submit your browser name, build and
-                version to Mozilla
               </span>
             </span>
           </label>

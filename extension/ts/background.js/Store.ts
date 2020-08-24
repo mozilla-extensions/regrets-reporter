@@ -9,7 +9,6 @@ export interface LocalStorageWrapper {
 }
 
 export interface ExtensionPreferences {
-  enableAnalytics: boolean;
   enableErrorReporting: boolean;
   hidePrivacySummaryBanner: boolean;
   extensionInstallationErrorReportingUuid: string;
@@ -38,7 +37,6 @@ export class Store implements LocalStorageWrapper {
 
   initialExtensionPreferences = async (): Promise<ExtensionPreferences> => {
     return {
-      enableAnalytics: true,
       enableErrorReporting: true,
       hidePrivacySummaryBanner: false,
       // The following are not editable extension preferences, but attributes

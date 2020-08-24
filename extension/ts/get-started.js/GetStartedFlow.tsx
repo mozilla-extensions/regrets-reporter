@@ -83,14 +83,10 @@ export class GetStartedFlow extends Component<
 
   handleEnableErrorReportingChange = async (event: MouseEvent) => {
     event.preventDefault();
-    const shouldBeEnabled = !(
-      this.state.extensionPreferences.enableErrorReporting ||
-      this.state.extensionPreferences.enableAnalytics
-    );
     await this.saveExtensionPreferences({
       ...this.state.extensionPreferences,
-      enableErrorReporting: shouldBeEnabled,
-      enableAnalytics: shouldBeEnabled,
+      enableErrorReporting: !this.state.extensionPreferences
+        .enableErrorReporting,
     });
   };
 
@@ -120,7 +116,7 @@ export class GetStartedFlow extends Component<
                 <div className="font-normal text-m text-center flex-auto">
                   <div>
                     RegretsReporter will by default submit YouTube usage
-                    statistics, analytics and error reports to Mozilla.
+                    statistics and error reports to Mozilla.
                   </div>
                   <div>
                     If you choose to submit a Regret report, Mozilla will also
@@ -150,11 +146,10 @@ export class GetStartedFlow extends Component<
                     className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
                   >
                     Turn{" "}
-                    {this.state.extensionPreferences.enableErrorReporting ||
-                    this.state.extensionPreferences.enableAnalytics
+                    {this.state.extensionPreferences.enableErrorReporting
                       ? "off"
                       : "on"}{" "}
-                    analytics and error reports
+                    error reports
                   </div>
                   <div
                     onClick={this.removeExtension}

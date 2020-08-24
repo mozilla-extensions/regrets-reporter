@@ -4,7 +4,6 @@ import { YouTubeUsageStatisticsUpdate } from "./YouTubeUsageStatistics";
 import { Store } from "./Store";
 import { TelemetryClient } from "./TelemetryClient";
 import { browser } from "webextension-polyfill-ts";
-import { getChromiumBrowserInfo } from "./lib/getChromiumBrowserInfo";
 
 // The `browser` global object can't be set via the global object in test/browser-polyfills.ts
 // thus, it sets globalThis.browser instead, which we have to move to `browser` during tests.
@@ -19,12 +18,6 @@ export interface SharedDataEventMetadata {
   client_timestamp: string;
   extension_installation_uuid: string;
   event_uuid: string;
-  browser_info?: {
-    build_id: string;
-    name: string;
-    vendor: string;
-    version: string;
-  };
   extension_version: string;
 }
 
@@ -53,9 +46,6 @@ export class DataSharer {
   }
 
   async annotateSharedData(data: SharedData): Promise<AnnotatedSharedData> {
-    const browserInfo = browser.runtime.getBrowserInfo
-      ? await browser.runtime.getBrowserInfo()
-      : getChromiumBrowserInfo();
     const extensionPreferences = await this.store.getExtensionPreferences();
 
     return {
@@ -65,16 +55,6 @@ export class DataSharer {
         extension_installation_uuid:
           extensionPreferences.extensionInstallationUuid,
         event_uuid: makeUUID(),
-        ...(extensionPreferences.enableAnalytics
-          ? {
-              browser_info: {
-                build_id: browserInfo.buildID,
-                vendor: browserInfo.vendor,
-                version: browserInfo.version,
-                name: browserInfo.name,
-              },
-            }
-          : {}),
         extension_version: browser.runtime.getManifest().version,
       },
     };
@@ -82,10 +62,6 @@ export class DataSharer {
 
   async share(data: SharedData) {
     const { sharedData } = await this.store.get("sharedData");
-
-    const countsAsRegretReport = ($annotatedData: SharedData) =>
-      $annotatedData.regret_report &&
-      $annotatedData.regret_report.form_step !== 2;
 
     const annotatedData: AnnotatedSharedData = await this.annotateSharedData(
       data,

@@ -5,10 +5,6 @@ export interface EventMetadataColumns {
   event_metadata_event_uuid: string;
   event_metadata_client_timestamp: Date;
   event_metadata_extension_installation_uuid: string;
-  event_metadata_browser_build_id: string;
-  event_metadata_browser_vendor: string;
-  event_metadata_browser_version: string;
-  event_metadata_browser_name: string;
   event_metadata_extension_version: string;
 }
 
@@ -47,38 +43,6 @@ export const eventMetadataColumns = [
     resizable: true,
     sortable: true,
   },
-  {
-    key: "event_metadata_browser_vendor",
-    name: "Browser Vendor",
-    width: 150,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
-  {
-    key: "event_metadata_browser_name",
-    name: "Browser Name",
-    width: 130,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
-  {
-    key: "event_metadata_browser_version",
-    name: "Browser Version",
-    width: 140,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
-  {
-    key: "event_metadata_browser_build_id",
-    name: "Browser Build ID",
-    width: 150,
-    editable: false,
-    resizable: true,
-    sortable: true,
-  },
 ];
 
 export const flattenEventMetadata = (
@@ -88,10 +52,6 @@ export const flattenEventMetadata = (
     event_metadata_event_uuid: `${event_metadata.event_uuid}`,
     event_metadata_extension_installation_uuid: `${event_metadata.extension_installation_uuid}`,
     event_metadata_client_timestamp: new Date(event_metadata.client_timestamp),
-    event_metadata_browser_build_id: `${event_metadata.browser_info?.build_id}`,
-    event_metadata_browser_vendor: `${event_metadata.browser_info?.vendor}`,
-    event_metadata_browser_version: `${event_metadata.browser_info?.version}`,
-    event_metadata_browser_name: `${event_metadata.browser_info?.name}`,
     event_metadata_extension_version: `${event_metadata.extension_version}`,
   };
 };
