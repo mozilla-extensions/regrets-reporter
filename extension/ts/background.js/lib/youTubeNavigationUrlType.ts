@@ -134,6 +134,7 @@ export const classifyYouTubeNavigationUrlType = (
     "/reporthistory",
     "/account",
     "/ptracking",
+    "/img",
   ];
   for (const startWith of otherRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
