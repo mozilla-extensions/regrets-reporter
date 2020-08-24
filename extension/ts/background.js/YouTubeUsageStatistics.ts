@@ -1,4 +1,7 @@
-import { NavigationBatch } from "./NavigationBatchPreprocessor";
+import {
+  NavigationBatch,
+  NavigationBatchPreprocessor,
+} from "./NavigationBatchPreprocessor";
 import { parseIsoDateTimeString } from "./lib/dateUtils";
 import { format } from "date-fns";
 import { DataSharer } from "./DataSharer";
@@ -502,14 +505,21 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
 
   private shareDataAlarmName: string;
 
-  public async run(dataSharer: DataSharer) {
-    await this.shareDataPeriodically(dataSharer);
+  public async run(
+    dataSharer: DataSharer,
+    navigationBatchPreprocessor: NavigationBatchPreprocessor,
+  ) {
+    await this.shareDataPeriodically(dataSharer, navigationBatchPreprocessor);
   }
 
-  public async shareDataPeriodically(dataSharer: DataSharer) {
+  public async shareDataPeriodically(
+    dataSharer: DataSharer,
+    navigationBatchPreprocessor: NavigationBatchPreprocessor,
+  ) {
     this.shareDataAlarmName = `${browser.runtime.id}:youTubeUsageStatisticsShareDataAlarm`;
     const summarizeAndShareStatistics = async () => {
       console.info(`Summarizing and sharing youtube_usage_statistics_update`);
+      await navigationBatchPreprocessor.processQueue();
       const youTubeUsageStatisticsUpdate = await this.summarizeUpdate();
       await dataSharer.share({
         youtube_usage_statistics_update: youTubeUsageStatisticsUpdate,

@@ -347,7 +347,10 @@ class ExtensionGlue {
     await this.startOpenWPMInstrumentation(openwpmConfig);
 
     // Periodic submission of YouTube usage statistics
-    await youTubeUsageStatistics.run(dataSharer);
+    await youTubeUsageStatistics.run(
+      dataSharer,
+      openWpmPacketHandler.navigationBatchPreprocessor,
+    );
 
     // Attempt telemetry uploads periodically
     await dataSharer.telemetryClient.run();
