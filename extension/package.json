@@ -1,6 +1,6 @@
 {
   "name": "regrets-reporter",
-  "description": "Content Recommendation Engine Regrets Reporter",
+  "description": "Mozilla RegretsReporter extension",
   "version": "0.8.1",
   "author": "Mozilla",
   "dependencies": {
