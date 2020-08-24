@@ -242,8 +242,7 @@ class ExtensionGlue {
         if (m.requestDataDeletion) {
           // Reset client data so that subsequently reported statistics start fresh
           await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
-          openWpmPacketHandler.navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue = [];
-          openWpmPacketHandler.navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+          openWpmPacketHandler.navigationBatchPreprocessor.reset();
           youTubeUsageStatistics.reset();
           await youTubeUsageStatistics.persist();
           // Send the data deletion request

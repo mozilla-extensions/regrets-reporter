@@ -301,6 +301,10 @@ export class NavigationBatchPreprocessor {
     if (this.alarmName) {
       await browser.alarms.clear(this.alarmName);
     }
+    this.reset();
+  }
+
+  public reset() {
     this.openWpmPayloadEnvelopeProcessQueue = [];
     this.navigationBatchesByNavigationUuid = {};
   }
