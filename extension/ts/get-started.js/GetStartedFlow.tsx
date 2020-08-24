@@ -108,7 +108,7 @@ export class GetStartedFlow extends Component<
         {!this.state.loading &&
           this.state.extensionPreferences &&
           !this.state.extensionPreferences.hidePrivacySummaryBanner && (
-            <div className="bg-grey-90 text-center py-4 px-16">
+            <div className="font-sans bg-grey-90 text-center py-4 px-16">
               <div
                 className="max-w-lg m-auto p-3 bg-grey-70 items-center text-grey-10 leading-tight rounded-xl lg:rounded-full flex flex-col"
                 role="alert"
