@@ -340,10 +340,7 @@ export class ReportRegretForm extends Component<
 
   render() {
     if (this.state.error) {
-      if (
-        this.state.errorMessage.indexOf("No YouTube navigations captured yet") >
-        -1
-      ) {
+      if (this.state.errorMessage.indexOf("No YouTube navigations") > -1) {
         return (
           <DisplayError
             message={`Please wait for the YouTube page to load or, if it seems like it has loaded: Reload the page`}
