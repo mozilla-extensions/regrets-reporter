@@ -15,6 +15,7 @@
   - [Creating a signed build of the add-on](#creating-a-signed-build-of-the-add-on)
   - [Generating JSON schema for telemetry ingestion based on typings](#generating-json-schema-for-telemetry-ingestion-based-on-typings)
   - [Validating the generated JSON schema](#validating-the-generated-json-schema)
+  - [Troubleshooting](#troubleshooting)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
