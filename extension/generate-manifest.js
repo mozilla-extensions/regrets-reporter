@@ -48,7 +48,7 @@ async function generateManifest({ dotEnvPath }) {
     manifest.applications = {
       gecko: {
         id: "regrets-reporter@mozillafoundation.org",
-        strict_min_version: "76.0a1",
+        strict_min_version: "80.0a1",
       },
     };
     manifest.browser_action.browser_style = false;
