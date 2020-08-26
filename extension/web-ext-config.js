@@ -33,11 +33,13 @@ if (targetBrowser === "firefox") {
   defaultConfig.run.firefox =
     process.env.FIREFOX_BINARY || "firefoxdeveloperedition";
   defaultConfig.run.target = ["firefox-desktop"];
+  defaultConfig.filename = `{name}-{version}-firefox.xpi`;
 }
 
 if (targetBrowser === "chrome") {
   defaultConfig.run.target = ["chromium"];
   defaultConfig.run.startUrl = [exampleYoutubeWatchpage, "chrome://extensions"];
+  defaultConfig.filename = `{name}-{version}-chrome.zip`;
 }
 
 module.exports = defaultConfig;
