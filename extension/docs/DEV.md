@@ -229,3 +229,10 @@ yarn dev-telemetry-server
 ```
 
 3. Use `TELEMETRY_SERVER=http://localhost` in .env.development.
+
+## Troubleshooting
+
+1. Go to `about:devtools-toolbox?type=extension&id=regrets-reporter%40mozillafoundation.org`
+2. Click Console
+
+To clear the current output, click the Trash can icon in the top left.
