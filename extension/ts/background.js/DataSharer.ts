@@ -93,7 +93,7 @@ export class DataSharer {
     });
   }
 
-  async export() {
+  async export(): Promise<AnnotatedSharedData[]> {
     const { sharedData } = await this.store.get("sharedData");
     return sharedData || [];
   }

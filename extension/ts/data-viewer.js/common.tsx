@@ -43,6 +43,14 @@ export const eventMetadataColumns = [
     resizable: true,
     sortable: true,
   },
+  {
+    key: "event_metadata_extension_version",
+    name: "Extension Version",
+    width: 200,
+    editable: false,
+    resizable: true,
+    sortable: true,
+  },
 ];
 
 export const flattenEventMetadata = (

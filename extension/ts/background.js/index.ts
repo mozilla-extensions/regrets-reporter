@@ -5,6 +5,7 @@ import {
   initErrorReportingInBackgroundScript,
 } from "../shared-resources/ErrorReporting";
 import { browser, Runtime } from "webextension-polyfill-ts";
+import semver from "semver";
 import {
   CookieInstrument,
   JavascriptInstrument,
@@ -25,7 +26,7 @@ import {
 } from "./NavigationBatchPreprocessor";
 import { YouTubeUsageStatistics } from "./YouTubeUsageStatistics";
 import { OpenWpmPacketHandler } from "./OpenWpmPacketHandler";
-import { DataSharer } from "./DataSharer";
+import { AnnotatedSharedData, DataSharer } from "./DataSharer";
 import { Store } from "./Store";
 import { localStorageWrapper } from "./lib/localStorageWrapper";
 import { getCurrentTab } from "./lib/getCurrentTab";
@@ -77,6 +78,13 @@ class ExtensionGlue {
         "port-from-response-body-listener-content-script:index",
       ],
     );
+  }
+
+  async resetClientData() {
+    await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
+    openWpmPacketHandler.navigationBatchPreprocessor.reset();
+    youTubeUsageStatistics.reset();
+    await youTubeUsageStatistics.persist();
   }
 
   async openGetStarted() {
@@ -237,14 +245,11 @@ class ExtensionGlue {
       if (port.name !== "port-from-options-ui:form") {
         return;
       }
-      port.onMessage.addListener(async function(m) {
+      port.onMessage.addListener(async m => {
         // console.debug(`dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`, { m });
         if (m.requestDataDeletion) {
           // Reset client data so that subsequently reported statistics start fresh
-          await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
-          openWpmPacketHandler.navigationBatchPreprocessor.reset();
-          youTubeUsageStatistics.reset();
-          await youTubeUsageStatistics.persist();
+          await this.resetClientData();
           // Send the data deletion request
           await dataSharer.requestDataDeletion();
           port.postMessage({
@@ -573,3 +578,47 @@ async function onEveryExtensionLoad() {
   await extensionGlue.start();
 }
 onEveryExtensionLoad().then();
+
+// migrations
+const onUpgrade = async () => {
+  console.info("Running onUpgrade callback");
+  const resetClientDataIfDataWasSharedPre090 = async () => {
+    // Reset client data if the installation was active before v0.9.0 so that reported statistics start fresh
+    const sharedData = await dataSharer.export();
+    const sharedDataPre090 = sharedData.filter((data: AnnotatedSharedData) => {
+      return (
+        !data.event_metadata.extension_version ||
+        semver.satisfies(data.event_metadata.extension_version, "<0.9.0")
+      );
+    });
+    if (sharedDataPre090.length > 0) {
+      console.info(
+        "RegretsReporter has reset the client data since it detected client data pre v0.9.0 which gave inaccurate usage statistics",
+      );
+      await this.resetClientData();
+    }
+    await browser.storage.local.set({
+      hasAttemptedResetClientDataIfDataWasSharedPre090: true,
+    });
+  };
+  const {
+    hasAttemptedResetClientDataIfDataWasSharedPre090,
+  } = await browser.storage.local.get(
+    "hasAttemptedResetClientDataIfDataWasSharedPre090",
+  );
+  if (!hasAttemptedResetClientDataIfDataWasSharedPre090) {
+    await resetClientDataIfDataWasSharedPre090();
+  }
+};
+
+// upgrade callback
+browser.runtime.onInstalled.addListener(async ({ reason, temporary }) => {
+  if (temporary) return; // skip during development
+  switch (reason) {
+    case "update":
+      {
+        await onUpgrade();
+      }
+      break;
+  }
+});

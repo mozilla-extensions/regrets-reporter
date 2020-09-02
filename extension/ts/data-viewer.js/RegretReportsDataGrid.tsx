@@ -8,6 +8,7 @@ import DataGrid, {
 } from "react-data-grid";
 import { ClickToViewFormatter } from "./ClickToViewFormatter";
 import "react-data-grid/dist/react-data-grid.css";
+import semver from "semver";
 import { AnnotatedSharedData } from "../background.js/DataSharer";
 import {
   EmptyRowsRenderer,
@@ -157,6 +158,11 @@ export function RegretReportsDataGrid({
         default:
           sortedRows = sortedRows.sort((a, b) =>
             a[sortColumn].localeCompare(b[sortColumn]),
+          );
+          break;
+        case "event_metadata_extension_version":
+          sortedRows = sortedRows.sort((a, b) =>
+            semver.gt(a[sortColumn], b[sortColumn]),
           );
           break;
         case "event_metadata_client_timestamp":
