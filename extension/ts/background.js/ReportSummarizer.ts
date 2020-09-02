@@ -1330,8 +1330,9 @@ export class ReportSummarizer {
       .slice()
       .pop();
     if (!mostRecentYouTubeNavigation) {
+      console.debug({ windowId, tabId });
       throw new Error(
-        `No YouTube navigations matching window id ${windowId}, tab id ${tabId} captured yet (or they have expired)`,
+        `No YouTube navigations matching the specific window and tab id captured yet (or they have expired)`,
       );
     }
     // console.log({ youTubeNavigations, mostRecentYouTubeNavigation });
