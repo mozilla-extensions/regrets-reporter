@@ -487,6 +487,7 @@ export class ReportSummarizer {
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
   ): YouTubePageMetadata {
     let ytInitialData;
+    let errorContext;
 
     if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
       // Handle ordinary full page loads
@@ -549,11 +550,17 @@ export class ReportSummarizer {
 
     let video_id;
     try {
+      if (!ytInitialData.currentVideoEndpoint) {
+        // this has been detected in error reports and further information is necessary to understand the context
+        errorContext = {
+          ytInitialDataObjectKeys: Object.keys(ytInitialData),
+        };
+      }
       video_id = ytInitialData.currentVideoEndpoint.watchEndpoint.videoId;
     } catch (err) {
       captureExceptionWithExtras(
         err,
-        { attribute: "video_id" },
+        { attribute: "video_id", ...errorContext },
         Sentry.Severity.Warning,
       );
       console.error("video_id", err.message);
@@ -639,6 +646,20 @@ export class ReportSummarizer {
       }
 
       try {
+        if (
+          !twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
+            .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount
+            .simpleText
+        ) {
+          // this has been detected in error reports and further information is necessary to understand the context
+          errorContext = {
+            viewCountObjectKeys: Object.keys(
+              twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
+                .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
+                .viewCount,
+            ),
+          };
+        }
         view_count_at_navigation = parseInt(
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer.videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
             /\D/g,
@@ -651,6 +672,7 @@ export class ReportSummarizer {
           err,
           {
             attribute: "view_count_at_navigation",
+            ...errorContext,
           },
           Sentry.Severity.Warning,
         );
@@ -659,6 +681,19 @@ export class ReportSummarizer {
       }
 
       try {
+        if (
+          !twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
+            .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
+            .shortViewCount
+        ) {
+          // this has been detected in error reports and further information is necessary to understand the context
+          errorContext = {
+            videoViewCountRendererObjectKeys: Object.keys(
+              twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
+                .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer,
+            ),
+          };
+        }
         view_count_at_navigation_short =
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
             .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
@@ -668,6 +703,7 @@ export class ReportSummarizer {
           err,
           {
             attribute: "view_count_at_navigation_short",
+            ...errorContext,
           },
           Sentry.Severity.Warning,
         );
@@ -688,6 +724,24 @@ export class ReportSummarizer {
 
     let video_description;
     try {
+      if (!ytInitialData.contents) {
+        // this has been detected in error reports and further information is necessary to understand the context
+        errorContext = {
+          ytInitialDataObjectKeys: Object.keys(ytInitialData),
+        };
+      } else {
+        if (
+          !ytInitialData.contents.twoColumnWatchNextResults.results.results
+            .contents
+        ) {
+          // this has been detected in error reports and further information is necessary to understand the context
+          errorContext = {
+            resultsResultsObjectKeys: Object.keys(
+              ytInitialData.contents.twoColumnWatchNextResults.results.results,
+            ),
+          };
+        }
+      }
       const twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer = ytInitialData.contents.twoColumnWatchNextResults.results.results.contents.find(
         contents => {
           return contents.videoSecondaryInfoRenderer !== undefined;
@@ -707,6 +761,7 @@ export class ReportSummarizer {
         err,
         {
           attribute: "video_description",
+          ...errorContext,
         },
         Sentry.Severity.Warning,
       );
