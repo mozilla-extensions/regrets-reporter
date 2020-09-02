@@ -3,6 +3,7 @@
 import {
   captureExceptionWithExtras,
   initErrorReportingInBackgroundScript,
+  Sentry,
 } from "../shared-resources/ErrorReporting";
 import { browser, Runtime } from "webextension-polyfill-ts";
 import semver from "semver";
@@ -41,6 +42,14 @@ const youTubeUsageStatistics = new YouTubeUsageStatistics(
 );
 const dataSharer = new DataSharer(store);
 
+const resetClientData = async () => {
+  await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
+  openWpmPacketHandler.navigationBatchPreprocessor.reset();
+  await youTubeUsageStatistics.hydrate();
+  youTubeUsageStatistics.reset();
+  await youTubeUsageStatistics.persist();
+};
+
 /**
  * Ties together overall execution logic and allows content scripts
  * to access persistent storage via cross-process messaging
@@ -78,13 +87,6 @@ class ExtensionGlue {
         "port-from-response-body-listener-content-script:index",
       ],
     );
-  }
-
-  async resetClientData() {
-    await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
-    openWpmPacketHandler.navigationBatchPreprocessor.reset();
-    youTubeUsageStatistics.reset();
-    await youTubeUsageStatistics.persist();
   }
 
   async openGetStarted() {
@@ -249,7 +251,7 @@ class ExtensionGlue {
         // console.debug(`dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`, { m });
         if (m.requestDataDeletion) {
           // Reset client data so that subsequently reported statistics start fresh
-          await this.resetClientData();
+          await resetClientData();
           // Send the data deletion request
           await dataSharer.requestDataDeletion();
           port.postMessage({
@@ -551,12 +553,12 @@ class ExtensionGlue {
 // make an instance of the ExtensionGlue class available to the extension background context
 const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 
-// make the openWpmPacketHandler singleton and triggerClientDownloadOfData available to
-// the extension background context so that we as developers can collect fixture data
+// make certain objects available to the extension background context for debugging and testing purposes
 (window as any).openWpmPacketHandler = openWpmPacketHandler;
 (window as any).reportSummarizer = reportSummarizer;
 (window as any).youTubeUsageStatistics = youTubeUsageStatistics;
 (window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
+(window as any).resetClientData = resetClientData;
 (window as any).exportSharedData = async () => {
   const sharedData = await dataSharer.export();
   return triggerClientDownloadOfData(
@@ -593,9 +595,10 @@ const onUpgrade = async () => {
     });
     if (sharedDataPre090.length > 0) {
       console.info(
-        "RegretsReporter has reset the client data since it detected client data pre v0.9.0 which gave inaccurate usage statistics",
+        "RegretsReporter will now reset the client data since it detected client data pre v0.9.0 which gave inaccurate usage statistics",
       );
-      await this.resetClientData();
+      await resetClientData();
+      console.info("Client data has been reset");
     }
     await browser.storage.local.set({
       hasAttemptedResetClientDataIfDataWasSharedPre090: true,
@@ -613,12 +616,24 @@ const onUpgrade = async () => {
 
 // upgrade callback
 browser.runtime.onInstalled.addListener(async ({ reason, temporary }) => {
-  if (temporary) return; // skip during development
-  switch (reason) {
-    case "update":
+  try {
+    if (temporary) return; // skip during development
+    switch (reason) {
+      case "update":
+        {
+          await onUpgrade();
+        }
+        break;
+    }
+  } catch (err) {
+    captureExceptionWithExtras(
+      err,
       {
-        await onUpgrade();
-      }
-      break;
+        reason,
+        temporary,
+      },
+      Sentry.Severity.Error,
+    );
+    console.error(err);
   }
 });
