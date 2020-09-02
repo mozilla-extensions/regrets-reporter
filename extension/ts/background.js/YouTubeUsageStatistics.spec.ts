@@ -248,6 +248,15 @@ describe("YouTubeUsageStatistics", function() {
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
       },
     });
+
+    // After reset + persist + re-hydration
+    await youTubeUsageStatistics.reset();
+    await youTubeUsageStatistics.persist();
+    await youTubeUsageStatistics2.hydrate();
+    const summarizedUpdate4 = await youTubeUsageStatistics.summarizeUpdate();
+    assert.deepEqual(summarizedUpdate4, summarizedUpdate2);
+    const summarizedUpdate5 = await youTubeUsageStatistics2.summarizeUpdate();
+    assert.deepEqual(summarizedUpdate5, summarizedUpdate2);
   });
 
   it("fixture: youtubeVisitWatchPageAndNavigateToFirstUpNext", async function() {
