@@ -33,6 +33,7 @@ async function generateManifest({ dotEnvPath }) {
     icons: {
       48: "icons/extension-icon.svg.48x48.png",
       96: "icons/extension-icon.svg.96x96.png",
+      128: "icons/extension-icon.svg.128x128.png",
     },
     browser_action: {
       default_icon: "icons/icon-toolbar-inactive.svg",
