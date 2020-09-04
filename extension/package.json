@@ -1,7 +1,7 @@
 {
   "name": "regrets-reporter",
   "description": "Mozilla RegretsReporter extension",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "author": "Mozilla",
   "dependencies": {
     "@openwpm/webext-instrumentation": "../instrumentation/OpenWPM/automation/Extension/webext-instrumentation",
