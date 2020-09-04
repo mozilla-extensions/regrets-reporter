@@ -7,8 +7,7 @@ export const config = {
     orphanAgeThresholdInSeconds: 60 * 5, // assume non-batched child packages to be orphans after 5 minutes
   },
   privacyNoticeUrl:
-    // "https://foundation.mozilla.org/campaigns/regretsreporter-privacy-notice",
-    "https://sites.google.com/mozillafoundation.org/regrets-reporter-staff-test/privacy-notice",
+    "https://foundation.mozilla.org/campaigns/regretsreporter-privacy-notice",
   feedbackSurveyUrl:
     "https://qsurvey.mozilla.com/s3/regrets-reporter-product-feedback",
 };
