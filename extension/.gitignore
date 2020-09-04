@@ -7,6 +7,5 @@ stats.json
 yarn-error.log
 *.map
 node_modules/
-.env
-.env.production*
-.env.development*
+.env*
+!.env.example
