@@ -26,7 +26,6 @@ async function generateManifest({ dotEnvPath }) {
       // "*://*.youtu.be/*",
       `${process.env.TELEMETRY_SERVER}/*`,
       "webRequest",
-      "webRequestBlocking",
       "webNavigation",
       "storage",
       "alarms",
@@ -53,6 +52,8 @@ async function generateManifest({ dotEnvPath }) {
     };
     manifest.browser_action.browser_style = false;
     manifest.options_ui.browser_style = false;
+    // Required for responseBodyListenerOptions.saveContentViaFilterResponseData which is only available on Firefox
+    manifest.permissions.push("webRequestBlocking");
   }
   if (targetBrowser === "chrome") {
     manifest.browser_action.chrome_style = false;
