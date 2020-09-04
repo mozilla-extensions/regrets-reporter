@@ -39,12 +39,9 @@ export class Store implements LocalStorageWrapper {
     return {
       enableErrorReporting: true,
       hidePrivacySummaryBanner: false,
-      // The following are not editable extension preferences, but attributes
-      // that we want to display on the extension preferences dialog and/or
-      // add as context in error reports
-      extensionInstallationErrorReportingUuid: await this.extensionInstallationErrorReportingUuid(),
-      extensionInstallationUuid: await this.extensionInstallationUuid(),
-      extensionVersion: browser.runtime.getManifest().version,
+      extensionInstallationErrorReportingUuid: "",
+      extensionInstallationUuid: "",
+      extensionVersion: "",
     };
   };
 
@@ -86,6 +83,14 @@ export class Store implements LocalStorageWrapper {
     return {
       ...(await this.initialExtensionPreferences()),
       ...extensionPreferences,
+      ...{
+        // The following are not editable extension preferences, but attributes
+        // that we want to display on the extension preferences dialog and/or
+        // add as context in error reports
+        extensionInstallationErrorReportingUuid: await this.extensionInstallationErrorReportingUuid(),
+        extensionInstallationUuid: await this.extensionInstallationUuid(),
+        extensionVersion: browser.runtime.getManifest().version,
+      },
     };
   };
 
