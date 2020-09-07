@@ -27,9 +27,13 @@
 
 ```
 yarn install
+cp .env.example .env.development
+cp .env.example .env.production
 ```
 
-Configure `.env.*` with values as per https://docs.sentry.io/cli/configuration/, then check the configuration using:
+Configure `.env.development` and `.env.production` with values as per https://docs.sentry.io/cli/configuration/.
+
+Hint: You can verify that the Sentry configuration is working using:
 
 ```
 cp .env.development .env
@@ -68,15 +72,6 @@ For Chrome:
 
 ```
 yarn watch:chrome
-```
-
-Note: The OpenWPM code (used for instrumentation of traffic data) is located in a submodule adjacent to the extension
-directory and needs to be copied/synced to the extension directory to be used by the extension. This is done before
-any build/start command, but not while in watch mode. After changing OpenWPM code, run the following to directly make
-use of changed OpenWPM code:
-
-```
-yarn openwpm-updated
 ```
 
 ## Opening up specific add-on pages
