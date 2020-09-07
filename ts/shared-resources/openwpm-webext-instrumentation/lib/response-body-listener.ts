@@ -264,7 +264,7 @@ export class ResponseBodyListener {
             } catch (error) {
               const logMsg = `${logMsgPrefix}Error occurred when trying to match response info from injected page script messages: ${error.message}\n${error.stack}`;
               console.error(logMsg, error);
-              dataReceiver.logError(logMsg);
+              await dataReceiver.logError(logMsg);
             }
           }
         };
