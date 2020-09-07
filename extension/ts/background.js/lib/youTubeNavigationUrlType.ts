@@ -60,6 +60,7 @@ export const classifyYouTubeNavigationUrlType = (
     "/heartbeat",
     "/error_204",
     "/yts/",
+    "/videoplayback",
   ];
   for (const startWith of miscXhrRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
