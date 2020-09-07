@@ -1,6 +1,3 @@
 [submodule "instrumentation/OpenWPM"]
 	path = instrumentation/OpenWPM
 	url = git@github.com:motin/OpenWPM.git
-[submodule "crawl-engineering/openwpm-crawler"]
-	path = crawl-engineering/openwpm-crawler
-	url = git@github.com:motin/openwpm-crawler.git
