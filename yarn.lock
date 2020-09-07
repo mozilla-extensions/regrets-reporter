@@ -966,14 +966,6 @@
   dependencies:
     mkdirp "^1.0.4"
 
-"@openwpm/webext-instrumentation@../instrumentation/OpenWPM/automation/Extension/webext-instrumentation":
-  version "0.4.0"
-  dependencies:
-    content-scripts-register-polyfill "^1.0.1"
-    webext-patterns "^0.9.0"
-    webextension-polyfill-ts "^0.17.0"
-    xhook "github:jpillora/xhook#es6-2020-refactor"
-
 "@peculiar/asn1-schema@^1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@peculiar/asn1-schema/-/asn1-schema-1.0.5.tgz#aa5a2c51225d213d1d6a5499ada926da3f556ff5"
@@ -1169,10 +1161,10 @@
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
   integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
 
-"@types/firefox-webext-browser@^70.0.1":
-  version "70.0.1"
-  resolved "https://registry.yarnpkg.com/@types/firefox-webext-browser/-/firefox-webext-browser-70.0.1.tgz#53a3915bfbe25e2c5ec439dbdbe6e303610012bb"
-  integrity sha512-hjHsTR9vKs+yikWbNS/s7TVCx15M/MEn+VYx47wtT/W/wORsIZDD75gfUfP7lkzi+IxRvKMQBB/5/wMFlfgvgQ==
+"@types/firefox-webext-browser@^78.0.1":
+  version "78.0.1"
+  resolved "https://registry.yarnpkg.com/@types/firefox-webext-browser/-/firefox-webext-browser-78.0.1.tgz#9c3b929c65a8263facac03ab930b0fb0f8addfbb"
+  integrity sha512-0d7oiI9K6Y4efP4Crl3JB88zYl7vaRdLtumqz8v6axMF8RCnK0NaGUjL4DnyQ7GLPo98b+s0BSRalaxAXgvPAQ==
 
 "@types/json-schema@^7.0.3":
   version "7.0.4"
@@ -3594,12 +3586,12 @@ contains-path@^0.1.0:
   resolved "https://registry.yarnpkg.com/contains-path/-/contains-path-0.1.0.tgz#fe8cf184ff6670b6baef01a9d4861a5cbec4120a"
   integrity sha1-/ozxhP9mcLa67wGp1IYaXL7EEgo=
 
-content-scripts-register-polyfill@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/content-scripts-register-polyfill/-/content-scripts-register-polyfill-1.0.1.tgz#c090ce6cc130e60ab2534d7644730719fafd6b3f"
-  integrity sha512-VuL9uPNlUTgkn2Q2EepkK8FGh+AtIDtpCNglWioZRibFK2BFDQC/FKWIXKoiibh2tYdMiHjI5LvPyotZcNcUlw==
+content-scripts-register-polyfill@^1.0.1, content-scripts-register-polyfill@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/content-scripts-register-polyfill/-/content-scripts-register-polyfill-1.0.5.tgz#8b68b6cf156357df54ac4a2789acbe76847ab946"
+  integrity sha512-SNpw8Qn3DeIRGLIVgeOdDrWftlwKMcIqaKTrZ67MEtBnt/rC1MG8GAWINxrrizOymSBDszk8K2CJ2AJPNILCcg==
   dependencies:
-    "@types/firefox-webext-browser" "^70.0.1"
+    "@types/firefox-webext-browser" "^78.0.1"
     webext-patterns "^0.9.0"
 
 convert-source-map@^1.5.1, convert-source-map@^1.7.0:

@@ -1,5 +1,5 @@
 import { parse } from "date-fns";
-import { dateTimeUnicodeFormatString } from "./openwpm-webext-instrumentation";
+import { dateTimeUnicodeFormatString } from "../../shared-resources/openwpm-webext-instrumentation";
 import { differenceInMilliseconds } from "date-fns";
 
 export const parseIsoDateTimeString = isoDateTimeString => {

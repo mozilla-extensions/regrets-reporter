@@ -12,7 +12,7 @@ import {
   NavigationInstrument,
   UiInstrument,
   ResponseBodyListener,
-} from "./lib/openwpm-webext-instrumentation";
+} from "../shared-resources/openwpm-webext-instrumentation";
 import {
   RegretReport,
   RegretReportData,

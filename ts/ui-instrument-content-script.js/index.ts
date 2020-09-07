@@ -1,5 +1,5 @@
 // import { initErrorReportingInContentScript } from "../shared-resources/ErrorReporting";
-import { injectUiInstrumentPageScript } from "@openwpm/webext-instrumentation";
+import { injectUiInstrumentPageScript } from "../shared-resources/openwpm-webext-instrumentation";
 
 const init = async () => {
   /*

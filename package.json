@@ -7,6 +7,7 @@
     "@popperjs/core": "^2.4.4",
     "@sentry/browser": "^5.15.5",
     "classnames": "^2.2.6",
+    "content-scripts-register-polyfill": "^1.0.5",
     "date-fns": "^2.0.0-alpha.25",
     "flat": "^5.0.0",
     "idb": "^2.0.4",
@@ -22,7 +23,9 @@
     "typeface-changa": "^1.1.4",
     "typeface-nunito-sans": "^0.0.72",
     "typeface-zilla-slab": "^0.0.72",
-    "webextension-polyfill-ts": "^0.17.0"
+    "webext-patterns": "^0.9.0",
+    "webextension-polyfill-ts": "^0.17.0",
+    "xhook": "github:jpillora/xhook#es6-2020-refactor"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
@@ -32,6 +35,7 @@
     "@sentry/webpack-plugin": "^1.11.1",
     "@types/chai": "^4.2.11",
     "@types/classnames": "^2.2.10",
+    "@types/firefox-webext-browser": "^78.0.1",
     "@types/mocha": "^7.0.2",
     "@types/react": "^16.9.25",
     "@types/react-dom": "^16.9.5",

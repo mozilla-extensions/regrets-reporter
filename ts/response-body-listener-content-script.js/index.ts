@@ -1,5 +1,5 @@
 // import { initErrorReportingInContentScript } from "../shared-resources/ErrorReporting";
-import { injectResponseBodyListenerPageScript } from "@openwpm/webext-instrumentation";
+import { injectResponseBodyListenerPageScript } from "../shared-resources/openwpm-webext-instrumentation";
 
 const init = async () => {
   /*
