@@ -5,6 +5,7 @@ const path = require("path");
 const Dotenv = require("dotenv-webpack");
 const CopyPlugin = require("copy-webpack-plugin");
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 
 const targetBrowser = process.env.TARGET_BROWSER || "firefox";
 const destPath = path.join(__dirname, "build", targetBrowser);
@@ -26,6 +27,29 @@ const plugins = [
     patterns: [{ from: "src", to: destPath }],
   }),
 ];
+
+// Inline the minimized version of the xhook library
+// so that webpack does not transform it and we can choose to only run it when the
+// instrumentation ought to be started (xhook pollutes global variables and enables
+// itself by default when included as an external script)
+const xhookMinimizedJS = fs.readFileSync(
+  "./node_modules/xhook/dist/xhook.min.js",
+  "utf8",
+);
+plugins.push(
+  new ReplaceInFileWebpackPlugin([
+    {
+      dir: `${destPath}/`,
+      files: ["response-body-listener-content-script.js"],
+      rules: [
+        {
+          search: '"XHOOK_MINIMIZED";',
+          replace: xhookMinimizedJS,
+        },
+      ],
+    },
+  ]),
+);
 
 // Only upload sources to Sentry if building a production build or testing the sentry plugin
 if (

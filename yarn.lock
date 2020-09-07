@@ -3586,7 +3586,7 @@ contains-path@^0.1.0:
   resolved "https://registry.yarnpkg.com/contains-path/-/contains-path-0.1.0.tgz#fe8cf184ff6670b6baef01a9d4861a5cbec4120a"
   integrity sha1-/ozxhP9mcLa67wGp1IYaXL7EEgo=
 
-content-scripts-register-polyfill@^1.0.1, content-scripts-register-polyfill@^1.0.5:
+content-scripts-register-polyfill@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/content-scripts-register-polyfill/-/content-scripts-register-polyfill-1.0.5.tgz#8b68b6cf156357df54ac4a2789acbe76847ab946"
   integrity sha512-SNpw8Qn3DeIRGLIVgeOdDrWftlwKMcIqaKTrZ67MEtBnt/rC1MG8GAWINxrrizOymSBDszk8K2CJ2AJPNILCcg==
@@ -10480,6 +10480,11 @@ replace-ext@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-1.0.0.tgz#de63128373fcbf7c3ccfa4de5a480c45a67958eb"
   integrity sha1-3mMSg3P8v3w8z6TeWkgMRaZ5WOs=
+
+replace-in-file-webpack-plugin@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/replace-in-file-webpack-plugin/-/replace-in-file-webpack-plugin-1.0.6.tgz#eee7e139be967e8e48a0552f73037ed567b54dbd"
+  integrity sha512-+KRgNYL2nbc6nza6SeF+wTBNkovuHFTfJF8QIEqZg5MbwkYpU9no0kH2YU354wvY/BK8mAC2UKoJ7q+sJTvciw==
 
 request@2.88.0:
   version "2.88.0"
