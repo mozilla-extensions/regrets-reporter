@@ -5,6 +5,8 @@
 
 - [Developing this add-on](#developing-this-add-on)
   - [Get started](#get-started)
+  - [Creating build artifacts](#creating-build-artifacts)
+  - [Development mode](#development-mode)
   - [Opening up specific add-on pages](#opening-up-specific-add-on-pages)
   - [Checking current report data](#checking-current-report-data)
   - [Checking current YouTube usage statistics](#checking-current-youtube-usage-statistics)
@@ -12,7 +14,7 @@
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
-  - [Creating a signed build of the add-on](#creating-a-signed-build-of-the-add-on)
+  - [Creating a signed build of the add-on for self-distribution](#creating-a-signed-build-of-the-add-on-for-self-distribution)
   - [Generating JSON schema for telemetry ingestion based on typings](#generating-json-schema-for-telemetry-ingestion-based-on-typings)
   - [Validating the generated JSON schema](#validating-the-generated-json-schema)
   - [Troubleshooting](#troubleshooting)
@@ -35,6 +37,26 @@ npx sentry-cli info
 cp .env.production .env
 npx sentry-cli info
 ```
+
+## Creating build artifacts
+
+To build for Firefox:
+
+```
+yarn build:production
+```
+
+The build artifact will be created under `dist/firefox/`.
+
+For Chrome:
+
+```
+TARGET_BROWSER=chrome yarn build:production
+```
+
+The build artifact will be created under `dist/chrome/`.
+
+## Development mode
 
 To build for and launch Firefox, install the extension and start Webpack in watch mode:
 
@@ -196,18 +218,12 @@ await (await fetch(rsFixtureFileInfo.url)).text();
 
 Restart the browser before collecting data for a new fixture.
 
-## Creating a signed build of the add-on
+## Creating a signed build of the add-on for self-distribution
 
 After version bumping and setting the API_KEY and API_SECRET env vars:
 
 ```
 yarn build:production && npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
-```
-
-For Chrome:
-
-```
-TARGET_BROWSER=chrome yarn build:production
 ```
 
 ## Generating JSON schema for telemetry ingestion based on typings
