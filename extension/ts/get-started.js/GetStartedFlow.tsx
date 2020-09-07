@@ -103,64 +103,66 @@ export class GetStartedFlow extends Component<
     }
     return (
       <>
-        <div className="img-get-started-bg absolute" />
-        <div className="img-circles absolute" />
         {!this.state.loading &&
           this.state.extensionPreferences &&
           !this.state.extensionPreferences.hidePrivacySummaryBanner && (
-            <div className="font-sans text-center py-4 px-16">
-              <div
-                className="max-w-lg m-auto p-3 bg-grey-70 items-center text-grey-10 leading-tight rounded-xl lg:rounded-full flex flex-col"
-                role="alert"
-              >
-                <div className="font-normal text-m text-center flex-auto">
-                  <div>
-                    RegretsReporter will by default submit YouTube usage
-                    statistics and error reports to Mozilla.
+            <div className="w-full bg-grey-90 text-white py-4">
+              <div className="mx-auto max-w-2xl font-sans">
+                <div
+                  role="alert"
+                  className="m-auto p-3 items-center text-grey-10 leading-tight flex"
+                >
+                  <div className="font-normal text-m text-left flex-auto">
+                    <div className="font-bold mb-2">
+                      Mozilla RegretsReporter and your data
+                    </div>
+                    <div className="mb-2">
+                      By default this add-on must send information about how
+                      often you use YouTube to Mozilla. You can choose to share
+                      additional info with us about what you watch by submitting
+                      a RegretReport in the add-on. Mozilla will also receive
+                      error reports,{" "}
+                      <div
+                        onClick={this.handleEnableErrorReportingChange}
+                        className="inline underline font-bold cursor-pointer"
+                      >
+                        which you can{" "}
+                        {this.state.extensionPreferences.enableErrorReporting
+                          ? "out of"
+                          : "in to"}{" "}
+                        here
+                      </div>
+                      . If you do not want to donate data to help Mozilla
+                      Foundation's campaign, please{" "}
+                      <div
+                        onClick={this.removeExtension}
+                        className="inline underline font-bold cursor-pointer"
+                      >
+                        remove this extension.
+                      </div>
+                    </div>
+                    <div>
+                      For more information, scroll down or read our{" "}
+                      <a
+                        href="https://foundation.mozilla.org/campaigns/regretsreporter-privacy-notice"
+                        target="_blank"
+                        className="underline"
+                      >
+                        privacy notice
+                      </a>
+                      .
+                    </div>
                   </div>
-                  <div>
-                    If you choose to submit a Regret report, Mozilla will also
-                    receive a subset of your YouTube watch history.
-                  </div>
-                  <div>
-                    For details, see our{" "}
-                    <a
-                      href={config.privacyNoticeUrl}
-                      target="_blank"
-                      className="underline"
-                    >
-                      privacy notice
-                    </a>
-                    .
-                  </div>
-                </div>
-                <div className="flex mt-4 mb-1">
                   <div
                     onClick={this.hideBanner}
-                    className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
-                  >
-                    I understand
-                  </div>
-                  <div
-                    onClick={this.handleEnableErrorReportingChange}
-                    className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
-                  >
-                    Turn{" "}
-                    {this.state.extensionPreferences.enableErrorReporting
-                      ? "off"
-                      : "on"}{" "}
-                    error reports
-                  </div>
-                  <div
-                    onClick={this.removeExtension}
-                    className="mx-2 text-center flex rounded-full bg-grey-50 hover:bg-grey-40 uppercase px-4 py-3 text-xs font-bold cursor-pointer"
-                  >
-                    Remove RegretsReporter
-                  </div>
+                    className="ml-5 cursor-pointer img-icon-close-white"
+                  ></div>
                 </div>
               </div>
             </div>
           )}
+        <div className="img-get-started-bg absolute" />
+        <div className="img-circles absolute" />
         <div className="px-16">
           <div className="mx-auto max-w-2xl grid grid-cols-12 gap-5 font-sans text-xl">
             <div className="col-span-1" />

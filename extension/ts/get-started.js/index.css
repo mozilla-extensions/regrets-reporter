@@ -1,5 +1,13 @@
 /* purgecss start ignore */
 
+.img-icon-close-white {
+  background-image: url(./img/icon-close-white.svg);
+  width: 34px;
+  height: 34px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 ul.triangle-bullets {
   padding-left: 1.5rem;
   list-style: none;
