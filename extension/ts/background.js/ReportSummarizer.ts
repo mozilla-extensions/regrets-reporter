@@ -4,7 +4,7 @@ import {
   TrimmedNavigationBatch,
   TrimmedNavigationBatchesByUuid,
 } from "./NavigationBatchPreprocessor";
-import { OpenWPMObjectifiedEventTarget } from "@openwpm/webext-instrumentation";
+import { OpenWPMObjectifiedEventTarget } from "./lib/openwpm-webext-instrumentation";
 import {
   classifyYouTubeNavigationUrlType,
   YouTubeNavigationUrlType,

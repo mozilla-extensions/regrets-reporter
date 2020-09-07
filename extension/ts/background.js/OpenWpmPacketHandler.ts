@@ -1,6 +1,6 @@
 import { humanFileSize } from "./lib/humanFileSize";
 import { NavigationBatchPreprocessor } from "./NavigationBatchPreprocessor";
-import { HttpResponse, UiState } from "@openwpm/webext-instrumentation";
+import { HttpResponse, UiState } from "./lib/openwpm-webext-instrumentation";
 import { browser } from "webextension-polyfill-ts";
 import { classifyYouTubeNavigationUrlType } from "./lib/youTubeNavigationUrlType";
 import {

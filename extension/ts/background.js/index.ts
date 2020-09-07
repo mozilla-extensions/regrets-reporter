@@ -8,13 +8,11 @@ import {
 import { browser, Runtime } from "webextension-polyfill-ts";
 import semver from "semver";
 import {
-  CookieInstrument,
-  JavascriptInstrument,
   HttpInstrument,
   NavigationInstrument,
   UiInstrument,
   ResponseBodyListener,
-} from "@openwpm/webext-instrumentation";
+} from "./lib/openwpm-webext-instrumentation";
 import {
   RegretReport,
   RegretReportData,
@@ -56,8 +54,6 @@ const resetClientData = async () => {
  */
 class ExtensionGlue {
   private navigationInstrument: NavigationInstrument;
-  private cookieInstrument: CookieInstrument;
-  private jsInstrument: JavascriptInstrument;
   private httpInstrument: HttpInstrument;
   private uiInstrument: UiInstrument;
   private openwpmCrawlId: string;
@@ -366,16 +362,6 @@ class ExtensionGlue {
       );
       this.navigationInstrument.run(config["crawl_id"]);
     }
-    if (config["cookie_instrument"]) {
-      await openWpmPacketHandler.logDebug("Cookie instrumentation enabled");
-      this.cookieInstrument = new CookieInstrument(openWpmPacketHandler);
-      this.cookieInstrument.run(config["crawl_id"]);
-    }
-    if (config["js_instrument"]) {
-      await openWpmPacketHandler.logDebug("Javascript instrumentation enabled");
-      this.jsInstrument = new JavascriptInstrument(openWpmPacketHandler);
-      this.jsInstrument.run(config["crawl_id"]);
-    }
     if (config["http_instrument"]) {
       await openWpmPacketHandler.logDebug("HTTP instrumentation enabled");
       this.httpInstrument = new HttpInstrument(openWpmPacketHandler);
@@ -493,20 +479,6 @@ class ExtensionGlue {
         await this.navigationInstrument.cleanup();
       } catch (err) {
         console.warn("navigationInstrument cleanup error", err);
-      }
-    }
-    if (this.cookieInstrument) {
-      try {
-        await this.cookieInstrument.cleanup();
-      } catch (err) {
-        console.warn("cookieInstrument cleanup error", err);
-      }
-    }
-    if (this.jsInstrument) {
-      try {
-        await this.jsInstrument.cleanup();
-      } catch (err) {
-        console.warn("jsInstrument cleanup error", err);
       }
     }
     if (this.httpInstrument) {

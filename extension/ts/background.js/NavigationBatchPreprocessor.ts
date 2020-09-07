@@ -7,7 +7,7 @@ import {
   Navigation,
   UiInteraction,
   UiState,
-} from "@openwpm/webext-instrumentation";
+} from "./lib/openwpm-webext-instrumentation";
 import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
 import {

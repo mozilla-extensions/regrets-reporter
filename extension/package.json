@@ -4,7 +4,6 @@
   "version": "0.9.5",
   "author": "Mozilla",
   "dependencies": {
-    "@openwpm/webext-instrumentation": "../instrumentation/OpenWPM/automation/Extension/webext-instrumentation",
     "@popperjs/core": "^2.4.4",
     "@sentry/browser": "^5.15.5",
     "classnames": "^2.2.6",
@@ -119,11 +118,9 @@
     "lint:fixpack": "fixpack",
     "lint:tslint": "tslint src/**/*.ts",
     "lint:web-ext-lint": "web-ext lint",
-    "openwpm-updated": "npm-run-all -n webext-instrumentation:adjacent-submodule-directory-as-node-module webext-instrumentation:build ",
     "postformat": "npm run docformat && npm run eslint-fix && fixpack",
-    "postinstall": "cd node_modules/@openwpm/webext-instrumentation && npm install",
-    "prebuild:development": "npm-run-all clean generate-manifest openwpm-updated compile-schema",
-    "prebuild:production": "NODE_ENV=production npm-run-all clean generate-manifest openwpm-updated compile-schema",
+    "prebuild:development": "npm-run-all clean generate-manifest compile-schema",
+    "prebuild:production": "NODE_ENV=production npm-run-all clean generate-manifest compile-schema",
     "prestart": "node ./ensure_minimum_node_version.js && npm run build:development",
     "pretest:unit:mocha": "NODE_ENV=test npx webpack --entry ./test/all-tests.ts --output-path test/build --output-filename all-tests.js --target node",
     "start": "TARGET_BROWSER=firefox web-ext run",
@@ -133,8 +130,6 @@
     "test:unit:mocha": "DOTENV_CONFIG_PATH=.env.development mocha -r source-map-support/register -r sinon/pkg/sinon -r ./test/browser-polyfills.ts -r dotenv/config --globals global test/build/all-tests.js",
     "watch": "TARGET_BROWSER=firefox npm-run-all build:development && TARGET_BROWSER=firefox concurrently 'webpack --watch' 'web-ext run'",
     "watch:chrome": "TARGET_BROWSER=chrome npm-run-all build:development && TARGET_BROWSER=chrome concurrently 'webpack --watch' 'web-ext run -t chromium'",
-    "webext-instrumentation:adjacent-submodule-directory-as-node-module": "rsync -r -t -p -o -g -x --stats --delete -l -D ../instrumentation/OpenWPM/automation/Extension/webext-instrumentation/ node_modules/@openwpm/webext-instrumentation/",
-    "webext-instrumentation:build": "cd node_modules/@openwpm/webext-instrumentation && npm run build && cd -",
     "webpack:stats": "webpack --profile --json --mode=production > stats.json"
   }
 }
