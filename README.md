@@ -1,13 +1,17 @@
 # Mozilla RegretsReporter
 
-## Repository structure
-
-## The extension - `extension`
+## What the add-on does
 
 The RegretsReporter browser extension, built by the nonprofit Mozilla, lets you flag regrettable recommendations on YouTube.
 
-See [extension/README.md](./extension/README.md) for more details.
+## Data Collected
 
-## The instrumentation - `instrumentation`
+See [data-review-request.md](./telemetry-schema/data-review-request.md) for more details on what data is collected and sent by this add-on.
 
-The browser extension uses [a custom fork of the OpenWPM instrumentation](https://github.com/motin/OpenWPM/tree/regrets-reporter/automation/Extension/webext-instrumentation) to keep tabs on what YouTube videos have been watched prior to reporting a regret and to be able to aggregate YouTube usage statistics.
+## Improving this add-on
+
+See [DEV.md](./docs/DEV.md) for more details on how to work with this add-on as a developer.
+
+## References
+
+- [Delivery Bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1644107)

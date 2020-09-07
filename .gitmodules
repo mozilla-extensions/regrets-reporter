@@ -1,3 +1,0 @@
-[submodule "instrumentation/OpenWPM"]
-	path = instrumentation/OpenWPM
-	url = git@github.com:motin/OpenWPM.git
