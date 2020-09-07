@@ -126,7 +126,7 @@ export class GetStartedFlow extends Component<
                         onClick={this.handleEnableErrorReportingChange}
                         className="inline underline font-bold cursor-pointer"
                       >
-                        which you can{" "}
+                        which you can opt{" "}
                         {this.state.extensionPreferences.enableErrorReporting
                           ? "out of"
                           : "in to"}{" "}
