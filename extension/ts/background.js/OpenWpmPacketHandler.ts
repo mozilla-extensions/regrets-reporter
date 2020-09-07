@@ -235,7 +235,7 @@ export class OpenWpmPacketHandler {
           { host: parsedUrl.host, pathname: parsedUrl.pathname },
         );
         console.warn("Encountered an unknown YouTube URL", {
-          url,
+          // url,
           host: parsedUrl.host,
           pathname: parsedUrl.pathname,
         });
