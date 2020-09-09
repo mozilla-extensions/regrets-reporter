@@ -97,7 +97,7 @@ class ExtensionGlue {
       function setActiveExtensionIcon() {
         try {
           browser.browserAction.setIcon({
-            path: "icons/icon-toolbar-active.svg",
+            path: "icons/icon-toolbar-active.svg.38x38.png",
           });
           browser.browserAction.setPopup({
             popup: "/report-regret-form/report-regret-form.html",
@@ -113,7 +113,7 @@ class ExtensionGlue {
       function setInactiveExtensionIcon() {
         try {
           browser.browserAction.setIcon({
-            path: "icons/icon-toolbar-inactive.svg",
+            path: "icons/icon-toolbar-inactive.svg.38x38.png",
           });
           browser.browserAction.setPopup({
             popup: "/not-available-notice/not-available-notice.html",

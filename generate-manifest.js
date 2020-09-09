@@ -36,7 +36,7 @@ async function generateManifest({ dotEnvPath }) {
       128: "icons/extension-icon.svg.128x128.png",
     },
     browser_action: {
-      default_icon: "icons/icon-toolbar-inactive.svg",
+      default_icon: "icons/icon-toolbar-inactive.svg.38x38.png",
       default_title: "__MSG_pageActionButtonTitle__",
       default_popup: "not-available/not-available.html",
     },
