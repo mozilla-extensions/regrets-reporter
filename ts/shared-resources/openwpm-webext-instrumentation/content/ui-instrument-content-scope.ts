@@ -41,6 +41,10 @@ export function injectUiInstrumentPageScript(contentScriptConfig) {
   document.addEventListener(injection_uuid.toString(), function(
     e: CustomEvent,
   ) {
+    if (!e.detail) {
+      console.error("Message sent from page script was empty/falsy", { e });
+      throw new Error("Message sent from page script was empty/falsy");
+    }
     // pass these on to the background page
     const msgs = e.detail;
     if (Array.isArray(msgs)) {
