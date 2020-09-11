@@ -1,4 +1,4 @@
-export const xpath = el => {
+const xpath = el => {
   if (typeof el == "string") {
     return document.evaluate(el, document, null, 0, null);
   }
@@ -18,3 +18,4 @@ export const xpath = el => {
     (sames.length > 1 ? "[" + ([].indexOf.call(sames, el) + 1) + "]" : "")
   );
 };
+export { xpath };
