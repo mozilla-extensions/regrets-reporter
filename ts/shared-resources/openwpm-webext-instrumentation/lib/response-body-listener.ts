@@ -148,7 +148,7 @@ export class ResponseBodyListener {
        * Start listening for messages from page/content/background scripts injected to forward response bodies
        */
       if (!this.responseBodyPageScriptMessageListener) {
-        const logMsgPrefix = `[Response body listener for request id ${details.requestId}]: `;
+        const logMsgPrefix = `[Response body listener for request id ${details.requestId} (${details.url})]: `;
         this.responseBodyPageScriptMessageListener = async (
           message: OpenWPMResponseInfoSentFromContentScript,
           sender: MessageSender,
@@ -156,7 +156,7 @@ export class ResponseBodyListener {
           const { namespace, responseInfo } = message;
           const candidateResponseInfo = responseInfo;
 
-          // console.debug("response-body-listener background listener received a message", {data, namespace, sender, details});
+          // console.debug("response-body-listener background listener received a message", {namespace, sender, details});
           if (namespace && namespace === "response-body-listener") {
             try {
               // console.debug(logMsgPrefix, "response-body-listener background listener received a response-body-listener-namespaced message", {candidateResponseInfo, sender, details,},);
@@ -186,6 +186,7 @@ export class ResponseBodyListener {
               }
 
               // must match url
+              // console.debug(logMsgPrefix, {responseUrl, candidateResponseUrl});
               if (responseUrl !== candidateResponseUrl) {
                 return;
               }
@@ -217,13 +218,21 @@ export class ResponseBodyListener {
                       _: any,
                       responseHeader: WebRequest.HttpHeadersItemType,
                     ) => {
-                      _[responseHeader.name] = responseHeader.value
+                      _[
+                        responseHeader.name.toLowerCase()
+                      ] = responseHeader.value
                         ? responseHeader.value
                         : responseHeader.binaryValue;
                       return _;
                     },
                     {},
                   );
+
+                  // Delete some headers that are never present in candidate response headers (from xhook)
+                  if (responseHeaders["set-cookie"]) {
+                    delete responseHeaders["set-cookie"];
+                  }
+
                   const candidateResponseHeaders =
                     candidateResponseInfo.response.headers;
                   if (
@@ -232,6 +241,7 @@ export class ResponseBodyListener {
                       candidateResponseHeaders,
                     )
                   ) {
+                    // console.debug("Header objects are not equal", {responseHeaders, candidateResponseHeaders});
                     return;
                   }
 
