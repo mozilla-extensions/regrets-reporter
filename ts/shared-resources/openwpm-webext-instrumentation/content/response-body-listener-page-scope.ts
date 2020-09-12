@@ -49,8 +49,8 @@ export const responseBodyListenerPageScript = function() {
    */
   const startInstrumentation = () => {
     if (!window.openWpmResponseBodyListenerInstrumentationStarted) {
-      // Inlined minimized version of the xhook library
-      // so that we only run it when the instrumentation ought to be started
+      // The following is replaced with the minimized version of the xhook library, which we
+      // inline here so that we only run it when the instrumentation ought to be started
       // (it pollutes global variables and enables itself by default when included as an external script)
       "XHOOK_MINIMIZED";
 
