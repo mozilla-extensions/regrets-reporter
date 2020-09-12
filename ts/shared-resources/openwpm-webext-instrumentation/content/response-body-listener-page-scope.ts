@@ -77,7 +77,7 @@ export const responseBodyListenerPageScript = function() {
           response: {
             finalUrl: response.finalUrl,
             data: response.data,
-            headers: response.headers,
+            headers: JSON.parse(JSON.stringify(response.headers)),
           },
         };
         sendMessagesToLogger([xhookEventResponseInfo]);

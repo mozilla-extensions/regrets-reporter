@@ -46,6 +46,7 @@ export function injectResponseBodyListenerPageScript(contentScriptConfig) {
   document.addEventListener(injection_uuid.toString(), function(
     e: CustomEvent,
   ) {
+    // console.debug("Message sent from page script", { e });
     if (!e.detail) {
       console.error("Message sent from page script was empty/falsy", { e });
       throw new Error("Message sent from page script was empty/falsy");
