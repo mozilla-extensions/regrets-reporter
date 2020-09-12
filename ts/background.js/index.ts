@@ -562,12 +562,12 @@ const onUpgrade = async () => {
     const sharedDataPre090 = sharedData.filter((data: AnnotatedSharedData) => {
       return (
         !data.event_metadata.extension_version ||
-        semver.satisfies(data.event_metadata.extension_version, "<0.9.0")
+        semver.satisfies(data.event_metadata.extension_version, "<0.9.8")
       );
     });
     if (sharedDataPre090.length > 0) {
       console.info(
-        "RegretsReporter will now reset the client data since it detected client data pre v0.9.0 which gave inaccurate usage statistics",
+        "RegretsReporter will now reset the client data since it detected client data pre v0.9.8 which gave inaccurate usage statistics",
       );
       await resetClientData();
       console.info("Client data has been reset");
