@@ -635,16 +635,18 @@ export class NavigationBatchPreprocessor {
                 return false;
               });
               // check the unprocessed queue for the stray envelopes
-              const matchingHttpRequestEnvelope = openWpmPayloadEnvelopeProcessQueue
-                .reverse()
-                .find(httpRequestEnvelopeMatcher);
-              if (matchingHttpRequestEnvelope) {
-                correspondingHttpRequest = matchingHttpRequestEnvelope;
-                // remove from the unprocessed queue
-                removeItemFromArray(
-                  openWpmPayloadEnvelopeProcessQueue,
-                  matchingHttpRequestEnvelope,
-                );
+              if (!correspondingHttpRequest) {
+                const matchingHttpRequestEnvelope = openWpmPayloadEnvelopeProcessQueue
+                  .reverse()
+                  .find(httpRequestEnvelopeMatcher);
+                if (matchingHttpRequestEnvelope) {
+                  correspondingHttpRequest = matchingHttpRequestEnvelope;
+                  // remove from the unprocessed queue
+                  removeItemFromArray(
+                    openWpmPayloadEnvelopeProcessQueue,
+                    matchingHttpRequestEnvelope,
+                  );
+                }
               }
               // add the stray envelope to this navigation batch if it was found
               if (correspondingHttpRequest) {
@@ -670,6 +672,10 @@ export class NavigationBatchPreprocessor {
                   Sentry.Severity.Warning,
                 );
                 // remove the http response since it will cause issues downstream if it is kept
+                // (developer note: comment out the removal code below to be able to collect
+                // a relevant fixture to debug this issue, which most often occurs in conjunction
+                // with extension reloads, but may possibly occur in other contexts as well.
+                // Note that tests will fail as long as the code below is commented out)
                 removeItemFromArray(
                   navigationBatch.childEnvelopes,
                   currentHttpResponseEnvelope,

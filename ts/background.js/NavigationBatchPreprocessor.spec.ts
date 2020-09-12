@@ -14,6 +14,7 @@ import { youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavi
 import { youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest } from "./fixtures/NavigationBatchPreprocessor/youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavigationsWithMissingHttpRequest";
 import { config } from "../config";
 import { youTubeReloadWatchPageChromium } from "./fixtures/NavigationBatchPreprocessor/youTubeReloadWatchPageChromium";
+import { youtubeFixturesReproducingMissingHttpRequest } from "./fixtures/NavigationBatchPreprocessor/youtubeFixturesReproducingMissingHttpRequest";
 
 describe("NavigationBatchPreprocessor", function() {
   it("should exist", function() {
@@ -631,6 +632,70 @@ describe("NavigationBatchPreprocessor", function() {
             oneNavigationBatch.uiStateCount,
           ],
           [1, 1, 0, 1, 2],
+        );
+      });
+    });
+
+    describe("Subsequent queue processing long after the visits", function() {
+      const nowDateTime = addSeconds(
+        firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
+      it("should have purged all navigation batches", async function() {
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          0,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 0);
+      });
+    });
+  });
+
+  describe("youtubeFixturesReproducingMissingHttpRequest", function() {
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
+    navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue =
+      youtubeFixturesReproducingMissingHttpRequest.openWpmPayloadEnvelopeProcessQueue;
+    navigationBatchPreprocessor.navigationBatchesByNavigationUuid =
+      youtubeFixturesReproducingMissingHttpRequest.navigationBatchesByNavigationUuid;
+
+    const firstVisitIsoDateTimeString = "2020-09-12T15:46:47.314Z";
+    const firstVisitDateTime = parseIsoDateTimeString(
+      firstVisitIsoDateTimeString,
+    );
+
+    describe("Subsequent queue processing 12 seconds after the visit", function() {
+      const nowDateTime = addSeconds(firstVisitDateTime, 12);
+      it("should have found one navigation batch", async function() {
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          1,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 1);
+        const oneNavigationBatch: NavigationBatch =
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
+            "e4772b67-7cc3-4a6b-894d-ae844c603ff2"
+          ];
+        assert.equal(oneNavigationBatch.childEnvelopes.length, 41);
+        assert.deepStrictEqual(
+          [
+            oneNavigationBatch.httpRequestCount,
+            oneNavigationBatch.httpResponseCount,
+            oneNavigationBatch.httpRedirectCount,
+            oneNavigationBatch.capturedContentCount,
+            oneNavigationBatch.uiStateCount,
+          ],
+          [3, 3, 0, 4, 30],
         );
       });
     });
