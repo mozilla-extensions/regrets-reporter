@@ -100,6 +100,21 @@ export class ReportRegretForm extends Component<
         if (m.regretReportData) {
           const { regretReportData } = m;
           console.log("Regret form received report data", { regretReportData });
+
+          // Check that the most recent yt navigation is indeed a video page
+          if (
+            regretReportData.youtube_navigation_metadata.url_type !==
+            "watch_page"
+          ) {
+            await this.setState({
+              loading: false,
+              error: true,
+              errorMessage:
+                "The most recent YouTube navigation is not a watch page",
+            });
+            return;
+          }
+
           const videoId =
             regretReportData.youtube_navigation_metadata.video_metadata
               .video_id;
@@ -340,7 +355,11 @@ export class ReportRegretForm extends Component<
 
   render() {
     if (this.state.error) {
-      if (this.state.errorMessage.indexOf("No YouTube navigations") > -1) {
+      if (
+        this.state.errorMessage.indexOf("No YouTube navigations") > -1 ||
+        this.state.errorMessage ===
+          "The most recent YouTube navigation is not a watch page"
+      ) {
         return (
           <DisplayError
             message={`Please wait for the YouTube page to load or, if it seems like it has loaded: Reload the page`}
