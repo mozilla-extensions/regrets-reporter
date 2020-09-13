@@ -1,7 +1,7 @@
 {
   "name": "regrets-reporter",
   "description": "Mozilla RegretsReporter extension",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "author": "Mozilla",
   "dependencies": {
     "@popperjs/core": "^2.4.4",
