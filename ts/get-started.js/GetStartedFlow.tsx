@@ -227,11 +227,14 @@ export class GetStartedFlow extends Component<
             <div className="col-span-2" />
             <div className="col-span-8 font-light">
               <section className="mt-24">
-                <p>
-                  We ask users not to modify their YouTube behavior when using
-                  this extension. Don’t seek out regrettable content. Instead,
-                  use YouTube as you normally do. That is the only way that we
-                  can collectively understand whether YouTube’s problem with
+                <h2 className="text-huge font-changa font-light">
+                  Use YouTube as you normally do
+                </h2>
+                <p className="mt-4">
+                  Please do not modify your YouTube behavior when using this
+                  extension. Don’t seek out regrettable content. Instead, use
+                  YouTube as you normally do. That is the only way that we can
+                  collectively understand whether YouTube’s problem with
                   recommending regrettable content is improving, and which areas
                   they need to do better on.
                 </p>
