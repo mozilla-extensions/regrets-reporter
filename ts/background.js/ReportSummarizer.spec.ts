@@ -34,6 +34,21 @@ const firstEncounteredWindowAndTabIds = (
   };
 };
 
+/**
+ * Several navigation batch fixtures were created before trimming was implemented
+ * We trim them using this helper function to make sure that the test still passes after trimming
+ * @param fixture
+ */
+const trimNavigationBatchesFixture = (
+  fixture: TrimmedNavigationBatchesByUuid,
+) => {
+  const reportSummarizer = new ReportSummarizer();
+  Object.keys(fixture).forEach(navUuid => {
+    fixture[navUuid] = reportSummarizer.trimNavigationBatch(fixture[navUuid]);
+  });
+  return fixture;
+};
+
 describe("ReportSummarizer", function() {
   it("should exist", async function() {
     const reportSummarizer = new ReportSummarizer();
@@ -42,7 +57,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageAndStartPlaying10hOfSilenceVideo,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -86,7 +103,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageOfADifferentType", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageOfADifferentType;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageOfADifferentType,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -131,7 +150,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageChrome20200820", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageChrome20200820;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageChrome20200820,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -175,7 +196,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageAndNavigateToFirstUpNext", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageAndNavigateToFirstUpNext;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageAndNavigateToFirstUpNext,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -281,7 +304,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageAndInteractWithEndScreens", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageAndInteractWithEndScreens;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageAndInteractWithEndScreens,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -387,7 +412,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageAndNavigateToChannelPageThenWatchPage,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -538,7 +565,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitMainPageSearchClickUserClickVideo", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitMainPageSearchClickUserClickVideo;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitMainPageSearchClickUserClickVideo,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -722,7 +751,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageAndSearchClickUserSearchResultVideo", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageAndSearchClickUserSearchResultVideo;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageAndSearchClickUserSearchResultVideo,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );
@@ -843,7 +874,9 @@ describe("ReportSummarizer", function() {
 
   it("fixture: youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile", async function() {
     const reportSummarizer = new ReportSummarizer();
-    const fixture = youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile;
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile,
+    );
     const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
       fixture,
     );

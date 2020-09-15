@@ -146,8 +146,11 @@ export interface RegretReport {
 }
 
 export class ReportSummarizer {
+  public matchYtInitialData = /var\sytInitialData\s*=\s*(.*);\s?<\/script>/;
+  public matchYtInitialDataPre202008 = /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/;
+
   trimNavigationBatch(
-    navigationBatch: NavigationBatch,
+    navigationBatch: NavigationBatch | TrimmedNavigationBatch,
   ): TrimmedNavigationBatch {
     const trimmedNavigationBatch = {
       ...navigationBatch,
@@ -162,6 +165,38 @@ export class ReportSummarizer {
     // console.log({ trimmedNavigationBatch });
 
     // Remove bulky non-essential parts of navigation batches
+    if (navigationBatch.capturedContentCount > 0) {
+      trimmedNavigationBatch.trimmedCapturedContentCount = 0;
+      trimmedNavigationBatch.childEnvelopes = navigationBatch.childEnvelopes.map(
+        envelope => {
+          // If a captured content matches one of the ytInitialData regexes, we save only the matching string
+          // Note: This strategy fails if for some reasons a XHR request or similar would contain raw text that
+          // makes the regex match, but that seems unlikely
+          if (
+            envelope.type === "openwpm_captured_content" &&
+            envelope.capturedContent.decoded_content
+          ) {
+            const matches = envelope.capturedContent.decoded_content.match(
+              this.matchYtInitialData,
+            );
+            if (matches && matches[0]) {
+              envelope.capturedContent.decoded_content = matches[0];
+              trimmedNavigationBatch.trimmedCapturedContentCount++;
+            } else {
+              const matches = envelope.capturedContent.decoded_content.match(
+                this.matchYtInitialDataPre202008,
+              );
+              if (matches && matches[0]) {
+                envelope.capturedContent.decoded_content = matches[0];
+                trimmedNavigationBatch.trimmedCapturedContentCount++;
+              }
+            }
+          }
+          return envelope;
+        },
+      );
+    }
+
     /*
     const jsonContent =
       capturedContentEnvelope.capturedContent.decoded_content;
@@ -482,10 +517,10 @@ export class ReportSummarizer {
     return youTubeNavigations;
   }
 
-  extractYouTubePageMetadataFromCapturedWatchPageContent(
+  extractYouTubePageMetadataFromCapturedWatchPageContent = (
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
-  ): YouTubePageMetadata {
+  ): YouTubePageMetadata => {
     let ytInitialData;
     let errorContext;
 
@@ -495,14 +530,10 @@ export class ReportSummarizer {
         capturedContentEnvelope.capturedContent.decoded_content;
       let matchArray;
       // Most recently know style of markup
-      matchArray = htmlContent.match(
-        /var\sytInitialData\s*=\s*(.*);\s?<\/script>/,
-      );
+      matchArray = htmlContent.match(this.matchYtInitialData);
       if (!matchArray) {
         // Older style of markup
-        matchArray = htmlContent.match(
-          /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
-        );
+        matchArray = htmlContent.match(this.matchYtInitialDataPre202008);
         if (!matchArray) {
           console.dir(
             { httpRequestEnvelope, capturedContentEnvelope, matchArray },
@@ -862,7 +893,7 @@ export class ReportSummarizer {
         // watch_next_end_screen,
       },
     };
-  }
+  };
 
   extractYouTubePageMetadataFromCapturedSearchResultsPageContent(
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
