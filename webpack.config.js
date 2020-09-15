@@ -36,10 +36,9 @@ const plugins = [
 // so that webpack does not transform it and we can choose to only run it when the
 // instrumentation ought to be started (xhook pollutes global variables and enables
 // itself by default when included as an external script)
-const xhookMinimizedJS = fs.readFileSync(
-  "./node_modules/xhook/dist/xhook.min.js",
-  "utf8",
-);
+const xhookMinimizedJS = fs
+  .readFileSync("./node_modules/xhook/dist/xhook.min.js", "utf8")
+  .replace("//# sourceMappingURL=xhook.min.js.map", "");
 plugins.push(
   new ReplaceInFileWebpackPlugin([
     {
@@ -47,8 +46,10 @@ plugins.push(
       files: ["response-body-listener-content-script.js"],
       rules: [
         {
-          search: '"XHOOK_MINIMIZED";',
-          replace: xhookMinimizedJS,
+          search: /const\s[^\s=]+\s?=\s?window.xhook;/,
+          replace(match) {
+            return `${xhookMinimizedJS}\n${match}`;
+          },
         },
       ],
     },

@@ -1,4 +1,4 @@
-const xpath = el => {
+function xpath(el) {
   if (typeof el == "string") {
     return document.evaluate(el, document, null, 0, null);
   }
@@ -17,5 +17,5 @@ const xpath = el => {
     el.tagName.toLowerCase() +
     (sames.length > 1 ? "[" + ([].indexOf.call(sames, el) + 1) + "]" : "")
   );
-};
+}
 export { xpath };
