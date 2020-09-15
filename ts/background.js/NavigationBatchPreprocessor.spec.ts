@@ -15,6 +15,8 @@ import { youtubeReloadWatchPageHttpRequestAndResponseSplitOrdinallyAcrossTwoNavi
 import { config } from "../config";
 import { youTubeReloadWatchPageChromium } from "./fixtures/NavigationBatchPreprocessor/youTubeReloadWatchPageChromium";
 import { youtubeFixturesReproducingMissingHttpRequest } from "./fixtures/NavigationBatchPreprocessor/youtubeFixturesReproducingMissingHttpRequest";
+import { youtubeVisitMainPageWatchPageThenReloadFirefox } from "./fixtures/NavigationBatchPreprocessor/youtubeVisitMainPageWatchPageThenReloadFirefox";
+import { youtubeVisitMainPageWatchPageThenReloadChrome } from "./fixtures/NavigationBatchPreprocessor/youtubeVisitMainPageWatchPageThenReloadChrome";
 
 describe("NavigationBatchPreprocessor", function() {
   it("should exist", function() {
@@ -703,6 +705,188 @@ describe("NavigationBatchPreprocessor", function() {
     describe("Subsequent queue processing long after the visits", function() {
       const nowDateTime = addSeconds(
         firstVisitDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
+      it("should have purged all navigation batches", async function() {
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          0,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 0);
+      });
+    });
+  });
+
+  describe("youtubeVisitMainPageWatchPageThenReloadFirefox", function() {
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
+    youtubeVisitMainPageWatchPageThenReloadFirefox.map(
+      (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+        if (
+          navigationBatchPreprocessor.shouldBeBatched(openWpmPayloadEnvelope)
+        ) {
+          navigationBatchPreprocessor.queueForProcessing(
+            openWpmPayloadEnvelope,
+          );
+        }
+      },
+    );
+
+    const reloadIsoDateTimeString = "2020-09-15T05:09:45.199Z";
+    const reloadDateTime = parseIsoDateTimeString(reloadIsoDateTimeString);
+
+    describe("Subsequent queue processing 12 seconds after the reload", function() {
+      const nowDateTime = addSeconds(reloadDateTime, 12);
+      it("should have found two navigation batches", async function() {
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          3,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 2);
+        const theFirstNavigationBatch: NavigationBatch =
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
+            "99cd25dd-3513-4368-a64c-64d8f3d2c7f9"
+          ];
+        assert.equal(theFirstNavigationBatch.childEnvelopes.length, 7);
+        assert.deepStrictEqual(
+          [
+            theFirstNavigationBatch.httpRequestCount,
+            theFirstNavigationBatch.httpResponseCount,
+            theFirstNavigationBatch.httpRedirectCount,
+            theFirstNavigationBatch.capturedContentCount,
+            theFirstNavigationBatch.uiStateCount,
+          ],
+          [2, 2, 0, 2, 0],
+        );
+        const theSecondNavigationBatch: NavigationBatch =
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
+            "857d0f1d-1505-4d12-aba4-1ccdaf1cd9dd"
+          ];
+        assert.equal(theSecondNavigationBatch.childEnvelopes.length, 3);
+        assert.deepStrictEqual(
+          [
+            theSecondNavigationBatch.httpRequestCount,
+            theSecondNavigationBatch.httpResponseCount,
+            theSecondNavigationBatch.httpRedirectCount,
+            theSecondNavigationBatch.capturedContentCount,
+            theSecondNavigationBatch.uiStateCount,
+          ],
+          [1, 1, 0, 1, 0],
+        );
+      });
+    });
+
+    describe("Subsequent queue processing long after the reload", function() {
+      const nowDateTime = addSeconds(
+        reloadDateTime,
+        config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
+      );
+      it("should have purged all navigation batches", async function() {
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          0,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 0);
+      });
+    });
+  });
+
+  describe("youtubeVisitMainPageWatchPageThenReloadChrome", function() {
+    const navigationBatchPreprocessor = new NavigationBatchPreprocessor(
+      config.navigationBatchProcessor,
+    );
+    youtubeVisitMainPageWatchPageThenReloadChrome.map(
+      (openWpmPayloadEnvelope: OpenWpmPayloadEnvelope) => {
+        if (
+          navigationBatchPreprocessor.shouldBeBatched(openWpmPayloadEnvelope)
+        ) {
+          navigationBatchPreprocessor.queueForProcessing(
+            openWpmPayloadEnvelope,
+          );
+        }
+      },
+    );
+
+    const reloadIsoDateTimeString = "2020-09-15T05:19:00.531Z";
+    const reloadDateTime = parseIsoDateTimeString(reloadIsoDateTimeString);
+
+    describe("Subsequent queue processing 12 seconds after the reload", function() {
+      const nowDateTime = addSeconds(reloadDateTime, 12);
+      it("should have found two navigation batches", async function() {
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
+        await navigationBatchPreprocessor.processQueue(nowDateTime);
+        console.debug(
+          "navigationBatchPreprocessor.navigationBatchesByNavigationUuid",
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        console.debug(
+          "navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue short",
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.map(
+            _ => {
+              return { type: _.type };
+            },
+          ),
+        );
+        assert.equal(
+          navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
+          6,
+        );
+        const navigationUuids = Object.keys(
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+        );
+        assert.equal(navigationUuids.length, 2);
+        const theFirstNavigationBatch: NavigationBatch =
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
+            "7df3c0cb-cf2c-48dc-afae-1a01ee1b5a5d"
+          ];
+        assert.equal(theFirstNavigationBatch.childEnvelopes.length, 4);
+        assert.deepStrictEqual(
+          [
+            theFirstNavigationBatch.httpRequestCount,
+            theFirstNavigationBatch.httpResponseCount,
+            theFirstNavigationBatch.httpRedirectCount,
+            theFirstNavigationBatch.capturedContentCount,
+            theFirstNavigationBatch.uiStateCount,
+          ],
+          [1, 1, 0, 1, 0],
+        );
+        const theSecondNavigationBatch: NavigationBatch =
+          navigationBatchPreprocessor.navigationBatchesByNavigationUuid[
+            "d41a2e7e-252a-4e59-996f-25798229bfcb"
+          ];
+        assert.equal(theSecondNavigationBatch.childEnvelopes.length, 3);
+        assert.deepStrictEqual(
+          [
+            theSecondNavigationBatch.httpRequestCount,
+            theSecondNavigationBatch.httpResponseCount,
+            theSecondNavigationBatch.httpRedirectCount,
+            theSecondNavigationBatch.capturedContentCount,
+            theSecondNavigationBatch.uiStateCount,
+          ],
+          [1, 1, 0, 1, 0],
+        );
+      });
+    });
+
+    describe("Subsequent queue processing long after the reload", function() {
+      const nowDateTime = addSeconds(
+        reloadDateTime,
         config.navigationBatchProcessor.navigationAgeThresholdInSeconds * 2,
       );
       it("should have purged all navigation batches", async function() {

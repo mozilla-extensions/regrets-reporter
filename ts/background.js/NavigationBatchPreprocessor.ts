@@ -456,8 +456,14 @@ export class NavigationBatchPreprocessor {
                     sameFrame(openWpmPayloadEnvelope.navigation, navigation) &&
                     withinNavigationEventOrdinalBounds(
                       openWpmPayloadEnvelope.navigation
-                        .before_navigate_event_ordinal,
-                      navigation.before_navigate_event_ordinal,
+                        .before_navigate_event_ordinal !== undefined
+                        ? openWpmPayloadEnvelope.navigation
+                            .before_navigate_event_ordinal
+                        : openWpmPayloadEnvelope.navigation
+                            .committed_event_ordinal,
+                      navigation.before_navigate_event_ordinal !== undefined
+                        ? navigation.before_navigate_event_ordinal
+                        : navigation.committed_event_ordinal,
                       Number.MAX_SAFE_INTEGER,
                     )
                   );
@@ -477,7 +483,11 @@ export class NavigationBatchPreprocessor {
             subsequentNavigationsMatchingThisNavigationsFrame.length === 0
               ? Number.MAX_SAFE_INTEGER
               : subsequentNavigationsMatchingThisNavigationsFrame[0].navigation
-                  .before_navigate_event_ordinal;
+                  .before_navigate_event_ordinal !== undefined
+              ? subsequentNavigationsMatchingThisNavigationsFrame[0].navigation
+                  .before_navigate_event_ordinal
+              : subsequentNavigationsMatchingThisNavigationsFrame[0].navigation
+                  .committed_event_ordinal;
 
           // Only non-navigations can be assigned navigation parents
           const childCandidates = openWpmPayloadEnvelopeProcessQueue.filter(
@@ -504,7 +514,9 @@ export class NavigationBatchPreprocessor {
                 toEventOrdinal,
               );
               const isWithinNavigationEventAgeThreshold = isoDateTimeStringsWithinFutureSecondThreshold(
-                navigation.committed_time_stamp,
+                navigation.before_navigate_time_stamp !== undefined
+                  ? navigation.before_navigate_time_stamp
+                  : navigation.committed_time_stamp,
                 payload.time_stamp,
                 this.navigationAgeThresholdInSeconds,
               );
