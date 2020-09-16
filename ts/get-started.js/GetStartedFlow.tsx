@@ -144,7 +144,7 @@ export class GetStartedFlow extends Component<
                     <div>
                       For more information, scroll down or read our{" "}
                       <a
-                        href="https://foundation.mozilla.org/campaigns/regretsreporter-privacy-notice"
+                        href={config.privacyNoticeUrl}
                         target="_blank"
                         className="underline"
                       >
