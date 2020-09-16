@@ -52,8 +52,8 @@ export const transformWebNavigationBaseEventDetailsToOpenWPMSchema = async (
 };
 
 export class NavigationInstrument {
-  public static navigationId(processId, tabId, frameId): string {
-    return `${processId}-${tabId}-${frameId}`;
+  public static navigationId(tabId, frameId): string {
+    return `${tabId}-${frameId}`;
   }
   private readonly dataReceiver;
   private onBeforeNavigateListener;
@@ -70,8 +70,8 @@ export class NavigationInstrument {
     this.onBeforeNavigateListener = async (
       details: WebNavigationOnBeforeNavigateEventDetails,
     ) => {
+      // console.debug("onBeforeNavigateListener", details);
       const navigationId = NavigationInstrument.navigationId(
-        details.processId,
         details.tabId,
         details.frameId,
       );
@@ -97,8 +97,8 @@ export class NavigationInstrument {
     this.onCommittedListener = async (
       details: WebNavigationOnCommittedEventDetails,
     ) => {
+      // console.debug("onCommittedListener", details);
       const navigationId = NavigationInstrument.navigationId(
-        details.processId,
         details.tabId,
         details.frameId,
       );
