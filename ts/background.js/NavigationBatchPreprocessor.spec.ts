@@ -831,6 +831,7 @@ describe("NavigationBatchPreprocessor", function() {
       it("should have found two navigation batches", async function() {
         navigationBatchPreprocessor.navigationBatchesByNavigationUuid = {};
         await navigationBatchPreprocessor.processQueue(nowDateTime);
+        /*
         console.debug(
           "navigationBatchPreprocessor.navigationBatchesByNavigationUuid",
           navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
@@ -843,6 +844,7 @@ describe("NavigationBatchPreprocessor", function() {
             },
           ),
         );
+        */
         assert.equal(
           navigationBatchPreprocessor.openWpmPayloadEnvelopeProcessQueue.length,
           6,
