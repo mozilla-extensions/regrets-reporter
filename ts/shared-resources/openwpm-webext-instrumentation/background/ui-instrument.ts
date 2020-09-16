@@ -27,16 +27,19 @@ export class UiInstrument {
     update.extension_session_uuid = extensionSessionUuid;
     update.event_ordinal = incrementedEventOrdinal();
     update.page_scoped_event_ordinal = data.ordinal;
-    update.window_id = sender.tab.windowId;
-    update.tab_id = sender.tab.id;
+    // Tab information is not always available (for instance if the message was sent while the tab was closing)
+    if (sender.tab) {
+      update.window_id = sender.tab.windowId;
+      update.tab_id = sender.tab.id;
+      update.incognito = boolToInt(sender.tab.incognito);
+      // top_level_url is the tab's document href (requires tabs permission in manifest)
+      update.top_level_url = escapeUrl(sender.tab.url);
+    }
     update.frame_id = sender.frameId;
     update.time_stamp = data.timeStamp;
-    update.incognito = boolToInt(sender.tab.incognito);
 
     // document_url is the current frame's document href
     update.document_url = escapeUrl(sender.url);
-    // top_level_url is the tab's document href (requires tabs permission in manifest)
-    update.top_level_url = escapeUrl(sender.tab.url);
 
     return update;
   }
