@@ -1,5 +1,4 @@
 import { browser } from "webextension-polyfill-ts";
-import { xpath } from "../lib/xpath";
 import { uiInstrumentPageScript } from "./ui-instrument-page-scope";
 
 export interface UiInstrumentTimeStampedMessage {
@@ -7,7 +6,7 @@ export interface UiInstrumentTimeStampedMessage {
 }
 
 function getPageScriptAsString() {
-  return `const xpath = ${xpath};\n(${uiInstrumentPageScript}({xpath}));`;
+  return `(${uiInstrumentPageScript}());`;
 }
 
 function insertScript(text, data) {
