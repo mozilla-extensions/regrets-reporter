@@ -20,6 +20,7 @@ export class YourPrivacy extends Component<YourPrivacyProps, YourPrivacyState> {
               General data collection principles
             </div>
             <ul className="triangle-bullets">
+              <li>You must be 18 or older to use RegretsReporter.</li>
               <li>
                 No data is collected from inside Private Browsing windows.
               </li>

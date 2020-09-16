@@ -142,7 +142,7 @@ export class GetStartedFlow extends Component<
                       </div>
                     </div>
                     <div>
-                      For more information, scroll down or read our{" "}
+                      By proceeding, you agree to our{" "}
                       <a
                         href={config.privacyNoticeUrl}
                         target="_blank"
