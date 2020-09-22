@@ -12,6 +12,10 @@ See [data-review-request.md](./telemetry-schema/data-review-request.md) for more
 
 See [DEV.md](./docs/DEV.md) for more details on how to work with this add-on as a developer.
 
+## Testing
+
+See [TESTING.md](./docs/TESTING.md) for expected functionality and testing instructions.
+
 ## References
 
 - [Delivery Bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1644107)
