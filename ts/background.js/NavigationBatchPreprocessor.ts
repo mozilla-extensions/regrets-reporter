@@ -216,14 +216,14 @@ export class NavigationBatchPreprocessor {
   }
 
   /**
-   * Optionally overrided hook that allows for inspection and/or modification of
+   * Method that is meant to be overridden and implement trimming of
    * navigation batches at the end of the processing flow.
    */
   public processedNavigationBatchTrimmer: (
-    navigationBatch: NavigationBatch,
-  ) => Promise<TrimmedNavigationBatch> = async (
+    navigationBatch: NavigationBatch | TrimmedNavigationBatch,
+  ) => TrimmedNavigationBatch = (
     navigationBatch: TrimmedNavigationBatch,
-  ): Promise<TrimmedNavigationBatch> => {
+  ): TrimmedNavigationBatch => {
     return {
       ...navigationBatch,
       trimmedHttpRequestCount: -1,
@@ -304,7 +304,11 @@ export class NavigationBatchPreprocessor {
 
   private alarmName: string;
 
-  public async run() {
+  public async run(
+    onAfterQueueProcessed: (
+      navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
+    ) => Promise<void>,
+  ) {
     this.alarmName = `${browser.runtime.id}:queueProcessorAlarm`;
     const alarmListener = async _alarm => {
       if (_alarm.name !== this.alarmName) {
@@ -313,7 +317,18 @@ export class NavigationBatchPreprocessor {
       console.info(
         `Processing ${this.openWpmPayloadEnvelopeProcessQueue.length} study payloads to group by navigation`,
       );
-      await this.processQueue();
+      try {
+        await this.processQueue();
+        await onAfterQueueProcessed(this.navigationBatchesByNavigationUuid);
+      } catch (error) {
+        captureExceptionWithExtras(error, {
+          msg: "Error encountered during periodic queue processing",
+        });
+        console.error(
+          "Error encountered during periodic queue processing",
+          error,
+        );
+      }
     };
     browser.alarms.onAlarm.addListener(alarmListener);
     browser.alarms.create(this.alarmName, {
@@ -569,7 +584,7 @@ export class NavigationBatchPreprocessor {
               },
             );
             // Run the general callback for trimming navigation batches further
-            updatedNavigationBatch = await this.processedNavigationBatchTrimmer(
+            updatedNavigationBatch = this.processedNavigationBatchTrimmer(
               updatedNavigationBatch,
             );
             this.navigationBatchesByNavigationUuid[

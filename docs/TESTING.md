@@ -48,6 +48,10 @@ Feel free to report obviously incorrect bits of implemented UX and unexpected gl
 
 ```
     await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
+    await youTubeUsageStatistics.onNavigationBatchesByUuidProcessed(
+      openWpmPacketHandler.navigationBatchPreprocessor
+        .navigationBatchesByNavigationUuid,
+    );
     await youTubeUsageStatistics.summarizeUpdate();
 ```
 

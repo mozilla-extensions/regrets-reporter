@@ -295,33 +295,14 @@ class ExtensionGlue {
     );
 
     // Add hooks to the navigation batch preprocessor
-    openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer = async (
-      navigationBatch: NavigationBatch,
-    ): Promise<TrimmedNavigationBatch> => {
-      try {
-        // Keep track of aggregated statistics
-        // TODO: Move this to a separate callback instead of piggybacking on processedNavigationBatchTrimmer
-        await youTubeUsageStatistics.seenNavigationBatch(navigationBatch);
-        // Persist the data immediately
-        await youTubeUsageStatistics.persist();
-      } catch (error) {
-        captureExceptionWithExtras(error, {
-          msg:
-            "Error encountered during youTubeUsageStatistics.seenNavigationBatch",
-        });
-        console.error(
-          "Error encountered during youTubeUsageStatistics.seenNavigationBatch",
-          error,
-        );
-      }
-
-      // trim away irrelevant parts of the batch (decreases memory usage)
-      // TODO
-      return reportSummarizer.trimNavigationBatch(navigationBatch);
-    };
+    // for trimming away irrelevant parts of the batch (decreases memory usage)
+    openWpmPacketHandler.navigationBatchPreprocessor.processedNavigationBatchTrimmer =
+      reportSummarizer.trimNavigationBatch;
 
     // Start the navigation batch preprocessor
-    await openWpmPacketHandler.navigationBatchPreprocessor.run();
+    await openWpmPacketHandler.navigationBatchPreprocessor.run(
+      youTubeUsageStatistics.onNavigationBatchesByUuidProcessed,
+    );
 
     // Start OpenWPM instrumentation (monitors navigations and http content)
     const openwpmConfig = {
@@ -417,7 +398,9 @@ class ExtensionGlue {
   resume() {
     openWpmPacketHandler.resume();
     if (openWpmPacketHandler.navigationBatchPreprocessor) {
-      openWpmPacketHandler.navigationBatchPreprocessor.run();
+      openWpmPacketHandler.navigationBatchPreprocessor.run(
+        youTubeUsageStatistics.onNavigationBatchesByUuidProcessed,
+      );
     }
   }
 

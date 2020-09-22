@@ -1,6 +1,7 @@
 import {
   NavigationBatch,
   NavigationBatchPreprocessor,
+  TrimmedNavigationBatchesByUuid,
 } from "./NavigationBatchPreprocessor";
 import { parseIsoDateTimeString } from "./lib/dateUtils";
 import { format } from "date-fns";
@@ -94,6 +95,17 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     this.store = store;
     this.reportSummarizer = reportSummarizer;
   }
+
+  onNavigationBatchesByUuidProcessed = async (
+    navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
+  ) => {
+    const navUuids = Object.keys(navigationBatchesByUuid);
+    for (const navUuid of navUuids) {
+      await this.seenNavigationBatch(navigationBatchesByUuid[navUuid]);
+    }
+    // Persist the data immediately
+    await this.persist();
+  };
 
   seenNavigationBatch = async (
     navigationBatch: NavigationBatch,
@@ -520,6 +532,9 @@ export class YouTubeUsageStatistics implements YouTubeUsageStatisticsRegistry {
     const summarizeAndShareStatistics = async () => {
       console.info(`Summarizing and sharing youtube_usage_statistics_update`);
       await navigationBatchPreprocessor.processQueue();
+      await this.onNavigationBatchesByUuidProcessed(
+        navigationBatchPreprocessor.navigationBatchesByNavigationUuid,
+      );
       const youTubeUsageStatisticsUpdate = await this.summarizeUpdate();
       await dataSharer.share({
         youtube_usage_statistics_update: youTubeUsageStatisticsUpdate,

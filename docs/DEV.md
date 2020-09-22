@@ -118,24 +118,12 @@ To force re-calculating usage statistics for the currently available navigationB
 (less than 5 hours old), to see if any errors occur:
 
 ```javascript
-const summarizeUpdate = async (
-  navigationBatchesByUuid,
-  youTubeUsageStatistics,
-) => {
-  const navUuids = Object.keys(navigationBatchesByUuid);
-  for (const navUuid of navUuids) {
-    await youTubeUsageStatistics.seenNavigationBatch(
-      navigationBatchesByUuid[navUuid],
-    );
-  }
-  return await youTubeUsageStatistics.summarizeUpdate();
-};
 await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
-await summarizeUpdate(
+await youTubeUsageStatistics.onNavigationBatchesByUuidProcessed(
   openWpmPacketHandler.navigationBatchPreprocessor
     .navigationBatchesByNavigationUuid,
-  youTubeUsageStatistics,
 );
+await youTubeUsageStatistics.summarizeUpdate();
 ```
 
 ## Export shared data
