@@ -517,12 +517,11 @@ export class ReportSummarizer {
     return youTubeNavigations;
   }
 
-  extractYouTubePageMetadataFromCapturedWatchPageContent = (
+  extractYtInitialDataFromYouTubeResponseBody = (
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
-  ): YouTubePageMetadata => {
+  ) => {
     let ytInitialData;
-    let errorContext;
 
     if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
       // Handle ordinary full page loads
@@ -579,6 +578,18 @@ export class ReportSummarizer {
       throw new UnexpectedContentParseError({}, "ytInitialData is empty");
     }
 
+    return ytInitialData;
+  };
+
+  extractYouTubePageMetadataFromCapturedWatchPageContent = (
+    httpRequestEnvelope: OpenWpmPayloadEnvelope,
+    capturedContentEnvelope: OpenWpmPayloadEnvelope,
+  ): YouTubePageMetadata => {
+    const ytInitialData = this.extractYtInitialDataFromYouTubeResponseBody(
+      httpRequestEnvelope,
+      capturedContentEnvelope,
+    );
+    let errorContext;
     let video_id;
     try {
       if (!ytInitialData.currentVideoEndpoint) {
@@ -899,37 +910,10 @@ export class ReportSummarizer {
     httpRequestEnvelope: OpenWpmPayloadEnvelope,
     capturedContentEnvelope: OpenWpmPayloadEnvelope,
   ): YouTubePageMetadata {
-    let ytInitialData;
-
-    if (httpRequestEnvelope.httpRequest.is_XHR == 0) {
-      // Handle ordinary full page loads
-      const htmlContent =
-        capturedContentEnvelope.capturedContent.decoded_content;
-      const matchArray = htmlContent.match(
-        /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/,
-      );
-      if (!matchArray) {
-        console.error("No MATCH", { matchArray });
-      }
-      ytInitialData = JSON.parse(matchArray[1]);
-    } else {
-      // Handle subsequent pushState-based loads
-      const jsonContent =
-        capturedContentEnvelope.capturedContent.decoded_content;
-      const xhrResponse = JSON.parse(jsonContent);
-      const xhrResponseItemWithYtInitialData = xhrResponse.find(
-        xhrResponseItem => {
-          return xhrResponseItem.response !== undefined;
-        },
-      );
-      if (!xhrResponseItemWithYtInitialData) {
-        console.error("No xhrResponseItemWithYtInitialData");
-        console.dir({ xhrResponse }, { depth: 4 });
-      }
-      ytInitialData = xhrResponseItemWithYtInitialData.response;
-      // console.dir({ ytInitialData }, {depth: 5});
-    }
-
+    const ytInitialData = this.extractYtInitialDataFromYouTubeResponseBody(
+      httpRequestEnvelope,
+      capturedContentEnvelope,
+    );
     // console.log({ httpRequestEnvelope, ytInitialData });
 
     let search_results;
