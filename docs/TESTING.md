@@ -61,3 +61,17 @@ Note: If there are any issues here, please follow these instructions and attach 
 - Run `youTubeUsageStatistics` in the Console.
 - Right click on "Object" and choose "Copy object”.
 - Paste into the bug report.
+
+## General YouTube functionality should not be affected
+
+This extension does not intentionally modify YouTube functionality in any way. Any breakage should be reported as bugs/issues.
+
+At least verify the following functionality is intact with the extension installed:
+
+- Visit YouTube.com
+- Log in
+- List history, subscriptions etc (without page reloads / &pbjreload=102 issues)
+- Watch videos
+- Subscribe and unsubscribe to channels from video watch pages
+
+Note that issues are much more likely on Chrome due to the lack an WebExtension API for reading response data ([for more details, see this open Chrome bug from 2015](https://bugs.chromium.org/p/chromium/issues/detail?id=487422)), requiring our extension to implement a page-script-level workaround.

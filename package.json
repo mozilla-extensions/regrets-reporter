@@ -24,8 +24,7 @@
     "typeface-nunito-sans": "^0.0.72",
     "typeface-zilla-slab": "^0.0.72",
     "webext-patterns": "^0.9.0",
-    "webextension-polyfill-ts": "^0.17.0",
-    "xhook": "github:jpillora/xhook#es6-2020-refactor"
+    "webextension-polyfill-ts": "^0.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
@@ -74,7 +73,6 @@
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^1.11.0",
-    "replace-in-file-webpack-plugin": "^1.0.6",
     "selenium-webdriver": "^3.6.0",
     "sinon": "4.0.0",
     "sinon-chrome": "2.2.1",

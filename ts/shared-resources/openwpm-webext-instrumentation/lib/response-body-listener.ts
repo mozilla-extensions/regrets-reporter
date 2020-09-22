@@ -228,13 +228,19 @@ export class ResponseBodyListener {
                     {},
                   );
 
-                  // Delete some headers that are never present in candidate response headers (from xhook)
-                  if (responseHeaders["set-cookie"]) {
-                    delete responseHeaders["set-cookie"];
-                  }
-
                   const candidateResponseHeaders =
                     candidateResponseInfo.response.headers;
+
+                  // Delete some headers that have been seen to differ even when the requests are the same
+                  ["set-cookie", "vary"].forEach(headerKey => {
+                    if (responseHeaders[headerKey]) {
+                      delete responseHeaders[headerKey];
+                    }
+                    if (candidateResponseHeaders[headerKey]) {
+                      delete candidateResponseHeaders[headerKey];
+                    }
+                  });
+
                   if (
                     !headerObjectsAreEqual(
                       responseHeaders,
