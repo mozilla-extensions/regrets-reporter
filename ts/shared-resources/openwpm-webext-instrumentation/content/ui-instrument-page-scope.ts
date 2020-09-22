@@ -37,9 +37,11 @@ export const uiInstrumentPageScript = function() {
     if (el.id) {
       return "//*[@id='" + el.id + "']";
     }
-    const sames = [].filter.call(el.parentNode.children, function(x) {
-      return x.tagName == el.tagName;
-    });
+    const sames = el.parentNode
+      ? [].filter.call(el.parentNode.children, function(x) {
+          return x.tagName == el.tagName;
+        })
+      : [];
     return (
       xpath(el.parentNode) +
       "/" +
