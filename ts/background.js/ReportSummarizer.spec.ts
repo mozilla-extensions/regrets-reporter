@@ -783,7 +783,7 @@ describe("ReportSummarizer", function() {
     });
     assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
     assert.deepEqual(youTubeNavigations[2].youtube_visit_metadata, {
-      reach_type: "search_results_non_video_click",
+      reach_type: "search_results_video_click",
       url_type: "watch_page",
       video_element_play_time: 6000,
       document_visible_time: 7000,

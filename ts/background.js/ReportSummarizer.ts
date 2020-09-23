@@ -1157,7 +1157,7 @@ export class ReportSummarizer {
       }
     });
 
-    // console.log({clickedWithinSearchResults, clickedWithinSearchPageNotSearchResults,});
+    // console.log({url_type, clickedWithinSearchResults, clickedWithinSearchPageNotSearchResults,});
 
     if (clickEventEnvelopesForParentYouTubeNavigation.length === 0) {
       return "without_clicking_at_all";
@@ -1201,11 +1201,12 @@ export class ReportSummarizer {
         return "search_results_page_other_indirect_videos_click";
       }
 
-      if (url_type === "search_results_page" && clickedWithinSearchResults) {
-        return "search_results_video_click";
-      }
       if (clickedWithinSearchResults) {
-        return "search_results_non_video_click";
+        if (url_type === "watch_page") {
+          return "search_results_video_click";
+        } else {
+          return "search_results_non_video_click";
+        }
       }
     }
     return "<failed>";
