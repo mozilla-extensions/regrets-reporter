@@ -39,6 +39,15 @@ export const classifyYouTubeNavigationUrlType = (
   if (url.indexOf("prefetch=1") > 0) {
     return "prefetch";
   }
+  const searchResultsPageStartWiths = ["/results", "/youtubei/v1/search"];
+  for (const startWith of searchResultsPageStartWiths) {
+    if (parsedUrl.pathname.indexOf(startWith) === 0) {
+      if (parsedUrl.search.indexOf("&continuation=") > 0) {
+        return "search_results_page_load_more_results";
+      }
+      return "search_results_page";
+    }
+  }
   const miscXhrRequestStartWiths = [
     /*
     "/api/stats",
@@ -102,13 +111,6 @@ export const classifyYouTubeNavigationUrlType = (
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
       return "channel_page";
     }
-  }
-  const searchResultsPageStartWith = "/results";
-  if (parsedUrl.pathname.indexOf(searchResultsPageStartWith) === 0) {
-    if (parsedUrl.search.indexOf("&continuation=") > 0) {
-      return "search_results_page_load_more_results";
-    }
-    return "search_results_page";
   }
   /*
   /feed/trending

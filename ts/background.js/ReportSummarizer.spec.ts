@@ -10,6 +10,7 @@ import { youtubeVisitMainPageSearchClickUserClickVideo } from "./fixtures/Report
 import { youtubeVisitWatchPageAndSearchClickUserSearchResultVideo } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndSearchClickUserSearchResultVideo";
 import { youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile";
 import { youtubeVisitWatchPageChrome20200820 } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageChrome20200820";
+import { youtubeVisitMainPageSearchClickVideoChromeSignedIn } from "./fixtures/ReportSummarizer/youtubeVisitMainPageSearchClickVideoChromeSignedIn";
 
 const firstEncounteredWindowAndTabIds = (
   navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
@@ -744,6 +745,139 @@ describe("ReportSummarizer", function() {
           via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: -1,
           video_element_play_time: 0,
           document_visible_time: 0,
+        },
+      ],
+    });
+  });
+
+  it("fixture: youtubeVisitMainPageSearchClickVideoChromeSignedIn", async function() {
+    const reportSummarizer = new ReportSummarizer();
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitMainPageSearchClickVideoChromeSignedIn,
+    );
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      fixture,
+    );
+    const windowAndTabIds = firstEncounteredWindowAndTabIds(fixture);
+
+    assert.equal(
+      youTubeNavigations.length,
+      3,
+      "should have found youtube navigations",
+    );
+
+    // console.dir({ youTubeNavigations }, { depth: 5 });
+
+    assert.deepEqual(youTubeNavigations[0].youtube_visit_metadata, {
+      reach_type: "direct_navigation",
+      url_type: "youtube_main_page",
+      video_element_play_time: 0,
+      document_visible_time: 3000,
+    });
+    assert.equal(youTubeNavigations[0].parent_youtube_navigations.length, 0);
+    assert.deepEqual(youTubeNavigations[1].youtube_visit_metadata, {
+      reach_type: "unspecified",
+      url_type: "search_results_page",
+      video_element_play_time: 0,
+      document_visible_time: 2000,
+    });
+    assert.equal(youTubeNavigations[1].parent_youtube_navigations.length, 1);
+    assert.deepEqual(youTubeNavigations[2].youtube_visit_metadata, {
+      reach_type: "search_results_non_video_click",
+      url_type: "watch_page",
+      video_element_play_time: 6000,
+      document_visible_time: 7000,
+    });
+    assert.equal(youTubeNavigations[2].parent_youtube_navigations.length, 2);
+
+    const youTubeNavigationSpecificRegretReportData1 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 1),
+      windowAndTabIds.windowId,
+      windowAndTabIds.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
+      youtube_navigation_metadata: {
+        page_entry_point: "direct_navigation",
+        url_type: "youtube_main_page",
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: -1,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: -1,
+        video_element_play_time: 0,
+        document_visible_time: 3000,
+      },
+      parent_youtube_navigations_metadata: [],
+    });
+
+    const youTubeNavigationSpecificRegretReportData2 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 2),
+      windowAndTabIds.windowId,
+      windowAndTabIds.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData2, {
+      youtube_navigation_metadata: {
+        page_entry_point: "youtube_main_page",
+        url_type: "search_results_page",
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: -1,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: -1,
+        video_element_play_time: 0,
+        document_visible_time: 2000,
+      },
+      parent_youtube_navigations_metadata: [
+        {
+          page_entry_point: "direct_navigation",
+          url_type: "youtube_main_page",
+          via_search_results: 0,
+          via_non_search_algorithmic_recommendations_content: -1,
+          via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: -1,
+          video_element_play_time: 0,
+          document_visible_time: 3000,
+        },
+      ],
+    });
+
+    const youTubeNavigationSpecificRegretReportData3 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 3),
+      windowAndTabIds.windowId,
+      windowAndTabIds.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData3, {
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_description:
+            'Watch the official music video for "The Pretender" by Foo Fighters\nListen to Foo Fighters: [https://FooFighters.lnk.to/listen_YD](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2Flisten_YD&redir_token=QUFFLUhqa3FOdEZudWxuVU9kalhNcmRKQ0dLNTBMVy1ad3xBQ3Jtc0trdkpYNjg4ZjluUnhseDJwWUlCTGNsWEhWM3BUTS1hZXVoNVJUSmx6VlcyM3ZnbTd4WGhCNDJ4cEYzZzNYZkI4R0k1ZGlyUnFWU0prU2NiVGE4Uk96d3BiWVlkaF9XOXdVWWQ0dnZPanZ0eEVSc0dIbw%3D%3D)\n\nSubscribe to the official Foo Fighters YouTube channel: [https://FooFighters.lnk.to/subscribeYD](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2FsubscribeYD&redir_token=QUFFLUhqa291MjNoS3N0WWxRWlFJdk5jN2V2c05wN21Yd3xBQ3Jtc0tsTnhGbGQ3YjNXbFI5bkRrR3UzcU1IVU1yajlmV05hYmptTGtKZkN5RDVhT1pFSzFKMU81MDFqWV9IUDVYNjhYTUlycWNwY1pSRGZTUXZUOG5HSHdJcjliV1d6NzRudHlfdUZvZjJWZDQxUHQ0X2tPQQ%3D%3D)\n\nWatch more Foo Fighter videos: [https://FooFighters.lnk.to/listen_YC/...](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2Flisten_YC%2Fyoutube&redir_token=QUFFLUhqbmJfeDdCOFRjTFhSVEVlTHR3TkhXQk5BS3d5d3xBQ3Jtc0ttUDU1WktQYXQ0dmZTLWxaZ1lyUl90Y0dUMnRlUXAtaW53ckQxc1otems5YmVrOXZueGFGVTJna3JGRU5PWmN2RXVfN09uSXFpREFGZksxaGZlTENzQXNFaXJVU3BHMlJOS21VNFpBT19FeXB2WVNxOA%3D%3D)\n\nFollow Foo Fighters:\nFacebook: [https://FooFighters.lnk.to/followFI](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2FfollowFI&redir_token=QUFFLUhqbnE3OWhOX3NrQk9qMXFiNV9KaE1iaG1DVFJnUXxBQ3Jtc0tsMHFLMXExM0ZUMm4xaDgySi1iblcyd3h4aEVmOHk5QjRMeDB5em9JLVlZTXhpMjRFMmNLSnVmb25SZ0FtQkxicDdfRzB4X3dpYWpYY2RCUUktWnJIZjV2WUtjd3F4cTZ1VjZoMFRIeTBQMDhfQ3JiTQ%3D%3D)\nInstagram: [https://FooFighters.lnk.to/followII](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2FfollowII&redir_token=QUFFLUhqa0FKMWZ0X0VqYlRQQUswbzRVTlE4R2picnR5UXxBQ3Jtc0tub2g1WG5zb0VlS1dRVmpKN0NveGlJOG9HZjZsR2xhdG5sTWZyazlWb3lzNVlHY2lFNmJubHNUdTFhV0NGZ3lVWHRQeTJsZUxRVkFEeVNWRnZFendIcWUyd2J3MlAtSDRodmpkd1VQM0NNc2FPTzFtaw%3D%3D)\nTwitter: [https://FooFighters.lnk.to/followTI](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2FfollowTI&redir_token=QUFFLUhqbENmeUpBdnVmdWg4SUVjeWhpMmR6TFhESXFnd3xBQ3Jtc0tuTDdReDVoRnFFRVl1TFZaVG1pSF9oazZMNzNRTk40enBQaG50czFGR0NWdWlmVFFWelpaSEhuZDY2cW1TRmJnRkFrQjVmOWpCemMxWnRzZExwWWw2VFA5SFBFQVZ6aFYzV0dJdkRFeTJFcm9ORzF4aw%3D%3D)\nWebsite: [https://FooFighters.lnk.to/followWI](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2FfollowWI&redir_token=QUFFLUhqbXFrd0N4WENJVW9aRUdlZVBublYyN3BJMXZ0UXxBQ3Jtc0ttREpnZ2l6Szhta1N5a0ZIUTluVkx5YTd3Z1h5VEpnbzZ6MnVSdDJLRVdLRWJOUHY5SU9RMlltVFBkNmc0VVVjVmgtOHpGYXI4WkRQY2Fidkx6RDdab21BYlloYmRuUy1taG9rVEVFcDJ1ZGhUdHJCQQ%3D%3D)\nSpotify: [https://FooFighters.lnk.to/followSI](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2FfollowSI&redir_token=QUFFLUhqbjZUMy0xVTBIcHdXakxQSFB4cHNsUERkX2psQXxBQ3Jtc0ttNXFtRW8wbDc4UmFZbmtFM005U1o0TjRJWTBqLVZWdzFuVlF4aEpuY2dpZnNwS0w3UWNUa1VVOW1nZmp2aG5NbDZjZklmMnBxaU9QS2dwdVFtdVEtdEZFajVyTXJrVXl4SzlLbTZ6Mmg0Zlc3VXAtRQ%3D%3D)\nYouTube: [https://FooFighters.lnk.to/subscribeYD](/redirect?v=SBjQ9tuuTJQ&event=video_description&q=https%3A%2F%2FFooFighters.lnk.to%2FsubscribeYD&redir_token=QUFFLUhqbFpoMHNXLTNqc1JndkZWUU1iQUN1MlhNY3dHd3xBQ3Jtc0tsc0xQRVZYMXlvcjVERUl1ZVBOU19OTmJ3TTRnb0NEY3FIU1NnQXdzTXZoQ0N2SkQ4bkZYRnB3WEV4RmpMOTFQWmhGYU1FR3BGQkhMSEd0bVQwRVhnbHB3ek8xTUtfa0ZVNFNWS216dHdHSG1MOGdSYw%3D%3D)\n\nLyrics:\nKeep you in the dark\nYou know they all pretend\nKeep you in the dark\nAnd so it all began\n\nSend in your skeletons\nSing as their bones go marching in... again\nThe need you buried deep\nThe secrets that you keep are ever ready\nAre you ready?\nI\'m finished making sense\nDone pleading ignorance\nThat whole defense\n\n[#FooFighters](/results?search_query=%23FooFighters) [#ThePretender](/results?search_query=%23ThePretender) [#Remastered](/results?search_query=%23Remastered) [#OfficialMusicVideo](/results?search_query=%23OfficialMusicVideo)',
+          video_id: "SBjQ9tuuTJQ",
+          video_posting_date: "Oct 3, 2009",
+          video_title: "Foo Fighters - The Pretender",
+          view_count_at_navigation: 435926622,
+          view_count_at_navigation_short: "435M views",
+        },
+        page_entry_point: "search_results_page",
+        url_type: "watch_page",
+        via_search_results: 1,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 1,
+        video_element_play_time: 6000,
+        document_visible_time: 7000,
+      },
+      parent_youtube_navigations_metadata: [
+        {
+          page_entry_point: "youtube_main_page",
+          url_type: "search_results_page",
+          via_search_results: 0,
+          via_non_search_algorithmic_recommendations_content: -1,
+          via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: -1,
+          video_element_play_time: 0,
+          document_visible_time: 2000,
+        },
+        {
+          page_entry_point: "direct_navigation",
+          url_type: "youtube_main_page",
+          via_search_results: 0,
+          via_non_search_algorithmic_recommendations_content: -1,
+          via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: -1,
+          video_element_play_time: 0,
+          document_visible_time: 3000,
         },
       ],
     });

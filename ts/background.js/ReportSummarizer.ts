@@ -550,22 +550,35 @@ export class ReportSummarizer {
       const jsonContent =
         capturedContentEnvelope.capturedContent.decoded_content;
       const xhrResponse = JSON.parse(jsonContent);
-      const xhrResponseItemWithYtInitialData = xhrResponse.find(
-        xhrResponseItem => {
-          return xhrResponseItem.response !== undefined;
-        },
-      );
-      if (!xhrResponseItemWithYtInitialData) {
+      if (typeof xhrResponse.find === "function") {
+        const xhrResponseItemWithYtInitialData = xhrResponse.find(
+          xhrResponseItem => {
+            return xhrResponseItem.response !== undefined;
+          },
+        );
+        if (!xhrResponseItemWithYtInitialData) {
+          console.dir(
+            { httpRequestEnvelope, capturedContentEnvelope, jsonContent, xhrResponse },
+            { depth: 4 },
+          );
+          throw new UnexpectedContentParseError(
+            {},
+            "No xhrResponseItemWithYtInitialData",
+          );
+        }
+        ytInitialData = xhrResponseItemWithYtInitialData.response;
+      } else if (typeof xhrResponse === "object") {
+        ytInitialData = xhrResponse;
+      } else {
         console.dir(
-          { httpRequestEnvelope, capturedContentEnvelope, xhrResponse },
+          { httpRequestEnvelope, capturedContentEnvelope, jsonContent, xhrResponse },
           { depth: 4 },
         );
         throw new UnexpectedContentParseError(
           {},
-          "No xhrResponseItemWithYtInitialData",
+          "Unexpected xhr response format",
         );
       }
-      ytInitialData = xhrResponseItemWithYtInitialData.response;
     }
 
     // console.dir({ ytInitialData }, {depth: 5});
