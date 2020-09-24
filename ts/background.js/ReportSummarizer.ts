@@ -711,68 +711,125 @@ export class ReportSummarizer {
       }
 
       try {
-        if (
-          !twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
-            .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount
-            .simpleText
-        ) {
-          // this has been detected in error reports and further information is necessary to understand the context
-          errorContext = {
-            viewCountObjectKeys: Object.keys(
-              twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
-                .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
-                .viewCount,
-            ),
-          };
-        }
-        view_count_at_navigation = parseInt(
-          twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer.videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
-            /\D/g,
-            "",
-          ),
-          10,
-        );
-      } catch (err) {
-        captureExceptionWithExtras(
-          err,
-          {
-            attribute: "view_count_at_navigation",
-            ...errorContext,
-          },
-          Sentry.Severity.Warning,
-        );
-        console.error("view_count_at_navigation", err.message);
-        view_count_at_navigation = -1;
-      }
-
-      try {
-        if (
-          !twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
-            .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
-            .shortViewCount
-        ) {
-          // this has been detected in error reports and further information is necessary to understand the context
-          errorContext = {
-            videoViewCountRendererObjectKeys: Object.keys(
-              twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
-                .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer,
-            ),
-          };
-        }
-        view_count_at_navigation_short =
+        const viewCount =
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
-            .videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer
-            .shortViewCount.simpleText;
+            .videoPrimaryInfoRenderer.viewCount;
+        if (viewCount) {
+          if (viewCount.videoViewCountRenderer) {
+            // view_count_at_navigation
+            try {
+              view_count_at_navigation = -1;
+              if (viewCount.videoViewCountRenderer.viewCount.simpleText) {
+                view_count_at_navigation = parseInt(
+                  viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
+                    /\D/g,
+                    "",
+                  ),
+                  10,
+                );
+              } else {
+                // sometimes only "viewCount.runs" is available
+                if (viewCount.videoViewCountRenderer.viewCount.runs) {
+                  const markdown = runsToMarkdown(
+                    viewCount.videoViewCountRenderer.viewCount.runs,
+                  );
+                  view_count_at_navigation = parseInt(markdown, 10);
+                  // Should never happen, unless parseInt was given garbage
+                  if (view_count_at_navigation === 0) {
+                    errorContext = { markdown };
+                    throw new Error(
+                      "view_count_at_navigation parsed via runs evaluated as 0",
+                    );
+                  }
+                } else {
+                  // further information is necessary to understand the context
+                  errorContext = {
+                    viewCountVideoViewCountRendererViewCountObjectKeys: Object.keys(
+                      viewCount.videoViewCountRenderer.viewCount,
+                    ),
+                  };
+                  throw new Error(
+                    "Neither simpleText nor runs was available when interpreting view_count_at_navigation",
+                  );
+                }
+              }
+            } catch (err) {
+              captureExceptionWithExtras(
+                err,
+                {
+                  attribute: "view_count_at_navigation",
+                  ...errorContext,
+                },
+                Sentry.Severity.Warning,
+              );
+              console.error("view_count_at_navigation", err.message);
+              view_count_at_navigation = -1;
+            }
+
+            // view_count_at_navigation_short
+            try {
+              view_count_at_navigation_short = "<failed>";
+              const shortViewCount =
+                viewCount.videoViewCountRenderer.shortViewCount;
+              if (shortViewCount) {
+                if (shortViewCount.simpleText) {
+                  view_count_at_navigation_short = shortViewCount.simpleText;
+                } else {
+                  throw new Error(
+                    "simpleText was not available when interpreting view_count_at_navigation_short",
+                  );
+                }
+              } else {
+                // sometimes only viewCount is available, so we use it as fallback
+                view_count_at_navigation_short = `${view_count_at_navigation}`;
+              }
+            } catch (err) {
+              captureExceptionWithExtras(
+                err,
+                {
+                  attribute: "view_count_at_navigation_short",
+                  ...errorContext,
+                },
+                Sentry.Severity.Warning,
+              );
+              console.error("view_count_at_navigation_short", err.message);
+              view_count_at_navigation_short = "<failed>";
+            }
+          } else {
+            // further information is necessary to understand the context
+            errorContext = {
+              viewCountObjectKeys: Object.keys(viewCount),
+            };
+            throw new Error(
+              "videoViewCountRenderer was not available when interpreting view counts",
+            );
+          }
+        } else {
+          // further information is necessary to understand the context
+          errorContext = {
+            twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRendererObjectKeys: Object.keys(
+              twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer,
+            ),
+          };
+          throw new Error(
+            "viewCount was not available when interpreting view counts",
+          );
+        }
       } catch (err) {
         captureExceptionWithExtras(
           err,
           {
-            attribute: "view_count_at_navigation_short",
+            attribute:
+              "view_count_at_navigation/view_count_at_navigation_short",
             ...errorContext,
           },
           Sentry.Severity.Warning,
         );
-        console.error("view_count_at_navigation_short", err.message);
+        console.error(
+          "view_count_at_navigation/view_count_at_navigation_short",
+          err.message,
+        );
+        view_count_at_navigation = -1;
         view_count_at_navigation_short = "<failed>";
       }
     } catch (err) {
