@@ -528,6 +528,8 @@ export class ReportSummarizer {
       const htmlContent =
         capturedContentEnvelope.capturedContent.decoded_content;
       let matchArray;
+      const htmlContentContainsTheStringYtInitialData =
+        htmlContent.indexOf("ytInitialData") > -1;
       // Most recently know style of markup
       matchArray = htmlContent.match(this.matchYtInitialData);
       if (!matchArray) {
@@ -539,17 +541,50 @@ export class ReportSummarizer {
             { depth: 4 },
           );
           throw new UnexpectedContentParseError(
-            { matchArray },
+            { matchArray, htmlContentContainsTheStringYtInitialData },
             "No match of ytInitialData in htmlContent",
           );
         }
       }
-      ytInitialData = JSON.parse(matchArray[1]);
+      if (!matchArray[1]) {
+        console.dir(
+          { httpRequestEnvelope, capturedContentEnvelope, matchArray },
+          { depth: 4 },
+        );
+        throw new UnexpectedContentParseError(
+          { matchArray, htmlContentContainsTheStringYtInitialData },
+          "Unexpected matches of ytInitialData in htmlContent",
+        );
+      }
+      try {
+        ytInitialData = JSON.parse(matchArray[1]);
+      } catch (err) {
+        console.dir(
+          { httpRequestEnvelope, capturedContentEnvelope, matchArray },
+          { depth: 4 },
+        );
+        throw new UnexpectedContentParseError(
+          { matchArray, htmlContentContainsTheStringYtInitialData },
+          `JSON.parse of ytInitialData in htmlContent failed: ${err.message}`,
+        );
+      }
     } else {
       // Handle subsequent pushState-based loads
       const jsonContent =
         capturedContentEnvelope.capturedContent.decoded_content;
-      const xhrResponse = JSON.parse(jsonContent);
+      let xhrResponse;
+      try {
+        xhrResponse = JSON.parse(jsonContent);
+      } catch (err) {
+        console.dir(
+          { httpRequestEnvelope, capturedContentEnvelope, jsonContent },
+          { depth: 4 },
+        );
+        throw new UnexpectedContentParseError(
+          { first5CharsOfJsonContent: jsonContent.substr(0, 5) },
+          `JSON.parse of xhrResponse in jsonContent failed: ${err.message}`,
+        );
+      }
       if (typeof xhrResponse.find === "function") {
         const xhrResponseItemWithYtInitialData = xhrResponse.find(
           xhrResponseItem => {
@@ -567,7 +602,7 @@ export class ReportSummarizer {
             { depth: 4 },
           );
           throw new UnexpectedContentParseError(
-            {},
+            { xhrResponseLength: xhrResponse.length },
             "No xhrResponseItemWithYtInitialData",
           );
         }
@@ -707,104 +742,14 @@ export class ReportSummarizer {
           Sentry.Severity.Warning,
         );
         console.error("video_posting_date", err.message);
-        video_posting_date = "";
+        video_posting_date = "<failed>";
       }
 
       try {
         const viewCount =
           twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRenderer
             .videoPrimaryInfoRenderer.viewCount;
-        if (viewCount) {
-          if (viewCount.videoViewCountRenderer) {
-            // view_count_at_navigation
-            try {
-              view_count_at_navigation = -1;
-              if (viewCount.videoViewCountRenderer.viewCount.simpleText) {
-                view_count_at_navigation = parseInt(
-                  viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
-                    /\D/g,
-                    "",
-                  ),
-                  10,
-                );
-              } else {
-                // sometimes only "viewCount.runs" is available
-                if (viewCount.videoViewCountRenderer.viewCount.runs) {
-                  const markdown = runsToMarkdown(
-                    viewCount.videoViewCountRenderer.viewCount.runs,
-                  );
-                  view_count_at_navigation = parseInt(markdown, 10);
-                  // Should never happen, unless parseInt was given garbage
-                  if (view_count_at_navigation === 0) {
-                    errorContext = { markdown };
-                    throw new Error(
-                      "view_count_at_navigation parsed via runs evaluated as 0",
-                    );
-                  }
-                } else {
-                  // further information is necessary to understand the context
-                  errorContext = {
-                    viewCountVideoViewCountRendererViewCountObjectKeys: Object.keys(
-                      viewCount.videoViewCountRenderer.viewCount,
-                    ),
-                  };
-                  throw new Error(
-                    "Neither simpleText nor runs was available when interpreting view_count_at_navigation",
-                  );
-                }
-              }
-            } catch (err) {
-              captureExceptionWithExtras(
-                err,
-                {
-                  attribute: "view_count_at_navigation",
-                  ...errorContext,
-                },
-                Sentry.Severity.Warning,
-              );
-              console.error("view_count_at_navigation", err.message);
-              view_count_at_navigation = -1;
-            }
-
-            // view_count_at_navigation_short
-            try {
-              view_count_at_navigation_short = "<failed>";
-              const shortViewCount =
-                viewCount.videoViewCountRenderer.shortViewCount;
-              if (shortViewCount) {
-                if (shortViewCount.simpleText) {
-                  view_count_at_navigation_short = shortViewCount.simpleText;
-                } else {
-                  throw new Error(
-                    "simpleText was not available when interpreting view_count_at_navigation_short",
-                  );
-                }
-              } else {
-                // sometimes only viewCount is available, so we use it as fallback
-                view_count_at_navigation_short = `${view_count_at_navigation}`;
-              }
-            } catch (err) {
-              captureExceptionWithExtras(
-                err,
-                {
-                  attribute: "view_count_at_navigation_short",
-                  ...errorContext,
-                },
-                Sentry.Severity.Warning,
-              );
-              console.error("view_count_at_navigation_short", err.message);
-              view_count_at_navigation_short = "<failed>";
-            }
-          } else {
-            // further information is necessary to understand the context
-            errorContext = {
-              viewCountObjectKeys: Object.keys(viewCount),
-            };
-            throw new Error(
-              "videoViewCountRenderer was not available when interpreting view counts",
-            );
-          }
-        } else {
+        if (!viewCount) {
           // further information is necessary to understand the context
           errorContext = {
             twoColumnWatchNextResultsResultsResultsContentsWithVideoPrimaryInfoRendererObjectKeys: Object.keys(
@@ -814,6 +759,94 @@ export class ReportSummarizer {
           throw new Error(
             "viewCount was not available when interpreting view counts",
           );
+        }
+        if (!viewCount.videoViewCountRenderer) {
+          // further information is necessary to understand the context
+          errorContext = {
+            viewCountObjectKeys: Object.keys(viewCount),
+          };
+          throw new Error(
+            "videoViewCountRenderer was not available when interpreting view counts",
+          );
+        }
+
+        // view_count_at_navigation
+        try {
+          view_count_at_navigation = -1;
+          if (viewCount.videoViewCountRenderer.viewCount.simpleText) {
+            view_count_at_navigation = parseInt(
+              viewCount.videoViewCountRenderer.viewCount.simpleText.replace(
+                /\D/g,
+                "",
+              ),
+              10,
+            );
+          } else {
+            // sometimes only "viewCount.runs" is available
+            if (!viewCount.videoViewCountRenderer.viewCount.runs) {
+              // further information is necessary to understand the context
+              errorContext = {
+                viewCountVideoViewCountRendererViewCountObjectKeys: Object.keys(
+                  viewCount.videoViewCountRenderer.viewCount,
+                ),
+              };
+              throw new Error(
+                "Neither simpleText nor runs was available when interpreting view_count_at_navigation",
+              );
+            }
+            const markdown = runsToMarkdown(
+              viewCount.videoViewCountRenderer.viewCount.runs,
+            );
+            view_count_at_navigation = parseInt(markdown, 10);
+            // Should never happen, unless parseInt was given garbage
+            if (view_count_at_navigation === 0) {
+              errorContext = { markdown };
+              throw new Error(
+                "view_count_at_navigation parsed via runs evaluated as 0",
+              );
+            }
+          }
+        } catch (err) {
+          captureExceptionWithExtras(
+            err,
+            {
+              attribute: "view_count_at_navigation",
+              ...errorContext,
+            },
+            Sentry.Severity.Warning,
+          );
+          console.error("view_count_at_navigation", err.message);
+          view_count_at_navigation = -1;
+        }
+
+        // view_count_at_navigation_short
+        try {
+          view_count_at_navigation_short = "<failed>";
+          const shortViewCount =
+            viewCount.videoViewCountRenderer.shortViewCount;
+          if (shortViewCount) {
+            if (shortViewCount.simpleText) {
+              view_count_at_navigation_short = shortViewCount.simpleText;
+            } else {
+              throw new Error(
+                "simpleText was not available when interpreting view_count_at_navigation_short",
+              );
+            }
+          } else {
+            // sometimes only viewCount is available, so we use it as fallback
+            view_count_at_navigation_short = `${view_count_at_navigation}`;
+          }
+        } catch (err) {
+          captureExceptionWithExtras(
+            err,
+            {
+              attribute: "view_count_at_navigation_short",
+              ...errorContext,
+            },
+            Sentry.Severity.Warning,
+          );
+          console.error("view_count_at_navigation_short", err.message);
+          view_count_at_navigation_short = "<failed>";
         }
       } catch (err) {
         captureExceptionWithExtras(
@@ -841,7 +874,6 @@ export class ReportSummarizer {
         Sentry.Severity.Warning,
       );
       console.error("video_* within videoPrimaryInfoRenderer", err.message);
-      video_title = "<failed>";
     }
 
     let video_description;
@@ -851,18 +883,32 @@ export class ReportSummarizer {
         errorContext = {
           ytInitialDataObjectKeys: Object.keys(ytInitialData),
         };
-      } else {
-        if (
-          !ytInitialData.contents.twoColumnWatchNextResults.results.results
-            .contents
-        ) {
-          // this has been detected in error reports and further information is necessary to understand the context
-          errorContext = {
-            resultsResultsObjectKeys: Object.keys(
-              ytInitialData.contents.twoColumnWatchNextResults.results.results,
-            ),
-          };
-        }
+        throw new Error("ytInitialData.contents is not available");
+      }
+      if (!ytInitialData.contents.twoColumnWatchNextResults.results) {
+        // this has been detected in error reports and further information is necessary to understand the context
+        errorContext = {
+          twoColumnWatchNextResultsObjectKeys: Object.keys(
+            ytInitialData.contents.twoColumnWatchNextResults,
+          ),
+        };
+        throw new Error(
+          "ytInitialData.contents.twoColumnWatchNextResults is not available",
+        );
+      }
+      if (
+        !ytInitialData.contents.twoColumnWatchNextResults.results.results
+          .contents
+      ) {
+        // this has been detected in error reports and further information is necessary to understand the context
+        errorContext = {
+          resultsResultsObjectKeys: Object.keys(
+            ytInitialData.contents.twoColumnWatchNextResults.results.results,
+          ),
+        };
+        throw new Error(
+          "ytInitialData.contents.twoColumnWatchNextResults.results.results.contents is not available",
+        );
       }
       const twoColumnWatchNextResultsResultsResultsContentsWithVideoSecondaryInfoRenderer = ytInitialData.contents.twoColumnWatchNextResults.results.results.contents.find(
         contents => {
