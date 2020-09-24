@@ -75,7 +75,6 @@ class ExtensionGlue {
         "port-from-options-ui:index",
         "port-from-options-ui:form",
         "port-from-data-viewer:index",
-        "port-from-data-viewer:component",
         "port-from-get-started:index",
         "port-from-get-started:component",
         "port-from-not-available-notice:index",
