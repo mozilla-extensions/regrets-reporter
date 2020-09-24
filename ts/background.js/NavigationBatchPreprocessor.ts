@@ -535,7 +535,7 @@ export class NavigationBatchPreprocessor {
                 payload.time_stamp,
                 this.navigationAgeThresholdInSeconds,
               );
-              // console.log("openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold", openWpmPayloadEnvelope.type, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold);
+              // console.debug({type: openWpmPayloadEnvelope.type, event_ordinal: payload.event_ordinal, isSameFrame, isWithinNavigationEventOrdinalBounds, isWithinNavigationEventAgeThreshold});
               if (isSameFrame && isWithinNavigationEventOrdinalBounds) {
                 if (isWithinNavigationEventAgeThreshold) {
                   navigationBatch.childEnvelopes.push(openWpmPayloadEnvelope);

@@ -558,7 +558,12 @@ export class ReportSummarizer {
         );
         if (!xhrResponseItemWithYtInitialData) {
           console.dir(
-            { httpRequestEnvelope, capturedContentEnvelope, jsonContent, xhrResponse },
+            {
+              httpRequestEnvelope,
+              capturedContentEnvelope,
+              jsonContent,
+              xhrResponse,
+            },
             { depth: 4 },
           );
           throw new UnexpectedContentParseError(
@@ -571,7 +576,12 @@ export class ReportSummarizer {
         ytInitialData = xhrResponse;
       } else {
         console.dir(
-          { httpRequestEnvelope, capturedContentEnvelope, jsonContent, xhrResponse },
+          {
+            httpRequestEnvelope,
+            capturedContentEnvelope,
+            jsonContent,
+            xhrResponse,
+          },
           { depth: 4 },
         );
         throw new UnexpectedContentParseError(
