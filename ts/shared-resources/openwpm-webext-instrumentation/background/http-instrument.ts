@@ -303,7 +303,7 @@ export class HttpInstrument {
       const { windowId, incognito, url } = await browser.tabs
         .get(tabId)
         .catch(reason => {
-          this.dataReceiver.logError(
+          this.dataReceiver.logWarn(
             `Usage of browser.tabs.get in http instrument rejected: ${reason}`,
           );
           return emptyMetadata;
@@ -680,8 +680,8 @@ export class HttpInstrument {
       dataReceiver.saveRecord("http_responses", update);
       */
       this.dataReceiver.logError(
-        `Unable to retrieve response body.\n` +
-          `Likely caused by a programming error: ${err.name}: ${err.message}\n${err.stack}`,
+        `Unable to retrieve response body. Likely caused by a programming error`,
+        err,
       );
       update.content_hash = "<error>";
       this.dataReceiver.saveRecord("http_responses", update);

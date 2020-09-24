@@ -82,11 +82,7 @@ export class OpenWpmPacketHandler {
     }
     const level = "warn";
     const logEntry: LogEntry = { level, msg };
-    captureExceptionWithExtras(
-      new Error("OpenWPM WARN log message"),
-      { msg },
-      Sentry.Severity.Warning,
-    );
+    // Note: Not capturing OpenWPM warnings via error reports
     console.warn(`OpenWPM WARN log message: ${msg}`);
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       "openwpm_log",
@@ -94,7 +90,7 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  logError = async msg => {
+  logError = async (msg, err) => {
     if (!this.active) {
       return;
     }
@@ -103,7 +99,7 @@ export class OpenWpmPacketHandler {
     }
     const level = "error";
     const logEntry: LogEntry = { level, msg };
-    captureExceptionWithExtras(new Error("OpenWPM ERROR log message"), { msg });
+    this.captureOpenWPMError(msg, level, err);
     console.error(`OpenWPM ERROR log message: ${msg}`);
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       "openwpm_log",
@@ -111,7 +107,7 @@ export class OpenWpmPacketHandler {
     );
   };
 
-  logCritical = async msg => {
+  logCritical = async (msg, err) => {
     if (!this.active) {
       return;
     }
@@ -120,13 +116,17 @@ export class OpenWpmPacketHandler {
     }
     const level = "critical";
     const logEntry: LogEntry = { level, msg };
-    captureExceptionWithExtras(new Error("OpenWPM CRITICAL log message"), {
-      msg,
-    });
+    this.captureOpenWPMError(msg, level, err);
     console.error(`OpenWPM CRITICAL log message: ${msg}`);
     await this.navigationBatchPreprocessor.submitOpenWPMPayload(
       "openwpm_log",
       logEntry,
+    );
+  };
+
+  captureOpenWPMError = (msg, level: string, err = null) => {
+    captureExceptionWithExtras(
+      err ? err : new Error(`OpenWPM ${level} message: ${msg}`),
     );
   };
 
