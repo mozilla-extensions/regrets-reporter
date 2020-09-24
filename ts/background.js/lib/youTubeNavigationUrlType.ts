@@ -106,7 +106,26 @@ export const classifyYouTubeNavigationUrlType = (
       return "user_page";
     }
   }
-  const channelPageStartWiths = ["/channel", "/c/", "/snl/"];
+  const channelPageStartWiths = [
+    "/channel",
+    "/c/",
+    // Various popular channels have their own shortlinks:
+    "/snl/",
+    "/ABolha",
+    "/CanalPeixeBabel",
+    "/TomScottGo",
+    "/annaakana",
+    "/entrepreneurs",
+    "/fendermusical",
+    "/gaming",
+    "/microsoftwindows",
+    "/mozilla",
+    "/ratoborrachudo",
+    "/sewmakecreate",
+    "/technikfaultier",
+    "/theschooloflifetv",
+    "/yoomjji",
+  ];
   for (const startWith of channelPageStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
       return "channel_page";
@@ -139,13 +158,46 @@ export const classifyYouTubeNavigationUrlType = (
     "/post",
     "/signin",
     "/embed",
+    "/oembed",
     "/pagead",
+    "/post",
     "/ptracking",
     "/img",
+    "/feeds/",
+    "/live_204",
+    "/s/",
     "/create_channel",
+    "/pair",
+    "/pcs",
+    "/audiolibrary",
+    "/timedtext_video",
+    "/dashboard",
+    "/attribution_link",
+    "/error",
+    "/logout",
+    "/oembed",
+    "/signin",
+    "/t/",
+    "/profile",
+    "/upload",
+    "/youtube/",
+    "/yt/",
   ];
   for (const startWith of otherRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
+      return "other";
+    }
+  }
+  const otherRequestIncludes = [
+    "/from",
+    "/to/",
+    "/init",
+    ".js",
+    ".ico",
+    ".css",
+  ];
+  for (const includes of otherRequestIncludes) {
+    if (parsedUrl.pathname.indexOf(includes) >= 0) {
       return "other";
     }
   }
