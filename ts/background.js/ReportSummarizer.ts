@@ -654,6 +654,11 @@ export class ReportSummarizer {
         // this has been detected in error reports and further information is necessary to understand the context
         errorContext = {
           ytInitialDataObjectKeys: Object.keys(ytInitialData),
+          // "responseContext" and "webWatchNextResponseExtensionData" has been reported as keys,
+          // but what do they contain in turn?
+          ytInitialDataChildrenObjectKeys: Object.keys(ytInitialData).map(key =>
+            Object.keys(ytInitialData[key]),
+          ),
         };
       }
       video_id = ytInitialData.currentVideoEndpoint.watchEndpoint.videoId;
@@ -1053,6 +1058,20 @@ export class ReportSummarizer {
             return el.videoRenderer.videoId;
           }
           if (el.playlistRenderer) {
+            if (!el.playlistRenderer.navigationEndpoint.watchEndpoint) {
+              captureExceptionWithExtras(
+                new Error(
+                  "el.playlistRenderer.navigationEndpoint.watchEndpoint not available",
+                ),
+                {
+                  navigationEndpointObjectKeys: Object.keys(
+                    el.playlistRenderer.navigationEndpoint,
+                  ),
+                },
+                Sentry.Severity.Warning,
+              );
+              return "(playlist-without-watch-endpoint)";
+            }
             return el.playlistRenderer.navigationEndpoint.watchEndpoint.videoId;
           }
           if (el.radioRenderer) {
