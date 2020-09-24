@@ -539,33 +539,33 @@ onEveryExtensionLoad().then();
 // migrations
 const onUpgrade = async () => {
   console.info("Running onUpgrade callback");
-  const resetClientDataIfDataWasSharedPre098 = async () => {
+  const resetClientDataIfDataWasSharedPre101 = async () => {
     // Reset client data if the installation was active before v0.9.0 so that reported statistics start fresh
     const sharedData = await dataSharer.export();
-    const sharedDataPre098 = sharedData.filter((data: AnnotatedSharedData) => {
+    const sharedDataPre101 = sharedData.filter((data: AnnotatedSharedData) => {
       return (
         !data.event_metadata.extension_version ||
-        semver.satisfies(data.event_metadata.extension_version, "<0.9.8")
+        semver.satisfies(data.event_metadata.extension_version, "<1.0.1")
       );
     });
-    if (sharedDataPre098.length > 0) {
+    if (sharedDataPre101.length > 0) {
       console.info(
-        "RegretsReporter will now reset the client data since it detected client data pre v0.9.8 which gave slightly inaccurate usage statistics",
+        "RegretsReporter will now reset the client state since it detected client data pre v1.0.1 which may have been affected by some data collection issues",
       );
       await resetClientData();
       console.info("Client data has been reset");
     }
     await browser.storage.local.set({
-      hasAttemptedResetClientDataIfDataWasSharedPre098: true,
+      hasAttemptedResetClientDataIfDataWasSharedPre101: true,
     });
   };
   const {
-    hasAttemptedResetClientDataIfDataWasSharedPre098,
+    hasAttemptedResetClientDataIfDataWasSharedPre101,
   } = await browser.storage.local.get(
-    "hasAttemptedResetClientDataIfDataWasSharedPre098",
+    "hasAttemptedResetClientDataIfDataWasSharedPre101",
   );
-  if (!hasAttemptedResetClientDataIfDataWasSharedPre098) {
-    await resetClientDataIfDataWasSharedPre098();
+  if (!hasAttemptedResetClientDataIfDataWasSharedPre101) {
+    await resetClientDataIfDataWasSharedPre101();
   }
 };
 
