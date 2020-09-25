@@ -68,13 +68,13 @@ export class TimeLineElement extends Component<
     }
 
     return (
-      <li className="flex" title={_.text}>
+      <li className="flex text-sm" title={_.text}>
         <img
           className={`flex-none h-9 w-15 mr-3 ${removed ? "opacity-10" : ""} ${
             _.thumbClass
           }`}
           src={_.thumbSrc}
-          alt={_.text}
+          alt="Video Thumbnail"
         />
         <div className="flex-1 text-sm h-9 overflow-y-hidden leading-tight flex items-center">
           <span
