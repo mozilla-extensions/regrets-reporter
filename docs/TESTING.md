@@ -58,9 +58,11 @@ Feel free to report obviously incorrect bits of implemented UX and unexpected gl
 - Verify that all usage stats are zeroed.
 - Browse around YouTube in a certain way (in some test cases, also restart the browser one or many times).
   - Eg play a YouTube video on a watch page, or just visit a watch page without playing the video etc.
-- Run the above two commands again and verify that the usage stats reflect the recent YouTube browsing history.
+- Run the above commands again and verify that the usage stats reflect the recent YouTube browsing history.
 
-Note: If there are any issues here, please follow these instructions and attach the following for proper debugging context:
+Note: Usage stats are updated once a minute, in conjunction with the navigation batch processing. This means that up to a minute of usage stats that occur before browser restart/shutdown will never make it to the persisted usage statistics.
+
+If there are any issues found here, please follow these instructions and attach the following for proper debugging context:
 
 - Run `youTubeUsageStatistics` in the Console.
 - Right click on "Object" and choose "Copy object”.
