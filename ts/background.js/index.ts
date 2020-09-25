@@ -40,7 +40,7 @@ const youTubeUsageStatistics = new YouTubeUsageStatistics(
 );
 const dataSharer = new DataSharer(store);
 
-const resetClientData = async () => {
+const resetClientUsageStatistics = async () => {
   await openWpmPacketHandler.navigationBatchPreprocessor.processQueue();
   openWpmPacketHandler.navigationBatchPreprocessor.reset();
   await youTubeUsageStatistics.hydrate();
@@ -58,17 +58,17 @@ class ExtensionGlue {
   private uiInstrument: UiInstrument;
   private openwpmCrawlId: string;
   private getStartedPortListener;
-  private extensionPreferencesPortListener;
-  private reportRegretFormPortListener;
-  private dataDeletionRequestsPortListener;
-  private sharedDataRequestPortListener;
-  private extensionRemovalRequestPortListener;
+  private extensionPreferencesPortListener: (port: Port) => void;
+  private reportRegretFormPortListener: (port: Port) => void;
+  private dataDeletionRequestsPortListener: (port: Port) => void;
+  private sharedDataRequestPortListener: (port: Port) => void;
+  private extensionRemovalRequestPortListener: (port: Port) => void;
 
   constructor() {}
 
   async init() {
     // Enable error reporting if not opted out
-    this.extensionPreferencesPortListener = initErrorReportingInBackgroundScript(
+    this.extensionPreferencesPortListener = await initErrorReportingInBackgroundScript(
       store,
       [
         "port-from-report-regret-form:index",
@@ -245,8 +245,8 @@ class ExtensionGlue {
       port.onMessage.addListener(async m => {
         // console.debug(`dataDeletionRequestsPortListener message listener: Message from port "${port.name}"`, { m });
         if (m.requestDataDeletion) {
-          // Reset client data so that subsequently reported statistics start fresh
-          await resetClientData();
+          // Reset client usage statistics so that subsequently reported statistics start fresh
+          await resetClientUsageStatistics();
           // Send the data deletion request
           await dataSharer.requestDataDeletion();
           port.postMessage({
@@ -512,7 +512,7 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
 (window as any).reportSummarizer = reportSummarizer;
 (window as any).youTubeUsageStatistics = youTubeUsageStatistics;
 (window as any).triggerClientDownloadOfData = triggerClientDownloadOfData;
-(window as any).resetClientData = resetClientData;
+(window as any).resetClientUsageStatistics = resetClientUsageStatistics;
 (window as any).exportSharedData = async () => {
   const sharedData = await dataSharer.export();
   return triggerClientDownloadOfData(
@@ -521,9 +521,43 @@ const extensionGlue = ((window as any).extensionGlue = new ExtensionGlue());
   );
 };
 
+// migrations
+const runMigrations = async () => {
+  console.info("Running relevant migrations");
+  const resetClientUsageStatisticsIfDataWasSharedPre101 = async () => {
+    // Reset client usage statistics if the installation was active before v1.0.1 so that reported statistics start fresh
+    const sharedData = await dataSharer.export();
+    const sharedDataPre101 = sharedData.filter((data: AnnotatedSharedData) => {
+      return (
+        !data.event_metadata.extension_version ||
+        semver.satisfies(data.event_metadata.extension_version, "<1.0.1")
+      );
+    });
+    if (sharedDataPre101.length > 0) {
+      console.info(
+        "RegretsReporter will now reset the client usage statistics since it detected client data pre v1.0.1 which may have been affected by some data collection issues",
+      );
+      await resetClientUsageStatistics();
+      console.info("Client usage statistics has been reset");
+    }
+    await browser.storage.local.set({
+      hasAttemptedResetClientUsageStatisticsIfDataWasSharedPre101: true,
+    });
+  };
+  const {
+    hasAttemptedResetClientUsageStatisticsIfDataWasSharedPre101,
+  } = await browser.storage.local.get(
+    "hasAttemptedResetClientUsageStatisticsIfDataWasSharedPre101",
+  );
+  if (!hasAttemptedResetClientUsageStatisticsIfDataWasSharedPre101) {
+    await resetClientUsageStatisticsIfDataWasSharedPre101();
+  }
+};
+
 // init the extension glue on every extension load
 async function onEveryExtensionLoad() {
   await extensionGlue.init();
+  await runMigrations();
   const { hasOpenedGetStarted } = await browser.storage.local.get(
     "hasOpenedGetStarted",
   );
@@ -534,60 +568,3 @@ async function onEveryExtensionLoad() {
   await extensionGlue.start();
 }
 onEveryExtensionLoad().then();
-
-// migrations
-const onUpgrade = async () => {
-  console.info("Running onUpgrade callback");
-  const resetClientDataIfDataWasSharedPre101 = async () => {
-    // Reset client data if the installation was active before v0.9.0 so that reported statistics start fresh
-    const sharedData = await dataSharer.export();
-    const sharedDataPre101 = sharedData.filter((data: AnnotatedSharedData) => {
-      return (
-        !data.event_metadata.extension_version ||
-        semver.satisfies(data.event_metadata.extension_version, "<1.0.1")
-      );
-    });
-    if (sharedDataPre101.length > 0) {
-      console.info(
-        "RegretsReporter will now reset the client state since it detected client data pre v1.0.1 which may have been affected by some data collection issues",
-      );
-      await resetClientData();
-      console.info("Client data has been reset");
-    }
-    await browser.storage.local.set({
-      hasAttemptedResetClientDataIfDataWasSharedPre101: true,
-    });
-  };
-  const {
-    hasAttemptedResetClientDataIfDataWasSharedPre101,
-  } = await browser.storage.local.get(
-    "hasAttemptedResetClientDataIfDataWasSharedPre101",
-  );
-  if (!hasAttemptedResetClientDataIfDataWasSharedPre101) {
-    await resetClientDataIfDataWasSharedPre101();
-  }
-};
-
-// upgrade callback
-browser.runtime.onInstalled.addListener(async ({ reason, temporary }) => {
-  try {
-    if (temporary) return; // skip during development
-    switch (reason) {
-      case "update":
-        {
-          await onUpgrade();
-        }
-        break;
-    }
-  } catch (err) {
-    captureExceptionWithExtras(
-      err,
-      {
-        reason,
-        temporary,
-      },
-      Sentry.Severity.Error,
-    );
-    console.error(err);
-  }
-});
