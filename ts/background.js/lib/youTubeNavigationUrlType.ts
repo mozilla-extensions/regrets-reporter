@@ -48,10 +48,7 @@ export const classifyYouTubeNavigationUrlType = (
       return "search_results_page";
     }
   }
-  const watchPageStartWiths = [
-    "/watch",
-    "/youtubei/v1/next",
-  ];
+  const watchPageStartWiths = ["/watch", "/youtubei/v1/next"];
   for (const startWith of watchPageStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
       return "watch_page";

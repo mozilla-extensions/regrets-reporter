@@ -176,17 +176,19 @@ export class ReportSummarizer {
             envelope.type === "openwpm_captured_content" &&
             envelope.capturedContent.decoded_content
           ) {
-            [this.matchYtInitialData, this.matchYtInitialDataPre202008].some(() => {
-              const matches = envelope.capturedContent.decoded_content.match(
-                this.matchYtInitialData,
-              );
-              if (matches && matches[0]) {
-                envelope.capturedContent.decoded_content = matches[0];
-                trimmedNavigationBatch.trimmedCapturedContentCount++;
-                return true;
-              }
-              return false;
-            });
+            [this.matchYtInitialData, this.matchYtInitialDataPre202008].some(
+              () => {
+                const matches = envelope.capturedContent.decoded_content.match(
+                  this.matchYtInitialData,
+                );
+                if (matches && matches[0]) {
+                  envelope.capturedContent.decoded_content = matches[0];
+                  trimmedNavigationBatch.trimmedCapturedContentCount++;
+                  return true;
+                }
+                return false;
+              },
+            );
           }
           return envelope;
         },
