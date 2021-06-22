@@ -82,7 +82,7 @@ export const responseBodyListenerPageScript = function() {
                 or.apply(this, arguments);
               }
               if (xhr.readyState === 4) {
-                console.debug("VIA XHR", { xhr });
+                // console.debug("VIA XHR", { xhr });
                 try {
                   const response: ResponseBodyListenerResponse = self.normalizeXhrResponse(
                     xhr,
@@ -102,7 +102,7 @@ export const responseBodyListenerPageScript = function() {
           window.fetch = function(url, options) {
             return new Promise(function(resolve, reject) {
               const processAfter = function(fetchResponse: Response) {
-                console.debug("VIA FETCH", { fetchResponse });
+                // console.debug("VIA FETCH", { fetchResponse });
                 resolve(fetchResponse);
                 try {
                   self
@@ -204,7 +204,7 @@ export const responseBodyListenerPageScript = function() {
         },
       };
       const onRequestBody = (response: ResponseBodyListenerResponse) => {
-        console.debug({ response });
+        // console.debug({ response });
         const xhookEventResponseInfo: OpenWPMInjectedPageScriptResponseInfo = {
           source: "xhook-after-event",
           ordinal: ordinal++,

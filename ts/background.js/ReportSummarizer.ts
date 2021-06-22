@@ -146,7 +146,7 @@ export interface RegretReport {
 }
 
 export class ReportSummarizer {
-  public matchYtInitialData = /var\sytInitialData\s*=\s*(.*);\s?<\/script>/;
+  public matchYtInitialData = /var\sytInitialData\s*=\s*(.*?);\s?<\/script>/;
   public matchYtInitialDataPre202008 = /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/;
 
   trimNavigationBatch(
@@ -176,21 +176,19 @@ export class ReportSummarizer {
             envelope.type === "openwpm_captured_content" &&
             envelope.capturedContent.decoded_content
           ) {
-            const matches = envelope.capturedContent.decoded_content.match(
-              this.matchYtInitialData,
+            [this.matchYtInitialData, this.matchYtInitialDataPre202008].some(
+              () => {
+                const matches = envelope.capturedContent.decoded_content.match(
+                  this.matchYtInitialData,
+                );
+                if (matches && matches[0]) {
+                  envelope.capturedContent.decoded_content = matches[0];
+                  trimmedNavigationBatch.trimmedCapturedContentCount++;
+                  return true;
+                }
+                return false;
+              },
             );
-            if (matches && matches[0]) {
-              envelope.capturedContent.decoded_content = matches[0];
-              trimmedNavigationBatch.trimmedCapturedContentCount++;
-            } else {
-              const matches = envelope.capturedContent.decoded_content.match(
-                this.matchYtInitialDataPre202008,
-              );
-              if (matches && matches[0]) {
-                envelope.capturedContent.decoded_content = matches[0];
-                trimmedNavigationBatch.trimmedCapturedContentCount++;
-              }
-            }
           }
           return envelope;
         },
@@ -1050,8 +1048,19 @@ export class ReportSummarizer {
     let search_results;
     let search_results_page_for_you_indirect_videos;
     let search_results_page_other_indirect_videos;
+    let errorContext;
     try {
       // console.dir(ytInitialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents, { depth: 8 });
+      if (!ytInitialData.contents) {
+        // this has been detected in error reports and further information is necessary to understand the context
+        errorContext = {
+          ytInitialDataObjectKeys: Object.keys(ytInitialData),
+          ytInitialDataChildrenObjectKeys: Object.keys(ytInitialData).map(key =>
+            Object.keys(ytInitialData[key]),
+          ),
+        };
+        throw new Error("ytInitialData.contents is not available");
+      }
       search_results = ytInitialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents.map(
         el => {
           if (el.videoRenderer) {
@@ -1127,9 +1136,13 @@ export class ReportSummarizer {
         },
       );
     } catch (err) {
-      captureExceptionWithExtras(err, null, Sentry.Severity.Warning);
+      captureExceptionWithExtras(
+        err,
+        { attribute: "search_results", ...errorContext },
+        Sentry.Severity.Warning,
+      );
       console.error("search_results", err.message);
-      console.dir({ ytInitialData }, { depth: 4 });
+      console.dir({ ytInitialData, errorContext }, { depth: 4 });
       search_results = "<failed>";
     }
 

@@ -146,6 +146,8 @@ export class OpenWpmPacketHandler {
       `OpenWPM ${instrument} instrumentation package received and ${
         accepted ? "accepted" : "rejected"
       }`,
+      // Uncomment during development to debug which packets are received and accepted/rejected
+      // { record }
     );
 
     // Only keep relevant packages
