@@ -1,8 +1,5 @@
 import * as React from "react";
 import { MouseEvent } from "react";
-import { browser } from "webextension-polyfill-ts";
-import { config } from "../config";
-import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
 import { GeneralErrorMessage } from "../shared-resources/GeneralErrorMessage";
 
 export class DisplayError extends React.Component<
