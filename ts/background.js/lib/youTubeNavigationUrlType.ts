@@ -70,6 +70,11 @@ export const classifyYouTubeNavigationUrlType = (
     "/error_204",
     "/yts/",
     "/videoplayback",
+    "/generate_204",
+    "/getDatasyncIdsEndpoint",
+    "/getAccountSwitcherEndpoint",
+    "/sw.js_data",
+    "/iframe_api",
   ];
   for (const startWith of miscXhrRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
@@ -125,6 +130,12 @@ export const classifyYouTubeNavigationUrlType = (
     "/technikfaultier",
     "/theschooloflifetv",
     "/yoomjji",
+    "/GiorgioProductions",
+    "/walmart",
+    "/aashiqui2",
+    "/jkl",
+    "/theyoungturks",
+    "/drbecky",
   ];
   for (const startWith of channelPageStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
@@ -138,7 +149,7 @@ export const classifyYouTubeNavigationUrlType = (
   /feed/history
   /feed/guide_builder
   */
-  const youTubeMainPageStartWiths = ["/feed/"];
+  const youTubeMainPageStartWiths = ["/feed/", "/index"];
   for (const startWith of youTubeMainPageStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
       return "youtube_main_page";
@@ -182,6 +193,17 @@ export const classifyYouTubeNavigationUrlType = (
     "/upload",
     "/youtube/",
     "/yt/",
+    "/ads/",
+    "/app_shell",
+    "[Filtered]",
+    "undefined",
+    "/tv",
+    "/paid_memberships",
+    "/analytics",
+    "/live_chat",
+    "/shorts",
+    "/hashtag",
+    "/360/",
   ];
   for (const startWith of otherRequestStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
@@ -195,6 +217,8 @@ export const classifyYouTubeNavigationUrlType = (
     ".js",
     ".ico",
     ".css",
+    ".png",
+    ".gif",
   ];
   for (const includes of otherRequestIncludes) {
     if (parsedUrl.pathname.indexOf(includes) >= 0) {
