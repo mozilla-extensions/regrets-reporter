@@ -146,7 +146,7 @@ export interface RegretReport {
 }
 
 export class ReportSummarizer {
-  public matchYtInitialData = /var\sytInitialData\s*=\s*(.*);\s?<\/script>/;
+  public matchYtInitialData = /var\sytInitialData\s*=\s*(.*?);\s?<\/script>/;
   public matchYtInitialDataPre202008 = /window\["ytInitialData"\]\s*=\s*(.*);\s*window\["ytInitialPlayerResponse"\]/;
 
   trimNavigationBatch(
