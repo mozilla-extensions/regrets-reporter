@@ -48,6 +48,15 @@ export const classifyYouTubeNavigationUrlType = (
       return "search_results_page";
     }
   }
+  const watchPageStartWiths = [
+    "/watch",
+    "/youtubei/v1/next",
+  ];
+  for (const startWith of watchPageStartWiths) {
+    if (parsedUrl.pathname.indexOf(startWith) === 0) {
+      return "watch_page";
+    }
+  }
   const miscXhrRequestStartWiths = [
     /*
     "/api/stats",
@@ -98,12 +107,6 @@ export const classifyYouTubeNavigationUrlType = (
    */
   if (parsedUrl.pathname.match(/^\/get_[a-z_]+_info/)) {
     return "misc_xhr";
-  }
-  const watchPageStartWiths = ["/watch"];
-  for (const startWith of watchPageStartWiths) {
-    if (parsedUrl.pathname.indexOf(startWith) === 0) {
-      return "watch_page";
-    }
   }
   const userPageStartWiths = ["/user"];
   for (const startWith of userPageStartWiths) {
