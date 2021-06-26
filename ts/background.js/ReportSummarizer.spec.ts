@@ -11,6 +11,7 @@ import { youtubeVisitWatchPageAndSearchClickUserSearchResultVideo } from "./fixt
 import { youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageChangeTabSwitchBackAndPlayVideoForAWhile";
 import { youtubeVisitWatchPageChrome20200820 } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageChrome20200820";
 import { youtubeVisitMainPageSearchClickVideoChromeSignedIn } from "./fixtures/ReportSummarizer/youtubeVisitMainPageSearchClickVideoChromeSignedIn";
+import { youtubeVisitWatchPageAndNavigateToARelatedVideo202106 } from "./fixtures/ReportSummarizer/youtubeVisitWatchPageAndNavigateToARelatedVideo202106";
 
 const firstEncounteredWindowAndTabIds = (
   navigationBatchesByUuid: TrimmedNavigationBatchesByUuid,
@@ -1047,6 +1048,53 @@ describe("ReportSummarizer", function() {
         via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
         video_element_play_time: 8000,
         document_visible_time: 15000,
+      },
+      parent_youtube_navigations_metadata: [],
+    });
+  });
+
+  it("fixture: youtubeVisitWatchPageAndNavigateToARelatedVideo202106", async function() {
+    const reportSummarizer = new ReportSummarizer();
+    const fixture = trimNavigationBatchesFixture(
+      youtubeVisitWatchPageAndNavigateToARelatedVideo202106,
+    );
+    const youTubeNavigations = await reportSummarizer.navigationBatchesByUuidToYouTubeNavigations(
+      fixture,
+    );
+
+    assert.equal(
+      youTubeNavigations.length,
+      2,
+      "should have found two youtube navigations",
+    );
+
+    console.dir({ youTubeNavigations }, { depth: 5 });
+
+    const windowAndTabIds1 = firstEncounteredWindowAndTabIds(fixture);
+    const youTubeNavigationSpecificRegretReportData1 = await reportSummarizer.youTubeNavigationSpecificRegretReportDataFromYouTubeNavigations(
+      youTubeNavigations.slice(0, 1),
+      windowAndTabIds1.windowId,
+      windowAndTabIds1.tabId,
+    );
+    assert.deepEqual(youTubeNavigationSpecificRegretReportData1, {
+      youtube_navigation_metadata: {
+        video_metadata: {
+          video_id: "u9Dg-g7t2l4",
+          video_title:
+            "Disturbed  - The Sound Of Silence [Official Music Video]",
+          video_description:
+            'Watch the official music video for The Sound of Silence by Disturbed from the album Immortalized.\n🔔 Subscribe to the channel: [https://youtube.com/c/DisturbedTV/?su...](https://youtube.com/c/DisturbedTV/?sub_confirmation=1)\n\nDownload or stream the song now: [https://wbr.ec/immortalized](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbWdKOVpfS1ZWbHNvd0hmeVU3Yk5GNnF1WWhXUXxBQ3Jtc0tsV2pob2VlNi1QQ2o1RFJUOFpfWXpPTUM1RVI5TEN5RU0tazRqVE1fdWppMnhBdXhDaS1oZ3RpUlpSdkYyRTE2Ukd6QzFtRFAyZ2o2NHZoQ05UZkRhZVl1LU4wRG1RdzF2Q1BCWEE4dkxrTHFZWExtRQ&q=https%3A%2F%2Fwbr.ec%2Fimmortalized)\nNew album \'Evolution\' out now: [https://disturbed.lnk.to/evolution](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbTZOQS1laW5GQnpYcXE2TFphVVVsMHNLT0tFZ3xBQ3Jtc0ttbk1mWmlybEFhd2IwcWoxaDYtU1ZIaWpnMFZpUC1ob2pveUxNRnQ1U1Z1QjdzV2RDeXI2ekFucmxNMk42dFNxR3ZRVnVsckd3Y3dUaWRZV2JLNWJOSW9LZHU3ZjdLVzgxZDB0MF9fQ0hWSlBIdnVaOA&q=https%3A%2F%2Fdisturbed.lnk.to%2Fevolution)\n\nDirected by Matt Mahurin\n[https://mattmahurin.com](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa1FjVl82eVB6TmVJUjJVNDd4SXViRGVTeXcxd3xBQ3Jtc0trVEFyZ2kxdWE0YVlkeC1KNEUxYV9nNXpuWmZFSE4tcFRQb05IcVlyYVlkOW5hZHFGTWVlZldSLWF2b3ZkWC1SNkd1Y0tjcU1JQUMtb0VLV2d1VzhDWkFqN0NrM3pYT2xTQ1FQV3ZoZDZBWVp6di1wbw&q=https%3A%2F%2Fmattmahurin.com)\n\nFollow Disturbed:\nOfficial Website - [https://disturbed1.com](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbVUwbG1MR2l5MDFINEtFc3otcjR2WEpFMmhzUXxBQ3Jtc0trWUQtOXY4UDdxaTc2WWZhNXlYWG54cTU2cDhuTFdvUXc5RDdBb1pFbUN1Sk1fZHNKZ2I1d2pZeUhuZWxiVGJpclJfeVdDYnNyLTVBcDdNVENmdnhjcjhkRjBUZUpIZDlONG9hbnFPT1NUNElTOUVYdw&q=https%3A%2F%2Fdisturbed1.com)\nFacebook - [https://facebook.com/disturbed](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa3A4VU1nQUwxMk9mQUVmUjNSakQyaktIczU3QXxBQ3Jtc0tsUjNwcWplX0l3TDVmYVJ1eTJMa3g3NFhFZnFjRDBNS3ViMF83WUtvZ1ZjbjEwQWI4ZURsd05xay11TlNWRkhXM2NNbGFBWV9DMmpyRW9rTUpEbGQ1Vy0yT2hHOXFjam9wY0hyZ3h3N1MyZDE1THp3TQ&q=https%3A%2F%2Ffacebook.com%2Fdisturbed)\nTwitter - [https://twitter.com/disturbed](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbFdTbVJrMmxqZU0zVUlLSlRES1dPYndvanJvZ3xBQ3Jtc0tsRWZ3azFqc05CcmlMbkVmVGlHZ0xXWlAySjJaNkFKQjJRMlhNNEwteVpZRkFzSWd0VWhKU0pWQlJNcUJYVTZZdm5yRTEtWUhaNUFlblFINHZIeW1FMUtzbHNxTnZhb0Q0U0l4R1JTTWFxYWo0ZE1UWQ&q=https%3A%2F%2Ftwitter.com%2Fdisturbed)\nInstagram - [https://instagram.com/disturbed](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbjFCQkt5YmxITEZVQjBfd00xMTNCRUsxQXNDQXxBQ3Jtc0ttakpKb1RPRm84YmNOcmlTNDNFYnFwMFExVEpoMnA0RW5idTEwNGZuTnlJc00xVk43Z09JN21GNVdaTWdQM1VPLTBEOUtzTGNXRmNLLXlvUVhBdW9zanlsS0h5NHMtQmlYb2tXUkFVd2NRSXVBNjZ5cw&q=https%3A%2F%2Finstagram.com%2Fdisturbed)\nSpotify - [https://smarturl.it/disturbed.spotify](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa2NleVZQSWdpa2dCMUpXUGVGbTNYWmk5V095Z3xBQ3Jtc0tuaXJ5TjVTUzFVQndUcFduaWNTT3d0NjBfTmFQdUVWa1RFWjlZRjVrUHlPY1pTWjUtZXZIamdubkRpOEpRZzJPUFlKSm1DMVZXT2x0dU45YXU2MFNUOXdvdTI0NkpkeEtUelpRX005S2pQdHZSRzNEaw&q=https%3A%2F%2Fsmarturl.it%2Fdisturbed.spotify)\n\nDisturbed is a multi-platinum-selling heavy metal band renowned for their hits “Down With The Sickness,” “Sound of Silence,” “The Vengeful One,” “The Light,” “Stricken,” “Land Of Confusion,” and “Indestructible.” They worked with artists like Myles Kennedy, and Lzzy Hale — amassing billions of global streams and achieving 5 consecutive number one debuts on the Billboard Top 200.\n\nLyrics:\nHello, darkness, my old friend\nI\'ve come to talk with you again\nBecause a vision softly creeping\nLeft its seeds while I was sleeping\n\nAnd the vision that was planted in my brain\nStill remains\nWithin the sound of silence\n\nIn restless dreams I walked alone\nNarrow streets of cobblestone\n\'Neath the halo of a street lamp\nI turned my collar to the cold and damp\n\nWhen my eyes were stabbed by the flash of a neon light\nThat split the night\nAnd touched the sound of silence\n\nAnd in the naked light I saw\nTen thousand people, maybe more\nPeople talking without speaking\nPeople hearing without listening\n\nPeople writing songs that voices never share\nAnd no one dare\nDisturb the sound of silence\n\n"Fools," said I, ""You do not know\nSilence, like a cancer, grows\nHear my words that I might teach you\nTake my arms that I might reach you""\n\nBut my words like silent raindrops fell\nAnd echoed in the wells of silence\n\nAnd the people bowed and prayed\nTo the neon god they made\nAnd the sign flashed out its warning\nIn the words that it was forming\n\nAnd the sign said\n"The words of the prophets are written on the subway walls\nAnd tenement halls\nAnd whispered in the sound\nOf silence"\n\n[#OfficialMusicVideo](/hashtag/officialmusicvideo) [#Disturbed](/hashtag/disturbed) [#SoundOfSilence](/hashtag/soundofsilence) [#WeAreWarnerRecords](/hashtag/wearewarnerrecords)',
+          video_posting_date: "Dec 8, 2015",
+          view_count_at_navigation: 722354944,
+          view_count_at_navigation_short: "722M views",
+        },
+        page_entry_point: "direct_navigation",
+        url_type: "watch_page",
+        via_search_results: 0,
+        via_non_search_algorithmic_recommendations_content: 0,
+        via_recommendations_with_an_explicit_query_or_constraint_to_optimize_for: 0,
+        video_element_play_time: 0,
+        document_visible_time: 5000,
       },
       parent_youtube_navigations_metadata: [],
     });

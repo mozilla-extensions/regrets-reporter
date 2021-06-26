@@ -48,9 +48,19 @@ export const classifyYouTubeNavigationUrlType = (
       return "search_results_page";
     }
   }
-  const watchPageStartWiths = ["/watch", "/youtubei/v1/next"];
+  const watchPageStartWiths = ["/watch"];
   for (const startWith of watchPageStartWiths) {
     if (parsedUrl.pathname.indexOf(startWith) === 0) {
+      return "watch_page";
+    }
+  }
+  const possiblyXhrWatchPageStartWiths = ["/youtubei/v1/next"];
+  for (const startWith of possiblyXhrWatchPageStartWiths) {
+    if (parsedUrl.pathname.indexOf(startWith) === 0) {
+      // The same url that is used for fetching information about the next video to watch is also
+      // used to fetch more recommendations (e.g. onResponseReceivedEndpoints[0].appendContinuationItemsAction)
+      // and possibly other things as well. Here we assume that this is a watch page until
+      // we have inspected the contents of the response
       return "watch_page";
     }
   }

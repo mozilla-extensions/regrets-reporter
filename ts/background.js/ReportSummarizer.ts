@@ -66,6 +66,10 @@ class UnexpectedContentParseError extends Error {
   }
 }
 
+class NotAWatchPageError extends Error {
+  public name: any = "NotAWatchPageError";
+}
+
 export interface VideoMetadata {
   video_id: string | FailedStringAttribute;
   video_title: string | FailedStringAttribute;
@@ -386,6 +390,10 @@ export class ReportSummarizer {
           */
           }
         } catch (error) {
+          if (error.name === "NotAWatchPageError") {
+            // try the next one instead
+            continue;
+          }
           if (error.name === "UnexpectedContentParseError") {
             // report it
             captureExceptionWithExtras(
@@ -647,18 +655,34 @@ export class ReportSummarizer {
     );
     let errorContext;
     let video_id;
+    if (!ytInitialData.currentVideoEndpoint) {
+      // The same url that is used for fetching information about the next video to watch is also
+      // used to fetch more recommendations (e.g. onResponseReceivedEndpoints[0].appendContinuationItemsAction)
+      // and possibly other things as well. This is where we know that the current request was not made
+      // to fetch information about the next video
+      console.info(
+        "A captured 'watch_page' request content does not contain video watch page information. This is mostly expected. Ignoring.",
+      );
+      throw new NotAWatchPageError();
+    }
     try {
-      if (!ytInitialData.currentVideoEndpoint) {
-        // this has been detected in error reports and further information is necessary to understand the context
-        errorContext = {
-          ytInitialDataObjectKeys: Object.keys(ytInitialData),
-          // "responseContext" and "webWatchNextResponseExtensionData" has been reported as keys,
-          // but what do they contain in turn?
-          ytInitialDataChildrenObjectKeys: Object.keys(ytInitialData).map(key =>
-            Object.keys(ytInitialData[key]),
+      // in case there is an error parsing the request, we need some error context metadata to
+      // understand the nature of the request
+      errorContext = {
+        ytInitialDataObjectKeys: Object.keys(ytInitialData),
+        // "responseContext" and "webWatchNextResponseExtensionData" has been reported as keys,
+        // but what do they contain in turn?
+        ytInitialDataChildrenObjectKeys: Object.keys(ytInitialData).map(key =>
+          Object.keys(ytInitialData[key]),
+        ),
+        ytInitialDataChildrenChildrenObjectKeys: Object.keys(
+          ytInitialData,
+        ).map(key =>
+          Object.keys(ytInitialData[key]).map(key2 =>
+            Object.keys(ytInitialData[key][key2]),
           ),
-        };
-      }
+        ),
+      };
       video_id = ytInitialData.currentVideoEndpoint.watchEndpoint.videoId;
     } catch (err) {
       captureExceptionWithExtras(
