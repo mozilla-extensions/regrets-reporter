@@ -15,6 +15,10 @@ jobs:
           command: yarn install --frozen-lockfile
 
       - run:
+          name: Output the current Sentry configuration
+          command: npx sentry-cli info
+
+      - run:
           name: Build extension - Firefox
           command: yarn build:production
 
