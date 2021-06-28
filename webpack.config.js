@@ -15,11 +15,13 @@ const dotEnvPath =
     : "./.env.development";
 
 // Make env vars available in the current scope
-require("dotenv").config({ path: dotEnvPath });
+if (!process.env.TELEMETRY_SERVER) {
+  require("dotenv").config({ path: dotEnvPath });
 
-// Workaround for https://github.com/getsentry/sentry-cli/issues/302
-const fs = require("fs");
-fs.createReadStream(dotEnvPath).pipe(fs.createWriteStream("./.env"));
+  // Workaround for https://github.com/getsentry/sentry-cli/issues/302
+  const fs = require("fs");
+  fs.createReadStream(dotEnvPath).pipe(fs.createWriteStream("./.env"));
+}
 
 const plugins = [
   // Make env vars available in the scope of webpack plugins/loaders
