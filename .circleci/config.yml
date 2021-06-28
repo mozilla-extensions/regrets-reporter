@@ -1,0 +1,41 @@
+version: 2.1
+
+jobs:
+  build-and-test-extension:
+    docker:
+      - image: circleci/node:latest-browsers
+
+    working_directory: ~/checkout
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: yarn install --frozen-lockfile
+
+      - run:
+          name: Build extension - Firefox
+          command: yarn build:production
+
+      - run:
+          name: Build extension - Chrome
+          command: TARGET_BROWSER=chrome yarn build:production
+
+      - store_artifacts:
+          path: "dist"
+          destination: "dist"
+
+      - run:
+          name: Run unit tests
+          command: yarn test
+
+      - store_artifacts:
+          path: "test/results"
+          destination: "test/results"
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - build-and-test-extension
