@@ -2,6 +2,7 @@
 
 const path = require("path");
 
+const webpack = require("webpack");
 const Dotenv = require("dotenv-webpack");
 const CopyPlugin = require("copy-webpack-plugin");
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
@@ -14,24 +15,32 @@ const dotEnvPath =
     ? "./.env.production"
     : "./.env.development";
 
-// Make env vars available in the current scope
+const plugins = [
+  new CopyPlugin({
+    patterns: [{ from: "src", to: destPath }],
+  }),
+];
+
 if (!process.env.TELEMETRY_SERVER) {
+  // Make env vars available in the current scope
   require("dotenv").config({ path: dotEnvPath });
 
   // Workaround for https://github.com/getsentry/sentry-cli/issues/302
   const fs = require("fs");
   fs.createReadStream(dotEnvPath).pipe(fs.createWriteStream("./.env"));
-}
 
-const plugins = [
   // Make env vars available in the scope of webpack plugins/loaders
-  new Dotenv({
-    path: dotEnvPath,
-  }),
-  new CopyPlugin({
-    patterns: [{ from: "src", to: destPath }],
-  }),
-];
+  plugins.push(
+    new Dotenv({
+      path: dotEnvPath,
+    }),
+  );
+} else {
+  // Make env vars available in the scope of webpack plugins/loaders
+  plugins.push(
+    new webpack.EnvironmentPlugin(["SENTRY_DSN", "TELEMETRY_SERVER"]),
+  );
+}
 
 // Only upload sources to Sentry if building a production build or testing the sentry plugin
 if (
