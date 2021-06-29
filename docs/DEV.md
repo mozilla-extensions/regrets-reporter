@@ -14,7 +14,6 @@
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
-  - [Creating a signed build of the add-on for self-distribution](#creating-a-signed-build-of-the-add-on-for-self-distribution)
   - [Generating JSON schema for telemetry ingestion based on typings](#generating-json-schema-for-telemetry-ingestion-based-on-typings)
   - [Validating the generated JSON schema](#validating-the-generated-json-schema)
   - [Troubleshooting](#troubleshooting)
@@ -138,7 +137,7 @@ await (await fetch((await exportSharedData()).url)).text();
 
 (Note: Temporarily add the `"<all_urls>",` permission to manifest.json if necessary)
 
-After launching the extension and consenting to the study:
+After installing the extension:
 
 1. Clear the current set of collected traffic data and stop scheduled processing:
 
@@ -170,7 +169,7 @@ Restart the browser before collecting data for a new fixture.
 
 ### ReportSummarizer
 
-After launching the extension and consenting to the study:
+After installing the extension:
 
 1. Clear the current set of collected navigations and stop scheduled processing:
 
@@ -200,14 +199,6 @@ await (await fetch(rsFixtureFileInfo.url)).text();
 ```
 
 Restart the browser before collecting data for a new fixture.
-
-## Creating a signed build of the add-on for self-distribution
-
-After version bumping and setting the API_KEY and API_SECRET env vars:
-
-```
-yarn build:production && npx web-ext sign --api-key $API_KEY --api-secret $API_SECRET
-```
 
 ## Generating JSON schema for telemetry ingestion based on typings
 
