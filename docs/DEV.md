@@ -14,7 +14,6 @@
   - [Collecting traffic data for test fixtures](#collecting-traffic-data-for-test-fixtures)
     - [NavigationBatchPreprocessor](#navigationbatchpreprocessor)
     - [ReportSummarizer](#reportsummarizer)
-  - [Creating a signed build of the add-on for self-distribution](#creating-a-signed-build-of-the-add-on-for-self-distribution)
   - [Generating JSON schema for telemetry ingestion based on typings](#generating-json-schema-for-telemetry-ingestion-based-on-typings)
   - [Validating the generated JSON schema](#validating-the-generated-json-schema)
   - [Troubleshooting](#troubleshooting)
