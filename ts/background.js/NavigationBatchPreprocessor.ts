@@ -8,7 +8,7 @@ import {
   UiInteraction,
   UiState,
 } from "../shared-resources/openwpm-webext-instrumentation";
-import { CapturedContent, LogEntry } from "./openWpmPacketHandler";
+import { CapturedContent, LogEntry } from "./OpenWpmPacketHandler";
 import { isoDateTimeStringsWithinFutureSecondThreshold } from "./lib/dateUtils";
 import {
   captureExceptionWithExtras,
