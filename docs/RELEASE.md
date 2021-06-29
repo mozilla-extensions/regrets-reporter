@@ -41,9 +41,14 @@
 
 ### CWS - Chrome Web Store
 
-- Log in to CWS
+- Log in to the CWS [Developer Dashboard](https://chrome.google.com/webstore/developer/dashboard)
+- Choose the correct Publisher in the dropdown menu up to the right
+- Click RegretsReporter
+- `Package` -> `Upload new package`
 - Upload the latest Chrome build created by Circle CI
-- After uploading you get to choose whether to publish the new version as soon as it is approved, or to manually publish the new version after it has been approved
+- Adjust any info if necessary
+- `Submit for review`
+- After submitting you get to choose whether to publish the new version as soon as it is approved, or to manually publish the new version after it has been approved
 - Wait for approval
-- Publish the new version if not previously chosen to be published automatically
+- (Publish the new version if not previously chosen to be published automatically)
 - The new release is live
