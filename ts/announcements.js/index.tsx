@@ -4,7 +4,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { ErrorBoundary } from "../shared-resources/ErrorBoundary";
-import { NotAvailableNotice } from "./NotAvailableNotice";
+import { Announcements } from "./Announcements";
 
 import "../shared-resources/tailwind.css";
 import "./index.css";
@@ -13,12 +13,10 @@ import "typeface-nunito-sans";
 import { DisplayError } from "./DisplayError";
 
 const init = async () => {
-  await initErrorReportingInContentScript(
-    "port-from-not-available-notice:index",
-  );
+  await initErrorReportingInContentScript("port-from-announcements:index");
   ReactDOM.render(
     <ErrorBoundary displayErrorComponent={DisplayError}>
-      <NotAvailableNotice />
+      <Announcements />
     </ErrorBoundary>,
     document.getElementById("app"),
   );
