@@ -13,6 +13,29 @@
 
 # RegretsReporter Release Process
 
+## Testing builds from CI (or those built locally by a developer)
+
+Artifacts built locally or via CircleCI are unsigned, and are installed as per follows:
+
+### Firefox
+
+- Make sure that the following preferences are set to `false` in `about:config`:
+  - `xpinstall.signatures.required`
+- Go to `about:addons`
+- Download the latest Firefox-version of the extension (a xpi file)
+- Click the gear icon, then choose `Install Add-on From File` and choose the extension xpi
+
+### Chrome
+
+- Download the latest Chrome-version of the extension (a zip file)
+- Unpack the zip file locally
+- Start Chrome
+- Enter `chrome://extensions` in Chrome's address bar and press enter
+- Flip the Developer mode switch up on the right so that the toolbar with the `Load unpacked`, `Pack extension` and `Update` buttons are shown
+- Click `Load unpacked`
+- Choose the directory that you unpacked from the zip file
+- Note that the extension icon may not be visible directly. Click the puzzle icon far to the right of the address bar and click the pin symbol next to the extension icon so that the pin becomes blue. This will make the extension icon show at all times.
+
 ## Create release builds
 
 - Create a new branch with the name: `release-x.y.z`
