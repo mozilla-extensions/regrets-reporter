@@ -4,6 +4,9 @@
 **Contents**
 
 - [RegretsReporter Release Process](#regretsreporter-release-process)
+  - [Testing builds from CI (or those built locally by a developer)](#testing-builds-from-ci-or-those-built-locally-by-a-developer)
+    - [Firefox](#firefox)
+    - [Chrome](#chrome)
   - [Create release builds](#create-release-builds)
   - [Upload and get approval of the artifacts](#upload-and-get-approval-of-the-artifacts)
     - [AMO (addons.mozilla.org)](#amo-addonsmozillaorg)
