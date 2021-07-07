@@ -140,7 +140,9 @@ class ExtensionGlue {
               title: "RegretsReporter",
             });
           }
-          browser.browserAction.setBadgeTextColor({ color: "#ffffff" });
+          if (browser.browserAction.setBadgeTextColor) {
+            browser.browserAction.setBadgeTextColor({ color: "#ffffff" });
+          }
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
             // do nothing, the tab does not exist anymore
