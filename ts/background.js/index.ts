@@ -62,7 +62,9 @@ class ExtensionGlue {
   private reportRegretFormPortListener: (port: Port) => void;
   private dataDeletionRequestsPortListener: (port: Port) => void;
   private sharedDataRequestPortListener: (port: Port) => void;
+  private announcementsComponentPortListener: (port: Port) => void;
   private extensionRemovalRequestPortListener: (port: Port) => void;
+  private hasUnreadAnnouncements: boolean = false;
 
   constructor() {}
 
@@ -74,10 +76,10 @@ class ExtensionGlue {
         "port-from-report-regret-form:index",
         "port-from-options-ui:index",
         "port-from-options-ui:form",
+        "port-from-announcements:index",
         "port-from-data-viewer:index",
         "port-from-get-started:index",
         "port-from-get-started:component",
-        "port-from-not-available-notice:index",
         "port-from-ui-instrument-content-script:index",
         "port-from-response-body-listener-content-script:index",
       ],
@@ -92,7 +94,15 @@ class ExtensionGlue {
   }
 
   async start() {
+    const { hasReadAnnouncements } = await browser.storage.local.get(
+      "hasReadAnnouncements",
+    );
+    if (!hasReadAnnouncements) {
+      this.hasUnreadAnnouncements = true;
+    }
+
     const showSpecificExtensionIconOnWatchPages = async () => {
+      const self = this;
       function setActiveExtensionIcon() {
         try {
           browser.browserAction.setIcon({
@@ -101,6 +111,8 @@ class ExtensionGlue {
           browser.browserAction.setPopup({
             popup: "/report-regret-form/report-regret-form.html",
           });
+          browser.browserAction.setBadgeText({ text: "" });
+          browser.browserAction.setTitle({ title: "Click to report a regret" });
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
             // do nothing, the tab does not exist anymore
@@ -115,8 +127,20 @@ class ExtensionGlue {
             path: "icons/icon-toolbar-inactive.svg.38x38.png",
           });
           browser.browserAction.setPopup({
-            popup: "/not-available-notice/not-available-notice.html",
+            popup: "/announcements/announcements.html",
           });
+          if (self.hasUnreadAnnouncements) {
+            browser.browserAction.setBadgeText({ text: "1" });
+            browser.browserAction.setTitle({
+              title: "You have 1 unread announcement",
+            });
+          } else {
+            browser.browserAction.setBadgeText({ text: "" });
+            browser.browserAction.setTitle({
+              title: "RegretsReporter",
+            });
+          }
+          browser.browserAction.setBadgeTextColor({ color: "#ffffff" });
         } catch (e) {
           if (e.message.indexOf("Invalid tab ID") === 0) {
             // do nothing, the tab does not exist anymore
@@ -275,6 +299,24 @@ class ExtensionGlue {
       });
     };
     browser.runtime.onConnect.addListener(this.sharedDataRequestPortListener);
+
+    // Listen for announcements-component messages
+    this.announcementsComponentPortListener = (port: Port) => {
+      if (port.name !== "port-from-announcements:component") {
+        return;
+      }
+      port.onMessage.addListener(async m => {
+        // console.debug(`announcementsComponentPortListener message listener: Message from port "${port.name}"`, { m });
+        if (m.announcementsDisplayed) {
+          this.hasUnreadAnnouncements = false;
+          await browser.storage.local.set({ hasReadAnnouncements: true });
+          await showSpecificExtensionIconOnWatchPages();
+        }
+      });
+    };
+    browser.runtime.onConnect.addListener(
+      this.announcementsComponentPortListener,
+    );
 
     // Listen for extension removal requests
     this.extensionRemovalRequestPortListener = (port: Port) => {
@@ -436,6 +478,15 @@ class ExtensionGlue {
         );
       } catch (err) {
         console.warn("sharedDataRequestPortListener removal error", err);
+      }
+    }
+    if (this.announcementsComponentPortListener) {
+      try {
+        browser.runtime.onConnect.removeListener(
+          this.announcementsComponentPortListener,
+        );
+      } catch (err) {
+        console.warn("announcementsComponentPortListener removal error", err);
       }
     }
     if (this.extensionPreferencesPortListener) {
