@@ -42,8 +42,10 @@ if (!process.env.TELEMETRY_SERVER) {
   );
 }
 
-// Only upload sources to Sentry if building a production build or testing the sentry plugin
+// Only upload sources to Sentry if env vars are available, we are building a
+// production build or we are testing the sentry plugin
 if (
+  process.env.SENTRY_AUTH_TOKEN &&
   process.env.SENTRY_AUTH_TOKEN !== "foo" &&
   (process.env.NODE_ENV === "production" ||
     process.env.TEST_SENTRY_WEBPACK_PLUGIN === "1")
@@ -62,9 +64,9 @@ module.exports = {
     "response-body-listener-content-script":
       "./ts/response-body-listener-content-script.js/index.ts",
     background: "./ts/background.js/index.ts",
+    announcements: "./ts/announcements.js/index.tsx",
     "data-viewer": "./ts/data-viewer.js/index.tsx",
     "get-started": "./ts/get-started.js/index.tsx",
-    "not-available-notice": "./ts/not-available-notice.js/index.tsx",
     "report-regret-form": "./ts/report-regret-form.js/index.tsx",
     "options-ui": "./ts/options-ui.js/index.tsx",
   },

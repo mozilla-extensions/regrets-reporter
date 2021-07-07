@@ -4,7 +4,6 @@ import "photon-colors/photon-colors.css";
 import "../shared-resources/photon-components-web/attributes/index.css";
 import "../shared-resources/tailwind.css";
 import "../shared-resources/photon-components-web/photon-components/Checkbox/light-theme.css";
-import { Link } from "../shared-resources/photon-components-web/photon-components/Link";
 import "./ReportRegretForm.css";
 import "./index.css";
 import { browser, Runtime } from "webextension-polyfill-ts";

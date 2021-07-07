@@ -5,6 +5,11 @@ jobs:
     docker:
       - image: circleci/node:latest-browsers
 
+    environment:
+      # CircleCI builds production builds and thus uses production environment variables
+      SENTRY_DSN: https://fbd070810c8c47f1bf9a1a17e8909d4d@sentry.prod.mozaws.net/524
+      TELEMETRY_SERVER: https://incoming.telemetry.mozilla.org
+
     working_directory: ~/checkout
 
     steps:
