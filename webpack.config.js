@@ -44,18 +44,18 @@ if (!process.env.TELEMETRY_SERVER) {
 
 // Only upload sources to Sentry if env vars are available, we are building a
 // production build or we are testing the sentry plugin
-if (
+const uploadSourceToSentry =
   process.env.SENTRY_AUTH_TOKEN &&
   process.env.SENTRY_AUTH_TOKEN !== "foo" &&
   (process.env.NODE_ENV === "production" ||
-    process.env.TEST_SENTRY_WEBPACK_PLUGIN === "1")
-) {
-  plugins.push(
-    new SentryWebpackPlugin({
-      include: destPath,
-    }),
-  );
-}
+    process.env.TEST_SENTRY_WEBPACK_PLUGIN === "1");
+
+plugins.push(
+  new SentryWebpackPlugin({
+    include: destPath,
+    dryRun: !uploadSourceToSentry,
+  }),
+);
 
 module.exports = {
   entry: {
