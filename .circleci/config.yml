@@ -19,8 +19,8 @@ jobs:
           command: cp .env.ci .env.production
 
       - run:
-          name: Use example env vars for testing
-          command: cp .env.example .env.development
+          name: Use CI non-sensitive env vars for testing
+          command: cp .env.ci .env.development
 
       - run:
           name: Output the current Sentry configuration
