@@ -1,0 +1,64 @@
+events:
+  - name: video-played
+    data:
+      - name: timestamp
+        type: number
+      - name: distinct-video-count
+        type: number
+      - name: metadata
+        type: struct(metadata)
+  - name: native-ui-interaction
+    data:
+      - name: element
+        type: enum(dislike, remove-from-history, not-interested, dont-recommend)
+      - name: timestamp
+        type: number
+      - name: metadata
+        type: struct(metadata)
+  - name: regret-action
+    data:
+      - name: video
+        type: struct(video)
+      - name: feedback-type
+        type: enum(dislike, remove-from-history, not-interested, dont-recommend)
+      - name: metadata
+        type: struct(metadata)
+      - name: timestamp
+        type: number
+  - name: video-recommended
+    data:
+      - name: video
+        type: struct(video)
+      - name: metadata
+        type: struct(metadata)
+      - name: timestamp
+        type: number
+data-types:
+  - name: video
+    type: struct
+    data:
+      - name: id
+        type: string
+      - name: title
+        type: string
+      - name: duration
+        type: number
+      - name: description
+        type: string | null
+      - name: view-count
+        type: number | null
+      - name: channel-name
+        type: string | null
+      - name: post-date
+        type: date | null
+      - name: entry-type
+        type: enum(autoplay, right-panel, search-result, explore-page)
+  - name: metadata
+    type: struct
+    data:
+      - name: installation-id
+        type: string
+      - name: extension-version
+        type: string
+      - name: experiment-arm
+        type: enum(no-action, dislike, remove-from-history, not-interested, dont-recommend, dislike-and-collection-opt-out, no-ui-data-collection)
