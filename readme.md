@@ -9,7 +9,7 @@ The RegretsReporter browser extension, built by the nonprofit Mozilla, lets you 
 1. Make sure you have `yarn^1.22` and `node.js^16` installed.
 1. Run `yarn --frozen-lockfile` to install package dependencies.
 2. Run `yarn build` to build the extension from source.
-3. Bundled & minified source code can now be found `dist` directory.
+3. Bundled & minified source code can now be found `distribution` directory.
 
 ## Releases
 
