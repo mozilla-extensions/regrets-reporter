@@ -1,0 +1,48 @@
+{
+	"name": "RegretsReporter",
+	"version": "2.0.2",
+	"description": "The RegretsReporter browser extension, built by the nonprofit Mozilla, helps you take control of your YouTube recommendations.",
+	"homepage_url": "https://github.com/mozilla-extensions/regrets-reporter",
+	"manifest_version": 2,
+	"minimum_chrome_version": "74",
+	"incognito": "not_allowed",
+	"icons": {
+	  "128": "assets/icon/extension-icon.svg.128x128.png",
+	  "96": "assets/icon/extension-icon.svg.96x96.png",
+	  "48": "assets/icon/extension-icon.svg.48x48.png"
+	},
+	"permissions": [
+	  "*://*.youtube.com/*",
+	  "https://incoming.telemetry.mozilla.org/*",
+	  "storage",
+	  "alarms",
+	  "webRequest"
+	],
+	"options_ui": {
+		"chrome_style": false,
+		"browser_style": false,
+		"page": "options/options.html"
+	},
+	"background": {
+		"scripts": [
+			"background/background.ts"
+		]
+	},
+  "browser_action": {
+	"default_icon": "assets/icon/icon-toolbar-active.svg.38x38.png",
+	"default_title": "RegretsReporter",
+	"default_popup": "popup/index.html"
+  },
+  "content_scripts": [
+	{
+	  "matches": ["*://*.youtube.com/*"],
+	  "js": ["content/content.ts"]
+	}
+  ],
+  "web_accessible_resources": [
+	"debug/index.html",
+	"get-started/index.html",
+	"content/content.css",
+	"assets/icon/icon-toolbar-badge.svg.38x38.png"
+  ]
+}

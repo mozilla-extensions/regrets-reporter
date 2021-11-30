@@ -1,0 +1,81 @@
+{
+	"private": true,
+	"scripts": {
+		"build": "NODE_ENV=production parcel build source/manifest.json --no-scope-hoist --no-autoinstall --no-content-hash --no-source-maps --dist-dir distribution --no-cache --detailed-report 0",
+		"postbuild": "node ./postbuild.js distribution/manifest.json",
+		"lint": "run-p lint:*",
+		"lint-fix": "run-p 'lint:* -- --fix'",
+		"lint:css": "stylelint source/**/*.css",
+		"lint:js": "eslint source",
+		"test": "run-p lint:* build",
+		"watch": "NODE_ENV=development parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr",
+		"build:glean": "glean translate source/telemetry/metrics.yaml source/telemetry/pings.yaml -f typescript -o source/telemetry/generated"
+	},
+	"browserslist": [
+		"last 1 Chrome version",
+		"last 1 Firefox version"
+	],
+	"stylelint": {
+		"extends": "stylelint-config-xo",
+		"rules": {
+			"selector-type-no-unknown": [
+				true,
+				{
+					"ignoreTypes": [
+						"/^ytd-/"
+					]
+				}
+			]
+		}
+	},
+	"dependencies": {
+		"@kkirbatski/parcel-resolver-require-resolve": "^1.0.1",
+		"@mozilla/glean": "^0.27.0",
+		"@parcel/config-webextension": "^2.0.0-rc.0",
+		"@sentry/browser": "^5.15.5",
+		"classnames": "^2.3.1",
+		"lodash": "^4.17.21",
+		"object-path": "^0.11.8",
+		"parcel": "^2.0.0-rc.0",
+		"photon-colors": "^3.3.2",
+		"postcss": "^8.3.6",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-inspector": "^5.1.1",
+		"react-table": "^7.7.0",
+		"typeface-changa": "^1.1.13",
+		"typeface-nunito-sans": "^1.1.13",
+		"typeface-zilla-slab": "^1.1.13",
+		"typescript": "^4.3.5",
+		"uuid": "^8.3.2",
+		"webextension-polyfill": "^0.7.0"
+	},
+	"devDependencies": {
+		"@parcel/optimizer-data-url": "2.0.0-rc.0",
+		"@parcel/transformer-image": "2.0.0-rc.0",
+		"@parcel/transformer-inline-string": "2.0.0-rc.0",
+		"@types/object-path": "^0.11.1",
+		"@types/react": "^17.0.14",
+		"@types/react-inspector": "^4.0.2",
+		"@types/react-table": "^7.7.2",
+		"@types/uuid": "^8.3.1",
+		"@typescript-eslint/eslint-plugin": "^4.29.3",
+		"@typescript-eslint/parser": "^4.29.3",
+		"autoprefixer": "^10.0.2",
+		"eslint": "^7.32.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-prettier": "^3.4.1",
+		"eslint-plugin-react": "^7.24.0",
+		"npm-run-all": "^4.1.5",
+		"postcss-nested": "^5.0.6",
+		"postcss-preset-env": "^6.7.0",
+		"prettier": "^2.3.2",
+		"stylelint": "^13.10.0",
+		"stylelint-config-xo": "^0.20.0",
+		"tailwindcss": "^2.2.16",
+		"webextension-polyfill-ts": "^0.26.0"
+	},
+	"webExt": {
+		"sourceDir": "distribution"
+	}
+}

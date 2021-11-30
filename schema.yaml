@@ -1,0 +1,91 @@
+events:
+  - name: experiment-arm-assigned
+    data:
+      - name: timestamp
+        type: number
+      - name: metadata
+        type: struct(metadata)
+  - name: video-played
+    data:
+      - name: timestamp
+        type: number
+      - name: distinct-video-count
+        type: number
+      - name: metadata
+        type: struct(metadata)
+  - name: native-ui-interaction
+    data:
+      - name: element
+        type: feedback-type
+      - name: timestamp
+        type: number
+      - name: metadata
+        type: struct(metadata)
+  - name: regret-video
+    data:
+      - name: video
+        type: struct(video)
+      - name: feedback-type
+        type: feedback-type
+      - name: metadata
+        type: struct(metadata)
+      - name: timestamp
+        type: number
+  - name: video-recommended
+    data:
+      - name: video
+        type: struct(video)
+      - name: metadata
+        type: struct(metadata)
+      - name: timestamp
+        type: number
+data-types:
+  - name: video
+    type: struct
+    data:
+      - name: id
+        type: string
+      - name: title
+        type: string
+      - name: duration
+        type: number
+      - name: description
+        type: string | null
+      - name: view-count
+        type: number | null
+      - name: channel-name
+        type: string | null
+      - name: post-date
+        type: date | null
+      - name: entry-type
+        type: enum(autoplay, right-panel, search-result, explore-page)
+  - name: metadata
+    type: struct
+    data:
+      - name: installation-id
+        type: string
+      - name: extension-version
+        type: string
+      - name: experiment-arm
+        type: experiment-arm-enum
+  - name: experiment-arm-enum
+    type: enum
+    data:
+      - dislike
+      - not-interested
+      - dont-recommend
+      - remove-from-history
+      - opt-out # shows button which does dislike, but no data collection
+      - control-with-ux # shows the button but it doesnt do anything
+  - name: feedback-button-variant
+    type: enum
+    data:
+      - show-intermediate-state # introduces intermediate "tell us more" button state, which can be clicked to show the modal
+      - show-modal # clicking the feedback button triggers the modal immediately
+  - name: feedback-type
+    type: enum
+    data:
+      - dislike
+      - not-interested
+      - dont-recommend
+      - remove-from-history

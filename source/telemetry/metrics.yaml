@@ -1,0 +1,180 @@
+---
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
+
+main:
+  onboarding_completed:
+    type: event
+    send_in_pings: [main-events]
+    description: Event sent after user clicks submit on onboarding page
+    notification_emails: &notification_emails
+      - jessed@mozillafoundation.org
+      - brandi@mozillafoundation.org
+    bugs: &bugs
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1740483
+    data_reviews: &data_review
+      - https://github.com/mozilla-extensions/regrets-reporter/issues/24
+    expires: &expires 2022-12-03
+  video_played:
+    type: event
+    description: Event sent on video plays
+    send_in_pings: [main-events]
+    extra_keys:
+      videos_played:
+        description: Count of unique videos played
+        type: quantity
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  regret_action:
+    type: event
+    description: Event sent on injected regret button clicks
+    send_in_pings: [main-events]
+    extra_keys:
+      feedback_type:
+        description: Feedback type
+        type: string
+      video_data_id: &video_data_id
+        description: Video UUID (not to be confused with YT video id)
+        type: string
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  native_ui_interaction:
+    type: event
+    description: Event sent on native YT UI clicks
+    send_in_pings: [main-events]
+    extra_keys:
+      video_data_id: *video_data_id
+      feedback_type:
+        description: Feedback type
+        type: string
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  video_recommended:
+    type: event
+    description: Event sent on YT video recommendation capture
+    send_in_pings: [main-events]
+    extra_keys:
+      video_data_id: *video_data_id
+      recommendation_type:
+        description: Video recommendation type
+        type: string
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+metadata:
+  feedback_ui_variant:
+    type: string
+    description: Feedback UI variant
+    lifetime: user
+    send_in_pings: &metadata_pings [main-events, video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  experiment_arm:
+    type: string
+    description: Experiment arm
+    lifetime: user
+    send_in_pings: *metadata_pings
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  installation_id:
+    type: string
+    description: Installation ID
+    send_in_pings: *metadata_pings
+    lifetime: user
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+video_data:
+  uuid:
+    type: string
+    description: Video data UUID
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  id:
+    type: string
+    description: Video Id
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  title:
+    type: string
+    description: Video title
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  view_count:
+    type: string
+    description: Video view count
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  duration:
+    type: quantity
+    unit: seconds
+    description: Video duration
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  description:
+    type: text
+    description: Video description
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  posted_date:
+    type: string
+    description: Video posted date
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  channel_id:
+    type: string
+    description: Owner channel Id
+    send_in_pings: [video-data]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+regret_details:
+  video_data_id:
+    type: string
+    description: Video UUID (not to be confused with YT video id)
+    send_in_pings: [regret-details]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  feedback_text:
+    type: text
+    description: Regret feedback text
+    send_in_pings: [regret-details]
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires

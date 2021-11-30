@@ -1,0 +1,20 @@
+html {
+	font-size: 12px;
+}
+
+body {
+	background-color: #fff;
+	@apply p-4;
+}
+
+.btn {
+	@apply py-2 px-4;
+}
+
+.btn-grey {
+	@apply bg-grey-20;
+}
+
+.btn-grey:hover {
+	@apply bg-grey-30;
+}

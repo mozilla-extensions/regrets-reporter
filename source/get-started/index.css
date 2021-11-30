@@ -1,0 +1,102 @@
+/* purgecss start ignore */
+
+.img-icon-close-white {
+	background-image: url('./img/icon-close-white.svg');
+	width: 34px;
+	height: 34px;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+ul.triangle-bullets {
+	padding-left: 1.5rem;
+	list-style: none;
+}
+
+ul.triangle-bullets li::before {
+	content: '';
+	border-color: transparent #000;
+	border-style: solid;
+	border-width: 0.3em 0 0.3em 0.55em;
+	display: block;
+	height: 0;
+	width: 0;
+	left: -1.1em;
+	top: 1em;
+	position: relative;
+}
+
+.img-circles {
+	background-image: url('./img/circles.svg');
+	width: 100%;
+	height: 1007px;
+	background-repeat: no-repeat;
+	background-position-x: center;
+	z-index: -100;
+}
+
+.img-get-started-bg {
+	background-image: url('./img/get-started-bg.jpg');
+	width: 100%;
+	height: 1250px;
+	background-repeat: repeat-x;
+	background-position: top;
+	background-size: auto 1250px;
+	z-index: -100;
+}
+
+@media (max-width: 1400px) {
+	.img-get-started-bg {
+		height: 1500px;
+		background-size: auto 1500px;
+	}
+}
+
+@media (max-width: 1000px) {
+	.img-get-started-bg {
+		height: 1700px;
+		background-size: auto 1700px;
+	}
+}
+
+@media (max-width: 800px) {
+	.img-get-started-bg {
+		height: 1900px;
+		background-size: auto 1900px;
+	}
+}
+
+.img-mozilla-logo {
+	background-image: url('./img/mozilla-logo.svg');
+	width: 191px;
+	height: 54px;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.img-step-1,
+.img-step-2,
+.img-step-3 {
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	padding-bottom: 70.83%;
+}
+
+.img-step-1 {
+	background-image: url('./img/step_1.jpg');
+}
+
+.img-step-2 {
+	background-image: url('./img/step_2.jpg');
+}
+
+.img-step-3 {
+	background-image: url('./img/step_3.jpg');
+}
+
+.button {
+	background-color: #065fd4;
+}
+
+/* purgecss end ignore */
