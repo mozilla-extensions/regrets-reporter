@@ -1,0 +1,59 @@
+/* changa-300normal - latin */
+@font-face {
+	font-family: 'Changa';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 300;
+	src:
+		local('Changa Light '),
+		local('Changa-Light'),
+		url('../../../node_modules/typeface-changa/files/changa-latin-300.woff2') format('woff2');
+}
+
+/* changa-400normal - latin */
+@font-face {
+	font-family: 'Changa';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 400;
+	src:
+		local('Changa Regular '),
+		local('Changa-Regular'),
+		url('../../../node_modules/typeface-changa/files/changa-latin-400.woff2') format('woff2');
+}
+
+/* changa-500normal - latin */
+@font-face {
+	font-family: 'Changa';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 500;
+	src:
+		local('Changa Medium '),
+		local('Changa-Medium'),
+		url('../../../node_modules/typeface-changa/files/changa-latin-500.woff2') format('woff2');
+}
+
+/* changa-600normal - latin */
+@font-face {
+	font-family: 'Changa';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 600;
+	src:
+		local('Changa SemiBold '),
+		local('Changa-SemiBold'),
+		url('../../../node_modules/typeface-changa/files/changa-latin-600.woff2') format('woff2');
+}
+
+/* changa-700normal - latin */
+@font-face {
+	font-family: 'Changa';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 700;
+	src:
+		local('Changa Bold '),
+		local('Changa-Bold'),
+		url('../../../node_modules/typeface-changa/files/changa-latin-700.woff2') format('woff2');
+}

@@ -1,0 +1,4 @@
+{
+	"extends": "@parcel/config-webextension",
+	"resolvers": ["...", "@kkirbatski/parcel-resolver-require-resolve"]
+}

@@ -1,0 +1,9 @@
+/* stylelint-disable */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.button {
+	@apply bg-blue-50 hover:bg-blue-70 disabled:bg-blue-20 text-white py-1 px-2;
+}

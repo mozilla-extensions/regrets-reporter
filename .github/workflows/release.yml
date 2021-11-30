@@ -1,0 +1,33 @@
+name: release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn install --frozen-lockfile
+      - run: yarn test
+  release:
+    runs-on: ubuntu-latest
+    needs: ["test"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
+      - name: Pack extension
+        run: zip -r extension.xpi ./*
+        working-directory: ./distribution
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./distribution/extension.xpi
+          tag: ${{ github.ref }}
+          overwrite: true

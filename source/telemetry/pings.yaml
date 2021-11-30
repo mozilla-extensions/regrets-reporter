@@ -1,0 +1,25 @@
+---
+$schema: moz://mozilla.org/schemas/glean/pings/2-0-0
+
+main-events:
+  description: A ping to record various extension events
+  include_client_id: true
+  notification_emails: &notification_emails
+    - jessed@mozillafoundation.org
+    - brandi@mozillafoundation.org
+  bugs: &bugs
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1740483
+  data_reviews: &data_review
+    - https://github.com/mozilla-extensions/regrets-reporter/issues/24
+regret-details:
+  description: Ping sent once a user submits regret feedback details
+  include_client_id: true
+  notification_emails: *notification_emails
+  bugs: *bugs
+  data_reviews: *data_review
+video-data:
+  description: A ping to record video data
+  include_client_id: false
+  notification_emails: *notification_emails
+  bugs: *bugs
+  data_reviews: *data_review
