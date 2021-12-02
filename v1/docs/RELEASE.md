@@ -83,7 +83,8 @@ docker run -it -v "$(PWD)":/pwd circleci/node:latest-browsers /bin/bash
 ```
 git clone https://github.com/mozilla-extensions/regrets-reporter.git /home/circleci/checkout
 cd /home/circleci/checkout
-yarn install --frozen-lockfile
+corepack enable
+yarn --immutable
 cp .env.ci .env.production
 yarn build:production
 mkdir -p /pwd/docker-dist/firefox/

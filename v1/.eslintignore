@@ -16,3 +16,9 @@ telemetry-schema/data-review-request.md
 package.json
 # don't lint node_modules
 node_modules/
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions

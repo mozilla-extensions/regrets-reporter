@@ -25,7 +25,8 @@
 ## Get started
 
 ```
-yarn install
+corepack enable
+yarn
 cp .env.example .env.development
 cp .env.example .env.production
 ```

@@ -15,5 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: yarn install --frozen-lockfile
-      - run: yarn test
+      - name: Setup Yarn
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn --immutable
+      - name: Test
+        run: yarn test

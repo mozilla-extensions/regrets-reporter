@@ -134,5 +134,6 @@
     "watch": "TARGET_BROWSER=firefox npm-run-all build:development && TARGET_BROWSER=firefox concurrently 'webpack --watch' 'web-ext run'",
     "watch:chrome": "TARGET_BROWSER=chrome npm-run-all build:development && TARGET_BROWSER=chrome concurrently 'webpack --watch' 'web-ext run -t chromium'",
     "webpack:stats": "webpack --profile --json --mode=production > stats.json"
-  }
+  },
+  "packageManager": "yarn@3.1.1"
 }

@@ -10,3 +10,9 @@ node_modules/
 .env*
 !.env.example
 !.env.ci
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
