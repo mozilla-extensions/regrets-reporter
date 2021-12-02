@@ -45,25 +45,28 @@ ul.triangle-bullets li::before {
 	z-index: -100;
 }
 
-@media (max-width: 1400px) {
-	.img-get-started-bg {
-		height: 1500px;
-		background-size: auto 1500px;
+.hide-welcome-section .img-get-started-bg {
+	background-size: auto 800px;
+}
+
+@media (min-width: 1200px) {
+	.slides-header {
+		@apply text-white;
 	}
 }
 
-@media (max-width: 1000px) {
-	.img-get-started-bg {
-		height: 1700px;
-		background-size: auto 1700px;
+@media (min-width: 780px) {
+	.action-result {
+		@apply text-white;
 	}
 }
 
-@media (max-width: 800px) {
-	.img-get-started-bg {
-		height: 1900px;
-		background-size: auto 1900px;
-	}
+.hide-welcome-section .slides-subheader {
+	@apply text-white;
+}
+
+.hide-welcome-section .slides-header {
+	@apply text-white;
 }
 
 .img-mozilla-logo {
