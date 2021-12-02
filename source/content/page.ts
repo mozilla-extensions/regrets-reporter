@@ -47,7 +47,12 @@ enum PageLocation {
 
 const loggingOn = process.env.ENABLE_PAGE_LOGS === 'true';
 
-const seenVideos = new Set();
+// Track last recorded window href
+let lastLocation = window.location.href;
+
+// Keeps track of all videos seen on page to avoid reporting duplicates
+const seenVideosOnPage = new Set();
+
 let lastViewedVideo: string | null = null;
 let pageClickListenerInjected = false;
 
@@ -64,10 +69,10 @@ function log(...args) {
 /** Extracts video data from YT metadata found in DOM */
 function processVideo(r: Data): ProcessedVideoData | null {
 	const id = r.videoId;
-	if (seenVideos.has(id)) {
+	if (seenVideosOnPage.has(id)) {
 		return null;
 	} else {
-		seenVideos.add(id);
+		seenVideosOnPage.add(id);
 	}
 
 	const title = r.title.simpleText || (r.title as any).runs[0].text;
@@ -96,6 +101,11 @@ function processVideo(r: Data): ProcessedVideoData | null {
 }
 
 function parseVideosOnPage() {
+	if (lastLocation !== window.location.href) {
+		seenVideosOnPage.clear();
+		lastLocation = window.location.href;
+	}
+
 	const mainVideo = parseMainVideoData();
 	if (mainVideo) {
 		postMessage({ type: EventType.VideoViewed, data: mainVideo } as VideoViewedEvent);
