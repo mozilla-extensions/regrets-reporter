@@ -147,7 +147,7 @@ export function GetStartedFlow() {
 							</div>
 						</div>
 						<div className="mt-5.25 font-serif font-light text-2xl font-light leading-tight">
-							Share extra details about why you regret watching that video.
+							Share more information with Mozilla about why you don't like this recommendation.
 						</div>
 					</div>
 					<div className="col-span-2" />
