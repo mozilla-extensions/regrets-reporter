@@ -72,6 +72,13 @@ export function Main() {
 					here
 				</a>
 				.
+				<br />
+				<br />
+				Learn more about how to use RegretsReporter{' '}
+				<a href={`${onboardingUrl}#active-user`} target="_blank" rel="noreferrer" className="underline text-red-70">
+					here
+				</a>
+				.
 			</div>
 		);
 	}
