@@ -91,6 +91,10 @@ body[dir='rtl'] .injected-btn {
 	}
 }
 
+.ytp-fullscreen .injected-btn {
+	display: none;
+}
+
 ytd-rich-item-renderer:hover,
 ytd-compact-video-renderer:hover,
 ytd-player:hover,
