@@ -29,18 +29,6 @@ main:
     bugs: *bugs
     data_reviews: *data_review
     expires: *expires
-  native_ui_interaction:
-    type: event
-    description: Event sent on native YT UI clicks
-    send_in_pings: [main-events]
-    extra_keys:
-      feedback_type:
-        description: Feedback type
-        type: string
-    notification_emails: *notification_emails
-    bugs: *bugs
-    data_reviews: *data_review
-    expires: *expires
   regret_action:
     type: event
     description: Event sent on injected regret button clicks
@@ -51,6 +39,19 @@ main:
         type: string
       video_data_id: &video_data_id
         description: Video UUID (not to be confused with YT video id)
+        type: string
+    notification_emails: *notification_emails
+    bugs: *bugs
+    data_reviews: *data_review
+    expires: *expires
+  native_ui_interaction:
+    type: event
+    description: Event sent on native YT UI clicks
+    send_in_pings: [main-events]
+    extra_keys:
+      video_data_id: *video_data_id
+      feedback_type:
+        description: Feedback type
         type: string
     notification_emails: *notification_emails
     bugs: *bugs
