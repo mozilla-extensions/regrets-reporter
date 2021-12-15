@@ -87,12 +87,10 @@ export const experimentArm = new StorageValue<ExperimentArm>(localStorageKeys.ex
 });
 
 /** Assigns users to a random feedback UI variant cohort, return existing cohort if set */
-export const feedbackUiVariant = new StorageValue<FeedbackUiVariant>(localStorageKeys.feedbackUiVariant, () => {
-	const variants = Object.values(FeedbackUiVariant);
-	const variantIndex = getRandomInt(0, variants.length - 1);
-	const variantCode = variants[variantIndex];
-	return variantCode as FeedbackUiVariant;
-});
+export const feedbackUiVariant = new StorageValue<FeedbackUiVariant>(
+	localStorageKeys.feedbackUiVariant,
+	() => FeedbackUiVariant.ForcedModal,
+);
 
 /** Last extension installation trigger: install, update or browser_update */
 export const installReason = new StorageValue<OnInstalledReason>(localStorageKeys.installedAsUpdate, () => 'install');
