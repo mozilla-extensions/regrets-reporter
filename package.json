@@ -30,7 +30,7 @@
 	},
 	"dependencies": {
 		"@kkirbatski/parcel-resolver-require-resolve": "^1.0.1",
-		"@mozilla/glean": "^0.27.0",
+		"@mozilla/glean": "^0.28.0",
 		"@parcel/config-webextension": "^2.0.0-rc.0",
 		"@sentry/browser": "^5.15.5",
 		"classnames": "^2.3.1",

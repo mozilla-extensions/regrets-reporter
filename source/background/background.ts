@@ -112,7 +112,7 @@ export class BackgroundScript {
 			appDisplayVersion: process.env.EXTENSION_VERSION,
 		});
 
-		Glean.setLogPings(true);
+		Glean.setLogPings(loggingOn);
 
 		metadataEvents.installationId.set(installId);
 		metadataEvents.experimentArm.set(experimentArmValue);
