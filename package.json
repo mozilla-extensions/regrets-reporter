@@ -3,11 +3,11 @@
 	"scripts": {
 		"build": "NODE_ENV=production parcel build source/manifest.json --no-scope-hoist --no-autoinstall --no-content-hash --no-source-maps --dist-dir distribution --no-cache --detailed-report 0",
 		"postbuild": "node ./postbuild.js distribution/manifest.json",
-		"lint": "run-p lint:*",
+		"lint": "run-p 'lint:*'",
 		"lint-fix": "run-p 'lint:* -- --fix'",
 		"lint:css": "stylelint source/**/*.css",
 		"lint:js": "eslint source",
-		"test": "run-p lint:* build",
+		"test": "run-p 'lint:* build'",
 		"watch": "NODE_ENV=development parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr",
 		"build:glean": "glean translate source/telemetry/metrics.yaml source/telemetry/pings.yaml -f typescript -o source/telemetry/generated"
 	},
@@ -77,5 +77,6 @@
 	},
 	"webExt": {
 		"sourceDir": "distribution"
-	}
+	},
+	"packageManager": "yarn@3.1.1"
 }
