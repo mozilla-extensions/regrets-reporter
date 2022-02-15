@@ -98,10 +98,16 @@ body[dir='rtl'] .injected-btn {
 ytd-rich-item-renderer:hover,
 ytd-compact-video-renderer:hover,
 ytd-player:hover,
-ytd-thumbnail:hover {
+ytd-thumbnail:hover,
+#video-preview-container {
 	& .injected-btn {
 		visibility: visible;
 	}
+}
+
+#video-preview-container .injected-btn {
+	top: 20px;
+	left: 20px;
 }
 
 .injected-modal {
