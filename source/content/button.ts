@@ -12,6 +12,9 @@ enum PageLocation {
 	Other,
 }
 
+/** A set of video ids reported, lives as long as the page itself */
+const videoIdsReported = new Set<string>();
+
 function getPageLocation(): PageLocation {
 	const { pathname } = window.location;
 	switch (pathname) {
@@ -76,32 +79,47 @@ function injectHovers(
 	if (mainPlayer && isElementVisible(mainPlayer)) {
 		injectButton(mainPlayer, getMainVideoId, onboardingCompleted, feedbackUiVariant, dataCollectionEnabled);
 	}
+
+	const previewPlayer = document.getElementById('video-preview-container');
+	const previewVideoIdThunk = () => (document.getElementById('media-container-link') as any)?.href.split('=')[1];
+	if (previewPlayer && isElementVisible(previewPlayer)) {
+		injectButton(
+			previewPlayer as HTMLElement,
+			previewVideoIdThunk,
+			onboardingCompleted,
+			feedbackUiVariant,
+			dataCollectionEnabled,
+		);
+	}
 }
 
 function injectButton(
 	parentNode: HTMLElement,
-	getVideoId: () => string,
+	getVideoId: () => string | void,
 	onboardingCompleted: boolean,
 	feedbackUiVariant: FeedbackUiVariant,
 	dataCollectionEnabled: boolean,
 ) {
 	const videoId = getVideoId();
-	const buttonId = generateButtonId(videoId);
 	const lastChild = parentNode.lastElementChild;
 	const hasInjectedButton = lastChild && lastChild.classList.contains('injected-btn');
+	if (!videoId) {
+		log('no video id found');
+		if (hasInjectedButton) {
+			lastChild.remove();
+		}
+		return;
+	}
+	const buttonId = generateButtonId(videoId);
 	const injectionHash = `${onboardingCompleted}_${feedbackUiVariant}_${dataCollectionEnabled}`;
 	if (hasInjectedButton) {
 		const prevButton = lastChild as HTMLDivElement;
-		const skipButton = buttonId === prevButton.id && prevButton.dataset.hash === injectionHash;
-		if (skipButton) {
+		const skipButtonInjection = buttonId === prevButton.id && prevButton.dataset.hash === injectionHash;
+		if (skipButtonInjection) {
 			return;
 		} else {
 			lastChild.remove();
 		}
-	}
-	if (!videoId) {
-		log('no video id found');
-		return;
 	}
 	const btn = document.createElement('div');
 	btn.id = buttonId;
@@ -157,12 +175,23 @@ function injectButton(
 			return;
 		}
 	};
+
 	parentNode.appendChild(btn);
+
+	if (videoIdsReported.has(videoId)) {
+		setButtonToFinalState(videoId, btn);
+	}
 }
 
-export function setButtonToFinalState(videoId: string) {
-	const buttonId = generateButtonId(videoId);
-	const button = document.getElementById(buttonId);
+export function setButtonToFinalState(videoId: string, node?: Element) {
+	videoIdsReported.add(videoId);
+	let button;
+	if (!node) {
+		const buttonId = generateButtonId(videoId);
+		button = document.getElementById(buttonId);
+	} else {
+		button = node;
+	}
 	const sidebarContainer = document.getElementById('related');
 	const isSidebarVideo = sidebarContainer && sidebarContainer.contains(button);
 	button.classList.remove('tell-more');
