@@ -4,3 +4,6 @@ distribution
 .idea
 .venv
 yarn-error.log
+
+# Mac OS .DS_Store
+.DS_Store
