@@ -10,6 +10,7 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 from google.api_core.exceptions import Conflict, NotFound, Forbidden
 import pydata_google_auth
+import threading
 
 
 labelled_schema = [
@@ -88,11 +89,19 @@ corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_sample"
 labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled"
 to_label_table_id = "regrets-reporter-dev.ra_can_read.to_label"
 
-bq_client = None
+@st.cache
+def table_exists(table):
+    try:
+        st.session_state.bq_client.get_table(table)
+        return True
+    except (NotFound, Forbidden):
+        return False
+@st.cache
+def get_table(table, schema):
+    return bigquery.Table(table, schema=schema)
 
-
+@st.cache(hash_funcs={bigquery.client.Client: id})
 def connect_to_db(user):
-    global bq_client
     if user == 'admin':
         credentials = pydata_google_auth.get_user_credentials(
             ['https://www.googleapis.com/auth/bigquery'],
@@ -109,16 +118,16 @@ def connect_to_db(user):
         project_id = "regrets-reporter-dev"
         bq_client = bigquery.Client(
             project=project_id, credentials=credentials)
-
+    return bq_client
 
 def display_labelling_progress():
     try:
-        df_labelled = bq_client.query(
+        df_labelled = st.session_state.bq_client.query(
             f"SELECT * FROM {labelled_table_id}").result().to_dataframe()
     except NotFound:
         df_labelled = None
     try:
-        df_to_label = bq_client.query(
+        df_to_label = st.session_state.bq_client.query(
             f"SELECT * FROM {to_label_table_id}").result().to_dataframe()
     except NotFound:
         df_to_label = None
@@ -154,12 +163,12 @@ def assign_sample_data_to_label(token='admin'):
     LIMIT 100
 
     '''
-    df_corpus = bq_client.query(corpus_query).result(
+    df_corpus = st.session_state.bq_client.query(corpus_query).result(
     ).to_dataframe()
 
     try:
-        bq_client.get_table(labelled_table_id)
-        df_labelled = bq_client.query(
+        st.session_state.bq_client.get_table(labelled_table_id)
+        df_labelled = st.session_state.bq_client.query(
             f"SELECT * FROM {labelled_table_id}").result().to_dataframe()
         
         # uids_to_ignore = []
@@ -202,7 +211,7 @@ def assign_sample_data_to_label(token='admin'):
     if st.button('Add data for labeling'):
         table = bigquery.Table(to_label_table_id, schema=to_label_schema)
         try:
-            table = bq_client.create_table(table)
+            table = st.session_state.bq_client.create_table(table)
         except Conflict:
             pass
         job_config = bigquery.LoadJobConfig(
@@ -210,7 +219,7 @@ def assign_sample_data_to_label(token='admin'):
             schema=to_label_schema,
         )
 
-        load_job = bq_client.load_table_from_json(
+        load_job = st.session_state.bq_client.load_table_from_json(
             df_to_label.to_dict(orient='records'),
             table,
             job_config=job_config,
@@ -226,20 +235,58 @@ def assign_sample_data_to_label(token='admin'):
 
 
 def get_datapoint_to_label(labeler):
-    try:
-        bq_client.get_table(to_label_table_id)
-    except (NotFound, Forbidden):
-        print("NO DATA TO LABEL")
+    if "data_to_label" in st.session_state:
+    else:
+    if "data_to_label" in st.session_state and len(st.session_state.data_to_label) >= 5:
+        # if we have data in the cache, no need to fetch more data
+        pass
+    else:
+        if "fetch_job" in st.session_state and st.session_state.fetch_job is not None:
+            # see if job is done
+            if st.session_state.fetch_job.done():
+                # load new data from completed job
+                new_data = st.session_state.fetch_job.result().to_dataframe()
+                if "data_to_label" not in st.session_state:
+                    st.session_state['data_to_label'] = new_data
+                else:
+                    st.session_state.data_to_label = pd.concat([st.session_state.data_to_label, new_data])
+                st.session_state.fetch_job = None
+            else:
+                # we may or may not need to wait for job to finish
+                pass
+        else:
+            # need to fetch data
+            try:
+                st.session_state.bq_client.get_table(to_label_table_id)
+            except (NotFound, Forbidden):
+                st.error("NO DATA AVAILABLE TO LABEL")
+                return None
+            fetch_job = None
+            if table_exists(labelled_table_id):
+                fetch_job = st.session_state.bq_client.query(
+                    f"SELECT * FROM {to_label_table_id} a LEFT JOIN {labelled_table_id} using(id_a, id_b)  where a.labeler='{labeler}' AND label IS NULL LIMIT 20")
+            else:
+                fetch_job =  st.session_state.bq_client.query(
+                    f"SELECT * FROM {to_label_table_id}  where labeler='{labeler}' LIMIT 20")
+            st.session_state['fetch_job'] = fetch_job
+    if "data_to_label" in st.session_state and len(st.session_state.data_to_label) >= 1:
+        # no need to wait on fetch
+        pass
+    else:
+        # need to wait on fetch
+        # load new data from completed job
+        new_data = st.session_state.fetch_job.result().to_dataframe()
+        if "data_to_label" not in st.session_state:
+            st.session_state['data_to_label'] = new_data
+        else:
+            st.session_state.data_to_label = pd.concat([st.session_state.data_to_label, new_data])
+        st.session_state.fetch_job = None
+    res = st.session_state.data_to_label.iloc[0:1]
+    st.session_state.data_to_label = st.session_state.data_to_label[1:]
+    if len(res) == 0:
+        st.error("NO DATA AVAILABLE TO LABEL")
         return None
-    try:
-        bq_client.get_table(labelled_table_id)
-        res = bq_client.query(
-            f"SELECT * FROM {to_label_table_id} a LEFT JOIN {labelled_table_id} using(id_a, id_b)  where a.labeler='{labeler}' AND label IS NULL LIMIT 1").result().to_dataframe()
-    except (NotFound, Forbidden):
-        res =  bq_client.query(
-            f"SELECT * FROM {to_label_table_id}  where labeler='{labeler}'  LIMIT 1").result().to_dataframe()  # Should maybe check for empty result
-    return (res.title_a.item(), res.channel_a.item(), res.description_a.item(), res.id_a.item(), res.title_b.item(), res.channel_b.item(),
-    res.description_b.item(), res.id_b.item())
+    return (res.title_a.item(), res.channel_a.item(), res.description_a.item(), res.id_a.item(), res.title_b.item(), res.channel_b.item(), res.description_b.item(), res.id_b.item())
 
 def add_labelled_datapoint_to_db(res, decision_dict):
     title_a, channel_a, description_a, id_a, title_b, channel_b, description_b, id_b = res
@@ -252,35 +299,46 @@ def add_labelled_datapoint_to_db(res, decision_dict):
     decision_dict['description_b'] = description_b
     decision_dict['id_b'] = id_b
     decision_dict['label_time'] = str(datetime.now())
-    table = bigquery.Table(labelled_table_id, schema=labelled_schema)
-    try:
+
+    
+    if "data_to_load" not in st.session_state:
+        st.session_state['data_to_load'] = []
+
+    if "load_thread" not in st.session_state:
+        c = threading.Condition()
+        st.session_state['load_thread_cv'] = c
+        th = threading.Thread(target=data_loader_thread, args=[c, st.session_state.data_to_load, st.session_state.bq_client])
+        th.start()
+        st.session_state['load_thread'] = th
+
+    st.session_state.load_thread_cv.acquire()
+    
+    st.session_state.data_to_load.append(decision_dict)
+    st.session_state.load_thread_cv.notify()
+    st.session_state.load_thread_cv.release()
+
+    
+    return 'Done'
+
+def data_loader_thread(cv, data_to_load, bq_client):
+    if not table_exists(labelled_table_id):
         table = bq_client.create_table(table)
-    except Conflict:
-        pass
+    table = get_table(labelled_table_id, labelled_schema)
     job_config = bigquery.LoadJobConfig(
-        write_disposition="WRITE_APPEND",
-        schema=labelled_schema,
-    )
-
-    load_job = bq_client.load_table_from_json(
-        [decision_dict],
-        table,
-        job_config=job_config,
-    )
-    if "load_job" in st.session_state and st.session_state.load_job != None:
-        st.session_state.load_job.results()
-    st.session_state.load_job = load_job
-    return 'Done'
-
-"""
-
-    decision_dict['datetime'] = str(datetime.now())
-    token = decision_dict['token']
-
-    df = pd.DataFrame(decision_dict,index=[0])
-
-    df.to_sql('labelled',con=con, if_exists= 'append',index=False)
-    delete_labelled_datapoint(uid,token)
-    return 'Done'
-
-"""
+            write_disposition="WRITE_APPEND",
+            schema=labelled_schema,
+        )
+    while True:
+        cv.acquire()
+        if len(data_to_load) == 0:
+            cv.wait()
+        else:
+            cur_data = data_to_load.copy()
+            data_to_load.clear()
+            cv.release()
+            load_job = bq_client.load_table_from_json(
+                cur_data,
+                table,
+                job_config=job_config,
+            )
+            load_job.result()
