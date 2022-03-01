@@ -1,3 +1,8 @@
+#from pyinstrument import Profiler
+
+#profiler = Profiler()
+#profiler.start()
+
 import pandas as pd
 import sqlite3
 from youtube_transcript_api import YouTubeTranscriptApi
@@ -27,7 +32,7 @@ st.set_page_config(page_title='Active Learning Frontend',layout='wide')
 token = simple_auth()
 if token == '':
     st.stop()
-connect_to_db(token)
+st.session_state['bq_client'] = connect_to_db(token)
 #token = 'admin'
 ########################### DataBase Management ################################
 
@@ -68,3 +73,6 @@ if operation == 'Get Stats':
     if token == 'admin':
         display_labelling_progress()
 
+#profiler.stop()
+
+#profiler.print()
