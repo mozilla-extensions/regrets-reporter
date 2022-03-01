@@ -235,8 +235,6 @@ def assign_sample_data_to_label(token='admin'):
 
 
 def get_datapoint_to_label(labeler):
-    if "data_to_label" in st.session_state:
-    else:
     if "data_to_label" in st.session_state and len(st.session_state.data_to_label) >= 5:
         # if we have data in the cache, no need to fetch more data
         pass
