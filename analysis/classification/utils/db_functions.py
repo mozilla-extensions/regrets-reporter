@@ -103,11 +103,17 @@ def get_table(table, schema):
 @st.cache(hash_funcs={bigquery.client.Client: id})
 def connect_to_db(user):
     if user == 'admin':
-        credentials = pydata_google_auth.get_user_credentials(
-            ['https://www.googleapis.com/auth/bigquery'],
-            use_local_webserver=True,
-        )
+        #credentials = pydata_google_auth.get_user_credentials(
+        #    ['https://www.googleapis.com/auth/bigquery'],
+        #    use_local_webserver=True,
+        #)
 
+        #project_id = "regrets-reporter-dev"
+        #bq_client = bigquery.Client(
+        #    project=project_id, credentials=credentials)
+        credentials = service_account.Credentials.from_service_account_info(
+            dict(**st.secrets.ranu_testing), scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
         project_id = "regrets-reporter-dev"
         bq_client = bigquery.Client(
             project=project_id, credentials=credentials)
@@ -279,7 +285,7 @@ def get_datapoint_to_label(labeler):
         else:
             st.session_state.data_to_label = pd.concat([st.session_state.data_to_label, new_data])
         st.session_state.fetch_job = None
-    res = st.session_state.data_to_label.iloc[0:1]
+    res = st.session_state.data_to_label.head(1)
     st.session_state.data_to_label = st.session_state.data_to_label[1:]
     if len(res) == 0:
         st.error("NO DATA AVAILABLE TO LABEL")
