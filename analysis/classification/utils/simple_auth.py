@@ -51,11 +51,38 @@ def add_user(user):
     
     return None
 
-def add_user_if_admin(token):
-    user_name_new = st.sidebar.text_input("username",key='new_user')
-    if st.sidebar.button("Add user"):
-        add_user(user_name_new)
-        st.sidebar.success("Added user")
+def get_all_users():
+    with open('.streamlit/profile_dict.pk', 'rb') as f:
+        profile_dict = pk.load(f)
+        #st.write(profile_dict.keys())
+    return profile_dict
+
+def delete_users():
+    with open('.streamlit/profile_dict.pk', 'rb') as f:
+        profile_dict = pk.load(f) 
+    users_list = list(profile_dict.keys())
+    users_to_delete = st.multiselect('Select the Users',users_list)
+    if st.button('Delete Users'):
+        for user in users_to_delete:
+            del profile_dict[user]
+        st.success(f'Sucessfully Deleted {len(users_list)} users from the DB')
+
+    with open('.streamlit/profile_dict.pk', 'wb') as f:
+        pk.dump(profile_dict, f)
+
+    time.sleep(2)
+
+    st.experimental_rerun()
+
+def add_users():
+    new_usernames = st.text_area("Usernames",key='new_user')
+    if st.button("Add users"):
+        users_list = new_usernames.splitlines()
+        for user in users_list:
+            add_user(user)
+        st.success(f'Sucessfully added {len(users_list)} users to the DB')
+        time.sleep(2)
+        st.experimental_rerun()
     return 'ok'
 
 def simple_auth():
@@ -77,8 +104,9 @@ def simple_auth():
             # If the user is in the system.
             else:
                 salt_key = profile_dict[token]
-                pwd = st.text_input("What's the password", type='password')
-
+                pwd = st.text_input("password", type='password')
+                if st.button('Login'):
+                    st.write('')
                 # They profile will not have the salt and key if the user has not set a password
                 # Ask user to set password        
                 if salt_key is None:
@@ -100,12 +128,9 @@ def simple_auth():
 
                     entered_key = get_key(salt, pwd)
                     if entered_key != orig_key:
-                        dummy = st.button("Submit", key='pwd_dummy')
-                        st.error("Please enter the correct password")
+                        #dummy = st.button("Submit", key='pwd_dummy')
+                        #st.error("Please enter the correct password")
                         st.stop()
-        if token == 'admin': 
-            if st.sidebar.checkbox('Add new user'):
-                add_user_if_admin(token)
     return token
 
 
