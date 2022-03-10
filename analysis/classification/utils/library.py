@@ -40,17 +40,24 @@ def display_video_transcripts(res):
 
     title1.markdown("<h4 style='text-align: center; color: red;'>Video the user doesn't want recommendations similar to</h4>", unsafe_allow_html=True)
     with video1.container():
-        st_player(f'https://www.youtube.com/watch?v={src1}',height = 400)
+        height = 300
+        width = 600
+        #st_player(f'https://www.youtube.com/watch?v={src1}',height = 400)
+        st.write(f'<iframe width="{width}" height="{height}" src="https://www.youtube.com/embed/{src1}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+        unsafe_allow_html=True)
         st.markdown(f"<h4 style='text-align: center; color: red;'>{title_a}</h4>", unsafe_allow_html=True)
         st.error(f'Channel Name: {channel_a}')
-        components.html(f"<p style='text-align: justify; color: red;'>{description_a}</p>", height=400,width=700, scrolling=True)
+        components.html(f"<p style='text-align: justify; color: red;'>{description_a}</p>", height=height,width=width, scrolling=True)
 
     title5.markdown("<h4 style='text-align: center; color: skyblue;'>Video that was recommended to the user</h4>", unsafe_allow_html=True)
     with video5.container():
-        st_player(f'https://www.youtube.com/watch?v={src2}',height=400)
-        hc.info_card(title=title_b, content=f'Channel Name: {channel_b}', sentiment='good',bar_value=100)
-        #st.info(f'Channel Name: {channel_b}')
-        components.html(f"<p style='text-align: justify; color: skyblue;'>{description_b}</p>", height=400,width=700, scrolling=True)
+        # st_player(f'https://www.youtube.com/watch?v={src2}',height=400)
+        #hc.info_card(title=title_b, content=f'Channel Name: {channel_b}', sentiment='good',bar_value=100)
+        st.write(f'<iframe width="{width}" height="{height}" src="https://www.youtube.com/embed/{src2}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+        unsafe_allow_html=True)
+        st.markdown(f"<h4 style='text-align: center; color: red;'>{title_b}</h4>", unsafe_allow_html=True)
+        st.info(f'Channel Name: {channel_b}')
+        components.html(f"<p style='text-align: justify; color: skyblue;'>{description_b}</p>", height=height,width=width, scrolling=True)
 
 
 def label_the_datapoint(res, token):

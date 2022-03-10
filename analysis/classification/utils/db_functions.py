@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from utils.helpers import user_dir, repo_dir, data_dir
 import hydralit_components as hc
 import time
@@ -9,6 +10,8 @@ from google.oauth2 import service_account
 from google.api_core.exceptions import Conflict, NotFound, Forbidden
 # import pydata_google_auth
 import threading
+from utils.simple_auth import *
+
 
 
 labelled_schema = [
@@ -151,7 +154,7 @@ def display_labelling_progress():
         st.text("No data to label")
 
 
-def assign_sample_data_to_label(token='admin'):
+def assign_sample_data_to_label_old(token='admin'):
 
     corpus_query = f'''
     SELECT
@@ -225,6 +228,97 @@ def assign_sample_data_to_label(token='admin'):
         st.experimental_rerun()
 
     return df_to_label
+
+
+def assign_sample_data_to_label(token='admin'):
+
+    profile_dict = get_all_users()
+    users_list = list(profile_dict.keys())
+    users_list = [i for i in users_list if i not in ('admin')]
+    if len(users_list) < 1:
+        st.error('No users added other than the admin')
+        st.stop()
+    corpus_query = f'''
+    SELECT
+        regret_id AS id_a,
+        recommendation_id AS id_b,
+        regret_title AS title_a,
+        recommendation_title AS title_b,
+        regret_description AS description_a,
+        recommendation_description AS description_b,
+        regret_channel AS channel_a,
+        recommendation_channel AS channel_b,
+
+    FROM
+        {corpus_table_id}
+    LIMIT 100
+
+    '''
+    df_corpus = st.session_state.bq_client.query(corpus_query).result(
+    ).to_dataframe()
+
+    if table_exists(st.session_state.bq_client, labelled_table_id):
+        df_labelled = st.session_state.bq_client.query(
+            f"SELECT * FROM {labelled_table_id}").result().to_dataframe()
+        df_to_label = df_corpus[~(df_corpus.id_a + df_corpus.id_b).isin(
+            df_labelled.id_a + df_labelled.id_b)].reset_index(drop=True)
+    else:
+        df_to_label = df_corpus
+
+
+    assign_method = st.sidebar.selectbox('Method',['Select','Random','Head','Active Learning'])
+    if assign_method == 'Select':
+        st.warning('Please select a method to assign data in the sidebar')
+        st.stop()
+    if st.checkbox('Display Corpus'):
+        st.subheader('Corpus')
+        st.warning(f'The corpus has {df_corpus.shape[0]} rows.')
+
+    if assign_method == 'Active Learning':
+        st.info('Active Learning pipeline is not ready yet. Please select other methods for now.')
+        st.stop()
+
+    nrows = st.number_input(
+        'Select number of data points to labeling', min_value=5, value=5, step=5)
+    if nrows < 1:
+        st.error('Please select more than 0 rows')
+        st.stop()
+    else:
+        nrows = int(nrows)
+    if assign_method == 'Head':
+        df_to_label = df_to_label.head(nrows)
+    if assign_method == 'Random':
+        df_to_label = df_to_label.sample(nrows, random_state=123).reset_index(drop=True)
+
+    assign = np.array(users_list*int(df_to_label.shape[0]/len(users_list)))
+
+    # labeler = st.selectbox('Choose the labeler', users_list)
+    df_to_label.loc[:len(assign)-1, 'labeler'] = assign
+    st.dataframe(df_to_label)
+    if st.button('Add data for labeling'):
+        table = bigquery.Table(to_label_table_id, schema=to_label_schema)
+        if ~table_exists(to_label_table_id): 
+            table = st.session_state.bq_client.create_table(table)
+            _table_created[to_label_table_id] = True
+        job_config = bigquery.LoadJobConfig(
+            write_disposition="WRITE_APPEND",
+            schema=to_label_schema,
+        )
+
+        load_job = st.session_state.bq_client.load_table_from_json(
+            df_to_label.to_dict(orient='records'),
+            table,
+            job_config=job_config,
+        )
+        load_job.result()
+        with hc.HyLoader(f'Adding {nrows} datapoints for labeling',hc.Loaders.standard_loaders,index=[2,2,2,2]):
+            time.sleep(3)
+        st.success(f'Added {nrows} datapoints for labeling')
+        time.sleep(2)
+        st.experimental_rerun()
+
+    return df_to_label
+
 
 _MIN_TO_LABEL_BUFF = 10
 _TO_LABEL_REFRESH = 20
