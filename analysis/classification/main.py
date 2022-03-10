@@ -40,7 +40,7 @@ st.session_state['bq_client'] = connect_to_db(token)
 with st.sidebar.expander('Operations'):
     # We dont want the RAs to retrain the model. This decision to retrain has to be taken by the admin
     if token == 'admin':
-        operations = ['Select','Get Stats','Assign data','Labeling','Re-Training']
+        operations = ['Select','Users Management','Get Stats','Assign data','Labeling','Re-Training']
     else:
         operations = ['Select','Labeling']
     operation = st.sidebar.selectbox('Choose your operation',operations)
@@ -50,6 +50,13 @@ if operation == 'Select':
     st.stop()
 
 
+if operation == 'Users Management':
+    st.subheader('Add Users')
+    add_users()
+    st.write('')
+    components.html(f"<p style='text-align: justify; color: skyblue;'> </p>", height=10, scrolling=True)
+    st.subheader('Delete Users')
+    delete_users()
 #st.session_state.value = 1
 
 
