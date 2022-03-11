@@ -168,6 +168,15 @@ export class BackgroundScript {
 	private attachInstallHook() {
 		browser.runtime.onInstalled.addListener(async (details) => {
 			await installReason.set(details.reason);
+			if (details.reason === 'update') {
+				const [major] = details.previousVersion.split('.');
+				const majorVersion = parseInt(major, 10);
+				console.log(majorVersion);
+				if (majorVersion > 1) {
+					// dont show onboarding for v2 updates
+					return;
+				}
+			}
 			browser.tabs.create({ url: 'get-started/index.html', active: true });
 		});
 	}
