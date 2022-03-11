@@ -27,7 +27,7 @@ def display_video_transcripts(res):
        width {str} -- video width(By default: {"100%"})
        height {int} -- video height (By default: {315})
    """
-    title_a, channel_a, description_a, id_a,title_b,channel_b, description_b, id_b = res
+    title_a, channel_a, description_a, id_a,title_b,channel_b, description_b, id_b, method = res
 
     title1, title2, title3, title4, title5 = st.columns([8,1,1,1,8])
     src1,src2 = id_a, id_b
