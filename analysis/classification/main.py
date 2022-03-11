@@ -1,8 +1,12 @@
 #from pyinstrument import Profiler
 
 #profiler = Profiler()
-#profiler.start()
+# profiler.start()
 
+from utils.db_functions import *
+from utils.helpers import user_dir
+from utils.simple_auth import *
+from utils.library import *
 import pandas as pd
 import sqlite3
 from youtube_transcript_api import YouTubeTranscriptApi
@@ -22,13 +26,9 @@ import json
 sys.path.append('utils/library/')
 warnings.filterwarnings('ignore')
 
-from utils.library import *
-from utils.simple_auth import *
-from utils.helpers import user_dir
-from utils.db_functions import *
 
-st.set_page_config(page_title='Active Learning Frontend',layout='wide')
-    
+st.set_page_config(page_title='Active Learning Frontend', layout='wide')
+
 token = simple_auth()
 if token == '':
     st.stop()
@@ -36,14 +36,15 @@ st.session_state['bq_client'] = connect_to_db(token)
 #token = 'admin'
 ########################### DataBase Management ################################
 
+# We dont want the RAs to retrain the model. This decision to retrain has to be taken by the admin
+if token == 'admin':
+    with st.sidebar.expander('Operations'):
+        operations = ['Select', 'Users Management',
+                      'Get Stats', 'Labeling', 'Re-Training']
+        operation = st.sidebar.selectbox('Choose your operation', operations)
+else:
+    operation = 'Labeling'
 
-with st.sidebar.expander('Operations'):
-    # We dont want the RAs to retrain the model. This decision to retrain has to be taken by the admin
-    if token == 'admin':
-        operations = ['Select','Users Management','Get Stats','Assign data','Labeling','Re-Training']
-    else:
-        operations = ['Select','Labeling']
-    operation = st.sidebar.selectbox('Choose your operation',operations)
 
 if operation == 'Select':
     st.error('Choose your operation to proceed')
@@ -54,7 +55,8 @@ if operation == 'Users Management':
     st.subheader('Add Users')
     add_users()
     st.write('')
-    components.html(f"<p style='text-align: justify; color: skyblue;'> </p>", height=10, scrolling=True)
+    components.html(
+        f"<p style='text-align: justify; color: skyblue;'> </p>", height=10, scrolling=True)
     st.subheader('Delete Users')
     delete_users()
 #st.session_state.value = 1
@@ -63,23 +65,17 @@ if operation == 'Users Management':
 if operation == 'Labeling':
     res = get_datapoint_to_label(token)
     if res != None:
-        label_the_datapoint(res,token)
+        label_the_datapoint(res, token)
         display_video_transcripts(res)
     else:
         st.success('No more data left for labelling. Thank you!!!')
         st.balloons()
 
-        
-if operation == 'Assign data':
-    if token == 'admin':
-        assign_sample_data_to_label()
-    else:
-        st.write('Hmm')
 
 if operation == 'Get Stats':
     if token == 'admin':
         display_labelling_progress()
 
-#profiler.stop()
+# profiler.stop()
 
-#profiler.print()
+# profiler.print()
