@@ -1,20 +1,18 @@
 # Security
 #passlib,hashlib,bcrypt,scrypt
-import hashlib
-import streamlit as st
+
 import pandas as pd
 import time
-
 import hashlib
 import os
 import pickle as pk
 import streamlit as st
-import time
+import hydralit_components as hc
+
 import pickle as pk
+import json
 
-# This expander will be invoked right when simple auth is imported into main.py
-# putting it here will ensure that auth is right on top.
-
+language_dict = {"Abkhazian": "ab", "Afar": "aa", "Afrikaans": "af", "Albanian": "sq", "Amharic": "am", "Arabic": "ar", "Aragonese": "an", "Armenian": "hy", "Assamese": "as", "Aymara": "ay", "Azerbaijani": "az", "Bashkir": "ba", "Basque": "eu", "Bengali (Bangla)": "bn", "Bhutani": "dz", "Bihari": "bh", "Bislama": "bi", "Breton": "br", "Bulgarian": "bg", "Burmese": "my", "Byelorussian (Belarusian)": "be", "Cambodian": "km", "Catalan": "ca", "Cherokee": '', "Chewa": '', "Chinese": "zh", "Chinese (Simplified)": "zh-Hans", "Chinese (Traditional)": "zh-Hant", "Corsican": "co", "Croatian": "hr", "Czech": "cs", "Danish": "da", "Divehi": '', "Dutch": "nl", "Edo": '', "English": "en", "Esperanto": "eo", "Estonian": "et", "Faeroese": "fo", "Farsi": "fa", "Fiji": "fj", "Finnish": "fi", "Flemish": '', "French": "fr", "Frisian": "fy", "Fulfulde": '', "Galician": "gl", "Gaelic (Scottish)": "gd", "Gaelic (Manx)": "gv", "Georgian": "ka", "German": "de", "Greek": "el", "Greenlandic": "kl", "Guarani": "gn", "Gujarati": "gu", "Haitian Creole": "ht", "Hausa": "ha", "Hawaiian": '', "Hebrew": "he, iw", "Hindi": "hi", "Hungarian": "hu", "Ibibio": '', "Icelandic": "is", "Ido": "io", "Igbo": '', "Indonesian": "id, in", "Interlingua": "ia", "Interlingue": "ie", "Inuktitut": "iu", "Inupiak": "ik", "Irish": "ga", "Italian": "it", "Japanese": "ja", "Javanese": "jv", "Kannada": "kn", "Kanuri": '', "Kashmiri": "ks", "Kazakh": "kk", "Kinyarwanda (Ruanda)": "rw", "Kirghiz": "ky", "Kirundi (Rundi)": "rn", "Konkani": '', "Korean": "ko", "Kurdish": "ku", "Laothian": "lo", "Latin": "la", "Latvian (Lettish)": "lv", "Limburgish ( Limburger)": "li", "Lingala": "ln", "Lithuanian": "lt", "Macedonian": "mk", "Malagasy": "mg", "Malay": "ms", "Malayalam": "ml", "Maltese": "mt", "Maori": "mi", "Marathi": "mr", "Moldavian": "mo", "Mongolian": "mn", "Nauru": "na", "Nepali": "ne", "Norwegian": "no", "Occitan": "oc", "Oriya": "or", "Oromo (Afaan Oromo)": "om", "Papiamentu": '', "Pashto (Pushto)": "ps", "Polish": "pl", "Portuguese": "pt", "Punjabi": "pa", "Quechua": "qu", "Rhaeto-Romance": "rm", "Romanian": "ro", "Russian": "ru", "Sami (Lappish)": '', "Samoan": "sm", "Sangro": "sg", "Sanskrit": "sa", "Serbian": "sr", "Serbo-Croatian": "sh", "Sesotho": "st", "Setswana": "tn", "Shona": "sn", "Sichuan Yi": "ii", "Sindhi": "sd", "Sinhalese": "si", "Siswati": "ss", "Slovak": "sk", "Slovenian": "sl", "Somali": "so", "Spanish": "es", "Sundanese": "su", "Swahili (Kiswahili)": "sw", "Swedish": "sv", "Syriac": '', "Tagalog": "tl", "Tajik": "tg", "Tamazight": '', "Tamil": "ta", "Tatar": "tt", "Telugu": "te", "Thai": "th", "Tibetan": "bo", "Tigrinya": "ti", "Tonga": "to", "Tsonga": "ts", "Turkish": "tr", "Turkmen": "tk", "Twi": "tw", "Uighur": "ug", "Ukrainian": "uk", "Urdu": "ur", "Uzbek": "uz", "Venda": '', "Vietnamese": "vi", "Volap\u00fck": "vo", "Wallon": "wa", "Welsh": "cy", "Wolof": "wo", "Xhosa": "xh", "Yi": '', "Yiddish": "yi, ji", "Yoruba": "yo", "Zulu": "zu"}
 
 def create_auth_file():
     profile_dict = {'admin': None, 'ranu': None,'jesse':None}
@@ -39,10 +37,7 @@ def set_key(token, pwd):
     salt = os.urandom(32) # A new salt for this user
     key = get_key(salt, pwd)
     profile_dict[token] = {salt: key}
-    with open('.streamlit/profile_dict.pk', 'wb') as f:
-        pk.dump(profile_dict, f)
-    
-    return None
+    return profile_dict
 
 def add_user(user):
     profile_dict[user] = None
@@ -65,14 +60,14 @@ def delete_users():
     if st.button('Delete Users'):
         for user in users_to_delete:
             del profile_dict[user]
-        st.success(f'Sucessfully Deleted {len(users_list)} users from the DB')
+        st.success(f'Sucessfully Deleted {len(users_to_delete)} users from the DB')
 
-    with open('.streamlit/profile_dict.pk', 'wb') as f:
-        pk.dump(profile_dict, f)
+        with open('.streamlit/profile_dict.pk', 'wb') as f:
+            pk.dump(profile_dict, f)
 
-    time.sleep(2)
+        time.sleep(4)
 
-    st.experimental_rerun()
+        st.experimental_rerun()
 
 def add_users():
     new_usernames = st.text_area("Usernames",key='new_user')
@@ -85,18 +80,14 @@ def add_users():
         st.experimental_rerun()
     return 'ok'
 
-def simple_auth():
+def login():
     temp_header = st.empty()
     with st.sidebar.expander("Authorization"):
         token = st.text_input('username').lower()
-    
         if token == '':
             temp_header.error("Please sign in using the auth area to your left")
             st.stop()
-        
-
         else:
-            
             # If there is no user, it'll return None
             if token not in profile_dict:
                 st.error("Sorry, you do not have access to the system.  Please write to the admin for access.")
@@ -104,34 +95,71 @@ def simple_auth():
             # If the user is in the system.
             else:
                 salt_key = profile_dict[token]
-                pwd = st.text_input("password", type='password')
-                if st.button('Login'):
-                    st.write('')
                 # They profile will not have the salt and key if the user has not set a password
                 # Ask user to set password        
                 if salt_key is None:
-                    st.error("You have not set a password yet, please set one")
-                    pwd2 = st.text_input("Please repeat your password", type="password")
-                    if st.button("Set password"):
-                        if pwd == pwd2:
-                            set_key(token, pwd)
-                            st.success("I've set the password for you.  Please contact admin if you have to reset it")
-                            time.sleep(3)
-                            st.experimental_rerun()
-                        else:
-                            st.warning("The two passwords you typed do not match.  Please correct.")
+                    st.error("You have not setup an account yet, please signup first and comeback")
                     st.stop()
                 # If the user has set a password.
                 else:
+                    pwd = st.text_input("password", type='password')
                     salt = list(salt_key.keys())[0]
                     orig_key = list(salt_key.values())[0]
-
                     entered_key = get_key(salt, pwd)
                     if entered_key != orig_key:
-                        #dummy = st.button("Submit", key='pwd_dummy')
-                        #st.error("Please enter the correct password")
+                        dummy = st.button("Submit", key='pwd_dummy')
+                        st.error("Please enter the correct password")
                         st.stop()
-    return token
+            return token
+
+def signup():
+    all_users = get_all_users()
+    token = st.text_input('Please choose a username')
+    if token == 'admin': 
+        st.error("Haha.....You can't signup as admin")
+        st.stop()
+    if token in all_users.keys():
+        st.error('User already exists. Please login if you are the user, or choose another username')
+        st.stop()
+    if len(token) < 3:
+        st.error('Please setup a username with atleast 3 characters')
+        st.stop()
+    pwd = st.text_input("Set up a Password", type='password')
+    if pwd == '':
+        st.stop()
+    pwd_repeat = st.text_input("Repeat the Password", type='password')
+    if pwd != pwd_repeat:
+        st.error('Passwords do not match. Please contact the admin to reset it')
+        st.stop()
+    languages_comfortable = st.multiselect('Please Select the language(s) you are comfortable in', language_dict.keys(),help = 'Start typing the language to narrow down the options below',default = 'English')
+    if len(languages_comfortable) < 1:
+        st.error('Please select atleast one language')
+        st.stop()
+    languages_iso_codes = [language_dict[i] for i in languages_comfortable]
+    profile_dict = set_key(token,pwd)
+    profile_dict[token]['languages'] = languages_comfortable
+    profile_dict[token]['iso_codes'] = languages_iso_codes
+    if st.button('Submit'):
+        with open('.streamlit/profile_dict.pk', 'wb') as f:
+            pk.dump(profile_dict, f)
+        with hc.HyLoader('Setting Up your account',hc.Loaders.standard_loaders,index=[1,0,5]):
+            time.sleep(5)
+        st.experimental_rerun()
+        
+def simple_auth():
+    with st.sidebar.expander('User Management'):
+        temp_header = st.empty()
+        operation = temp_header.selectbox('Choose your operation',['Select','Login','Signup'])
+    if operation == 'Select':
+        st.stop()
+    elif operation == 'Login':
+        token = login()
+        temp_header.empty()
+        return token
+    elif operation == 'Signup':
+        result = signup()
+        return ''
+
 
 
 
