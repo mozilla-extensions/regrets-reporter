@@ -32,6 +32,7 @@ st.set_page_config(page_title='Active Learning Frontend', layout='wide')
 token = simple_auth()
 if token == '':
     st.stop()
+
 st.session_state['bq_client'] = connect_to_db(token)
 #token = 'admin'
 ########################### DataBase Management ################################
@@ -39,7 +40,7 @@ st.session_state['bq_client'] = connect_to_db(token)
 # We dont want the RAs to retrain the model. This decision to retrain has to be taken by the admin
 if token == 'admin':
     with st.sidebar.expander('Operations'):
-        operations = ['Select', 'Users Management',
+        operations = ['Select', 'Users Management','Assign Data',
                       'Get Stats', 'Labeling', 'Re-Training']
         operation = st.sidebar.selectbox('Choose your operation', operations)
 else:
@@ -61,6 +62,17 @@ if operation == 'Users Management':
     delete_users()
 #st.session_state.value = 1
 
+if operation == 'Assign Data':
+    if 'sampling_mode' not in st.session_state:
+        st.session_state['sampling_mode'] = ''
+
+    st.session_state['sampling_mode'] = st.selectbox('Choose the mode of sampling',['Select','Random','Active Learning'])
+    if st.session_state['sampling_mode'] == 'Select':
+        st.stop()
+    st.write(st.session_state)
+    with open('utils/settings.json','w') as f:
+        json.dump({'sampling_mode': st.session_state['sampling_mode']}, f)
+
 
 if operation == 'Labeling':
     res = get_datapoint_to_label(token)
@@ -79,4 +91,3 @@ if operation == 'Get Stats':
 # profiler.stop()
 
 # profiler.print()
-    
