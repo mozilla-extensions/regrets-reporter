@@ -8,9 +8,10 @@ import os
 import pickle as pk
 import streamlit as st
 import hydralit_components as hc
-
 import pickle as pk
 import json
+from streamlit import caching
+
 
 language_dict = {"Abkhazian": "ab", "Afar": "aa", "Afrikaans": "af", "Albanian": "sq", "Amharic": "am", "Arabic": "ar", "Aragonese": "an", "Armenian": "hy", "Assamese": "as", "Aymara": "ay", "Azerbaijani": "az", "Bashkir": "ba", "Basque": "eu", "Bengali (Bangla)": "bn", "Bhutani": "dz", "Bihari": "bh", "Bislama": "bi", "Breton": "br", "Bulgarian": "bg", "Burmese": "my", "Byelorussian (Belarusian)": "be", "Cambodian": "km", "Catalan": "ca", "Cherokee": '', "Chewa": '', "Chinese": "zh", "Chinese (Simplified)": "zh-Hans", "Chinese (Traditional)": "zh-Hant", "Corsican": "co", "Croatian": "hr", "Czech": "cs", "Danish": "da", "Divehi": '', "Dutch": "nl", "Edo": '', "English": "en", "Esperanto": "eo", "Estonian": "et", "Faeroese": "fo", "Farsi": "fa", "Fiji": "fj", "Finnish": "fi", "Flemish": '', "French": "fr", "Frisian": "fy", "Fulfulde": '', "Galician": "gl", "Gaelic (Scottish)": "gd", "Gaelic (Manx)": "gv", "Georgian": "ka", "German": "de", "Greek": "el", "Greenlandic": "kl", "Guarani": "gn", "Gujarati": "gu", "Haitian Creole": "ht", "Hausa": "ha", "Hawaiian": '', "Hebrew": "he, iw", "Hindi": "hi", "Hungarian": "hu", "Ibibio": '', "Icelandic": "is", "Ido": "io", "Igbo": '', "Indonesian": "id, in", "Interlingua": "ia", "Interlingue": "ie", "Inuktitut": "iu", "Inupiak": "ik", "Irish": "ga", "Italian": "it", "Japanese": "ja", "Javanese": "jv", "Kannada": "kn", "Kanuri": '', "Kashmiri": "ks", "Kazakh": "kk", "Kinyarwanda (Ruanda)": "rw", "Kirghiz": "ky", "Kirundi (Rundi)": "rn", "Konkani": '', "Korean": "ko", "Kurdish": "ku", "Laothian": "lo", "Latin": "la", "Latvian (Lettish)": "lv", "Limburgish ( Limburger)": "li", "Lingala": "ln", "Lithuanian": "lt", "Macedonian": "mk", "Malagasy": "mg", "Malay": "ms", "Malayalam": "ml", "Maltese": "mt", "Maori": "mi", "Marathi": "mr", "Moldavian": "mo", "Mongolian": "mn", "Nauru": "na", "Nepali": "ne", "Norwegian": "no", "Occitan": "oc", "Oriya": "or", "Oromo (Afaan Oromo)": "om", "Papiamentu": '', "Pashto (Pushto)": "ps", "Polish": "pl", "Portuguese": "pt", "Punjabi": "pa", "Quechua": "qu", "Rhaeto-Romance": "rm", "Romanian": "ro", "Russian": "ru", "Sami (Lappish)": '', "Samoan": "sm", "Sangro": "sg", "Sanskrit": "sa", "Serbian": "sr", "Serbo-Croatian": "sh", "Sesotho": "st", "Setswana": "tn", "Shona": "sn", "Sichuan Yi": "ii", "Sindhi": "sd", "Sinhalese": "si", "Siswati": "ss", "Slovak": "sk", "Slovenian": "sl", "Somali": "so", "Spanish": "es", "Sundanese": "su", "Swahili (Kiswahili)": "sw", "Swedish": "sv", "Syriac": '', "Tagalog": "tl", "Tajik": "tg", "Tamazight": '', "Tamil": "ta", "Tatar": "tt", "Telugu": "te", "Thai": "th", "Tibetan": "bo", "Tigrinya": "ti", "Tonga": "to", "Tsonga": "ts", "Turkish": "tr", "Turkmen": "tk", "Twi": "tw", "Uighur": "ug", "Ukrainian": "uk", "Urdu": "ur", "Uzbek": "uz", "Venda": '', "Vietnamese": "vi", "Volap\u00fck": "vo", "Wallon": "wa", "Welsh": "cy", "Wolof": "wo", "Xhosa": "xh", "Yi": '', "Yiddish": "yi, ji", "Yoruba": "yo", "Zulu": "zu"}
 
@@ -64,7 +65,6 @@ def delete_users():
 
         with open('.streamlit/profile_dict.pk', 'wb') as f:
             pk.dump(profile_dict, f)
-
         time.sleep(4)
 
         st.experimental_rerun()
@@ -112,52 +112,80 @@ def login():
                         st.stop()
             return token
 
-def signup():
+def signup(session_state=st.session_state):
     all_users = get_all_users()
-    token = st.text_input('Please choose a username')
+
+    text1 = st.empty()
+    text2 = st.empty()
+    text3 = st.empty()
+    text4 = st.empty()
+    text5 = st.empty()
+    text6 = st.empty()
+    text7 = st.empty()
+    text8 = st.empty()
+
+    token = text1.text_input('Please choose a username',value='')
     if token == 'admin': 
-        st.error("Haha.....You can't signup as admin")
+        text2.error("Haha.....You can't signup as admin")
         st.stop()
     if token in all_users.keys():
-        st.error('User already exists. Please login if you are the user, or choose another username')
+        text2.error('User already exists. Please login if you are the user, or choose another username')
         st.stop()
     if len(token) < 3:
-        st.error('Please setup a username with atleast 3 characters')
+        text2.error('Please setup a username with atleast 3 characters')
         st.stop()
-    pwd = st.text_input("Set up a Password", type='password')
+    pwd = text3.text_input("Set up a Password", type='password')
     if pwd == '':
         st.stop()
-    pwd_repeat = st.text_input("Repeat the Password", type='password')
-    if pwd != pwd_repeat:
-        st.error('Passwords do not match. Please contact the admin to reset it')
+    pwd_repeat = text4.text_input("Repeat the Password", type='password')
+    if pwd_repeat == '':
         st.stop()
-    languages_comfortable = st.multiselect('Please Select the language(s) you are comfortable in', language_dict.keys(),help = 'Start typing the language to narrow down the options below',default = 'English')
+    if pwd != pwd_repeat:
+        text5.error('Passwords do not match. Please contact the admin to reset it')
+        st.stop()
+    languages_comfortable = text6.multiselect('Please Select the language(s) you are comfortable in', language_dict.keys(),help = 'Start typing the language to narrow down the options below',default = 'English')
     if len(languages_comfortable) < 1:
-        st.error('Please select atleast one language')
+        text7.error('Please select atleast one language')
         st.stop()
     languages_iso_codes = [language_dict[i] for i in languages_comfortable]
     profile_dict = set_key(token,pwd)
     profile_dict[token]['languages'] = languages_comfortable
     profile_dict[token]['iso_codes'] = languages_iso_codes
-    if st.button('Submit'):
+    if text8.button('Submit'):
         with open('.streamlit/profile_dict.pk', 'wb') as f:
             pk.dump(profile_dict, f)
+            text1.empty()
+            text2.empty()
+            text3.empty()
+            text4.empty()
+            text5.empty()
+            text6.empty()
+            text7.empty()
+            text8.empty()
         with hc.HyLoader('Setting Up your account',hc.Loaders.standard_loaders,index=[1,0,5]):
             time.sleep(5)
-        st.experimental_rerun()
+        st.success("I've set the account for you, please login!!")
         
 def simple_auth():
     with st.sidebar.expander('User Management'):
         temp_header = st.empty()
-        operation = temp_header.selectbox('Choose your operation',['Select','Login','Signup'])
-    if operation == 'Select':
+        if 'current_project' in st.session_state:
+            operation_idx = st.session_state.get('operation', 0)
+            st.write('tetsvgej')
+            st.session_state['operation'] = temp_header.selectbox('Choose your operation',['Select','Login','Signup'],index=operation_idx)
+        else:
+            st.session_state['operation'] = temp_header.selectbox('Choose your operation',['Select','Login','Signup'],index=0)
+
+
+    if st.session_state['operation'] == 'Select':
         st.stop()
-    elif operation == 'Login':
+    elif st.session_state['operation'] == 'Login':
         token = login()
         temp_header.empty()
         return token
-    elif operation == 'Signup':
+    elif st.session_state['operation'] == 'Signup':
         result = signup()
+        
         return ''
 
 
