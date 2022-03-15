@@ -13,6 +13,7 @@ import threading
 from utils.simple_auth import *
 
 
+
 labelled_schema = [
     bigquery.SchemaField(
         "label", "STRING", mode="REQUIRED",
@@ -146,15 +147,22 @@ def _pull_thread(cv, data_to_label, bq_client):
             cv.wait()
         elif fetch_job is None:
             cv.release()
+        with open('utils/settings.json','r') as f:
+            json_result = json.load(f)
+            method = json_result['sampling_mode']
+            print(method)
             # TODO(Ranu): create a local config file to store this and an admin interface to choose between random or any models that have been run
-            method = "random"
-            if method == "random":
+            # method = "Random"
+            if method == "Random":
                 if table_exists(bq_client, labelled_table_id):
                     fetch_job = bq_client.query(
                         f"SELECT * FROM {corpus_table_id} a LEFT JOIN {labelled_table_id} using(regret_id, recommendation_id) WHERE label IS NULL ORDER BY RAND() LIMIT {_TO_LABEL_REFRESH}")
                 else:
                     fetch_job = bq_client.query(
                         f"SELECT * FROM {corpus_table_id} ORDER BY RAND() LIMIT {_TO_LABEL_REFRESH}")
+            
+            else:
+                st.warning('Active learning pipeline is not available yet')
             # TODO(Jesse): finish this
             # else:
                 # fetch pairs by joining corpus table with model prediction table - model name is specified in method config variable
