@@ -110,6 +110,8 @@ def login():
                         dummy = st.button("Submit", key='pwd_dummy')
                         st.error("Please enter the correct password")
                         st.stop()
+            if token != 'admin':
+                st.session_state['user_langs'] = profile_dict[token]['iso_codes']
             return token
 
 def signup(session_state=st.session_state):
