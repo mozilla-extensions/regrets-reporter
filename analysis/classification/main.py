@@ -70,7 +70,7 @@ if operation == 'Assign Data':
     if st.session_state['sampling_mode'] == 'Select':
         st.stop()
     st.write(st.session_state)
-    with open('utils/settings.json','w') as f:
+    with open('.streamlit/settings.json','w') as f:
         json.dump({'sampling_mode': st.session_state['sampling_mode']}, f)
 
 
