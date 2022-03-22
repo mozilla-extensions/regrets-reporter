@@ -147,7 +147,7 @@ def _pull_thread(cv, data_to_label, bq_client):
             cv.wait()
         elif fetch_job is None:
             cv.release()
-        with open('utils/settings.json','r') as f:
+        with open('.streamlit/settings.json','r') as f:
             json_result = json.load(f)
             method = json_result['sampling_mode']
             print(method)
