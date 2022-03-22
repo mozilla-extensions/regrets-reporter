@@ -62,6 +62,7 @@ labelled_schema = [
 
 corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_sample"
 labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled"
+language_table_id = "regrets-reporter-dev.ra_can_read.langs"
 
 _table_created = {
     corpus_table_id: False,
@@ -135,7 +136,7 @@ _MIN_TO_LABEL_BUFF = 10
 _TO_LABEL_REFRESH = 20
 
 
-def _pull_thread(cv, data_to_label, bq_client):
+def _pull_thread(cv, data_to_label, bq_client, user_langs):
     try:
         bq_client.get_table(corpus_table_id)
     except (NotFound, Forbidden):
@@ -156,10 +157,48 @@ def _pull_thread(cv, data_to_label, bq_client):
             if method == "Random":
                 if table_exists(bq_client, labelled_table_id):
                     fetch_job = bq_client.query(
-                        f"SELECT * FROM {corpus_table_id} a LEFT JOIN {labelled_table_id} using(regret_id, recommendation_id) WHERE label IS NULL ORDER BY RAND() LIMIT {_TO_LABEL_REFRESH}")
+                        f'''
+                            SELECT
+                                *
+                            FROM
+                                {corpus_table_id} a
+                            LEFT JOIN
+                                {labelled_table_id}
+                            USING(regret_id, recommendation_id)
+                            LEFT JOIN
+                                {language_table_id} reg_l_t
+                            ON regret_id = reg_l_t.video_id
+                            LEFT JOIN
+                                {language_table_id} rec_l_t
+                            ON recommendation_id = rec_l_t.video_id
+                            WHERE
+                                label IS NULL
+                                AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                            ORDER BY RAND()
+                            LIMIT {_TO_LABEL_REFRESH}
+                        '''
+                    )
                 else:
                     fetch_job = bq_client.query(
-                        f"SELECT * FROM {corpus_table_id} ORDER BY RAND() LIMIT {_TO_LABEL_REFRESH}")
+                        f'''
+                            SELECT
+                                *
+                            FROM
+                                {corpus_table_id}
+                            LEFT JOIN
+                                {language_table_id} reg_l_t
+                            ON regret_id = reg_l_t.video_id
+                            LEFT JOIN
+                                {language_table_id} rec_l_t
+                            ON recommendation_id = rec_l_t.video_id
+                            WHERE
+                                AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                            ORDER BY RAND()
+                            LIMIT {_TO_LABEL_REFRESH}
+                        '''
+                    )
             
             else:
                 st.warning('Active learning pipeline is not available yet')
@@ -185,7 +224,7 @@ def get_datapoint_to_label(labeler):
         c = threading.Condition()
         st.session_state['load_thread_cv'] = c
         th = threading.Thread(target=_pull_thread, args=[
-                              c, st.session_state.data_to_label, st.session_state.bq_client])
+                              c, st.session_state.data_to_label, st.session_state.bq_client, st.session_state.user_langs])
         th.start()
         st.session_state['load_thread'] = th
     st.session_state.load_thread_cv.acquire()
