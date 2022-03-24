@@ -193,7 +193,7 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs):
                                 {language_table_id} rec_l_t
                             ON recommendation_id = rec_l_t.video_id
                             WHERE
-                                AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                                 AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                             ORDER BY RAND()
                             LIMIT {_TO_LABEL_REFRESH}
