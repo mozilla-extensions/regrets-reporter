@@ -1,0 +1,7 @@
+google-api-python-client
+google-cloud-pubsub
+youtube_transcript_api
+lxml
+beautifulsoup4
+requests
+numpy

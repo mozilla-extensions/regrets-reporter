@@ -1,0 +1,4 @@
+pandas
+pyarrow
+google-cloud-bigquery
+google-cloud-pubsub
