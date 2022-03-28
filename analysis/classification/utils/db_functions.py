@@ -60,7 +60,7 @@ labelled_schema = [
 ]
 
 
-corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_sample"
+corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_high"
 labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled"
 language_table_id = "regrets-reporter-dev.ra_can_read.langs"
 
@@ -282,7 +282,7 @@ def add_labelled_datapoint_to_db(res, decision_dict):
     decision_dict['recommendation_description'] = recommendation_description
     decision_dict['recommendation_id'] = recommendation_id
     decision_dict['label_time'] = str(datetime.now())
-    decision_dict['selection_method'] = method
+    decision_dict['selection_method'] = "high" # This is a hack for labelling hi-prob pairs and should never make it to main
 
     if "data_to_push" not in st.session_state:
         st.session_state['data_to_push'] = []
