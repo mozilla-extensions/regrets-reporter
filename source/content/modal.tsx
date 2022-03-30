@@ -57,18 +57,18 @@ export function Modal() {
 	}
 	return (
 		<div>
-			<div className="overlay" />
-			<div className="injected-modal">
-				<div className="header">
-					<div id="icon" />
+			<div className="mrr-overlay" />
+			<div className="mrr-injected-modal">
+				<div className="mrr-header">
+					<div className="mrr-icon" />
 					<span>Mozilla RegretsReporter</span>
-					<div id="close" onClick={close} />
+					<div className="mrr-close" onClick={close} />
 				</div>
 				{isSubmitted ? (
 					<>
-						<div className="panel">
-							<div className="label">Thank you for your submission.</div>
-							<div className="message">
+						<div className="mrr-panel">
+							<div className="mrr-label">Thank you for your submission.</div>
+							<div className="mrr-message">
 								If you believe that the content you identified in this submission constitutes abuse under YouTube's
 								policies, please report it directly to YouTube via its{' '}
 								<a href={abuseReportingPlatformUrl} target="_blank" rel="noreferrer">
@@ -77,7 +77,7 @@ export function Modal() {
 								.
 							</div>
 						</div>
-						<div className="footer">
+						<div className="mrr-footer">
 							Do you have feedback about the RegretsReporter? We would love to hear it.{' '}
 							<a href={extensionFeedbackUrl} target="_blank" rel="noreferrer">
 								Send us feedback
@@ -86,8 +86,8 @@ export function Modal() {
 						</div>
 					</>
 				) : (
-					<div className="panel">
-						<div className="label">
+					<div className="mrr-panel">
+						<div className="mrr-label">
 							Please tell us more about your experience. Why do you want YouTube to stop recommending this content to
 							you?
 						</div>

@@ -3,7 +3,7 @@
 @import '../common/fonts/changa.css';
 @import '../common/fonts/nunito-sans.css';
 
-body[dir='rtl'] .injected-btn {
+body[dir='rtl'] .mrr-injected-btn {
 	top: 5px;
 	right: 5px;
 	left: auto;
@@ -14,7 +14,7 @@ body[dir='rtl'] .injected-btn {
 	}
 }
 
-.injected-btn {
+.mrr-injected-btn {
 	visibility: hidden;
 	position: absolute;
 	color: #fff;
@@ -91,7 +91,7 @@ body[dir='rtl'] .injected-btn {
 	}
 }
 
-.ytp-fullscreen .injected-btn {
+.ytp-fullscreen .mrr-injected-btn {
 	display: none;
 }
 
@@ -100,17 +100,17 @@ ytd-compact-video-renderer:hover,
 ytd-player:hover,
 ytd-thumbnail:hover,
 #video-preview-container {
-	& .injected-btn {
+	& .mrr-injected-btn {
 		visibility: visible;
 	}
 }
 
-#video-preview-container .injected-btn {
+#video-preview-container .mrr-injected-btn {
 	top: 20px;
 	left: 20px;
 }
 
-.injected-modal {
+.mrr-injected-modal {
 	direction: ltr;
 	min-width: 400px;
 	width: 50%;
@@ -128,15 +128,15 @@ ytd-thumbnail:hover,
 		text-decoration: none;
 	}
 
-	& .header {
-		& #icon {
+	& .mrr-header {
+		& .mrr-icon {
 			width: 20px;
 			height: 20px;
 			background: url('data-url:../assets/face.svg') no-repeat;
 			margin: 0 16px;
 		}
 
-		& #close {
+		& .mrr-close {
 			cursor: pointer;
 			width: 26px;
 			height: 26px;
@@ -157,14 +157,14 @@ ytd-thumbnail:hover,
 		align-items: center;
 	}
 
-	& .panel {
+	& .mrr-panel {
 		margin: 16px;
 		padding: 32px;
 		background: #fff;
 		font-family: 'Nunito Sans';
 		font-size: 16px;
 
-		& .label {
+		& .mrr-label {
 			padding: 5px 0;
 			font-size: 16px;
 			font-weight: 600;
@@ -172,12 +172,12 @@ ytd-thumbnail:hover,
 			line-height: 14px;
 		}
 
-		& .message {
+		& .mrr-message {
 			padding-top: 10px;
 		}
 	}
 
-	& .footer {
+	& .mrr-footer {
 		background: #fff;
 		margin: -15px 16px 16px;
 		padding: 32px;
@@ -219,7 +219,7 @@ ytd-thumbnail:hover,
 	}
 }
 
-.overlay {
+.mrr-overlay {
 	width: 100%;
 	height: 100%;
 	position: fixed;
