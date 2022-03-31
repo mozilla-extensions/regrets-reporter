@@ -63,6 +63,7 @@ labelled_schema = [
 corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_sample"
 labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled"
 language_table_id = "regrets-reporter-dev.ra_can_read.langs"
+model_table_id = "regrets-reporter-dev.ra_can_read.model_predictions_v1"
 
 _table_created = {
     corpus_table_id: False,
@@ -136,7 +137,7 @@ _MIN_TO_LABEL_BUFF = 10
 _TO_LABEL_REFRESH = 20
 
 
-def _pull_thread(cv, data_to_label, bq_client, user_langs):
+def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
     try:
         bq_client.get_table(corpus_table_id)
     except (NotFound, Forbidden):
@@ -148,13 +149,8 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs):
             cv.wait()
         elif fetch_job is None:
             cv.release()
-        with open('.streamlit/settings.json','r') as f:
-            json_result = json.load(f)
-            method = json_result['sampling_mode']
-            print(method)
-            # TODO(Ranu): create a local config file to store this and an admin interface to choose between random or any models that have been run
-            # method = "Random"
             if method == "Random":
+                print("choosing random")
                 if table_exists(bq_client, labelled_table_id):
                     fetch_job = bq_client.query(
                         f'''
@@ -200,11 +196,72 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs):
                         '''
                     )
             
-            else:
-                st.warning('Active learning pipeline is not available yet')
-            # TODO(Jesse): finish this
-            # else:
-                # fetch pairs by joining corpus table with model prediction table - model name is specified in method config variable
+            else: # active learning case
+                print("choosing with active learning")
+                if table_exists(bq_client, labelled_table_id):
+                    fetch_job = bq_client.query(
+                        f'''
+                            SELECT 
+                                *
+                            FROM (
+                                SELECT
+                                    *
+                                FROM
+                                    {corpus_table_id} a
+                                LEFT JOIN
+                                    {labelled_table_id}
+                                USING(regret_id, recommendation_id)
+                                LEFT JOIN
+                                    {language_table_id} reg_l_t
+                                ON regret_id = reg_l_t.video_id
+                                LEFT JOIN
+                                    {language_table_id} rec_l_t
+                                ON recommendation_id = rec_l_t.video_id
+                                INNER JOIN
+                                    {model_table_id} m_t
+                                USING(regret_id, recommendation_id)
+                                WHERE
+                                    model_timestamp = (SELECT MAX(model_timestamp) FROM {model_table_id})
+                                    AND label IS NULL
+                                    AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                    AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                ORDER BY ABS(2 * prediction - 1) ASC
+                                LIMIT {_TO_LABEL_REFRESH * 20}
+                            )
+                            ORDER BY RAND()
+                            LIMIT {_TO_LABEL_REFRESH}
+                        '''
+                    )
+                else:
+                    fetch_job = bq_client.query(
+                        f'''
+                            SELECT 
+                                *
+                            FROM (
+                                SELECT
+                                    *
+                                FROM
+                                    {corpus_table_id}
+                                LEFT JOIN
+                                    {language_table_id} reg_l_t
+                                ON regret_id = reg_l_t.video_id
+                                LEFT JOIN
+                                    {language_table_id} rec_l_t
+                                ON recommendation_id = rec_l_t.video_id
+                                 INNER JOIN
+                                    {model_table_id} m_t
+                                USING(regret_id, recommendation_id)
+                                WHERE
+                                    model_timestamp = (SELECT MAX(model_timestamp) FROM {model_table_id})
+                                    AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                    AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                ORDER BY ABS(2 * prediction - 1) ASC
+                                 LIMIT {_TO_LABEL_REFRESH * 20}
+                            )
+                            ORDER BY RAND()
+                            LIMIT {_TO_LABEL_REFRESH}
+                        '''
+                    )
             new_data = fetch_job.result().to_dataframe()
             fetch_job = None
             cv.acquire()
@@ -214,8 +271,10 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs):
 
 
 def get_datapoint_to_label(labeler):
-    # TODO(Ranu): create a local config file to store this and an admin interface to choose between random or any models that have been run
-    method = "random"
+    with open('.streamlit/settings.json','r') as f:
+            json_result = json.load(f)
+            method = json_result['sampling_mode']
+            print(method)
     if "data_to_label" not in st.session_state:
         # Note use of list as pseudo-pointer so data frame can be reassigned
         st.session_state['data_to_label'] = [pd.DataFrame()]
@@ -224,7 +283,7 @@ def get_datapoint_to_label(labeler):
         c = threading.Condition()
         st.session_state['load_thread_cv'] = c
         th = threading.Thread(target=_pull_thread, args=[
-                              c, st.session_state.data_to_label, st.session_state.bq_client, st.session_state.user_langs])
+                              c, st.session_state.data_to_label, st.session_state.bq_client, st.session_state.user_langs, method])
         th.start()
         st.session_state['load_thread'] = th
     st.session_state.load_thread_cv.acquire()
@@ -241,6 +300,7 @@ def get_datapoint_to_label(labeler):
         return None
     print(
         f"ready to label {res.regret_id.item()} and {res.recommendation_id.item()} and buffer has {len(st.session_state.data_to_label[0])} items")
+    print(f"p prob is {res.prediction.item()}")
     return (res.regret_title.item(), res.regret_channel.item(), res.regret_description.item(),
             res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), method)
 
