@@ -57,11 +57,15 @@ labelled_schema = [
     bigquery.SchemaField(
         "selection_method", "STRING", mode="REQUIRED",
         description="How this pair was selected and by which model"),
+    bigquery.SchemaField(
+        "disturbing", "STRING", mode="REQUIRED",
+        description="Whether the video is disturbing, hateful, or misinformation"
+    )
 ]
 
 
 corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_sample"
-labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled"
+labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled_v2"
 language_table_id = "regrets-reporter-dev.ra_can_read.langs"
 
 _table_created = {
@@ -108,17 +112,29 @@ def connect_to_db(user):
     return bq_client
 
 
-def display_labelling_progress():
-    try:
-        df_labelled = st.session_state.bq_client.query(
-            f"SELECT labeler, COUNT(*) AS n FROM {labelled_table_id} GROUP BY labeler").result().to_dataframe()
-    except NotFound:
-        df_labelled = None
-    try:
-        corpus_count = st.session_state.bq_client.query(
-            f"SELECT COUNT(*) AS n FROM {corpus_table_id}").result().to_dataframe()
-    except NotFound:
-        corpus_count = None
+def display_labelling_progress(token='admin'):
+    if token == 'admin':
+        try:
+            df_labelled = st.session_state.bq_client.query(
+                f"SELECT labeler, COUNT(*) AS n FROM {labelled_table_id} GROUP BY labeler").result().to_dataframe()
+        except NotFound:
+            df_labelled = None
+        try:
+            corpus_count = st.session_state.bq_client.query(
+                f"SELECT COUNT(*) AS n FROM {corpus_table_id}").result().to_dataframe()
+        except NotFound:
+            corpus_count = None
+    else:
+        try:
+            df_labelled = st.session_state.bq_client.query(
+                f"SELECT labeler, COUNT(*) AS n FROM {labelled_table_id}  where labeler= 'ranu' GROUP BY labeler").result().to_dataframe()
+        except NotFound:
+            df_labelled = None
+        try:
+            corpus_count = st.session_state.bq_client.query(
+                f"SELECT COUNT(*) AS n FROM {corpus_table_id}").result().to_dataframe()
+        except NotFound:
+            corpus_count = None
     st.subheader('Labelled So Far')
     if df_labelled is not None:
         st.dataframe(df_labelled)
@@ -130,6 +146,9 @@ def display_labelling_progress():
         st.text(f"{corpus_count.n.item()} items in corpus")
     else:
         st.text("No data to label")
+    
+    if st.button('Refresh Stats'):
+        st.experimental_rerun()
 
 
 _MIN_TO_LABEL_BUFF = 10
@@ -232,17 +251,23 @@ def get_datapoint_to_label(labeler):
         st.session_state.load_thread_cv.wait()
     elif len(st.session_state.data_to_label[0]) <= _MIN_TO_LABEL_BUFF:
         st.session_state.load_thread_cv.notify()
-    res = st.session_state.data_to_label[0].head(1)
-    st.session_state.data_to_label[0].drop(0, inplace=True)
-    st.session_state.data_to_label[0].reset_index(drop=True, inplace=True)
-    st.session_state.load_thread_cv.release()
-    if len(res) == 0:
-        st.error("NO DATA AVAILABLE TO LABEL")
-        return None
-    print(
-        f"ready to label {res.regret_id.item()} and {res.recommendation_id.item()} and buffer has {len(st.session_state.data_to_label[0])} items")
-    return (res.regret_title.item(), res.regret_channel.item(), res.regret_description.item(),
-            res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), method)
+
+    if 'res' not in st.session_state:
+        res = st.session_state.data_to_label[0].head(1)
+        st.session_state.data_to_label[0].drop(0, inplace=True)
+        st.session_state.data_to_label[0].reset_index(drop=True, inplace=True)
+        st.session_state.load_thread_cv.release()
+        if len(res) == 0:
+            st.error("NO DATA AVAILABLE TO LABEL")
+            return None
+        print(
+            f"ready to label {res.regret_id.item()} and {res.recommendation_id.item()} and buffer has {len(st.session_state.data_to_label[0])} items")
+        return (res.regret_title.item(), res.regret_channel.item(), res.regret_description.item(),
+                res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), method)
+
+    else:
+        res = st.session_state['res']
+        return res
 
 
 def _push_thread(cv, data_to_push, bq_client, _table_created):
@@ -272,6 +297,7 @@ def _push_thread(cv, data_to_push, bq_client, _table_created):
 
 
 def add_labelled_datapoint_to_db(res, decision_dict):
+    print(decision_dict)
     regret_title, regret_channel, regret_description, regret_id, recommendation_title, recommendation_channel, recommendation_description, recommendation_id, method = res
     decision_dict['regret_title'] = regret_title
     decision_dict['regret_channel'] = regret_channel

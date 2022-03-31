@@ -13,12 +13,8 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from utils.helpers import user_dir
 from utils.db_functions import *
 
-# # df = pd.read_csv(f'{user_dir}/repos/youtubeRegrets/data/backend.csv')
-# df = pd.read_csv('/home/ranu/repos/youTubeRegrets/data/backend.csv')
-
-# df = df.sample(1).reset_index(drop=True)
-
-def display_video_transcripts(res):
+def display_video_transcripts():
+    res = st.session_state['res']
 
     """An extension of the video widget
    Arguments:
@@ -59,37 +55,46 @@ def display_video_transcripts(res):
         st.info(f'Channel Name: {channel_b}')
         components.html(f"<p style='text-align: justify; color: skyblue;'>{description_b}</p>", height=height,width=width, scrolling=True)
 
+def clear_res_from_session_state():
+    del st.session_state['res']
 
-def label_the_datapoint(res, token):
-    form1, form2, form3, form4, form5 = st.columns([8,1,8,1,8])
-    with form1.form(key='acceptable',clear_on_submit = True):
+def label_the_datapoint():
+    res = st.session_state['res']
+    token = st.session_state['token']
+    form1, form2, form3, form4, form5, form6, form7 = st.columns([8,1,8,1,8,1,8])
+    # decision_dict = {}
+    if form7.checkbox('video is disturbing, hateful, or misinformation'):
         decision_dict = {}
+        # decision_dict['disturbing'] = 'True'
+    else:
+        decision_dict = {}
+        # decision_dict['disturbing'] = 'False'
+    st.write(decision_dict)       
+    with form1.form(key='acceptable',clear_on_submit = True):
         label = 'Acceptable Recommendation'
         reason = None
         decision_dict['labeler'] = token
         decision_dict['label'] = label
         decision_dict['reason'] = reason
         decision_dict['other_reason'] = None
-        submit_button = st.form_submit_button(label=label)
+        submit_button = st.form_submit_button(label=label, on_click=clear_res_from_session_state)
         if submit_button:
             add_labelled_datapoint_to_db(res,decision_dict)
 
 
     with form3.form(key='unsure',clear_on_submit = True):
-        decision_dict = {}
         label = 'Unsure'
         reason = None
         decision_dict['labeler'] = token
         decision_dict['label'] = label
         decision_dict['reason'] = reason
         decision_dict['other_reason'] = None
-        submit_button = st.form_submit_button(label=label)
+        submit_button = st.form_submit_button(label=label, on_click=clear_res_from_session_state)
         if submit_button:
             add_labelled_datapoint_to_db(res,decision_dict)
 
 
     with form5.form(key='bad',clear_on_submit = True):
-        decision_dict = {}
         label = 'Bad recommendation'
         reason = st.selectbox('Why do you think this is a bad recommendation',['Select','Similar subject','Similar opinion','Same controversy','Same persons','Same undesirable'])
         if reason == 'Select':
@@ -99,30 +104,6 @@ def label_the_datapoint(res, token):
         decision_dict['label'] = label
         decision_dict['reason'] = reason
         decision_dict['other_reason'] = comments
-        submit_button = st.form_submit_button(label=label)
+        submit_button = st.form_submit_button(label=label, on_click=clear_res_from_session_state)
         if submit_button:
             add_labelled_datapoint_to_db(res,decision_dict)
-
-    # with st.form(key='bad',clear_on_submit = True):
-    #     form1, form2, form3, form4, form5 = st.columns([8,1,8,1,8])
-    #     option_data = [
-    #     {'icon': "bi bi-hand-thumbs-up", 'label':"Acceptable Recommendation"},
-    #     {'icon':"fa fa-question-circle",'label':"Unsure"},
-    #     {'icon': "bi bi-hand-thumbs-down", 'label':"Bad recommendation"},
-    #     ]
-
-    #     # override the theme, else it will use the Streamlit applied theme
-    #     over_theme = {'txc_inactive': 'white','menu_background':'grey','txc_active':'yellow','option_active':'grey'}
-    #     font_fmt = {'font-class':'h2','font-size':'150%'}
-
-    #     reason = form5.multiselect('Why do you think this is a Bad recommendation',['Select','graphic injury or violence','sexual content','unpleasant language'])
-    #     comments = form5.text_input('Please write down your comments if your reason is not listed above')
-
-    #     # display a horizontal version of the option bar
-    #     op = hc.option_bar(option_definition=option_data,title='',key='PrimaryOption',override_theme=over_theme,font_styling=font_fmt,horizontal_orientation=True)
-    #     decision_dict = {}
-    #     decision_dict['token'] = token
-    #     decision_dict['label'] = op
-    #     decision_dict['reason'] = reason
-    #     decision_dict['comments'] = comments
-    #     return st.form_submit_button()

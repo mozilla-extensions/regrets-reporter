@@ -77,8 +77,10 @@ if operation == 'Assign Data':
 if operation == 'Labeling':
     res = get_datapoint_to_label(token)
     if res != None:
-        label_the_datapoint(res, token)
-        display_video_transcripts(res)
+        st.session_state['res'] = res
+        st.session_state['token'] = token
+        label_the_datapoint()
+        display_video_transcripts()
     else:
         st.success('No more data left for labelling. Thank you!!!')
         st.balloons()
@@ -86,7 +88,7 @@ if operation == 'Labeling':
 
 if operation == 'Get Stats':
     if token == 'admin':
-        display_labelling_progress()
+        display_labelling_progress(token=token)
 
 # profiler.stop()
 
