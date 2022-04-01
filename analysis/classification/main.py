@@ -26,12 +26,20 @@ import json
 sys.path.append('utils/library/')
 warnings.filterwarnings('ignore')
 
-
+app_type = sys.argv[-1]
 st.set_page_config(page_title='Active Learning Frontend', layout='wide')
+ph1 = st.empty()
+if app_type == 'qa':
+    ph1.markdown("<h2 style='text-align: center; color: White;'>Testing Frontend</h2>", unsafe_allow_html=True)
+
+else:
+    ph1.markdown("<h2 style='text-align: center; color: White;'>Active Learning Frontend</h2>", unsafe_allow_html=True)
 
 token = simple_auth()
 if token == '':
     st.stop()
+else:
+    ph1.empty()
 
 st.session_state['bq_client'] = connect_to_db(token)
 #token = 'admin'
@@ -77,8 +85,10 @@ if operation == 'Assign Data':
 if operation == 'Labeling':
     res = get_datapoint_to_label(token)
     if res != None:
-        label_the_datapoint(res, token)
-        display_video_transcripts(res)
+        st.session_state['res'] = res
+        st.session_state['token'] = token
+        label_the_datapoint()
+        display_video_transcripts()
     else:
         st.success('No more data left for labelling. Thank you!!!')
         st.balloons()
@@ -86,7 +96,7 @@ if operation == 'Labeling':
 
 if operation == 'Get Stats':
     if token == 'admin':
-        display_labelling_progress()
+        display_labelling_progress(token=token)
 
 # profiler.stop()
 
