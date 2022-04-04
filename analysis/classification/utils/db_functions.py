@@ -174,7 +174,7 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
             cv.wait()
         elif fetch_job is None:
             cv.release()
-            if method == "Random":
+            if method[0] == "Random":
                 print("choosing random")
                 if table_exists(bq_client, labelled_table_id):
                     fetch_job = bq_client.query(
@@ -296,10 +296,12 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
 
 
 def get_datapoint_to_label(labeler):
+    if "method" not in st.session_state:
+        st.session_state['method'] = ["Random"]
     with open('.streamlit/settings.json','r') as f:
             json_result = json.load(f)
-            method = json_result['sampling_mode']
-            print(method)
+            st.session_state.method[0] = json_result['sampling_mode']
+            print(st.session_state.method[0])
     if "data_to_label" not in st.session_state:
         # Note use of list as pseudo-pointer so data frame can be reassigned
         st.session_state['data_to_label'] = [pd.DataFrame()]
@@ -308,12 +310,12 @@ def get_datapoint_to_label(labeler):
         c = threading.Condition()
         st.session_state['load_thread_cv'] = c
         th = threading.Thread(target=_pull_thread, args=[
-                              c, st.session_state.data_to_label, st.session_state.bq_client, st.session_state.user_langs, method])
+                              c, st.session_state.data_to_label, st.session_state.bq_client, st.session_state.user_langs, st.session_state.method])
         th.start()
         st.session_state['load_thread'] = th
     st.session_state.load_thread_cv.acquire()
     if len(st.session_state.data_to_label[0]) == 0:
-        st.session_state.load_thread_cv.wait()
+        st.session_state.load_thread_cv.wait()  
     elif len(st.session_state.data_to_label[0]) <= _MIN_TO_LABEL_BUFF:
         st.session_state.load_thread_cv.notify()
 
@@ -329,7 +331,7 @@ def get_datapoint_to_label(labeler):
             f"ready to label {res.regret_id.item()} and {res.recommendation_id.item()} and buffer has {len(st.session_state.data_to_label[0])} items")
         print(f"p prob is {res.prediction.item()}")
         return (res.regret_title.item(), res.regret_channel.item(), res.regret_description.item(),
-                res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), method)
+                res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), st.session_state.method[0])
 
     else:
         res = st.session_state['res']
