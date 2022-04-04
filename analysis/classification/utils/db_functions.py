@@ -65,7 +65,7 @@ labelled_schema = [
 ]
 
 
-corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_sample"
+corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_to_label"
 if app_type == 'qa':
     labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled_qa"
 else:
