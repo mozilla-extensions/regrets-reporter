@@ -67,7 +67,7 @@ def label_the_datapoint():
     with st.form(key='columns_in_form',clear_on_submit=True):
         #The below two lines are for horizontal radio buttons
         st.write('<style>div.row-widget.stRadio > div{flex-direction:row;justify-content: left;} </style>', unsafe_allow_html=True)
-        st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:normal;padding-left:10px; margin: 0 150px 0 5px;}</style>', unsafe_allow_html=True)
+        st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:normal;padding-left:10px; margin: 0 50px 0 5px;}</style>', unsafe_allow_html=True)
         label = st.radio("Choose your response",("Acceptable Recommendation","Unsure","Bad recommendation"))
         
         col1, col2, col3 = st.columns(3)

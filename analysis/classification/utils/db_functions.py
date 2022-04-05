@@ -356,14 +356,13 @@ def _push_thread(cv, data_to_push, bq_client, _table_created):
             cur_data = data_to_push.copy()
             data_to_push.clear()
             cv.release()
-            print(f"pushing {len(cur_data)}")
+            print(f"pushing {len(cur_data)} to {labelled_table_id}")
             load_job = bq_client.load_table_from_json(
                 cur_data,
                 table,
                 job_config=job_config,
             )
             load_job.result()
-
 
 def add_labelled_datapoint_to_db(res, decision_dict):
     regret_title, regret_channel, regret_description, regret_id, recommendation_title, recommendation_channel, recommendation_description, recommendation_id, method = res
