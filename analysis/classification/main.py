@@ -61,9 +61,9 @@ if operation == 'Select':
 
 
 if operation == 'Users Management':
-    st.subheader('Add Users')
-    add_users()
-    st.write('')
+    # st.subheader('Add Users')
+    # add_users()
+    # st.write('')
     components.html(
         f"<p style='text-align: justify; color: skyblue;'> </p>", height=10, scrolling=True)
     st.subheader('Delete Users')
