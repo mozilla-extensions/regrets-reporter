@@ -329,7 +329,8 @@ def get_datapoint_to_label(labeler):
             return None
         print(
             f"ready to label {res.regret_id.item()} and {res.recommendation_id.item()} and buffer has {len(st.session_state.data_to_label[0])} items")
-        print(f"p prob is {res.prediction.item()}")
+        if st.session_state.method[0] != "Random":
+            print(f"p prob is {res.prediction.item()}")
         return (res.regret_title.item(), res.regret_channel.item(), res.regret_description.item(),
                 res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), st.session_state.method[0])
 
