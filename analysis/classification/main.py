@@ -83,15 +83,13 @@ if operation == 'Assign Data':
 
 
 if operation == 'Labeling':
-    res = get_datapoint_to_label(token)
-    if res != None:
-        st.session_state['res'] = res
-        st.session_state['token'] = token
-        label_the_datapoint()
-        display_video_transcripts()
-    else:
-        st.success('No more data left for labelling. Thank you!!!')
-        st.balloons()
+    if "res" not in st.session_state:
+        st.session_state['res'] = get_datapoint_to_label(token)
+    st.session_state['token'] = token
+    label_the_datapoint()
+    #display_video_transcripts()
+    
+    
 
 
 if operation == 'Get Stats':
