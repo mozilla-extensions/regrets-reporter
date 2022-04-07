@@ -77,7 +77,7 @@ def label_the_datapoint():
         #The below two lines are for horizontal radio buttons
         st.write('<style>div.row-widget.stRadio > div{flex-direction:row;justify-content: left;} </style>', unsafe_allow_html=True)
         st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:normal;padding-left:10px; margin: 0 50px 0 5px;}</style>', unsafe_allow_html=True)
-        label = st.radio("Choose your response",("Acceptable Recommendation","Unsure","Bad recommendation"), index = (2 if st.session_state.warning_spot == 'Please choose a reason' else 0), key="label")
+        label = st.radio("Choose your response",("Acceptable Recommendation","Unsure","Bad recommendation"), index = (2 if "warning_spot" in st.session_state and st.session_state.warning_spot == 'Please choose a reason' else 0), key="label")
         
         col1, col2, col3 = st.columns(3)
 
