@@ -64,25 +64,36 @@ def label_the_datapoint():
     token = st.session_state['token']
     decision_dict = {}
 
-    with st.form(key='columns_in_form',clear_on_submit=True):
+    with st.form(key='columns_in_form', clear_on_submit=True):
+        def submit_handler():
+            if st.session_state.label == "Bad recommendation" and st.session_state.reason == 'Click Here':
+                st.session_state.warning_spot = 'Please choose a reason'
+                #label = "Bad recommendation"
+            else:
+                st.session_state.warning_spot = ''
+                add_labelled_datapoint_to_db(res, {'labeler': token, 'label': st.session_state.label, 'reason': st.session_state.reason, 'other_reason': st.session_state.comment, 'disturbing': st.session_state.disturbing})
+                clear_res_from_session_state()
+                #st.stop()
         #The below two lines are for horizontal radio buttons
         st.write('<style>div.row-widget.stRadio > div{flex-direction:row;justify-content: left;} </style>', unsafe_allow_html=True)
         st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:normal;padding-left:10px; margin: 0 50px 0 5px;}</style>', unsafe_allow_html=True)
-        label = st.radio("Choose your response",("Acceptable Recommendation","Unsure","Bad recommendation"))
+        label = st.radio("Choose your response",("Acceptable Recommendation","Unsure","Bad recommendation"), index = (2 if "warning_spot" in st.session_state and st.session_state.warning_spot == 'Please choose a reason' else 0), key="label")
         
         col1, col2, col3 = st.columns(3)
 
-        reason = col1.selectbox("If you think it's a bad recommendation, choose why?",['Click Here','Similar subject','Similar opinion','Same controversy','Same persons','Same undesirable'], format_func = str)
-        comments = col2.text_input('Please write down if your reason is not listed above')
-        disturbing = st.checkbox('video is disturbing, hateful, or misinformation',key='checkbox')
-        decision_dict['labeler'] = token
-        decision_dict['label'] = label
-        decision_dict['reason'] = reason
-        decision_dict['other_reason'] = comments
-        decision_dict['disturbing'] = disturbing
-        submit_button = st.form_submit_button(label="Submit", on_click=clear_res_from_session_state)
-        if submit_button:
-            add_labelled_datapoint_to_db(res,decision_dict)
+        reason = col1.selectbox("If you think it's a bad recommendation, choose why?",['Click Here','Similar subject','Similar opinion','Same controversy','Same persons','Same undesirable'], format_func = str, key="reason")
+        comments = col2.text_input('Please write down if your reason is not listed above', key="comment")
+        disturbing = st.checkbox('video is disturbing, hateful, or misinformation', key="disturbing")
+        if "warning_spot" in st.session_state and st.session_state['warning_spot'] != '':
+            st.warning(st.session_state['warning_spot'])
+        submit_button = st.form_submit_button(label="Submit", on_click=submit_handler)
+        
+
+        
+    display_video_transcripts()
+
+
+
 
     # form1, form2, form3, form4, form5, form6, form7 = st.columns([8,1,8,1,8,1,8])
     # if form7.checkbox('video is disturbing, hateful, or misinformation',key='checkbox'):
