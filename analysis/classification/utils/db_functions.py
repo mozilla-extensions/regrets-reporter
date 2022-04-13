@@ -158,8 +158,8 @@ def display_labelling_progress(token='admin'):
         st.experimental_rerun()
 
 
-_MIN_TO_LABEL_BUFF = 10
-_TO_LABEL_REFRESH = 20
+_MIN_TO_LABEL_BUFF = 20
+_TO_LABEL_REFRESH = 100
 
 
 def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
