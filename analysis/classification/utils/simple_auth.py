@@ -81,37 +81,41 @@ def add_users():
 
 def login():
     temp_header = st.empty()
-    with st.sidebar.expander("Authorization"):
-        token = st.text_input('username').lower()
-        if token == '':
-            temp_header.error("Please sign in using the auth area to your left")
-            st.stop()
-        else:
-            # If there is no user, it'll return None
-            if token not in profile_dict:
-                st.error("Sorry, you do not have access to the system.  Please write to the admin for access.")
-                st.stop()
-            # If the user is in the system.
-            else:
+    with st.sidebar.form(key='login'):
+        token_ = st.text_input('username',key='token_').lower()
+        pwd = st.text_input("password", type='password', key='pwd')
+
+        def validate_login():
+            token = st.session_state['token_']
+            pwd = st.session_state['pwd']
+            
+            # check if the user is already exists or not
+            try:
                 salt_key = profile_dict[token]
-                # They profile will not have the salt and key if the user has not set a password
-                # Ask user to set password        
-                if salt_key is None:
-                    st.error("You have not setup an account yet, please signup first and comeback")
-                    st.stop()
-                # If the user has set a password.
-                else:
-                    pwd = st.text_input("password", type='password')
-                    salt = list(salt_key.keys())[0]
-                    orig_key = list(salt_key.values())[0]
-                    entered_key = get_key(salt, pwd)
-                    if entered_key != orig_key:
-                        dummy = st.button("Submit", key='pwd_dummy')
-                        st.error("Please enter the correct password")
-                        st.stop()
-            if token != 'admin':
-                st.session_state['user_langs'] = profile_dict[token]['iso_codes']
-            return token
+            except:
+                salt_key = None
+            
+            if salt_key is None:
+                st.error("You have not setup an account yet, please refresh this page and signup first and comeback")
+                st.stop()
+            
+            # check the hashed password entered with the hashed one we stored in our DV 
+            else:
+                salt = list(salt_key.keys())[0]
+                orig_key = list(salt_key.values())[0]
+                entered_key = get_key(salt, pwd)
+                if entered_key  == orig_key:
+                    st.session_state['logged_in'] = 'yes'                    
+                    
+        
+        if st.form_submit_button('Login', on_click=validate_login):
+            st.session_state['logged_in'] = 'yes'
+            try:
+                st.session_state['user_langs'] = profile_dict[token_]['iso_codes']
+            except:
+                st.session_state['user_langs'] = ['en']
+            return token_
+            
 
 def signup(session_state=st.session_state):
     all_users = get_all_users()
@@ -172,7 +176,6 @@ def simple_auth():
         temp_header = st.empty()
         if 'current_project' in st.session_state:
             operation_idx = st.session_state.get('operation', 0)
-            st.write('tetsvgej')
             st.session_state['operation'] = temp_header.selectbox('Choose your operation',['Select','Login','Signup'],index=operation_idx)
         else:
             st.session_state['operation'] = temp_header.selectbox('Choose your operation',['Select','Login','Signup'],index=0)
@@ -188,79 +191,3 @@ def simple_auth():
         result = signup()
         
         return ''
-
-
-
-
-# def make_hashes(password):
-# 	return hashlib.sha256(str.encode(password)).hexdigest()
-
-# def check_hashes(password,hashed_text):
-# 	if make_hashes(password) == hashed_text:
-# 		return hashed_text
-# 	return False
-# # DB Management
-# import sqlite3 
-# conn = sqlite3.connect('data/profiles.db')
-# c = conn.cursor()
-# # DB  Functions
-
-# def create_usertable():
-# 	c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
-
-
-# def add_userdata(username,password):
-# 	c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
-# 	conn.commit()
-
-# def login_user(username,password):
-# 	c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
-# 	data = c.fetchall()
-# 	return data
-
-
-# def view_all_users():
-# 	c.execute('SELECT * FROM userstable')
-# 	data = c.fetchall()
-# 	return data
-
-# def auth():
-#     auth_choices = ['Select','Login','Signup']
-#     ph1 = st.empty()
-#     ph2 = st.empty()
-#     ph3 = st.empty()
-#     ph4 = st.empty()
-#     ph5 = st.empty()
-
-#     auth_choice = ph1.selectbox('Choose your options', auth_choices)
-#     if auth_choice == 'Select':
-#         st.stop()
-#     if auth_choice == 'Login':
-#         username = ph2.text_input("Username")
-#         password = ph3.text_input("Password",type='password')
-#         if ph4.button("Login"):
-#             # if password == '12345':
-#             create_usertable()
-#             hashed_pswd = make_hashes(password)
-
-#             result = login_user(username,check_hashes(password,hashed_pswd))
-#             if result:
-#                 ph5.success("Logged In as {}".format(username))
-#                 time.sleep(3)
-#                 return True
-#             else:
-#                 st.warning("Incorrect Username/Password")
-#     if auth_choice == 'Signup':
-#         new_user = ph2.text_input("Username")
-#         new_password = ph3.text_input("Password",type='password')
-#         if ph4.button("Signup"):
-#             create_usertable()
-#             add_userdata(new_user,make_hashes(new_password))
-#             st.success("You have successfully created a valid Account")
-#             st.info("Go to Login Menu to login") 
-
-# ph1 = st.empty()
-# ph2 = st.empty()
-# ph3 = st.empty()
-# ph4 = st.empty()
-# ph5 = st.empty()

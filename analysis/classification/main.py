@@ -36,10 +36,17 @@ else:
     ph1.markdown("<h2 style='text-align: center; color: White;'>Active Learning Frontend</h2>", unsafe_allow_html=True)
 
 token = simple_auth()
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = 'no'
+
+if st.session_state['logged_in'] != 'yes':
+    st.stop()
 if token == '':
     st.stop()
 else:
     ph1.empty()
+
+
 
 st.session_state['bq_client'] = connect_to_db(token)
 #token = 'admin'

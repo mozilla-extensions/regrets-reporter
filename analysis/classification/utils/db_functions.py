@@ -306,6 +306,8 @@ def get_datapoint_to_label(labeler):
         # Note use of list as pseudo-pointer so data frame can be reassigned
         st.session_state['data_to_label'] = [pd.DataFrame()]
 
+    # st.session_state['user_langs'] = ['en']
+
     if "load_thread" not in st.session_state:
         c = threading.Condition()
         st.session_state['load_thread_cv'] = c
