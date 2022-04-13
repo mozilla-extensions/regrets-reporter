@@ -83,7 +83,7 @@ def label_the_datapoint():
 
         reason = col1.selectbox("If you think it's a bad recommendation, choose why?",['Click Here','Similar subject','Similar opinion','Same controversy','Same persons','Same undesirable'], format_func = str, key="reason")
         comments = col2.text_input('Please write down if your reason is not listed above', key="comment")
-        disturbing = st.checkbox('video is disturbing, hateful, or misinformation', key="disturbing")
+        disturbing = st.checkbox('recommended video is disturbing, hateful, or misinformation', key="disturbing")
         if "warning_spot" in st.session_state and st.session_state['warning_spot'] != '':
             st.warning(st.session_state['warning_spot'])
         submit_button = st.form_submit_button(label="Submit", on_click=submit_handler)
