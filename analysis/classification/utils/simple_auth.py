@@ -81,7 +81,6 @@ def add_users():
 
 def login():
     temp_header = st.empty()
-    # with st.sidebar.expander("Authorization"):
     with st.sidebar.form(key='login'):
         token_ = st.text_input('username',key='token_').lower()
         pwd = st.text_input("password", type='password', key='pwd')
@@ -90,16 +89,17 @@ def login():
             token = st.session_state['token_']
             pwd = st.session_state['pwd']
             
+            # check if the user is already exists or not
             try:
                 salt_key = profile_dict[token]
             except:
                 salt_key = None
-            # If the profile does not have the salt and key if the user has not set a password
-            # Ask user to set password        
+            
             if salt_key is None:
                 st.error("You have not setup an account yet, please refresh this page and signup first and comeback")
                 st.stop()
-                
+            
+            # check the hashed password entered with the hashed one we stored in our DV 
             else:
                 salt = list(salt_key.keys())[0]
                 orig_key = list(salt_key.values())[0]
@@ -116,41 +116,6 @@ def login():
                 st.session_state['user_langs'] = ['en']
             return token_
             
-
-
-def login_old():
-    temp_header = st.empty()
-    with st.sidebar.expander("Authorization"):
-        token = st.text_input('username').lower()
-        if token == '':
-            temp_header.error("Please sign in using the auth area to your left")
-            st.stop()
-        else:
-            # If there is no user, it'll return None
-            if token not in profile_dict:
-                st.error("Sorry, you do not have access to the system.  Please write to the admin for access.")
-                st.stop()
-            # If the user is in the system.
-            else:
-                salt_key = profile_dict[token]
-                # They profile will not have the salt and key if the user has not set a password
-                # Ask user to set password        
-                if salt_key is None:
-                    st.error("You have not setup an account yet, please signup first and comeback")
-                    st.stop()
-                # If the user has set a password.
-                else:
-                    pwd = st.text_input("password", type='password')
-                    salt = list(salt_key.keys())[0]
-                    orig_key = list(salt_key.values())[0]
-                    entered_key = get_key(salt, pwd)
-                    if entered_key != orig_key:
-                        dummy = st.button("Submit", key='pwd_dummy')
-                        st.error("Please enter the correct password")
-                        st.stop()
-            # if token != 'admin':
-            st.session_state['user_langs'] = profile_dict[token]['iso_codes']
-            return token
 
 def signup(session_state=st.session_state):
     all_users = get_all_users()
