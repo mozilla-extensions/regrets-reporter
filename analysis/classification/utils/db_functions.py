@@ -4,7 +4,7 @@ import numpy as np
 from utils.helpers import user_dir, repo_dir, data_dir
 import hydralit_components as hc
 import time
-from datetime import datetime
+import datetime
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from google.api_core.exceptions import Conflict, NotFound, Forbidden
@@ -376,7 +376,7 @@ def add_labelled_datapoint_to_db(res, decision_dict):
     decision_dict['recommendation_channel'] = recommendation_channel
     decision_dict['recommendation_description'] = recommendation_description
     decision_dict['recommendation_id'] = recommendation_id
-    decision_dict['label_time'] = str(datetime.now())
+    decision_dict['label_time'] = str(datetime.datetime.now())
     decision_dict['selection_method'] = method
 
     if "data_to_push" not in st.session_state:
