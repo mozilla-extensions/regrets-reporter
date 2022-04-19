@@ -81,7 +81,7 @@ def label_the_datapoint():
         
         col1, col2, col3 = st.columns(3)
 
-        reason = col1.selectbox("If you think it's a bad recommendation, choose why?",['Click Here','Similar subject','Similar opinion','Same controversy','Same persons','Same undesirable'], format_func = str, key="reason")
+        reason = col1.selectbox("If you think it's a bad recommendation, choose why?",['Click Here','Similar subject','Similar opinion','Same controversy','Same persons','Same undesirable','Other'], format_func = str, key="reason")
         comments = col2.text_input('Optional comment as to why recommendation is bad.', key="comment")
         disturbing = st.checkbox('recommended video is disturbing, hateful, or misinformation', key="disturbing")
         if "warning_spot" in st.session_state and st.session_state['warning_spot'] != '':
