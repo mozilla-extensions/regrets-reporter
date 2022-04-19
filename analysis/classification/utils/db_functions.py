@@ -65,14 +65,13 @@ labelled_schema = [
 ]
 
 
-corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_to_label"
+corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_to_label_1_pct"
 if app_type == 'qa':
     labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled_qa"
 else:
     labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled_ra"
 
 
-language_table_id = "regrets-reporter-dev.ra_can_read.langs"
 model_table_id = "regrets-reporter-dev.ra_can_read.model_predictions_v1"
 
 _table_created = {
@@ -186,16 +185,10 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
                             LEFT JOIN
                                 {labelled_table_id}
                             USING(regret_id, recommendation_id)
-                            LEFT JOIN
-                                {language_table_id} reg_l_t
-                            ON regret_id = reg_l_t.video_id
-                            LEFT JOIN
-                                {language_table_id} rec_l_t
-                            ON recommendation_id = rec_l_t.video_id
                             WHERE
                                 label IS NULL
-                                AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
-                                AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                AND regret_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                AND recommendation_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                             ORDER BY RAND()
                             LIMIT {_TO_LABEL_REFRESH}
                         '''
@@ -207,15 +200,9 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
                                 *
                             FROM
                                 {corpus_table_id}
-                            LEFT JOIN
-                                {language_table_id} reg_l_t
-                            ON regret_id = reg_l_t.video_id
-                            LEFT JOIN
-                                {language_table_id} rec_l_t
-                            ON recommendation_id = rec_l_t.video_id
                             WHERE
-                                reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
-                                AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                regret_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                AND recommendation_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                             ORDER BY RAND()
                             LIMIT {_TO_LABEL_REFRESH}
                         '''
