@@ -130,13 +130,13 @@ def login():
 def signup():
     all_users = get_all_users()
     with st.form(key='signup',clear_on_submit=True):
-        token = st.text_input('Please choose a username',value='',key='token')
+        token = st.text_input('Please choose a username',value='',key='token_')
         pwd = st.text_input("Set up a Password", type='password',key='pwd')
         pwd_repeat = st.text_input('Please repeat the password', type='password', key='pwd_repeat')
         languages_comfortable = st.multiselect('Please Select the language(s) you are comfortable in', language_dict.keys(),help = 'Start typing the language to narrow down the options below',default = 'English',key='languages')
         error_message_ph = st.empty()
         def validate_signup():
-            token = st.session_state['token']
+            token = st.session_state['token_']
             pwd = st.session_state['pwd']
             pwd_repeat = st.session_state['pwd_repeat']
             languages_comfortable = st.session_state['languages']
@@ -158,6 +158,7 @@ def signup():
 
 
         if st.form_submit_button('Signup', on_click = validate_signup):
+            st.session_state['token'] = token
             languages_iso_codes = [language_dict[i] for i in languages_comfortable]
             user_dict = set_key(token,pwd)
             user_dict[token]['languages'] = languages_comfortable
