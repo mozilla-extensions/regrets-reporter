@@ -32,48 +32,52 @@ app_type = sys.argv[-1]
 st.set_page_config(page_title='Active Learning Frontend', layout='wide')
 ph1 = st.empty()
 if app_type == 'qa':
-    st.markdown("<h2 style='text-align: center;'>Testing Frontend</h2>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center;'>Testing Frontend</h4>", unsafe_allow_html=True)
 
 else:
-    st.markdown("<h2 style='text-align: center;'>Active Learning Frontend</h2>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center;'>Active Learning Frontend</h4>", unsafe_allow_html=True)
 
 
-# def logout():
-#     cookie_manager = stx.CookieManager()
-#     cookie_manager.delete('token_and_pwd_hash')
-#     cookie_manager.delete('token')
-#     cookie_manager.delete('pwd')
-#     return None
+def logout():
+    st.warning('Logging out!')
+    cookie_manager = stx.CookieManager()
+    cookie_manager.delete('token_and_pwd_hash')
+    del st.session_state['token']
+    if 'logged_in' in st.session_state:
+        del st.session_state['logged_in']
+    return None
 
-# with open('.streamlit/profile_dict.pk', 'rb') as f:
-#     profile_dict = pk.load(f)
+with open('.streamlit/profile_dict.pk', 'rb') as f:
+    profile_dict = pk.load(f)
 
-# token, pwd, token_and_pwd_hash = get_cookie_token()
-# user_dict = profile_dict[token]
+token, pwd, token_and_pwd_hash, user_langs = get_cookie_token()
+# print(user_langs)
+# time.sleep(1)
 # user_langs = profile_dict[token]['iso_codes']
-# st.session_state['user_langs'] = user_langs
+st.session_state['user_langs'] = user_langs
+st.session_state['token'] = token
 
 
-# if token_and_pwd_hash is None:
+if token_and_pwd_hash is None:
     #token_ is a dummy variable, the actual token comes from the session state in the simeple auth function
-token_ = simple_auth()
-if 'token' not in st.session_state:
-    st.stop()
-else:
-    token = st.session_state['token']
+    token_ = simple_auth()
 
-if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = 'no'
+    if 'token' not in st.session_state:
+        st.stop()
+    else:
+        token = st.session_state['token']
 
-if st.session_state['logged_in'] != 'yes':
-    st.stop()
-if token == '':
-    st.stop()
-else:
-    ph1.empty()
+    if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = 'no'
+    if st.session_state['logged_in'] != 'yes':
+        st.stop()
+    if token == '':
+        st.stop()
+    else:
+        ph1.empty()
 
-# if st.button('Logout'):
-#     logout()
+
+
 
 
 st.session_state['bq_client'] = connect_to_db(token)
@@ -88,6 +92,10 @@ if token == 'admin':
         operation = st.sidebar.selectbox('Choose your operation', operations)
 else:
     operation = 'Labeling'
+
+    
+if st.sidebar.button('Logout'):
+    logout()
 
 
 if operation == 'Select':
@@ -114,6 +122,7 @@ if operation == 'Assign Data':
         st.stop()
     with open('.streamlit/settings.json','w') as f:
         json.dump({'sampling_mode': st.session_state['sampling_mode']}, f)
+        st.success('Saved the settings sucessfully!')
 
 
 if operation == 'Labeling':
@@ -130,6 +139,3 @@ if operation == 'Get Stats':
     if token == 'admin':
         display_labelling_progress(token=token)
 
-# profiler.stop()
-
-# profiler.print()

@@ -83,11 +83,11 @@ def add_users():
 def login():
     temp_header = st.empty()
     with st.sidebar.form(key='login'):
-        token = st.text_input('username',key='token').lower()
+        token = st.text_input('username',key='token_').lower()
         pwd = st.text_input("password", type='password', key='pwd')
 
         def validate_login():
-            token = st.session_state['token']
+            token = st.session_state['token_']
             pwd = st.session_state['pwd']
             
             # check if the user is already exists or not
@@ -108,11 +108,12 @@ def login():
                 if entered_key  == orig_key:
                     st.session_state['logged_in'] = 'yes'                    
                     st.session_state['token'] = token
-                    save_token_in_cookies(token, pwd)
-                    try:
-                        st.session_state['user_langs'] = profile_dict[token]['iso_codes']
-                    except:
-                        st.session_state['user_langs'] = ['en']
+                    # try:
+                    st.session_state['user_langs'] = profile_dict[token]['iso_codes']
+                    # except:
+                    #     st.session_state['user_langs'] = ['en']
+                    user_langs = st.session_state['user_langs']
+                    save_token_in_cookies(token, pwd, user_langs)
                 else:
                     warning_placeholder = st.empty()
                     st.warning('Please enter the correct username/password')
@@ -232,28 +233,30 @@ def signup_old(session_state=st.session_state):
             time.sleep(5)
         st.success("I've set the account for you, please login!!")
         
-@st.cache(allow_output_mutation=True)
+# @st.cache(allow_output_mutation=True)
 def get_manager():
     return stx.CookieManager()
 
 
-def save_token_in_cookies(token, pwd):
-    cookie_manager = get_manager()
+def save_token_in_cookies(token, pwd, user_langs):
+    cookie_manager = stx.CookieManager(key='save')
     days_from = datetime.datetime.now() + datetime.timedelta(3)
     cookie_manager.set('token_and_pwd_hash', hash(token + pwd), expires_at=days_from,key='token_hash')
     cookie_manager.set('token', token, expires_at=days_from,key='token_key')
     cookie_manager.set('pwd',pwd, expires_at=days_from,key='pwd')
+    print(f'list is {user_langs}')
+    cookie_manager.set('user_langs', user_langs, expires_at=days_from, key='user_lang')
 
 def get_cookie_token():
     token = None
-    cookie_manager = get_manager()
-    cookies = cookie_manager.get_all(key='cookies')
+    cookie_manager = stx.CookieManager(key='cookies')
+    cookies = cookie_manager.get_all()
     token = None if cookies is None else cookies.get('token', None)
     pwd = None if cookies is None else cookies.get('pwd', None)
     token_and_pwd_hash = None if cookies is None else cookies.get('token_and_pwd_hash', None)
+    user_langs = ['en'] if cookies is None else cookies.get('user_langs',['en'])
 
-
-    return token, pwd, token_and_pwd_hash
+    return token, pwd, token_and_pwd_hash, user_langs
 
 
 def simple_auth():
@@ -264,7 +267,6 @@ def simple_auth():
             st.session_state['operation'] = temp_header.selectbox('Choose your operation',['Select','Login','Signup'],index=operation_idx)
         else:
             st.session_state['operation'] = temp_header.selectbox('Choose your operation',['Select','Login','Signup'],index=0)
-
 
     if st.session_state['operation'] == 'Select':
         st.stop()
