@@ -61,7 +61,10 @@ def clear_res_from_session_state():
 def label_the_datapoint():
 
     res = st.session_state['res']
-    token = st.session_state['token']
+    try:
+        token = st.session_state['token']
+    except:
+        st.write()
     decision_dict = {}
 
     with st.form(key='columns_in_form', clear_on_submit=True):
