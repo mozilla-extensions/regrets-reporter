@@ -108,10 +108,10 @@ def login():
                 if entered_key  == orig_key:
                     st.session_state['logged_in'] = 'yes'                    
                     st.session_state['token'] = token
-                    # try:
-                    st.session_state['user_langs'] = profile_dict[token]['iso_codes']
-                    # except:
-                    #     st.session_state['user_langs'] = ['en']
+                    try:
+                        st.session_state['user_langs'] = profile_dict[token]['iso_codes']
+                    except:
+                        st.session_state['user_langs'] = ['en']
                     user_langs = st.session_state['user_langs']
                     save_token_in_cookies(token, pwd, user_langs)
                 else:
