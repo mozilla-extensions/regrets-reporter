@@ -8,7 +8,6 @@ import datetime
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from google.api_core.exceptions import Conflict, NotFound, Forbidden
-# import pydata_google_auth
 import threading
 from utils.simple_auth import *
 import sys
@@ -66,16 +65,13 @@ labelled_schema = [
 
 
 corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_to_label_1_pct"
+al_corpus_table_id = "regrets-reporter-dev.ra_can_read.pairs_to_label_al"
 if app_type == 'qa':
     labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled_qa"
 else:
     labelled_table_id = "regrets-reporter-dev.ra_can_write.labelled_ra"
 
-
-model_table_id = "regrets-reporter-dev.ra_can_read.model_predictions_v1"
-
 _table_created = {
-    corpus_table_id: False,
     labelled_table_id: False,
 }
 
@@ -99,11 +95,6 @@ def get_table(table, schema):
 @st.cache(hash_funcs={bigquery.client.Client: id})
 def connect_to_db(user):
     if user == 'admin':
-        # TODO: BEFORE PROD DEPLOYMENT SWITCH BACK TO USER AUTHENTICATION FOR ADMIN
-        # credentials = pydata_google_auth.get_user_credentials(
-        #    ['https://www.googleapis.com/auth/bigquery'],
-        #    use_local_webserver=True,
-        # )
         credentials = service_account.Credentials.from_service_account_info(
             dict(**st.secrets.ranu_testing), scopes=["https://www.googleapis.com/auth/cloud-platform"],
         )
@@ -157,7 +148,7 @@ def display_labelling_progress(token='admin'):
         st.experimental_rerun()
 
 
-_MIN_TO_LABEL_BUFF = 20
+_MIN_TO_LABEL_BUFF = 50
 _TO_LABEL_REFRESH = 100
 
 
@@ -219,24 +210,14 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
                                 SELECT
                                     *
                                 FROM
-                                    {corpus_table_id} a
+                                    {al_corpus_table_id} a
                                 LEFT JOIN
                                     {labelled_table_id}
                                 USING(regret_id, recommendation_id)
-                                LEFT JOIN
-                                    {language_table_id} reg_l_t
-                                ON regret_id = reg_l_t.video_id
-                                LEFT JOIN
-                                    {language_table_id} rec_l_t
-                                ON recommendation_id = rec_l_t.video_id
-                                INNER JOIN
-                                    {model_table_id} m_t
-                                USING(regret_id, recommendation_id)
                                 WHERE
-                                    model_timestamp = (SELECT MAX(model_timestamp) FROM {model_table_id})
-                                    AND label IS NULL
-                                    AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
-                                    AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                    label IS NULL
+                                    AND regret_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                    AND recommendation_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                                 ORDER BY ABS(2 * prediction - 1) ASC
                                 LIMIT {_TO_LABEL_REFRESH * 20}
                             )
@@ -253,22 +234,12 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method):
                                 SELECT
                                     *
                                 FROM
-                                    {corpus_table_id}
-                                LEFT JOIN
-                                    {language_table_id} reg_l_t
-                                ON regret_id = reg_l_t.video_id
-                                LEFT JOIN
-                                    {language_table_id} rec_l_t
-                                ON recommendation_id = rec_l_t.video_id
-                                 INNER JOIN
-                                    {model_table_id} m_t
-                                USING(regret_id, recommendation_id)
+                                    {al_corpus_table_id} a
                                 WHERE
-                                    model_timestamp = (SELECT MAX(model_timestamp) FROM {model_table_id})
-                                    AND reg_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
-                                    AND rec_l_t.description_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                    regret_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
+                                    AND recommendation_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                                 ORDER BY ABS(2 * prediction - 1) ASC
-                                 LIMIT {_TO_LABEL_REFRESH * 20}
+                                LIMIT {_TO_LABEL_REFRESH * 20}
                             )
                             ORDER BY RAND()
                             LIMIT {_TO_LABEL_REFRESH}
