@@ -51,7 +51,7 @@ function generateButtonId(videoId: string) {
 const getMainVideoId = () => document.getElementsByTagName('ytd-watch-flexy')[0].getAttribute('video-id');
 
 function clearInjectedButtons() {
-	const elements = document.getElementsByClassName('injected-btn');
+	const elements = document.getElementsByClassName('mrr-injected-btn');
 	for (const element of Array.from(elements)) {
 		element.remove();
 	}
@@ -102,7 +102,7 @@ function injectButton(
 ) {
 	const videoId = getVideoId();
 	const lastChild = parentNode.lastElementChild;
-	const hasInjectedButton = lastChild && lastChild.classList.contains('injected-btn');
+	const hasInjectedButton = lastChild && lastChild.classList.contains('mrr-injected-btn');
 	if (!videoId) {
 		log('no video id found');
 		if (hasInjectedButton) {
@@ -124,7 +124,7 @@ function injectButton(
 	const btn = document.createElement('div');
 	btn.id = buttonId;
 	btn.dataset.hash = injectionHash;
-	btn.className = 'injected-btn';
+	btn.className = 'mrr-injected-btn';
 
 	const label = document.createElement('span');
 	label.innerText = 'Stop Recommending';

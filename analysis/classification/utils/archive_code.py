@@ -221,3 +221,113 @@ if operation == 'View DF':
     AgGrid(df)
 
 
+
+
+def login_old():
+    temp_header = st.empty()
+    with st.sidebar.expander("Authorization"):
+        token = st.text_input('username').lower()
+        if token == '':
+            temp_header.error("Please sign in using the auth area to your left")
+            st.stop()
+        else:
+            # If there is no user, it'll return None
+            if token not in profile_dict:
+                st.error("Sorry, you do not have access to the system.  Please write to the admin for access.")
+                st.stop()
+            # If the user is in the system.
+            else:
+                salt_key = profile_dict[token]
+                # They profile will not have the salt and key if the user has not set a password
+                # Ask user to set password        
+                if salt_key is None:
+                    st.error("You have not setup an account yet, please signup first and comeback")
+                    st.stop()
+                # If the user has set a password.
+                else:
+                    pwd = st.text_input("password", type='password')
+                    salt = list(salt_key.keys())[0]
+                    orig_key = list(salt_key.values())[0]
+                    entered_key = get_key(salt, pwd)
+                    if entered_key != orig_key:
+                        dummy = st.button("Submit", key='pwd_dummy')
+                        st.error("Please enter the correct password")
+                        st.stop()
+            # if token != 'admin':
+            st.session_state['user_langs'] = profile_dict[token]['iso_codes']
+            return token
+
+
+
+# def make_hashes(password):
+# 	return hashlib.sha256(str.encode(password)).hexdigest()
+
+# def check_hashes(password,hashed_text):
+# 	if make_hashes(password) == hashed_text:
+# 		return hashed_text
+# 	return False
+# # DB Management
+# import sqlite3 
+# conn = sqlite3.connect('data/profiles.db')
+# c = conn.cursor()
+# # DB  Functions
+
+# def create_usertable():
+# 	c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
+
+
+# def add_userdata(username,password):
+# 	c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
+# 	conn.commit()
+
+# def login_user(username,password):
+# 	c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
+# 	data = c.fetchall()
+# 	return data
+
+
+# def view_all_users():
+# 	c.execute('SELECT * FROM userstable')
+# 	data = c.fetchall()
+# 	return data
+
+# def auth():
+#     auth_choices = ['Select','Login','Signup']
+#     ph1 = st.empty()
+#     ph2 = st.empty()
+#     ph3 = st.empty()
+#     ph4 = st.empty()
+#     ph5 = st.empty()
+
+#     auth_choice = ph1.selectbox('Choose your options', auth_choices)
+#     if auth_choice == 'Select':
+#         st.stop()
+#     if auth_choice == 'Login':
+#         username = ph2.text_input("Username")
+#         password = ph3.text_input("Password",type='password')
+#         if ph4.button("Login"):
+#             # if password == '12345':
+#             create_usertable()
+#             hashed_pswd = make_hashes(password)
+
+#             result = login_user(username,check_hashes(password,hashed_pswd))
+#             if result:
+#                 ph5.success("Logged In as {}".format(username))
+#                 time.sleep(3)
+#                 return True
+#             else:
+#                 st.warning("Incorrect Username/Password")
+#     if auth_choice == 'Signup':
+#         new_user = ph2.text_input("Username")
+#         new_password = ph3.text_input("Password",type='password')
+#         if ph4.button("Signup"):
+#             create_usertable()
+#             add_userdata(new_user,make_hashes(new_password))
+#             st.success("You have successfully created a valid Account")
+#             st.info("Go to Login Menu to login") 
+
+# ph1 = st.empty()
+# ph2 = st.empty()
+# ph3 = st.empty()
+# ph4 = st.empty()
+# ph5 = st.empty()

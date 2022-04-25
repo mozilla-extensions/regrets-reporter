@@ -16,6 +16,7 @@ from st_aggrid import AgGrid
 from streamlit_player import st_player
 import streamlit as st
 import hydralit_components as hc
+import extra_streamlit_components as stx
 
 import time
 import numpy as np
@@ -23,18 +24,64 @@ import random
 import warnings
 import sys
 import json
+import pickle as pk
 sys.path.append('utils/library/')
 warnings.filterwarnings('ignore')
 
-
+app_type = sys.argv[-1]
 st.set_page_config(page_title='Active Learning Frontend', layout='wide')
+ph1 = st.empty()
+if app_type == 'qa':
+    st.markdown("<h4 style='text-align: center;'>Testing Frontend</h4>", unsafe_allow_html=True)
 
-token = simple_auth()
-if token == '':
-    st.stop()
+else:
+    st.markdown("<h4 style='text-align: center;'>Active Learning Frontend</h4>", unsafe_allow_html=True)
+
+
+def logout():
+    st.warning('Logging out!')
+    cookie_manager = stx.CookieManager()
+    cookie_manager.delete('token_and_pwd_hash')
+    del st.session_state['token']
+    if 'logged_in' in st.session_state:
+        del st.session_state['logged_in']
+    return None
+
+with open('.streamlit/profile_dict.pk', 'rb') as f:
+    profile_dict = pk.load(f)
+
+token, pwd, token_and_pwd_hash, user_langs = get_cookie_token()
+# print(user_langs)
+# time.sleep(1)
+# user_langs = profile_dict[token]['iso_codes']
+st.session_state['user_langs'] = user_langs
+st.session_state['token'] = token
+
+
+if token_and_pwd_hash is None:
+    #token_ is a dummy variable, the actual token comes from the session state in the simeple auth function
+    token_ = simple_auth()
+
+    if 'token' not in st.session_state:
+        st.stop()
+    else:
+        token = st.session_state['token']
+
+    if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = 'no'
+    if st.session_state['logged_in'] != 'yes':
+        st.stop()
+    if token == '':
+        st.stop()
+    else:
+        ph1.empty()
+
+
+
+
 
 st.session_state['bq_client'] = connect_to_db(token)
-#token = 'admin'
+
 ########################### DataBase Management ################################
 
 # We dont want the RAs to retrain the model. This decision to retrain has to be taken by the admin
@@ -46,6 +93,10 @@ if token == 'admin':
 else:
     operation = 'Labeling'
 
+    
+if st.sidebar.button('Logout'):
+    logout()
+
 
 if operation == 'Select':
     st.error('Choose your operation to proceed')
@@ -53,9 +104,9 @@ if operation == 'Select':
 
 
 if operation == 'Users Management':
-    st.subheader('Add Users')
-    add_users()
-    st.write('')
+    # st.subheader('Add Users')
+    # add_users()
+    # st.write('')
     components.html(
         f"<p style='text-align: justify; color: skyblue;'> </p>", height=10, scrolling=True)
     st.subheader('Delete Users')
@@ -69,25 +120,22 @@ if operation == 'Assign Data':
     st.session_state['sampling_mode'] = st.selectbox('Choose the mode of sampling',['Select','Random','Active Learning'])
     if st.session_state['sampling_mode'] == 'Select':
         st.stop()
-    st.write(st.session_state)
     with open('.streamlit/settings.json','w') as f:
         json.dump({'sampling_mode': st.session_state['sampling_mode']}, f)
+        st.success('Saved the settings sucessfully!')
 
 
 if operation == 'Labeling':
-    res = get_datapoint_to_label(token)
-    if res != None:
-        label_the_datapoint(res, token)
-        display_video_transcripts(res)
-    else:
-        st.success('No more data left for labelling. Thank you!!!')
-        st.balloons()
+    if "res" not in st.session_state:
+        st.session_state['res'] = get_datapoint_to_label(token)
+    # st.session_state['token'] = token
+    label_the_datapoint()
+    #display_video_transcripts()
+    
+    
 
 
 if operation == 'Get Stats':
     if token == 'admin':
-        display_labelling_progress()
+        display_labelling_progress(token=token)
 
-# profiler.stop()
-
-# profiler.print()
