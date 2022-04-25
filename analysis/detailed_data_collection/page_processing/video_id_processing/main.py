@@ -6,11 +6,14 @@ import requests
 import numpy as np
 from bs4 import BeautifulSoup
 import time
+import datetime
+from datetime import timezone
 from google.cloud import pubsub_v1
 
 from youtube_transcript_api import YouTubeTranscriptApi
-# from youtube_transcript_api.formatters import TextFormatter
 from youtube_transcript_api import TranscriptsDisabled, NoTranscriptFound, TooManyRequests
+import xml.etree.ElementTree as et
+
 import logging
 import traceback
 
@@ -19,8 +22,28 @@ VIDEO_DATA_TOPIC = "video-data"
 ERROR_VIDEO_ID_TOPIC = "error-video-id"
 logging.basicConfig(encoding='utf-8', level=logging.INFO, format='%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
 
+PROXY_1 = "proxy_1"
+PROXY_2 = "proxy_2"
+proxy_1 = {
+    "http": "",
+    "https": "",
+}
+proxy_2 = {
+              "http": "",
+              "https": ""
+}
+PROXIES = {PROXY_1: proxy_1, PROXY_2: proxy_2}
+
+video_ids_file = open("do_not_get_thumbnail.txt", "r")
+DO_NOT_GET_THUMBNAIL_VIDEO_IDS = video_ids_file.read().split("\n")
+video_ids_file.close()
+
 
 class PageParseError(Exception):
+    pass
+
+
+class ThrottlingError(Exception):
     pass
 
 
@@ -42,12 +65,12 @@ def parse_youtube_metadata_response(response, video_id, dict_result):
     try:
         view_count = json_response['contents']['twoColumnWatchNextResults']['results']['results']['contents'][0][
             'videoPrimaryInfoRenderer']['viewCount']['videoViewCountRenderer']['viewCount']['simpleText']
-        dict_result["view_count"] = int(view_count.split()[0].replace(',', ''))
+        dict_result["view_count"] = int(view_count.replace(',', '').replace('.', '').split()[0])
     except KeyError:
         try:
             view_count = json_response['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1][
                 'videoPrimaryInfoRenderer']['viewCount']['videoViewCountRenderer']['viewCount']['simpleText']
-            dict_result["view_count"] = int(view_count.split()[0].replace(',', ''))
+            dict_result["view_count"] = int(view_count.replace(',', '').replace('.', '').split()[0])
         except KeyError:
             dict_result["view_count"] = None
 
@@ -56,7 +79,7 @@ def parse_youtube_metadata_response(response, video_id, dict_result):
         like_count = json_response['contents']['twoColumnWatchNextResults']['results']['results']['contents'][0][
             'videoPrimaryInfoRenderer']['videoActions']['menuRenderer']['topLevelButtons'][0]['toggleButtonRenderer'][
             'defaultText']['accessibility']['accessibilityData']['label']
-        dict_result["like_count"] = int(like_count.split()[0].replace(',', ''))
+        dict_result["like_count"] = int(like_count.replace(',', '').replace('.', '').split()[0])
     except ValueError:
         dict_result["like_count"] = None
     except KeyError:
@@ -64,7 +87,7 @@ def parse_youtube_metadata_response(response, video_id, dict_result):
             like_count = json_response['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1][
                 'videoPrimaryInfoRenderer']['videoActions']['menuRenderer']['topLevelButtons'][0]['toggleButtonRenderer'][
                 'defaultText']['accessibility']['accessibilityData']['label']
-            dict_result["like_count"] = int(like_count.split()[0].replace(',', ''))
+            dict_result["like_count"] = int(like_count.replace(',', '').replace('.', '').split()[0])
         except (KeyError, ValueError):
             logging.info(f"Video ID: {video_id} Unable to parse like_count, setting to 0")
             dict_result["like_count"] = None
@@ -86,7 +109,6 @@ def parse_youtube_metadata_response(response, video_id, dict_result):
         text = iterr['text']
         full_description = full_description + text
 
-    logging.info(f"Video ID: {video_id} descriotion len: {len(full_description)}" )
     dict_result["description"] = full_description
 
     # Channel name and link
@@ -138,9 +160,11 @@ def check_valid_video_page(response):
             initital_json_response = json.loads(
                 response.text.split('ytInitialPlayerResponse =')[1].split(';</script>')[0].strip())
         except JSONDecodeError:
-            initital_json_response = json.loads(
-                response.text.split('ytInitialPlayerResponse =')[1].split(';var meta = document.createElement(\'meta\')')[
-                    0])
+            try:
+                initital_json_response = json.loads(
+                    response.text.split('ytInitialPlayerResponse =')[1].split(';var meta = document.createElement(\'meta\')')[0])
+            except JSONDecodeError:
+                initital_json_response = json.loads(response.text.split('ytInitialPlayerResponse =')[1].split(';var head = ')[0])
 
         try:
             main_reason = initital_json_response['playabilityStatus']['errorScreen']['playerErrorMessageRenderer']['reason']['simpleText']
@@ -177,7 +201,7 @@ def is_upgrade_browser_page(html):
     return False
 
 
-def request_with_retry_timeout(url, headers=None, proxies=None, timeout=20, max_retry=3):
+def request_with_retry_timeout(url, headers=None, proxy_name=None, timeout=20, max_retry=3):
     """This is the wrapper function for request post method."""
     retry = 0
     error = False
@@ -187,11 +211,12 @@ def request_with_retry_timeout(url, headers=None, proxies=None, timeout=20, max_
     while retry < max_retry:
         try:
             logging.info(f"Video ID: {url} sending http request: {retry}")
-            response = requests.get(url, headers=headers, proxies=proxies, timeout=timeout,  verify=False)
+            response = requests.get(url, headers=headers, proxies=PROXIES.get(proxy_name), timeout=timeout,  verify=False)
             if response.status_code == 200:
                 error = False
                 if is_upgrade_browser_page(response.text):
                     # If the page returned OK verify that it isn't a "upgrade user-agent page"
+                    logging.info(f"Video ID: {url} Upgrade user-agent page")
                     error = True
             else:
                 error = True
@@ -205,8 +230,8 @@ def request_with_retry_timeout(url, headers=None, proxies=None, timeout=20, max_
         except Exception as e:
             logging.info(f"Video ID: {url} {e}")
         else:
-            logging.info(f"Video ID: {url} Response Code: {response.status_code} Response reason: {response.reason}.")
-
+            if response.status_code != 200:
+                logging.info(f"Video ID: {url} Response Code: {response.status_code} Response reason: {response.reason}.")
 
         if error:
             retry += 1
@@ -219,15 +244,13 @@ def request_with_retry_timeout(url, headers=None, proxies=None, timeout=20, max_
     return response, retry, error
 
 
-def load_metadata_from_youtube_api(video_id, dict_result):
-    proxies = {
-    }
-
+def load_metadata_from_page(video_id, proxy_name, dict_result):
     headers = {"Accept-Language": 'en'}
 
     start_time = time.time()
-    url = f'https://www.youtube.com/watch?v={video_id}'
-    response, retry_count, error_page_received = request_with_retry_timeout(url=url, headers=headers, proxies=proxies)
+    url = f'http://www.youtube.com/watch?v={video_id}' if proxy_name == PROXY_2 else f'https://www.youtube.com/watch?v={video_id}'
+
+    response, retry_count, error_page_received = request_with_retry_timeout(url=url, headers=headers, proxy_name=proxy_name)
 
     # Did not receive a response or receive upgrade user-agent repeatedly then stop processing.
     if response is None or error_page_received:
@@ -239,9 +262,18 @@ def load_metadata_from_youtube_api(video_id, dict_result):
         logging.error(f"Video ID: {video_id}  Unable to get response for Video ID: {video_id} after {retry_count} "
                       f"request attempts. {reason}  Skipping.  ")
         raise PageParseError
+    elif response.status_code == 429:
+        # We need to throttle a little so don't retry the 429, just halt processing and let the video id get picked up later for processing.
+        dict_result['proxy_service'] = proxy_name
+        dict_result['last_http_response_code'] = response.status_code
+        # Want to track the number of attempts, not retries which is why 1 is added to the retry value
+        # When using a proxy service billed by requests, the number of requests needs to be monitored, not the retries.
+        dict_result['num_http_request_attempts'] = retry_count + 1
+        raise ThrottlingError
 
     end_time = time.time()
-    logging.info(f"Video ID: {video_id}  Response Code: {response.status_code} Response reason: {response.reason} Calculated content length: {len(response.content)} Request duration: {end_time - start_time}")
+    if response.status_code != 200:
+        logging.info(f"Video ID: {video_id}  Response Code: {response.status_code} Response reason: {response.reason} Calculated content length: {len(response.content)} Request duration: {end_time - start_time}")
 
     reason, subreason = check_valid_video_page(response)
 
@@ -259,7 +291,7 @@ def load_metadata_from_youtube_api(video_id, dict_result):
             logging.error(f"Video ID: {video_id} Exception occurred: {type(exc)}, {exc}")
             logging.error(f"Video ID: {video_id} {traceback.format_exc()}")
 
-    dict_result['proxy_service'] = ''
+    dict_result['proxy_service'] = proxy_name
     dict_result['last_http_response_code'] = response.status_code
     # Want to track the number of attempts, not retries which is why 1 is added to the retry value
     # When using a proxy service billed by requests, the number of requests needs to be monitored, not the retries.
@@ -282,11 +314,9 @@ def load_youtube_transcript(video_id, dict_result):
         for l in transcripts_list:
             transcript += (f" {l['text']}")
         # TODO GLE check case where multiple transcripts available
-        logging.info(f"Video ID: {video_id} desc len: {len(dict_result['description'])} transcript len: {len(transcript)}")
         max_transcript_len = 35000
         if len(transcript) > max_transcript_len:
-                logging.info(f"Video ID: {video_id} transcript truncated to {max_transcript_len}")
-                transcript = transcript[:max_transcript_len]
+			transcript = transcript[:max_transcript_len]
         dict_result["transcript"] = transcript
 
     except (TranscriptsDisabled):
@@ -298,38 +328,24 @@ def load_youtube_transcript(video_id, dict_result):
     except (JSONDecodeError):
         logging.error(f"Cannot get transcript for {video_id} Reason: JSONDecodeError")
         dict_result["transcript"] = None
-
-    # formatter = TextFormatter()
-    # try:
-    #     transcript = formatter.format_transcript(YouTubeTranscriptApi.get_transcript(video_id))
-    #     dict_result["transcript"] = transcript
-    # except (TranscriptsDisabled):
-    #     logging.error(f"Cannot get transcript for {video_id} Reason: TranscriptsDisabled")
-    #     dict_result["transcript"] = None
-    # except (NoTranscriptFound):
-    #     logging.error(f"Cannot get transcript for {video_id} Reason: NoTranscriptFound")
-    #     dict_result["transcript"] = None
-    # except (JSONDecodeError):
-    #     logging.error(f"Cannot get transcript for {video_id} Reason: JSONDecodeError")
-    #     dict_result["transcript"] = None
+    except (et.ParseError):
+        logging.error(f"Cannot get transcript for {video_id} Reason: xml.etree.ElementTree.ParseError")
+        dict_result["transcript"] = None
 
 
-def load_thumbnail(video_id, dict_result):
-    thumbnail = base64.b64encode(requests.get(f"https://img.youtube.com/vi/{video_id}/mqdefault.jpg").content).decode(
-        'utf-8')
-    dict_result["thumbnail"] = thumbnail
-    logging.info(f"Video Id: {video_id} thumbnail len: {len(thumbnail)}")
+def load_thumbnail(video_id, proxy_name, dict_result):
+    if video_id not in DO_NOT_GET_THUMBNAIL_VIDEO_IDS:
+        thumbnail = base64.b64encode(requests.get(f"https://img.youtube.com/vi/{video_id}/mqdefault.jpg").content).decode('utf-8')
+        dict_result["thumbnail"] = thumbnail
+    # logging.info(f"Video Id: {video_id} thumbnail len: {len(thumbnail)}")
 
 
-def load_data_from_youtube(video_id):
-    dict_result = {}
-    dict_result["video_id"] = video_id
-
-    load_metadata_from_youtube_api(video_id, dict_result)
-    load_youtube_transcript(video_id, dict_result)
-    load_thumbnail(video_id, dict_result)
-
-    return dict_result
+def load_data_from_youtube(video_id, proxy_name):
+	dict_result = {"video_id": video_id, "submission_timestamp": str(datetime.datetime.now(timezone.utc))}
+	load_metadata_from_page(video_id, proxy_name=proxy_name, dict_result=dict_result)
+	load_youtube_transcript(video_id, dict_result=dict_result)
+	load_thumbnail(video_id, proxy_name=proxy_name, dict_result=dict_result)
+	return dict_result
 
 
 def truncate_transcript(result_dict, reduction_amount):
@@ -362,15 +378,12 @@ def prepare_data_for_publish(result):
             result['truncated_transcript'] = True
 
 
-
 def publish_video_data(result):
     publisher = pubsub_v1.PublisherClient()
     topic_path = publisher.topic_path(PROJECT_ID, VIDEO_DATA_TOPIC)
     prepare_data_for_publish(result)
     json_result = json.dumps(result, ensure_ascii=False)
     encoded_json = json_result.encode()
-
-    logging.info(f"Video Id: {result['video_id']} encoded json len: {len(encoded_json)}")
     future = publisher.publish(topic_path, data=encoded_json)
 
 
@@ -379,6 +392,7 @@ def publish_error_video_id(video_id):
     topic_path = publisher.topic_path(PROJECT_ID, ERROR_VIDEO_ID_TOPIC)
     future = publisher.publish(topic_path, data=video_id.encode())
 
+
 # TODO add exception handling and return 404, 500 to send NACK
 def process_video_id(event, context):
     """Triggered from a message on a Cloud Pub/Sub topic.
@@ -386,12 +400,16 @@ def process_video_id(event, context):
          event (dict): Event payload.
          context (google.cloud.functions.Context): Metadata for the event.
     """
-    video_id = base64.b64decode(event['data']).decode('utf-8')
+    pubsub_message = base64.b64decode(event['data']).decode('utf-8')
+    msg = json.loads(pubsub_message)
+    video_id = msg['video_id']
+    proxy_name = msg['proxy_name']
+
     try:
-        dict_result = load_data_from_youtube(video_id)
-        logging.info(f">>>>>>>{dict_result}")
+        dict_result = load_data_from_youtube(video_id, proxy_name=proxy_name)
+        print_dict = {key: dict_result[key] for key in dict_result.keys() - {'thumbnail', 'description', 'transcript'}}
+        logging.info(f"Video ID: {print_dict['video_id']} Full msg: {print_dict}")
         publish_video_data(dict_result)
     except PageParseError:
         publish_error_video_id(video_id)
         logging.info("Unable to process page")
-
