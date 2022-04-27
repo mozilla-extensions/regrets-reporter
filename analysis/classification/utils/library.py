@@ -56,7 +56,8 @@ def display_video_transcripts():
         components.html(f"<p style='text-align: justify; color: skyblue;'>{description_b}</p>", height=height,width=width, scrolling=True)
 
 def clear_res_from_session_state():
-    del st.session_state['res']
+    if 'res' in st.session_state:
+        del st.session_state['res']
 
 def label_the_datapoint():
 
