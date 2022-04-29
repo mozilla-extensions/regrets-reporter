@@ -357,7 +357,10 @@ export class BackgroundScript {
 			};
 			await this.pushEvent(EventType.VideoBatchRecorded, message.batchType, tabId, videoData);
 			const videoDataId = recordVideoData(videoData);
-			telemetryEvents.videoRecommended.record({ video_data_id: videoDataId });
+			telemetryEvents.videoRecommended.record({
+				video_data_id: videoDataId,
+				recommendation_type: message.batchType,
+			});
 		}
 		mainEventsPing.submit();
 		return;
