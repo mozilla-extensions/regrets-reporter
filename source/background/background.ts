@@ -88,7 +88,8 @@ export class BackgroundScript {
 		await this.updateBadgeIcon();
 		this.attachRequestHook();
 		this.attachMessageListener();
-		this.initializeSurveyAlarm();
+		// we want to disable surveys collection for now
+		// this.initializeSurveyAlarm();
 	}
 
 	private async initializeExtension() {
@@ -409,7 +410,8 @@ export class BackgroundScript {
 	}
 
 	async onSurveyClick() {
-		await this.initializeSurveyAlarm(true);
+		// we want to disable surveys collection for now
+		// await this.initializeSurveyAlarm(true);
 	}
 
 	async onReminderSurveyClick() {

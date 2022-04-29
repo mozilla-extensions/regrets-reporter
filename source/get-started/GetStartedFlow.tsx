@@ -110,6 +110,7 @@ export function GetStartedFlow() {
 											<div className="font-changa text-huge font-light">
 												{experimentOptedIn ? 'Thanks! You’re in.' : 'Thanks for letting us know.'}
 											</div>
+											{/*
 											<div className="text-2xl">
 												If you have a few minutes, we’d appreciate it very much if you’d{' '}
 												<a onClick={onSurveyClick} className="underline cursor-pointer">
@@ -117,6 +118,7 @@ export function GetStartedFlow() {
 												</a>
 												.
 											</div>
+*/}
 										</div>
 									)}
 								</div>
