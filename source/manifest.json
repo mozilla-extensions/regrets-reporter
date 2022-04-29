@@ -1,6 +1,6 @@
 {
 	"name": "RegretsReporter",
-	"version": "2.0.7",
+	"version": "2.0.8",
 	"description": "The RegretsReporter browser extension, built by the nonprofit Mozilla, helps you take control of your YouTube recommendations.",
 	"homepage_url": "https://github.com/mozilla-extensions/regrets-reporter",
 	"manifest_version": 2,
