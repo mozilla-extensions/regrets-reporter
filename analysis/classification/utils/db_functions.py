@@ -200,7 +200,7 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probab
                     )
             
             else: # active learning case
-                print("choosing with active learning")
+                print(f"choosing active learning with target probability {target_probability[0]}")
                 if not target_probability[0]:
                     print(f"target_probability was {target_probability[0]} which is not accepted, changed it to 0.5 as default")
                     target_probability[0] = 0.5 # set to 0.5 as default value
