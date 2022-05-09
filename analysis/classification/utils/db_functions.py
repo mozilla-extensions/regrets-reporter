@@ -152,7 +152,7 @@ _MIN_TO_LABEL_BUFF = 50
 _TO_LABEL_REFRESH = 100
 
 
-def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probability=0.5):
+def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probability):
     try:
         bq_client.get_table(corpus_table_id)
     except (NotFound, Forbidden):
@@ -164,7 +164,7 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probab
             cv.wait()
         elif fetch_job is None:
             cv.release()
-            if method == "Random":
+            if method[0] == "Random":
                 print("choosing random")
                 if table_exists(bq_client, labelled_table_id):
                     fetch_job = bq_client.query(
@@ -201,6 +201,9 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probab
             
             else: # active learning case
                 print("choosing with active learning")
+                if not target_probability[0]:
+                    print(f"target_probability was {target_probability[0]} which is not accepted, changed it to 0.5 as default")
+                    target_probability[0] = 0.5 # set to 0.5 as default value
                 if table_exists(bq_client, labelled_table_id):
                     fetch_job = bq_client.query(
                         f'''
@@ -218,7 +221,7 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probab
                                     label IS NULL
                                     AND regret_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                                     AND recommendation_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
-                                ORDER BY ABS({target_probability} - prediction) ASC
+                                ORDER BY ABS({target_probability[0]} - prediction) ASC
                                 LIMIT {_TO_LABEL_REFRESH * 20}
                             )
                             ORDER BY RAND()
@@ -238,7 +241,7 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probab
                                 WHERE
                                     regret_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
                                     AND recommendation_lang IN ({",".join(["'" + i + "'" for i in user_langs + ["??"]])})
-                                ORDER BY ABS({target_probability} - prediction) ASC
+                                ORDER BY ABS({target_probability[0]} - prediction) ASC
                                 LIMIT {_TO_LABEL_REFRESH * 20}
                             )
                             ORDER BY RAND()
@@ -256,10 +259,10 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probab
 def get_datapoint_to_label(labeler):
     with open('.streamlit/settings.json','r') as f:
             json_result = json.load(f)
-            st.session_state['sampling_mode'] = json_result.get('sampling_mode')
-            st.session_state['target_probability'] = json_result.get('target_probability', 0.5)
-            print(f"sampling_mode: {st.session_state['sampling_mode']}")
-            print(f"target_probability: {st.session_state['target_probability']}")
+            st.session_state['method'] = [json_result.get('sampling_mode')]
+            st.session_state['probability'] = [json_result.get('target_probability')]
+            print(f"sampling_mode: {st.session_state.method[0]}")
+            print(f"target_probability: {st.session_state.probability[0]}")
     if "data_to_label" not in st.session_state:
         # Note use of list as pseudo-pointer so data frame can be reassigned
         st.session_state['data_to_label'] = [pd.DataFrame()]
@@ -270,7 +273,7 @@ def get_datapoint_to_label(labeler):
         c = threading.Condition()
         st.session_state['load_thread_cv'] = c
         th = threading.Thread(target=_pull_thread, args=[
-                              c, st.session_state.data_to_label, st.session_state.bq_client, st.session_state.user_langs, st.session_state['sampling_mode'], st.session_state['target_probability']])
+                              c, st.session_state.data_to_label, st.session_state.bq_client, st.session_state.user_langs, st.session_state.method, st.session_state.probability])
         th.start()
         st.session_state['load_thread'] = th
     st.session_state.load_thread_cv.acquire()
@@ -292,7 +295,7 @@ def get_datapoint_to_label(labeler):
         if "prediction" in res:
             print(f"p prob is {res.prediction.item()}")
         return (res.regret_title.item(), res.regret_channel.item(), res.regret_description.item(),
-                res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), st.session_state['sampling_mode'])
+                res.regret_id.item(), res.recommendation_title.item(), res.recommendation_channel.item(), res.recommendation_description.item(), res.recommendation_id.item(), st.session_state.method[0])
 
     else:
         res = st.session_state['res']
