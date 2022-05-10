@@ -114,23 +114,31 @@ if operation == 'Users Management':
 #st.session_state.value = 1
 
 if operation == 'Assign Data':
-    if 'sampling_mode' not in st.session_state:
-        st.session_state['sampling_mode'] = ''
-    if 'target_probability' not in st.session_state:
-        st.session_state['target_probability'] = None
+    
+    
+    with open('.streamlit/settings.json','r') as f:
+        json_result = json.load(f)
+        sampling_mode = json_result.get('sampling_mode')
+        target_probability = json_result.get('target_probability')
+    index = 0
+    if sampling_mode == "Random":
+        index = 1
+    if sampling_mode == "Active Learning":
+        index = 2
+    with st.form("Assignment configuration"):
+        sampling_mode = st.selectbox('Choose the mode of sampling',['Select','Random','Active Learning'], index = index )
+        if sampling_mode == 'Active Learning':
+            if not target_probability:
+                target_probability = 0.5
+            target_probability = st.slider('Choose target probability for active learning', min_value=0, max_value=100, value=int(target_probability*100))/100 # store as float but show as int percentage slider
+        if sampling_mode == 'Random':
+            target_probability = None # set to None when not using Active Learning
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            with open('.streamlit/settings.json','w') as f:
+                json.dump({'sampling_mode': sampling_mode, 'target_probability': target_probability}, f)
+                st.success(f"Saved the settings sucessfully: {sampling_mode} {target_probability}")
 
-    st.session_state['sampling_mode'] = st.selectbox('Choose the mode of sampling',['Select','Random','Active Learning'])
-    if st.session_state['sampling_mode'] == 'Active Learning':
-        if not st.session_state['target_probability']:
-            st.session_state['target_probability'] = 0.5 # set to 0.5 as default if None
-        st.session_state['target_probability'] = st.slider('Choose target probability for active learning', min_value=0, max_value=100, value=int(st.session_state['target_probability']*100))/100 # store as float but show as int percentage slider
-    if st.session_state['sampling_mode'] == 'Random':
-        st.session_state['target_probability'] = None # set to None when not using Active Learning
-    if st.session_state['sampling_mode'] == 'Select':
-        st.stop()
-    with open('.streamlit/settings.json','w') as f:
-        json.dump({'sampling_mode': st.session_state['sampling_mode'], 'target_probability': st.session_state['target_probability']}, f)
-        st.success('Saved the settings sucessfully!')
 
 
 if operation == 'Labeling':

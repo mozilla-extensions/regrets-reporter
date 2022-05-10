@@ -257,10 +257,18 @@ def _pull_thread(cv, data_to_label, bq_client, user_langs, method, target_probab
 
 
 def get_datapoint_to_label(labeler):
+    if 'method' not in st.session_state:
+        st.session_state['method'] = [None]
+    if 'probability' not in st.session_state:
+        st.session_state['probability'] = [None]
     with open('.streamlit/settings.json','r') as f:
             json_result = json.load(f)
-            st.session_state['method'] = [json_result.get('sampling_mode')]
-            st.session_state['probability'] = [json_result.get('target_probability')]
+            if 'method' in st.session_state and 'data_to_label' in st.session_state:
+                if (st.session_state['method'][0] != json_result.get('sampling_mode')) or (st.session_state['probability'][0] != json_result.get('target_probability')):
+                    print("Change in configuration detected.  Dumping cached pairs.")
+                    st.session_state['data_to_label'][0] = pd.DataFrame()
+            st.session_state['method'][0] = json_result.get('sampling_mode')
+            st.session_state['probability'][0] = json_result.get('target_probability')
             print(f"sampling_mode: {st.session_state.method[0]}")
             print(f"target_probability: {st.session_state.probability[0]}")
     if "data_to_label" not in st.session_state:
@@ -277,10 +285,11 @@ def get_datapoint_to_label(labeler):
         th.start()
         st.session_state['load_thread'] = th
     st.session_state.load_thread_cv.acquire()
-    if len(st.session_state.data_to_label[0]) == 0:
-        st.session_state.load_thread_cv.wait()  
-    elif len(st.session_state.data_to_label[0]) <= _MIN_TO_LABEL_BUFF:
+      
+    if len(st.session_state.data_to_label[0]) <= _MIN_TO_LABEL_BUFF:
         st.session_state.load_thread_cv.notify()
+        if len(st.session_state.data_to_label[0]) == 0:
+            st.session_state.load_thread_cv.wait()
 
     if 'res' not in st.session_state:
         res = st.session_state.data_to_label[0].head(1)
