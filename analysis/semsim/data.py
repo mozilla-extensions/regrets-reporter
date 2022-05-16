@@ -76,7 +76,7 @@ def get_be_labeled_pairs(context):
             `{language_table_id}` rec_l_t
         ON recommendation_id=rec_l_t.video_id
         WHERE
-            (reg_l_t.language != 'en' OR rec_l_t.language != 'en')
+            (reg_l_t.description_lang != 'en' OR rec_l_t.description_lang != 'en')
     
     '''
 
@@ -123,7 +123,7 @@ def get_xe_labeled_pairs(context):
             `{language_table_id}` rec_l_t
         ON recommendation_id=rec_l_t.video_id
         WHERE
-            (reg_l_t.language = 'en' AND rec_l_t.language = 'en')
+            (reg_l_t.description_lang = 'en' AND rec_l_t.description_lang = 'en')
     '''
 
     data = context['bq_client'].query(
