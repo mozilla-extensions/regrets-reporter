@@ -8,11 +8,10 @@ class RRUMDatasetArrow():
     _scalar_features = ['channel_sim']
 
     def __init__(self, pandas_data, with_transcript):
-        self._text_types = ['title', 'description'] + \
-            ['transcript'] if with_transcript else []
+        self._text_types = ['title', 'description'] + (['transcript'] if with_transcript else [])
         self._text_features = [
             'regret_title', 'recommendation_title', 'regret_thumbnail', 'recommendation_thumbnail', 'regret_description',
-            'recommendation_description'] + ['regret_transcript', 'recommendation_transcript'] if with_transcript else []
+            'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if with_transcript else [])
         df = pandas_data.loc[:, self._text_features +
                              RRUMDatasetArrow._scalar_features + ['label']]
         self.dataset = datasets.Dataset.from_pandas(df)
@@ -47,19 +46,13 @@ class RRUMDatasetArrow():
 class RRUMPredictDatasetArrow():
     tokenizer = AutoTokenizer.from_pretrained(
         'cross-encoder/stsb-roberta-base')
-    _text_types = ['title', 'description', 'transcript']
-    _text_features = [
-        'regret_title', 'recommendation_title', 'regret_thumbnail', 'recommendation_thumbnail', 'regret_description',
-        'recommendation_description', 'regret_transcript', 'recommendation_transcript'
-    ]
     _scalar_features = ['channel_sim']
 
     def __init__(self, pandas_data, with_transcript):
-        self._text_types = ['title', 'description'] + \
-            ['transcript'] if with_transcript else []
+        self._text_types = ['title', 'description'] + (['transcript'] if with_transcript else [])
         self._text_features = [
             'regret_title', 'recommendation_title', 'regret_thumbnail', 'recommendation_thumbnail', 'regret_description',
-            'recommendation_description'] + ['regret_transcript', 'recommendation_transcript'] if with_transcript else []
+            'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if with_transcript else [])
         df = pandas_data.loc[:, self._text_features +
                              RRUMPredictDatasetArrow._scalar_features]
         self.dataset = datasets.Dataset.from_pandas(df)
