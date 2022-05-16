@@ -88,8 +88,10 @@ def get_be_labeled_pairs(context):
     )
 
     data = data.query("label != 'Unsure'")
-    data['label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
-    data['channel_sim'] = data['channel_sim'].astype(int)
+    data.loc[:, 'label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
+    data.loc[:, 'channel_sim'] = data['channel_sim'].astype(int)
+
+    return data
 
 
 # Get English-only labelled pairs in format for unified cross-encoder model.
@@ -134,6 +136,7 @@ def get_xe_labeled_pairs(context):
     )
 
     data = data.query("label != 'Unsure'")
-    data['label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
-    data['channel_sim'] = data['channel_sim'].astype(int)
+    data.loc[:, 'label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
+    data.loc[:, 'channel_sim'] = data['channel_sim'].astype(int)
 
+    return data
