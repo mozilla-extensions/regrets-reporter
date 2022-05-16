@@ -140,3 +140,14 @@ def get_xe_labeled_pairs(context):
     data.loc[:, 'channel_sim'] = data['channel_sim'].astype(int)
 
     return data
+
+
+def save_data(data, pickle_file, context):
+    with open(context['gdrive_path'] + pickle_file, 'wb') as handle:
+        pickle.dump(data, handle,
+                    protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def load_data(pickle_file, context):
+    with open(context['gdrive_path'] + pickle_file, 'rb') as handle:
+        return pickle.load(handle)
