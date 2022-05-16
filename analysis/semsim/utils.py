@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from analysis.semsim import unifiedmodel
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
+import torch
 from sklearn.metrics import roc_auc_score
 import numpy as np
 from scipy.special import expit
