@@ -1,0 +1,8 @@
+google-api-python-client
+google-cloud-pubsub
+google-cloud-bigquery
+requests
+numpy
+pandas
+db-dtypes
+beautifulsoup4
