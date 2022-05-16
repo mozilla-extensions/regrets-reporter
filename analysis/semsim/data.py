@@ -87,7 +87,7 @@ def get_be_labeled_pairs(context):
         bqstorage_client=context['bq_storage_client']
     )
 
-    data = data.query("label != 'Unsure")
+    data = data.query("label != 'Unsure'")
     data['label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
     data['channel_sim'] = data['channel_sim'].astype(int)
 
@@ -133,7 +133,7 @@ def get_xe_labeled_pairs(context):
         bqstorage_client=context['bq_storage_client']
     )
 
-    data = data.query("label != 'Unsure")
+    data = data.query("label != 'Unsure'")
     data['label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
     data['channel_sim'] = data['channel_sim'].astype(int)
 
