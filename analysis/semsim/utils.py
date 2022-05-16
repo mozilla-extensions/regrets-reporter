@@ -1,7 +1,7 @@
 import gcld3
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import unifiedmodel
+from analysis.semsim import unifiedmodel
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from sklearn.metrics import roc_auc_score
