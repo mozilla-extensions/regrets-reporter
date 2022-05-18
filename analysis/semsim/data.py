@@ -1,6 +1,6 @@
 labeled_data_table_id = "regrets-reporter-dev.ra_can_write.labelled_ra"
 embeddings_table_id = 'regrets-reporter-dev.regrets_reporter_analysis.derived_fields_v1'
-yt_data_table_id = "regrets-reporter-dev.regrets_reporter_analysis.yt_api_data_v9_filled_deduped"
+yt_data_table_id = "regrets-reporter-dev.regrets_reporter_analysis.yt_api_data_can"
 language_table_id = 'regrets-reporter-dev.ra_can_read.langs'
 
 # Get labelled pairs that have non-English video in format for bi-encoder model.
