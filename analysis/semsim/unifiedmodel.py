@@ -72,10 +72,10 @@ class RRUMDatasetArrow():
             else:
                 self.encoded_dataset = encoded_text_type
 
-            self.encoded_dataset = datasets.concatenate_datasets(
-                [self.encoded_dataset, self.num_features_dataset], axis=1)  # concatenate final encoded_dataset where text and numerical features are together
-            self.encoded_dataset.set_format(
-                type='torch', columns=self.encoded_dataset.column_names)
+        self.encoded_dataset = datasets.concatenate_datasets(
+            [self.encoded_dataset, self.num_features_dataset], axis=1)  # concatenate final encoded_dataset where text and numerical features are together
+        self.encoded_dataset.set_format(
+            type='torch', columns=self.encoded_dataset.column_names)
 
 
 class RRUMPredictDatasetArrow():
@@ -90,7 +90,8 @@ class RRUMPredictDatasetArrow():
             'regret_title', 'recommendation_title', 'regret_thumbnail', 'recommendation_thumbnail', 'regret_description',
             'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if with_transcript else [])
         text_features_df = pandas_data.loc[:, self._text_features]
-        num_features_df = pandas_data.loc[:, RRUMPredictDatasetArrow._scalar_features]
+        num_features_df = pandas_data.loc[:,
+                                          RRUMPredictDatasetArrow._scalar_features]
         self.text_features_dataset = datasets.Dataset.from_pandas(
             text_features_df)
         self.num_features_dataset = datasets.Dataset.from_pandas(
@@ -142,10 +143,10 @@ class RRUMPredictDatasetArrow():
             else:
                 self.encoded_dataset = encoded_text_type
 
-            self.encoded_dataset = datasets.concatenate_datasets(
-                [self.encoded_dataset, self.num_features_dataset], axis=1)  # concatenate final encoded_dataset where text and numerical features are together
-            self.encoded_dataset.set_format(
-                type='torch', columns=self.encoded_dataset.column_names)
+        self.encoded_dataset = datasets.concatenate_datasets(
+            [self.encoded_dataset, self.num_features_dataset], axis=1)  # concatenate final encoded_dataset where text and numerical features are together
+        self.encoded_dataset.set_format(
+            type='torch', columns=self.encoded_dataset.column_names)
 
 
 class RRUM(pl.LightningModule):
