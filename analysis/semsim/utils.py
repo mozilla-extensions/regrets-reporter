@@ -37,8 +37,8 @@ def run_experiment(data, with_transcript, sample_negative, epochs, batch_size, l
     train_dataset = unifiedmodel.RRUMDatasetArrow(train_data, with_transcript=with_transcript)
     val_dataset = unifiedmodel.RRUMDatasetArrow(val_data, with_transcript=with_transcript)
 
-    train_loader = DataLoader(train_dataset.encoded_dataset, shuffle=True, batch_size=batch_size, num_workers=0, pin_memory=False)
-    val_loader = DataLoader(val_dataset.encoded_dataset, shuffle=False, batch_size=batch_size, num_workers=0, pin_memory=False)
+    train_loader = DataLoader(train_dataset.dataset, shuffle=True, batch_size=batch_size, num_workers=0, pin_memory=False)
+    val_loader = DataLoader(val_dataset.dataset, shuffle=False, batch_size=batch_size, num_workers=0, pin_memory=False)
     
     model = unifiedmodel.RRUM(
         with_transcript=with_transcript,
@@ -51,8 +51,8 @@ def run_experiment(data, with_transcript, sample_negative, epochs, batch_size, l
 
     trainer.fit(model, train_loader, val_loader)
 
-    test_dataset = unifiedmodel.RRUMPredictDatasetArrow(test_data, with_transcript)
-    test_loader = DataLoader(test_dataset, shuffle=False, batch_size=50, num_workers=0, pin_memory=False)
+    test_dataset = unifiedmodel.RRUMDatasetArrow(test_data, with_transcript, label_col=None)
+    test_loader = DataLoader(test_dataset.dataset, shuffle=False, batch_size=50, num_workers=0, pin_memory=False)
     predictor = pl.Trainer(gpus=1)
     predictions_all_batches = predictor.predict(model, dataloaders=test_loader)
     predictions = [expit(x) for x in np.hstack([l.squeeze().numpy() for l in predictions_all_batches])]
