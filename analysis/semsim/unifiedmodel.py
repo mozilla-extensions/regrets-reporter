@@ -11,41 +11,43 @@ class RRUMDatasetArrow():
     tokenizer = AutoTokenizer.from_pretrained(
         'cross-encoder/stsb-roberta-base')
     _scalar_features = ['channel_sim']
+    _image_features = ['regret_thumbnail',
+                       'recommendation_thumbnail']  # not used atm
 
-    def __init__(self, pandas_data, with_transcript, max_length=128):
+    def __init__(self, pandas_data, with_transcript, label_col="label", max_length=128, encode_on_the_fly=False, processing_batch_size=1000, processing_num_proc=None):
+        self.label_col = label_col
+        self.max_length = max_length
+        self.processing_batch_size = processing_batch_size
+        self.processing_num_proc = multiprocessing.cpu_count(
+        ) if not processing_num_proc else processing_num_proc
+
         self._text_types = ['title', 'description'] + \
             (['transcript'] if with_transcript else [])
         self._text_features = [
-            'regret_title', 'recommendation_title', 'regret_thumbnail', 'recommendation_thumbnail', 'regret_description',
+            'regret_title', 'recommendation_title', 'regret_description',
             'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if with_transcript else [])
-        text_features_df = pandas_data.loc[:, self._text_features]
-        num_features_df = pandas_data.loc[:,
-                                          RRUMDatasetArrow._scalar_features + ['label']]
-        self.text_features_dataset = datasets.Dataset.from_pandas(
-            text_features_df)
-        self.num_features_dataset = datasets.Dataset.from_pandas(
-            num_features_df)
-        if '__index_level_0__' in self.text_features_dataset.column_names:
-            self.text_features_dataset = self.text_features_dataset.remove_columns(
-                '__index_level_0__')
-        if '__index_level_0__' in self.num_features_dataset.column_names:
-            self.num_features_dataset = self.num_features_dataset.remove_columns(
-                '__index_level_0__')
-        self.max_length = max_length
-        self.num_cpu = multiprocessing.cpu_count()
+
+        df = pandas_data.loc[:, self._text_features + RRUMDatasetArrow._scalar_features + (
+            [self.label_col] if self.label_col else [])]
+        self.dataset = datasets.Dataset.from_pandas(df)
+        if '__index_level_0__' in self.dataset.column_names:
+            self.dataset = self.dataset.remove_columns('__index_level_0__')
 
         self._preprocess()
-        self._encode()
+        if encode_on_the_fly:
+            self.dataset.set_transform(self._encode_on_the_fly)
+        else:
+            self.dataset = self._encode(self.dataset)
 
     def __len__(self):
-        return len(self.encoded_dataset)
+        return len(self.dataset)
 
     def __getitem__(self, index):
-        return self.encoded_dataset[index]
+        return self.dataset[index]
 
     def _preprocess(self):
-        self.text_features_dataset = self.text_features_dataset.map(
-            self._truncate_and_strip_text, batched=True, num_proc=self.num_cpu)
+        self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=True,
+                                        batch_size=self.processing_batch_size, num_proc=self.processing_num_proc)
 
     def _truncate_and_strip_text(self, example):
         # tokenizer will truncate to max_length tokens anyway so to save RAM let's truncate to max_length words already beforehand
@@ -57,96 +59,50 @@ class RRUMDatasetArrow():
             elif isinstance(example[feat], str):
                 example[feat] = ' '.join(example[feat].split()[
                                          :self.max_length]).strip()
+            else:
+                raise ValueError(
+                    f'Type of example is {type(example[feat])} when list or string is allowed')
         return example
 
-    def _encode(self):
-        self.encoded_dataset = None
+    def _encode(self, dataset):
+        encoded_dataset = None
         for text_type in self._text_types:
-            encoded_text_type = self.text_features_dataset.map(lambda regret, recommendation: RRUMDatasetArrow.tokenizer(regret, recommendation, padding="max_length", truncation=True, max_length=self.max_length),
-                                                               batched=True, num_proc=self.num_cpu, input_columns=[f'regret_{text_type}', f'recommendation_{text_type}'], remove_columns=self.text_features_dataset.column_names)
+            encoded_text_type = dataset.map(lambda regret, recommendation: RRUMDatasetArrow.tokenizer(regret, recommendation, padding="max_length", truncation=True, max_length=self.max_length), batched=True,
+                                            batch_size=self.processing_batch_size, num_proc=self.processing_num_proc, input_columns=[f'regret_{text_type}', f'recommendation_{text_type}'], remove_columns=dataset.column_names)
             encoded_text_type = encoded_text_type.rename_columns(
                 {col: f'{text_type}_{col}' for col in encoded_text_type.column_names})  # e.g. input_ids -> title_input_ids so we have separate input_ids for each text_type
-            if self.encoded_dataset:
-                self.encoded_dataset = datasets.concatenate_datasets(
-                    [self.encoded_dataset, encoded_text_type], axis=1)
+            if encoded_dataset:
+                encoded_dataset = datasets.concatenate_datasets(
+                    [encoded_dataset, encoded_text_type], axis=1)
             else:
-                self.encoded_dataset = encoded_text_type
+                encoded_dataset = encoded_text_type
 
-        self.encoded_dataset = datasets.concatenate_datasets(
-            [self.encoded_dataset, self.num_features_dataset], axis=1)  # concatenate final encoded_dataset where text and numerical features are together
-        self.encoded_dataset.set_format(
-            type='torch', columns=self.encoded_dataset.column_names)
+        # copy scalar features and label from original dataset to the encoded dataset
+        for scalar_feat in RRUMDatasetArrow._scalar_features:
+            encoded_dataset = encoded_dataset.add_column(
+                name=scalar_feat, column=dataset[scalar_feat])
+        if self.label_col:
+            encoded_dataset = encoded_dataset.add_column(
+                name=self.label_col, column=dataset[self.label_col])
+        encoded_dataset.set_format(
+            type='torch', columns=encoded_dataset.column_names)
+        return encoded_dataset
 
-
-class RRUMPredictDatasetArrow():
-    tokenizer = AutoTokenizer.from_pretrained(
-        'cross-encoder/stsb-roberta-base')
-    _scalar_features = ['channel_sim']
-
-    def __init__(self, pandas_data, with_transcript, max_length=128):
-        self._text_types = ['title', 'description'] + \
-            (['transcript'] if with_transcript else [])
-        self._text_features = [
-            'regret_title', 'recommendation_title', 'regret_thumbnail', 'recommendation_thumbnail', 'regret_description',
-            'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if with_transcript else [])
-        text_features_df = pandas_data.loc[:, self._text_features]
-        num_features_df = pandas_data.loc[:,
-                                          RRUMPredictDatasetArrow._scalar_features]
-        self.text_features_dataset = datasets.Dataset.from_pandas(
-            text_features_df)
-        self.num_features_dataset = datasets.Dataset.from_pandas(
-            num_features_df)
-        if '__index_level_0__' in self.text_features_dataset.column_names:
-            self.text_features_dataset = self.text_features_dataset.remove_columns(
-                '__index_level_0__')
-        if '__index_level_0__' in self.num_features_dataset.column_names:
-            self.num_features_dataset = self.num_features_dataset.remove_columns(
-                '__index_level_0__')
-        self.max_length = max_length
-        self.num_cpu = multiprocessing.cpu_count()
-
-        self._preprocess()
-        self._encode()
-
-    def __len__(self):
-        return len(self.encoded_dataset)
-
-    def __getitem__(self, index):
-        return self.encoded_dataset[index]
-
-    def _preprocess(self):
-        self.text_features_dataset = self.text_features_dataset.map(
-            self._truncate_and_strip_text, batched=True, num_proc=self.num_cpu)
-
-    def _truncate_and_strip_text(self, example):
-        # tokenizer will truncate to max_length tokens anyway so to save RAM let's truncate to max_length words already beforehand
-        # one word is usually one or more tokens so should be safe to truncate this way without losing information
-        for feat in self._text_features:
-            if isinstance(example[feat], list):
-                example[feat] = [
-                    ' '.join(text.split()[:self.max_length]).strip() for text in example[feat]]
-            elif isinstance(example[feat], str):
-                example[feat] = ' '.join(example[feat].split()[
-                                         :self.max_length]).strip()
-        return example
-
-    def _encode(self):
-        self.encoded_dataset = None
+    def _encode_on_the_fly(self, batch):
         for text_type in self._text_types:
-            encoded_text_type = self.text_features_dataset.map(lambda regret, recommendation: RRUMPredictDatasetArrow.tokenizer(regret, recommendation, padding="max_length", truncation=True, max_length=self.max_length),
-                                                               batched=True, num_proc=self.num_cpu, input_columns=[f'regret_{text_type}', f'recommendation_{text_type}'], remove_columns=self.text_features_dataset.column_names)
-            encoded_text_type = encoded_text_type.rename_columns(
-                {col: f'{text_type}_{col}' for col in encoded_text_type.column_names})  # e.g. input_ids -> title_input_ids so we have separate input_ids for each text_type
-            if self.encoded_dataset:
-                self.encoded_dataset = datasets.concatenate_datasets(
-                    [self.encoded_dataset, encoded_text_type], axis=1)
-            else:
-                self.encoded_dataset = encoded_text_type
-
-        self.encoded_dataset = datasets.concatenate_datasets(
-            [self.encoded_dataset, self.num_features_dataset], axis=1)  # concatenate final encoded_dataset where text and numerical features are together
-        self.encoded_dataset.set_format(
-            type='torch', columns=self.encoded_dataset.column_names)
+            encoded_text_type = dict(RRUMDatasetArrow.tokenizer(
+                batch[f'regret_{text_type}'], batch[f'recommendation_{text_type}'], padding="max_length", truncation=True, max_length=self.max_length, return_tensors="pt"))
+            for encoded_key in encoded_text_type.copy():
+                encoded_text_type[f"{text_type}_{encoded_key}"] = encoded_text_type.pop(
+                    encoded_key)  # e.g. input_ids -> title_input_ids so we have separate input_ids for each text_type
+            del batch[f'regret_{text_type}']
+            del batch[f'recommendation_{text_type}']
+            batch.update(encoded_text_type)
+        for scalar_feat in RRUMDatasetArrow._scalar_features:
+            batch[scalar_feat] = torch.as_tensor(batch[scalar_feat])
+        if self.label_col:
+            batch[self.label_col] = torch.as_tensor(batch[self.label_col])
+        return batch
 
 
 class RRUM(pl.LightningModule):
