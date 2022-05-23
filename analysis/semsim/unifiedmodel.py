@@ -149,7 +149,7 @@ class RRUM(pl.LightningModule):
                       [x[scalar][:, None] for scalar in self.scalar_features],
                       1
                       )
-        del cross_logits, scalar
+        del cross_logits
 
         x = self.lin1(x)
         return x
