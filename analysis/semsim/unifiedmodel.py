@@ -47,7 +47,7 @@ class RRUMDatasetArrow():
 
     def _preprocess(self):
         self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=True,
-                                        batch_size=self.processing_batch_size, num_proc=self.processing_num_proc)
+                                        batch_size=self.processing_batch_size)
 
     def _truncate_and_strip_text(self, example):
         # tokenizer will truncate to max_length tokens anyway so to save RAM let's truncate to max_length words already beforehand
