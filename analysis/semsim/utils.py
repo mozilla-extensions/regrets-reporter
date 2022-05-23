@@ -40,12 +40,17 @@ def run_experiment(data, with_transcript, sample_negative, epochs, batch_size, l
     train_loader = DataLoader(train_dataset.dataset, shuffle=True, batch_size=batch_size, num_workers=0, pin_memory=False)
     val_loader = DataLoader(val_dataset.dataset, shuffle=False, batch_size=batch_size, num_workers=0, pin_memory=False)
     
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     model = unifiedmodel.RRUM(
-        with_transcript=with_transcript,
+        text_types=train_dataset.text_types,
+        scalar_features=train_dataset.scalar_features,
+        label_col=train_dataset.label_col,
         optimizer_config=(lambda x: torch.optim.Adam(x.parameters(), lr=lr)),
+        device=device,
         freeze_policy=freeze_policy,
         pos_weight=None
-    ).to("cuda:0")
+    ).to(device)
 
     trainer = pl.Trainer(max_epochs=epochs, gpus=1, precision=16, num_sanity_val_steps=0, log_every_n_steps=5)
 
