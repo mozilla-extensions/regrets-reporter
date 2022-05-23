@@ -8,13 +8,13 @@ import multiprocessing
 
 
 class RRUMDatasetArrow():
-    tokenizer = AutoTokenizer.from_pretrained(
-        'cross-encoder/stsb-roberta-base')
     scalar_features = ['channel_sim']
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
 
-    def __init__(self, pandas_data, with_transcript, label_col="label", max_length=128, encode_on_the_fly=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, pandas_data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, encode_on_the_fly=False, processing_batch_size=1000, processing_num_proc=None):
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            cross_encoder_model_name_or_path)
         self.label_col = label_col
         self.max_length = max_length
         self.processing_batch_size = processing_batch_size
@@ -106,7 +106,7 @@ class RRUMDatasetArrow():
 
 
 class RRUM(pl.LightningModule):
-    def __init__(self, text_types, scalar_features, label_col, optimizer_config, device, freeze_policy=None, pos_weight=None):
+    def __init__(self, text_types, scalar_features, label_col, optimizer_config, cross_encoder_model_name_or_path, device, freeze_policy=None, pos_weight=None):
         super().__init__()
         self.text_types = text_types
         self.scalar_features = scalar_features
@@ -115,7 +115,7 @@ class RRUM(pl.LightningModule):
         self.cross_encoders = nn.ModuleDict({})
         for t in self.text_types:
             self.cross_encoders[t] = AutoModelForSequenceClassification.from_pretrained(
-                'cross-encoder/stsb-roberta-base').to(device)
+                cross_encoder_model_name_or_path).to(device)
         if freeze_policy is not None:
             for xe in self.cross_encoders.values():
                 for name, param in xe.named_parameters():
@@ -143,8 +143,9 @@ class RRUM(pl.LightningModule):
             x = x[0]
         cross_logits = {}
         for f in self.text_types:
-            cross_logits[f] = self.cross_encoders[f](
-                input_ids=x[f"{f}_input_ids"], attention_mask=x[f"{f}_attention_mask"]).logits
+            inputs = {key.split(f'{f}_')[1]: x[key]
+                      for key in x if f in key} # e.g. title_input_ids -> input_ids since we have separate input_ids for each text_type
+            cross_logits[f] = self.cross_encoders[f](**inputs).logits
         x = torch.cat([*cross_logits.values()] +
                       [x[scalar][:, None] for scalar in self.scalar_features],
                       1
