@@ -121,8 +121,9 @@ class RRUM(pl.LightningModule):
                 for name, param in xe.named_parameters():
                     if freeze_policy(name):
                         param.requires_grad = False
-
-        self.lin1 = nn.Linear(len(self.text_types) +
+        cross_encoder_out_features = list(self.cross_encoders.values())[0](
+            torch.randint(1, 2, (1, 2)).to(device)).logits.size(dim=1)
+        self.lin1 = nn.Linear(len(self.cross_encoders) * cross_encoder_out_features +
                               len(self.scalar_features), 1)
         self.ac_metric = torchmetrics.Accuracy()
         self.pr_metric = torchmetrics.Precision()
@@ -144,7 +145,7 @@ class RRUM(pl.LightningModule):
         cross_logits = {}
         for f in self.text_types:
             inputs = {key.split(f'{f}_')[1]: x[key]
-                      for key in x if f in key} # e.g. title_input_ids -> input_ids since we have separate input_ids for each text_type
+                      for key in x if f in key}  # e.g. title_input_ids -> input_ids since we have separate input_ids for each text_type
             cross_logits[f] = self.cross_encoders[f](**inputs).logits
         x = torch.cat([*cross_logits.values()] +
                       [x[scalar][:, None] for scalar in self.scalar_features],
