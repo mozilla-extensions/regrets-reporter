@@ -8,26 +8,26 @@ import multiprocessing
 
 
 class RRUMDatasetArrow():
-    tokenizer = AutoTokenizer.from_pretrained(
-        'cross-encoder/stsb-roberta-base')
-    _scalar_features = ['channel_sim']
+    scalar_features = ['channel_sim']
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
 
-    def __init__(self, pandas_data, with_transcript, label_col="label", max_length=128, encode_on_the_fly=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, pandas_data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, encode_on_the_fly=False, processing_batch_size=1000, processing_num_proc=None):
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            cross_encoder_model_name_or_path)
         self.label_col = label_col
         self.max_length = max_length
         self.processing_batch_size = processing_batch_size
         self.processing_num_proc = multiprocessing.cpu_count(
         ) if not processing_num_proc else processing_num_proc
 
-        self._text_types = ['title', 'description'] + \
+        self.text_types = ['title', 'description'] + \
             (['transcript'] if with_transcript else [])
         self._text_features = [
             'regret_title', 'recommendation_title', 'regret_description',
             'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if with_transcript else [])
 
-        df = pandas_data.loc[:, self._text_features + RRUMDatasetArrow._scalar_features + (
+        df = pandas_data.loc[:, self._text_features + self.scalar_features + (
             [self.label_col] if self.label_col else [])]
         self.dataset = datasets.Dataset.from_pandas(df)
         if '__index_level_0__' in self.dataset.column_names:
@@ -47,7 +47,7 @@ class RRUMDatasetArrow():
 
     def _preprocess(self):
         self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=True,
-                                        batch_size=self.processing_batch_size, num_proc=self.processing_num_proc)
+                                        batch_size=self.processing_batch_size)
 
     def _truncate_and_strip_text(self, example):
         # tokenizer will truncate to max_length tokens anyway so to save RAM let's truncate to max_length words already beforehand
@@ -66,8 +66,8 @@ class RRUMDatasetArrow():
 
     def _encode(self, dataset):
         encoded_dataset = None
-        for text_type in self._text_types:
-            encoded_text_type = dataset.map(lambda regret, recommendation: RRUMDatasetArrow.tokenizer(regret, recommendation, padding="max_length", truncation=True, max_length=self.max_length), batched=True,
+        for text_type in self.text_types:
+            encoded_text_type = dataset.map(lambda regret, recommendation: self.tokenizer(regret, recommendation, padding="max_length", truncation=True, max_length=self.max_length), batched=True,
                                             batch_size=self.processing_batch_size, num_proc=self.processing_num_proc, input_columns=[f'regret_{text_type}', f'recommendation_{text_type}'], remove_columns=dataset.column_names)
             encoded_text_type = encoded_text_type.rename_columns(
                 {col: f'{text_type}_{col}' for col in encoded_text_type.column_names})  # e.g. input_ids -> title_input_ids so we have separate input_ids for each text_type
@@ -78,7 +78,7 @@ class RRUMDatasetArrow():
                 encoded_dataset = encoded_text_type
 
         # copy scalar features and label from original dataset to the encoded dataset
-        for scalar_feat in RRUMDatasetArrow._scalar_features:
+        for scalar_feat in self.scalar_features:
             encoded_dataset = encoded_dataset.add_column(
                 name=scalar_feat, column=dataset[scalar_feat])
         if self.label_col:
@@ -89,8 +89,8 @@ class RRUMDatasetArrow():
         return encoded_dataset
 
     def _encode_on_the_fly(self, batch):
-        for text_type in self._text_types:
-            encoded_text_type = dict(RRUMDatasetArrow.tokenizer(
+        for text_type in self.text_types:
+            encoded_text_type = dict(self.tokenizer(
                 batch[f'regret_{text_type}'], batch[f'recommendation_{text_type}'], padding="max_length", truncation=True, max_length=self.max_length, return_tensors="pt"))
             for encoded_key in encoded_text_type.copy():
                 encoded_text_type[f"{text_type}_{encoded_key}"] = encoded_text_type.pop(
@@ -98,7 +98,7 @@ class RRUMDatasetArrow():
             del batch[f'regret_{text_type}']
             del batch[f'recommendation_{text_type}']
             batch.update(encoded_text_type)
-        for scalar_feat in RRUMDatasetArrow._scalar_features:
+        for scalar_feat in self.scalar_features:
             batch[scalar_feat] = torch.as_tensor(batch[scalar_feat])
         if self.label_col:
             batch[self.label_col] = torch.as_tensor(batch[self.label_col])
@@ -106,22 +106,25 @@ class RRUMDatasetArrow():
 
 
 class RRUM(pl.LightningModule):
-    def __init__(self, with_transcript, optimizer_config, freeze_policy=None, pos_weight=None):
+    def __init__(self, text_types, scalar_features, label_col, optimizer_config, cross_encoder_model_name_or_path, device, freeze_policy=None, pos_weight=None):
         super().__init__()
+        self.text_types = text_types
+        self.scalar_features = scalar_features
+        self.label_col = label_col
         self.optimizer_config = optimizer_config
-        self._text_types = ['title', 'description'] + \
-            (['transcript'] if with_transcript else [])
         self.cross_encoders = nn.ModuleDict({})
-        for t in self._text_types:
+        for t in self.text_types:
             self.cross_encoders[t] = AutoModelForSequenceClassification.from_pretrained(
-                'cross-encoder/stsb-roberta-base').to("cuda:0")
+                cross_encoder_model_name_or_path).to(device)
         if freeze_policy is not None:
             for xe in self.cross_encoders.values():
                 for name, param in xe.named_parameters():
                     if freeze_policy(name):
                         param.requires_grad = False
-
-        self.lin1 = nn.Linear(len(self._text_types) + 1, 1)
+        cross_encoder_out_features = list(self.cross_encoders.values())[0](
+            torch.randint(1, 2, (1, 2)).to(device)).logits.size(dim=1)
+        self.lin1 = nn.Linear(len(self.cross_encoders) * cross_encoder_out_features +
+                              len(self.scalar_features), 1)
         self.ac_metric = torchmetrics.Accuracy()
         self.pr_metric = torchmetrics.Precision()
         self.re_metric = torchmetrics.Recall()
@@ -140,16 +143,15 @@ class RRUM(pl.LightningModule):
                 print("BAD!!!")
             x = x[0]
         cross_logits = {}
-        for f in self._text_types:
-            cross_logits[f] = self.cross_encoders[f](
-                input_ids=x[f"{f}_input_ids"], attention_mask=x[f"{f}_attention_mask"]).logits
-        scalar = x["channel_sim"]
-        x = torch.cat((
-            *cross_logits.values(),
-            scalar[:, None]),
-            1
-        )
-        del cross_logits, scalar
+        for f in self.text_types:
+            inputs = {key.split(f'{f}_')[1]: x[key]
+                      for key in x if f in key}  # e.g. title_input_ids -> input_ids since we have separate input_ids for each text_type
+            cross_logits[f] = self.cross_encoders[f](**inputs).logits
+        x = torch.cat([*cross_logits.values()] +
+                      [x[scalar][:, None] for scalar in self.scalar_features],
+                      1
+                      )
+        del cross_logits
 
         x = self.lin1(x)
         return x
@@ -158,14 +160,14 @@ class RRUM(pl.LightningModule):
         return self.optimizer_config(self)
 
     def training_step(self, train_batch, batch_idx):
-        y = train_batch["label"].unsqueeze(1).float()
+        y = train_batch[self.label_col].unsqueeze(1).float()
         logits = self(train_batch)
         loss = self.loss(logits, y)
         self.log('train_loss', loss)
         return loss
 
     def validation_step(self, val_batch, batch_idx):
-        y = val_batch["label"].unsqueeze(1).float()
+        y = val_batch[self.label_col].unsqueeze(1).float()
         logits = self(val_batch)
         loss = self.loss(logits, y)
         self.ac_metric(logits, y.int())
