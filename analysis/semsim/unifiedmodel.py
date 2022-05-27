@@ -187,11 +187,11 @@ class RRUM(pl.LightningModule):
         self.log('validation_accuracy', self.ac_metric)
         self.log('validation_precision', self.pr_metric)
         self.log('validation_recall', self.re_metric)
-        self.log('auc', self.auc_metric)
+        self.log('validation_auc', self.auc_metric)
         self.log('val_loss', loss, prog_bar=True)
 
     def validation_epoch_end(self, outputs):
         self.log('validation_accuracy_ep', self.ac_metric)
         self.log('validation_precision_ep', self.pr_metric)
         self.log('validation_recall_ep', self.re_metric)
-        self.log('validation auc', self.auc_metric)
+        self.log('validation_auc_ep', self.auc_metric)

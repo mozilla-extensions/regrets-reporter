@@ -65,8 +65,17 @@ def run_experiment(data, with_transcript, sample_negative, epochs, batch_size, l
         pos_weight=None
     ).to(device)
 
+    checkpoint_callback = pl.callbacks.ModelCheckpoint(
+        save_top_k=1,
+        monitor="validation_auc_ep",
+        mode="max",
+        auto_insert_metric_name=True,
+    )
+
+    lr_monitor = pl.callbacks.LearningRateMonitor()
+
     trainer = pl.Trainer(max_epochs=epochs, gpus=1, precision=16,
-                         num_sanity_val_steps=0, log_every_n_steps=5)
+                         num_sanity_val_steps=0, log_every_n_steps=5, callbacks=[checkpoint_callback, lr_monitor])
 
     trainer.fit(model, train_loader, val_loader)
 
