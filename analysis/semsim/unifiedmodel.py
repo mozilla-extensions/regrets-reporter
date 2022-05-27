@@ -5,7 +5,7 @@ import torchmetrics
 import torch.nn as nn
 import torch
 import multiprocessing
-from text_cleaning import clean_text_funcs
+from .text_cleaning import clean_text_funcs
 
 
 class RRUMDatasetArrow():
