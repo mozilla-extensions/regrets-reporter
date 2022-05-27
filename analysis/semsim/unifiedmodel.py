@@ -5,6 +5,7 @@ import torchmetrics
 import torch.nn as nn
 import torch
 import multiprocessing
+from .text_cleaning import clean_text_funcs
 
 
 class RRUMDatasetArrow():
@@ -12,11 +13,12 @@ class RRUMDatasetArrow():
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
 
-    def __init__(self, pandas_data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, encode_on_the_fly=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, pandas_data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
         self.tokenizer = AutoTokenizer.from_pretrained(
             cross_encoder_model_name_or_path)
         self.label_col = label_col
         self.max_length = max_length
+        self.clean_text = clean_text
         self.processing_batch_size = processing_batch_size
         self.processing_num_proc = multiprocessing.cpu_count(
         ) if not processing_num_proc else processing_num_proc
@@ -46,8 +48,16 @@ class RRUMDatasetArrow():
         return self.dataset[index]
 
     def _preprocess(self):
+        if self.clean_text:
+            self.dataset = self.dataset.map(self._clean_text, batched=True,
+                                            batch_size=self.processing_batch_size)
         self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=True,
                                         batch_size=self.processing_batch_size)
+
+    def _clean_text(self, example):
+        for feat in self._text_features:
+            example[feat] = clean_text_funcs(example[feat])
+        return example
 
     def _truncate_and_strip_text(self, example):
         # tokenizer will truncate to max_length tokens anyway so to save RAM let's truncate to max_length words already beforehand
@@ -177,11 +187,11 @@ class RRUM(pl.LightningModule):
         self.log('validation_accuracy', self.ac_metric)
         self.log('validation_precision', self.pr_metric)
         self.log('validation_recall', self.re_metric)
-        self.log('auc', self.auc_metric)
+        self.log('validation_auc', self.auc_metric)
         self.log('val_loss', loss, prog_bar=True)
 
     def validation_epoch_end(self, outputs):
         self.log('validation_accuracy_ep', self.ac_metric)
         self.log('validation_precision_ep', self.pr_metric)
         self.log('validation_recall_ep', self.re_metric)
-        self.log('validation auc', self.auc_metric)
+        self.log('validation_auc_ep', self.auc_metric)
