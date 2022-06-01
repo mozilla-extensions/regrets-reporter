@@ -1,9 +1,12 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import datasets
+import pandas as pd
+import pyarrow
 import pytorch_lightning as pl
 import torchmetrics
 import torch.nn as nn
 import torch
+import types
 import multiprocessing
 from .text_cleaning import clean_text_funcs
 
@@ -12,8 +15,10 @@ class RRUMDatasetArrow():
     scalar_features = ['channel_sim']
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
+    _label_map = {'Acceptable Recommendation': 0, 'Bad recommendation': 1}
 
-    def __init__(self, pandas_data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, do_train_test_split=False, test_size=0.25, seed=42, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
+        self._with_transcript = with_transcript
         self.tokenizer = AutoTokenizer.from_pretrained(
             cross_encoder_model_name_or_path)
         self.label_col = label_col
@@ -24,35 +29,128 @@ class RRUMDatasetArrow():
         ) if not processing_num_proc else processing_num_proc
 
         self.text_types = ['title', 'description'] + \
-            (['transcript'] if with_transcript else [])
+            (['transcript'] if self._with_transcript else [])
         self._text_features = [
             'regret_title', 'recommendation_title', 'regret_description',
-            'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if with_transcript else [])
+            'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if self._with_transcript else [])
 
-        df = pandas_data.loc[:, self._text_features + self.scalar_features + (
-            [self.label_col] if self.label_col else [])]
-        self.dataset = datasets.Dataset.from_pandas(df)
-        if '__index_level_0__' in self.dataset.column_names:
-            self.dataset = self.dataset.remove_columns('__index_level_0__')
-
-        self._preprocess()
-        if encode_on_the_fly:
-            self.dataset.set_transform(self._encode_on_the_fly)
+        # LOAD DATA INTO DATASET
+        self._streaming_dataset = False
+        if isinstance(data, pd.DataFrame):
+            self.dataset = datasets.Dataset.from_pandas(data)
+        elif isinstance(data, types.GeneratorType):
+            examples_iterable = datasets.iterable_dataset.ExamplesIterable(
+                self._streaming_generate_examples, {"arrow_iterable": data})
+            self.dataset = datasets.IterableDataset(examples_iterable)
+            self._stream_dataset_column_names = list(
+                next(iter(self.dataset)).keys())
+            self._streaming_dataset = True
+        elif isinstance(data, pyarrow.Table):
+            self.dataset = datasets.Dataset(data)
         else:
-            self.dataset = self._encode(self.dataset)
+            raise ValueError(
+                f'Type of data is {type(data)} when pd.DataFrame, pyarrow.Table or generator of pyarrow.RecordBatch is allowed')
+
+        # PREPROCESS DATASET
+        self._preprocess()
+
+        # ENCODE DATASET
+        self.train_dataset = None
+        self.test_dataset = None
+        if self._streaming_dataset:
+            # IterableDataset doesn't have train_test_split method
+            if self.label_col:
+                self.train_dataset = self._encode_streaming(self.dataset)
+                print('Streaming dataset available in .train_dataset')
+            else:
+                self.test_dataset = self._encode_streaming(self.dataset)
+                print(
+                    'Streaming dataset available in .test_dataset because label_col=None')
+        else:
+            # dataset into train_dataset and/or test_dataset
+            if do_train_test_split:
+                ds = self.dataset.train_test_split(
+                    test_size=test_size, shuffle=True, seed=seed, stratify_by_column=self.label_col)
+                self.train_dataset = ds['train']
+                self.test_dataset = ds['test']
+                print(
+                    f'Dataset was splitted into train and test with test_size={test_size}')
+            else:
+                if self.label_col:
+                    self.train_dataset = self.dataset
+                else:
+                    self.test_dataset = self.dataset
+
+            if encode_on_the_fly:
+                if self.train_dataset:
+                    self.train_dataset.set_transform(self._encode_on_the_fly)
+                    print('On-the-fly encoded dataset available in .train_dataset')
+                if self.test_dataset:
+                    self.test_dataset.set_transform(self._encode_on_the_fly)
+                    print('On-the-fly encoded dataset available in .test_dataset')
+            else:
+                if self.train_dataset:
+                    self.train_dataset = self._encode(self.train_dataset)
+                    print('Pre-encoded dataset available in .train_dataset')
+                if self.test_dataset:
+                    self.test_dataset = self._encode(self.test_dataset)
+                    print('Pre-encoded dataset available in .test_dataset')
 
     def __len__(self):
+        if self._streaming_dataset:
+            raise ValueError(
+                f'Streaming dataset does not support len method')
         return len(self.dataset)
 
     def __getitem__(self, index):
+        if self._streaming_dataset:
+            return next(iter(self.dataset))
         return self.dataset[index]
 
+    def _streaming_generate_examples(self, arrow_iterable):
+        id_ = 0
+        for examples in arrow_iterable:
+            for ex in examples.to_pylist():
+                yield id_, ex
+                id_ += 1
+
     def _preprocess(self):
+        if self._with_transcript:
+            self.dataset = self.dataset.filter(
+                lambda example: example['regret_transcript'] is not None and example['recommendation_transcript'] is not None)
+        else:
+            self.dataset = self.dataset.filter(
+                lambda example: example['regret_transcript'] is None and example['recommendation_transcript'] is None)
+        if self.label_col:
+            self.dataset = self.dataset.filter(
+                lambda example: example[self.label_col] in self._label_map.keys())
+            if self._streaming_dataset:
+                # cast_column method had issues with streaming dataset
+                self.dataset = self.dataset.map(self._streaming_rename_labels)
+            else:
+                self.dataset = self.dataset.cast_column(self.label_col, datasets.ClassLabel(
+                    num_classes=len(self._label_map), names=list(self._label_map.keys())))
+
+        self.dataset = self.dataset.filter(lambda example: not any(x in [None, ""] for x in [
+                                           example[key] for key in self._text_features + self.scalar_features]))  # dropna
         if self.clean_text:
-            self.dataset = self.dataset.map(self._clean_text, batched=True,
+            self.dataset = self.dataset.map(self._clean_text, batched=not self._streaming_dataset,
                                             batch_size=self.processing_batch_size)
-        self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=True,
+        self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=not self._streaming_dataset,
                                         batch_size=self.processing_batch_size)
+
+    def _streaming_rename_labels(self, example):
+        # rename labels according to label_map if not already correct labels
+        if isinstance(example[self.label_col], list):
+            example[self.label_col] = [self._label_map.get(
+                ex, None) for ex in example[self.label_col] if ex not in self._label_map.values()]
+        elif isinstance(example[self.label_col], str) and example[self.label_col] not in self._label_map.values():
+            example[self.label_col] = self._label_map.get(
+                example[self.label_col], None)
+        else:
+            raise ValueError(
+                f'Type of example label is {type(example[self.label_col])} when list or string is allowed')
+        return example
 
     def _clean_text(self, example):
         for feat in self._text_features:
@@ -65,10 +163,12 @@ class RRUMDatasetArrow():
         for feat in self._text_features:
             if isinstance(example[feat], list):
                 example[feat] = [
-                    ' '.join(text.split()[:self.max_length]).strip() for text in example[feat]]
+                    ' '.join(text.split()[:self.max_length]).strip() for text in example[feat] if text]
             elif isinstance(example[feat], str):
                 example[feat] = ' '.join(example[feat].split()[
                                          :self.max_length]).strip()
+            elif isinstance(example[feat], None):
+                return None
             else:
                 raise ValueError(
                     f'Type of example is {type(example[feat])} when list or string is allowed')
@@ -98,20 +198,29 @@ class RRUMDatasetArrow():
             type='torch', columns=encoded_dataset.column_names)
         return encoded_dataset
 
+    def _encode_streaming(self, dataset):
+        encoded_dataset = dataset.map(self._encode_on_the_fly, batched=True,
+                                      batch_size=self.processing_batch_size, remove_columns=list(set(self._stream_dataset_column_names)-set(self.scalar_features + (
+                                          [self.label_col] if self.label_col else []))))  # IterableDataset doesn't have column_names attribute as normal Dataset
+        encoded_dataset = encoded_dataset.with_format("torch")
+        return encoded_dataset
+
     def _encode_on_the_fly(self, batch):
         for text_type in self.text_types:
             encoded_text_type = dict(self.tokenizer(
                 batch[f'regret_{text_type}'], batch[f'recommendation_{text_type}'], padding="max_length", truncation=True, max_length=self.max_length, return_tensors="pt"))
             for encoded_key in encoded_text_type.copy():
-                encoded_text_type[f"{text_type}_{encoded_key}"] = encoded_text_type.pop(
-                    encoded_key)  # e.g. input_ids -> title_input_ids so we have separate input_ids for each text_type
+                encoded_text_type[f"{text_type}_{encoded_key}"] = encoded_text_type.pop(encoded_key) if not self._streaming_dataset else encoded_text_type.pop(
+                    encoded_key).squeeze(0)  # e.g. input_ids -> title_input_ids so we have separate input_ids for each text_type
             del batch[f'regret_{text_type}']
             del batch[f'recommendation_{text_type}']
             batch.update(encoded_text_type)
         for scalar_feat in self.scalar_features:
-            batch[scalar_feat] = torch.as_tensor(batch[scalar_feat])
+            batch[scalar_feat] = torch.as_tensor(
+                batch[scalar_feat]) if not self._streaming_dataset else torch.as_tensor(batch[scalar_feat]).squeeze(0)
         if self.label_col:
-            batch[self.label_col] = torch.as_tensor(batch[self.label_col])
+            batch[self.label_col] = torch.as_tensor(
+                batch[self.label_col]) if not self._streaming_dataset else torch.as_tensor(batch[self.label_col]).squeeze(0)
         return batch
 
 
