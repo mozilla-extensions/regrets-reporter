@@ -154,7 +154,8 @@ class RRUMDatasetArrow():
 
     def _clean_text(self, example):
         for feat in self._text_features:
-            example[feat] = clean_text_funcs(example[feat])
+            example[feat] = clean_text_funcs(example[feat])[0] if isinstance(
+                example[feat], str) else clean_text_funcs(example[feat])
         return example
 
     def _truncate_and_strip_text(self, example):
