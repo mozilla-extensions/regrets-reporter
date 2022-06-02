@@ -99,7 +99,7 @@ class RRUMDatasetArrow():
     def __len__(self):
         if self._streaming_dataset:
             raise ValueError(
-                f'Streaming dataset does not support len method')
+                f'Streaming dataset does not support len() method')
         return len(self.dataset)
 
     def __getitem__(self, index):

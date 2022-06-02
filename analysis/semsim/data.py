@@ -1,10 +1,12 @@
+import pickle
+
 labeled_data_table_id = "regrets-reporter-dev.ra_can_write.labelled_ra"
 embeddings_table_id = 'regrets-reporter-dev.regrets_reporter_analysis.derived_fields_v1'
 yt_data_table_id = "regrets-reporter-dev.regrets_reporter_analysis.yt_api_data_can"
 language_table_id = 'regrets-reporter-dev.ra_can_read.langs'
 
 # Get labelled pairs that have non-English video in format for bi-encoder model.
-def get_be_labeled_pairs(context):
+def get_be_labeled_pairs(context, get_only_non_english_data=True):
     _query = f'''
         SELECT
             regret_id,
@@ -75,8 +77,7 @@ def get_be_labeled_pairs(context):
         INNER JOIN
             `{language_table_id}` rec_l_t
         ON recommendation_id=rec_l_t.video_id
-        WHERE
-            (reg_l_t.description_lang != 'en' OR rec_l_t.description_lang != 'en')
+        {"WHERE (reg_l_t.description_lang != 'en' OR rec_l_t.description_lang != 'en')" if get_only_non_english_data else ""}
     
     '''
 
@@ -88,14 +89,15 @@ def get_be_labeled_pairs(context):
     )
 
     data = data.query("label != 'Unsure'")
-    data.loc[:, 'label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
+    data.loc[:, 'label'] = data['label'].map(
+        {"Acceptable Recommendation": 0, "Bad recommendation": 1})
     data.loc[:, 'channel_sim'] = data['channel_sim'].astype(int)
 
     return data
 
 
 # Get English-only labelled pairs in format for unified cross-encoder model.
-def get_xe_labeled_pairs(context):
+def get_xe_labeled_pairs(context, get_only_english_data=True):
     _query = f'''
         SELECT
             regret_id,
@@ -124,8 +126,7 @@ def get_xe_labeled_pairs(context):
         INNER JOIN
             `{language_table_id}` rec_l_t
         ON recommendation_id=rec_l_t.video_id
-        WHERE
-            (reg_l_t.description_lang = 'en' AND rec_l_t.description_lang = 'en')
+        {"WHERE (reg_l_t.description_lang = 'en' AND rec_l_t.description_lang = 'en')" if get_only_english_data else ""}
     '''
 
     data = context['bq_client'].query(
@@ -134,10 +135,6 @@ def get_xe_labeled_pairs(context):
     ).to_dataframe(
         bqstorage_client=context['bq_storage_client']
     )
-
-    data = data.query("label != 'Unsure'")
-    data.loc[:, 'label'] = data['label'].map({"Acceptable Recommendation": 0, "Bad recommendation": 1})
-    data.loc[:, 'channel_sim'] = data['channel_sim'].astype(int)
 
     return data
 
