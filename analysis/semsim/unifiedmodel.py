@@ -17,12 +17,13 @@ class RRUMDatasetArrow():
                        'recommendation_thumbnail']  # not used atm
     _label_map = {'Acceptable Recommendation': 0, 'Bad recommendation': 1}
 
-    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, do_train_test_split=False, test_size=0.25, seed=42, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
         self._with_transcript = with_transcript
         self.tokenizer = AutoTokenizer.from_pretrained(
             cross_encoder_model_name_or_path)
         self.label_col = label_col
         self.max_length = max_length
+        self.keep_video_ids_for_predictions = keep_video_ids_for_predictions
         self.clean_text = clean_text
         self.processing_batch_size = processing_batch_size
         self.processing_num_proc = multiprocessing.cpu_count(
@@ -35,7 +36,7 @@ class RRUMDatasetArrow():
             'recommendation_description'] + (['regret_transcript', 'recommendation_transcript'] if self._with_transcript else [])
 
         # LOAD DATA INTO DATASET
-        self._streaming_dataset = False
+        self.streaming_dataset = False
         if isinstance(data, pd.DataFrame):
             self.dataset = datasets.Dataset.from_pandas(data)
         elif isinstance(data, types.GeneratorType):
@@ -44,7 +45,7 @@ class RRUMDatasetArrow():
             self.dataset = datasets.IterableDataset(examples_iterable)
             self._stream_dataset_column_names = list(
                 next(iter(self.dataset)).keys())
-            self._streaming_dataset = True
+            self.streaming_dataset = True
         elif isinstance(data, pyarrow.Table):
             self.dataset = datasets.Dataset(data)
         else:
@@ -57,7 +58,7 @@ class RRUMDatasetArrow():
         # ENCODE DATASET
         self.train_dataset = None
         self.test_dataset = None
-        if self._streaming_dataset:
+        if self.streaming_dataset:
             # IterableDataset doesn't have train_test_split method
             if self.label_col:
                 self.train_dataset = self._encode_streaming(self.dataset)
@@ -97,13 +98,13 @@ class RRUMDatasetArrow():
                     print('Pre-encoded dataset available in .test_dataset')
 
     def __len__(self):
-        if self._streaming_dataset:
+        if self.streaming_dataset:
             raise ValueError(
                 f'Streaming dataset does not support len() method')
         return len(self.dataset)
 
     def __getitem__(self, index):
-        if self._streaming_dataset:
+        if self.streaming_dataset:
             return next(iter(self.dataset))
         return self.dataset[index]
 
@@ -124,7 +125,7 @@ class RRUMDatasetArrow():
         if self.label_col:
             self.dataset = self.dataset.filter(
                 lambda example: example[self.label_col] in self._label_map.keys())
-            if self._streaming_dataset:
+            if self.streaming_dataset:
                 # cast_column method had issues with streaming dataset
                 self.dataset = self.dataset.map(self._streaming_rename_labels)
             else:
@@ -134,9 +135,9 @@ class RRUMDatasetArrow():
         self.dataset = self.dataset.filter(lambda example: not any(x in [None, ""] for x in [
                                            example[key] for key in self._text_features + self.scalar_features]))  # dropna
         if self.clean_text:
-            self.dataset = self.dataset.map(self._clean_text, batched=not self._streaming_dataset,
+            self.dataset = self.dataset.map(self._clean_text, batched=not self.streaming_dataset,
                                             batch_size=self.processing_batch_size)
-        self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=not self._streaming_dataset,
+        self.dataset = self.dataset.map(self._truncate_and_strip_text, batched=not self.streaming_dataset,
                                         batch_size=self.processing_batch_size)
 
     def _streaming_rename_labels(self, example):
@@ -195,6 +196,11 @@ class RRUMDatasetArrow():
         if self.label_col:
             encoded_dataset = encoded_dataset.add_column(
                 name=self.label_col, column=dataset[self.label_col])
+        if self.keep_video_ids_for_predictions:
+            for id in ['regret_id', "recommendation_id"]:
+                encoded_dataset = encoded_dataset.add_column(
+                    name=id, column=dataset[id])
+
         encoded_dataset.set_format(
             type='torch', columns=encoded_dataset.column_names)
         return encoded_dataset
@@ -202,7 +208,7 @@ class RRUMDatasetArrow():
     def _encode_streaming(self, dataset):
         encoded_dataset = dataset.map(self._encode_on_the_fly, batched=True,
                                       batch_size=self.processing_batch_size, remove_columns=list(set(self._stream_dataset_column_names)-set(self.scalar_features + (
-                                          [self.label_col] if self.label_col else []))))  # IterableDataset doesn't have column_names attribute as normal Dataset
+                                          [self.label_col] if self.label_col else []) + (['regret_id', "recommendation_id"] if self.keep_video_ids_for_predictions else []))))  # IterableDataset doesn't have column_names attribute as normal Dataset
         encoded_dataset = encoded_dataset.with_format("torch")
         return encoded_dataset
 
@@ -211,31 +217,33 @@ class RRUMDatasetArrow():
             encoded_text_type = dict(self.tokenizer(
                 batch[f'regret_{text_type}'], batch[f'recommendation_{text_type}'], padding="max_length", truncation=True, max_length=self.max_length, return_tensors="pt"))
             for encoded_key in encoded_text_type.copy():
-                encoded_text_type[f"{text_type}_{encoded_key}"] = encoded_text_type.pop(encoded_key) if not self._streaming_dataset else encoded_text_type.pop(
+                encoded_text_type[f"{text_type}_{encoded_key}"] = encoded_text_type.pop(encoded_key) if not self.streaming_dataset else encoded_text_type.pop(
                     encoded_key).squeeze(0)  # e.g. input_ids -> title_input_ids so we have separate input_ids for each text_type
             del batch[f'regret_{text_type}']
             del batch[f'recommendation_{text_type}']
             batch.update(encoded_text_type)
         for scalar_feat in self.scalar_features:
             batch[scalar_feat] = torch.as_tensor(
-                batch[scalar_feat]) if not self._streaming_dataset else torch.as_tensor(batch[scalar_feat]).squeeze(0)
+                batch[scalar_feat]) if not self.streaming_dataset else torch.as_tensor(batch[scalar_feat]).squeeze(0)
         if self.label_col:
             batch[self.label_col] = torch.as_tensor(
-                batch[self.label_col]) if not self._streaming_dataset else torch.as_tensor(batch[self.label_col]).squeeze(0)
+                batch[self.label_col]) if not self.streaming_dataset else torch.as_tensor(batch[self.label_col]).squeeze(0)
         return batch
 
 
 class RRUM(pl.LightningModule):
     def __init__(self, text_types, scalar_features, label_col, optimizer_config, cross_encoder_model_name_or_path, device, freeze_policy=None, pos_weight=None):
         super().__init__()
+        self.save_hyperparameters()
         self.text_types = text_types
         self.scalar_features = scalar_features
         self.label_col = label_col
         self.optimizer_config = optimizer_config
+        self.cross_encoder_model_name_or_path = cross_encoder_model_name_or_path
         self.cross_encoders = nn.ModuleDict({})
         for t in self.text_types:
             self.cross_encoders[t] = AutoModelForSequenceClassification.from_pretrained(
-                cross_encoder_model_name_or_path).to(device)
+                self.cross_encoder_model_name_or_path).to(device)
         if freeze_policy is not None:
             for xe in self.cross_encoders.values():
                 for name, param in xe.named_parameters():
