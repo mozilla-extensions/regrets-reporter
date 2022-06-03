@@ -55,7 +55,7 @@ def run_prediction(data, write_preds_to_bq, return_preds, batch_size, trained_mo
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = unifiedmodel.RRUM.load_from_checkpoint(
-        trained_model_checkpoint_path, device=device)
+        trained_model_checkpoint_path, device=device, optimizer_config=None)
 
     pred_dataset = unifiedmodel.RRUMDatasetArrow(data, with_transcript='transcript' in model.text_types, keep_video_ids_for_predictions=True,
                                                  cross_encoder_model_name_or_path=model.cross_encoder_model_name_or_path, label_col=None, processing_batch_size=batch_size, clean_text=False)
