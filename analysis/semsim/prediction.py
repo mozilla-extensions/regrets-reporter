@@ -1,6 +1,8 @@
 import torch
-from torch.utils.data import DataLoader
 import pytorch_lightning as pl
+from torch.utils.data import DataLoader
+from google.cloud import bigquery
+from google.api_core.exceptions import NotFound
 from analysis.semsim import unifiedmodel
 
 
@@ -11,6 +13,32 @@ class RRUMPredictionBQWriter(pl.callbacks.BasePredictionWriter):
         self.bq_predictions_table = bq_predictions_table
         self.model_timestamp = str(model_timestamp).split('.')[0]
         self.print_row_writes = print_row_writes
+        self._prepare_bq_table()
+
+    def _prepare_bq_table(self):
+        # Schema for model prediction results
+        SCHEMA = [
+            bigquery.SchemaField(
+                'regret_id', 'STRING', mode='REQUIRED',
+                description='Regret Video ID'),
+            bigquery.SchemaField(
+                'recommendation_id', 'STRING', mode='REQUIRED',
+                description='Recommendation Video ID'),
+            bigquery.SchemaField(
+                'prediction', 'FLOAT64', mode='REQUIRED',
+                description='Predicted probability of similarity'),
+            bigquery.SchemaField(
+                'model_timestamp', 'TIMESTAMP', mode='REQUIRED',
+                description='When model was loaded'),
+        ]
+        table = bigquery.Table(self.bq_predictions_table, schema=SCHEMA)
+        try:
+            self.bq_client.get_table(table)
+            print(
+                f'BQ table {self.bq_predictions_table} exists, no need to create')
+        except (NotFound):
+            table = self.bq_client.create_table(table)
+            print(f'Creating BQ table {self.bq_predictions_table}')
 
     def write_on_batch_end(
             self, trainer, pl_module, prediction, batch_indices, batch, batch_idx, dataloader_idx):
