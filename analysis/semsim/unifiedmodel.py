@@ -17,12 +17,13 @@ class RRUMDatasetArrow():
                        'recommendation_thumbnail']  # not used atm
     _label_map = {'Acceptable Recommendation': 0, 'Bad recommendation': 1}
 
-    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, do_train_test_split=False, test_size=0.25, seed=42, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
         self._with_transcript = with_transcript
         self.tokenizer = AutoTokenizer.from_pretrained(
             cross_encoder_model_name_or_path)
         self.label_col = label_col
         self.max_length = max_length
+        self.keep_video_ids_for_predictions = keep_video_ids_for_predictions
         self.clean_text = clean_text
         self.processing_batch_size = processing_batch_size
         self.processing_num_proc = multiprocessing.cpu_count(
@@ -195,6 +196,11 @@ class RRUMDatasetArrow():
         if self.label_col:
             encoded_dataset = encoded_dataset.add_column(
                 name=self.label_col, column=dataset[self.label_col])
+        if self.keep_video_ids_for_predictions:
+            for id in ['regret_id', "recommendation_id"]:
+                encoded_dataset = encoded_dataset.add_column(
+                    name=id, column=dataset[id])
+
         encoded_dataset.set_format(
             type='torch', columns=encoded_dataset.column_names)
         return encoded_dataset
@@ -202,7 +208,7 @@ class RRUMDatasetArrow():
     def _encode_streaming(self, dataset):
         encoded_dataset = dataset.map(self._encode_on_the_fly, batched=True,
                                       batch_size=self.processing_batch_size, remove_columns=list(set(self._stream_dataset_column_names)-set(self.scalar_features + (
-                                          [self.label_col] if self.label_col else []))))  # IterableDataset doesn't have column_names attribute as normal Dataset
+                                          [self.label_col] if self.label_col else []) + (['regret_id', "recommendation_id"] if self.keep_video_ids_for_predictions else []))))  # IterableDataset doesn't have column_names attribute as normal Dataset
         encoded_dataset = encoded_dataset.with_format("torch")
         return encoded_dataset
 
