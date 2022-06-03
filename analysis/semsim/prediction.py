@@ -13,6 +13,7 @@ class RRUMPredictionBQWriter(pl.callbacks.BasePredictionWriter):
         self.bq_predictions_table = bq_predictions_table
         self.model_timestamp = str(model_timestamp).split('.')[0]
         self.print_row_writes = print_row_writes
+        self.total_rows_written = 0
         self._prepare_bq_table()
 
     def _prepare_bq_table(self):
@@ -54,6 +55,7 @@ class RRUMPredictionBQWriter(pl.callbacks.BasePredictionWriter):
         errors = self.bq_client.insert_rows_json(
             self.bq_predictions_table, rows_to_insert)
         if errors == []:
+            self.total_rows_written += len(prediction)
             if self.print_row_writes:
                 print(
                     f'{len(prediction)} rows have been added to BQ Table {self.bq_predictions_table}')
@@ -97,5 +99,7 @@ def run_prediction(data, write_preds_to_bq, return_preds, batch_size, trained_mo
                            precision=16, callbacks=pl_callbacks)
     predictions_all_batches = predictor.predict(
         model, dataloaders=pred_loader, return_predictions=return_preds)
+    if write_preds_to_bq:
+        print(f'Wrote in total {prediction_writer.total_rows_written} prediction rows to BigQuery')
     print('Predictions done')
     return predictions_all_batches
