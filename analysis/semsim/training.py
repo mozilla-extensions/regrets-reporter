@@ -9,7 +9,7 @@ import numpy as np
 from scipy.special import expit
 
 
-def run_experiment(data, with_transcript, sample_negative, epochs, batch_size, lr, freeze_policy, cross_encoder_model_name_or_path='cross-encoder/stsb-roberta-base'):
+def run_training(data, with_transcript, sample_negative, epochs, batch_size, lr, freeze_policy, cross_encoder_model_name_or_path='cross-encoder/stsb-roberta-base'):
     exp_data = data.copy(deep=True)
     if not with_transcript:
         exp_data = exp_data[exp_data.regret_transcript.isnull(
