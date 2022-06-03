@@ -6,8 +6,12 @@ yt_data_table_id = 'regrets-reporter-dev.regrets_reporter_analysis.yt_api_data_c
 language_table_id = 'regrets-reporter-dev.ra_can_read.langs'
 pairs_table_id = 'regrets-reporter-dev.regrets_reporter_analysis.pairs'
 
+
 # Get labelled pairs in format for training bi-encoder model.
 def get_be_labeled_pairs(context, get_only_non_english_data=True, return_data_type='dataframe'):
+    if return_data_type not in ['dataframe', 'arrow', 'arrow_streaming']:
+        raise ValueError(
+            f'return_data_type={return_data_type} is not allowed. Only "dataframe", "arrow" and "arrow_streaming" is allowed.')
     _query = f'''
         SELECT
             regret_id,
@@ -105,6 +109,9 @@ def get_be_labeled_pairs(context, get_only_non_english_data=True, return_data_ty
 
 # Get video pairs in format for predicting with the bi-encoder model.
 def get_be_predict_data(context, with_transcript, get_only_non_english_data=True, return_data_type='dataframe', sample_rate=None):
+    if return_data_type not in ['dataframe', 'arrow', 'arrow_streaming']:
+        raise ValueError(
+            f'return_data_type={return_data_type} is not allowed. Only "dataframe", "arrow" and "arrow_streaming" is allowed.')
     _query = f'''
         WITH data_t AS (
         SELECT
@@ -206,6 +213,9 @@ def get_be_predict_data(context, with_transcript, get_only_non_english_data=True
 
 # Get labelled pairs in format for training unified cross-encoder model.
 def get_xe_labeled_pairs(context, get_only_english_data=False, return_data_type='dataframe'):
+    if return_data_type not in ['dataframe', 'arrow', 'arrow_streaming']:
+        raise ValueError(
+            f'return_data_type={return_data_type} is not allowed. Only "dataframe", "arrow" and "arrow_streaming" is allowed.')
     _query = f'''
         SELECT
             regret_id,
@@ -258,6 +268,9 @@ def get_xe_labeled_pairs(context, get_only_english_data=False, return_data_type=
 
 # Get video pairs in format for predicting with the unified cross-encoder model.
 def get_xe_predict_data(context, with_transcript, get_only_english_data=False, return_data_type='dataframe', sample_rate=None):
+    if return_data_type not in ['dataframe', 'arrow', 'arrow_streaming']:
+        raise ValueError(
+            f'return_data_type={return_data_type} is not allowed. Only "dataframe", "arrow" and "arrow_streaming" is allowed.')
     _query = f'''
         SELECT
             regret_id,
