@@ -51,7 +51,7 @@ class RRUMDatasetArrow():
             self.dataset = datasets.Dataset(data)
         else:
             raise ValueError(
-                f'Type of data is {type(data)} when pd.DataFrame, pyarrow.Table or generator of pyarrow.RecordBatch is allowed')
+                f'Type of data is {type(data)} when pd.DataFrame, pyarrow.Table, google.cloud.bigquery_storage_v1.reader.ReadRowsIterable or generator of pyarrow.RecordBatch is allowed')
 
         # PREPROCESS DATASET
         self._preprocess()
@@ -111,7 +111,7 @@ class RRUMDatasetArrow():
 
     def _streaming_generate_examples(self, iterable):
         id_ = 0
-        # TODO: make sure GeneratorType is arrow iterable
+        # TODO: make sure GeneratorType is pyarrow.RecordBatch
         if isinstance(iterable, types.GeneratorType):
             for examples in iterable:
                 for ex in examples.to_pylist():
