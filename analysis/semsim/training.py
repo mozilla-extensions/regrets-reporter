@@ -27,7 +27,7 @@ def run_training(data, with_transcript, sample_negative, epochs, batch_size, lr,
     del exp_data
 
     train_dataset = unifiedmodel.RRUMDatasetArrow(
-        train_data, with_transcript=with_transcript, do_train_test_split=True, cross_encoder_model_name_or_path=cross_encoder_model_name_or_path)
+        train_data, with_transcript=with_transcript, do_train_test_split=True, cross_encoder_model_name_or_path=cross_encoder_model_name_or_path, processing_num_proc=1)
 
     train_loader = DataLoader(train_dataset.train_dataset, shuffle=True,
                               batch_size=batch_size, num_workers=0, pin_memory=False)
@@ -62,7 +62,7 @@ def run_training(data, with_transcript, sample_negative, epochs, batch_size, lr,
     trainer.fit(model, train_loader, val_loader)
 
     test_dataset = unifiedmodel.RRUMDatasetArrow(
-        test_data, with_transcript, label_col=None)
+        test_data, with_transcript, label_col=None, cross_encoder_model_name_or_path=cross_encoder_model_name_or_path, processing_num_proc=1)
     test_loader = DataLoader(test_dataset.test_dataset, shuffle=False,
                              batch_size=128, num_workers=0, pin_memory=False)
     predictor = pl.Trainer(devices="auto", accelerator="auto", precision=16)

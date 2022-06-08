@@ -1,4 +1,5 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from google.cloud.bigquery_storage_v1.reader import ReadRowsIterable
 import datasets
 import pandas as pd
 import pyarrow
@@ -39,9 +40,9 @@ class RRUMDatasetArrow():
         self.streaming_dataset = False
         if isinstance(data, pd.DataFrame):
             self.dataset = datasets.Dataset.from_pandas(data)
-        elif isinstance(data, types.GeneratorType):
+        elif isinstance(data, ReadRowsIterable) or isinstance(data, types.GeneratorType):
             examples_iterable = datasets.iterable_dataset.ExamplesIterable(
-                self._streaming_generate_examples, {"arrow_iterable": data})
+                self._streaming_generate_examples, {"iterable": data})
             self.dataset = datasets.IterableDataset(examples_iterable)
             self._stream_dataset_column_names = list(
                 next(iter(self.dataset)).keys())
@@ -50,7 +51,7 @@ class RRUMDatasetArrow():
             self.dataset = datasets.Dataset(data)
         else:
             raise ValueError(
-                f'Type of data is {type(data)} when pd.DataFrame, pyarrow.Table or generator of pyarrow.RecordBatch is allowed')
+                f'Type of data is {type(data)} when pd.DataFrame, pyarrow.Table, google.cloud.bigquery_storage_v1.reader.ReadRowsIterable or generator of pyarrow.RecordBatch is allowed')
 
         # PREPROCESS DATASET
         self._preprocess()
@@ -108,11 +109,17 @@ class RRUMDatasetArrow():
             return next(iter(self.dataset))
         return self.dataset[index]
 
-    def _streaming_generate_examples(self, arrow_iterable):
+    def _streaming_generate_examples(self, iterable):
         id_ = 0
-        for examples in arrow_iterable:
-            for ex in examples.to_pylist():
-                yield id_, ex
+        # TODO: make sure GeneratorType is pyarrow.RecordBatch
+        if isinstance(iterable, types.GeneratorType):
+            for examples in iterable:
+                for ex in examples.to_pylist():
+                    yield id_, ex
+                    id_ += 1
+        elif isinstance(iterable, ReadRowsIterable):
+            for ex in iterable:
+                yield id_, {key: ex[key].as_py() for key in ex}
                 id_ += 1
 
     def _preprocess(self):
@@ -169,7 +176,7 @@ class RRUMDatasetArrow():
             elif isinstance(example[feat], str):
                 example[feat] = ' '.join(example[feat].split()[
                                          :self.max_length]).strip()
-            elif isinstance(example[feat], None):
+            elif example[feat] is None:
                 return None
             else:
                 raise ValueError(

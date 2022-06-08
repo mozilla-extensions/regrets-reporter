@@ -1,4 +1,5 @@
 import pickle
+from google.cloud.bigquery_storage import types
 
 labeled_data_table_id = 'regrets-reporter-dev.ra_can_write.labelled_ra'
 embeddings_table_id = 'regrets-reporter-dev.regrets_reporter_analysis.derived_fields_v1'
@@ -321,6 +322,32 @@ def get_xe_predict_data(context, with_transcript, get_only_english_data=False, r
             f'return_data_type={return_data_type} is not allowed. Only "dataframe", "arrow" and "arrow_streaming" is allowed.')
 
     return data
+
+
+# Get video pairs in format for predicting with the unified cross-encoder model.
+def get_xe_predict_data_table_streaming(context, dataset_name, table_name, with_transcript, get_only_english_data=False):
+    table = f"projects/{context['project_id']}/datasets/{dataset_name}/tables/{table_name}"
+
+    requested_session = types.ReadSession()
+    requested_session.table = table
+    requested_session.data_format = types.DataFormat.ARROW
+
+    if with_transcript:
+        row_restriction = '(recommendation_transcript IS NOT NULL AND regret_transcript IS NOT NULL)'
+    else:
+        row_restriction = '(recommendation_transcript IS NULL OR regret_transcript IS NULL)'
+    if get_only_english_data:
+        row_restriction += ' AND (recommendation_description_lang = "en" AND regret_description_lang = "en")'
+    requested_session.read_options.row_restriction = row_restriction
+
+    parent = f"projects/{context['project_id']}"
+    session = context['bq_storage_client'].create_read_session(
+        parent=parent,
+        read_session=requested_session,
+        max_stream_count=1,
+    )
+    reader = context['bq_storage_client'].read_rows(session.streams[0].name)
+    return reader.rows(session)
 
 
 def save_data(data, pickle_file, context):
