@@ -128,7 +128,7 @@ class RRUMDatasetArrow():
                 lambda example: example['regret_transcript'] is not None and example['recommendation_transcript'] is not None)
         else:
             self.dataset = self.dataset.filter(
-                lambda example: example['regret_transcript'] is None and example['recommendation_transcript'] is None)
+                lambda example: example['regret_transcript'] is None or example['recommendation_transcript'] is None)
         if self.label_col:
             self.dataset = self.dataset.filter(
                 lambda example: example[self.label_col] in self._label_map.keys())
