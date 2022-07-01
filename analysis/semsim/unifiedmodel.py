@@ -17,13 +17,15 @@ class RRUMDatasetArrow():
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
 
-    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", label_map=None, max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", label_map=None, balance_label_counts=False, max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
         self._with_transcript = with_transcript
         self.tokenizer = AutoTokenizer.from_pretrained(
             cross_encoder_model_name_or_path)
         self.label_col = label_col
         self.label_map = label_map
+        self.balance_label_counts = balance_label_counts
         self.max_length = max_length
+        self.seed = seed
         self.keep_video_ids_for_predictions = keep_video_ids_for_predictions
         self.clean_text = clean_text
         self.processing_batch_size = processing_batch_size
@@ -73,7 +75,7 @@ class RRUMDatasetArrow():
             # dataset into train_dataset and/or test_dataset
             if do_train_test_split:
                 ds = self.dataset.train_test_split(
-                    test_size=test_size, shuffle=True, seed=seed, stratify_by_column=self.label_col)
+                    test_size=test_size, shuffle=True, seed=self.seed, stratify_by_column=self.label_col)
                 self.train_dataset = ds['train']
                 self.test_dataset = ds['test']
                 print(
@@ -151,6 +153,18 @@ class RRUMDatasetArrow():
 
         self.dataset = self.dataset.filter(lambda example: not any(x in [None, ""] for x in [
                                            example[key] for key in self._text_features + self.scalar_features + ([self.label_col] if self.label_col else [])]))  # dropna
+
+        if self.balance_label_counts and self.label_col and not self.streaming_dataset:
+            label_datasets = {}
+            for label in list(self.label_map.values()):
+                label_dataset = self.dataset.filter(
+                    lambda example: example[self.label_col] == label)
+                label_datasets[len(label_dataset)] = label_dataset
+            min_label_count = min(label_datasets)
+            sampled_datasets = [dataset.train_test_split(train_size=min_label_count, shuffle=True, seed=self.seed)[
+                'train'] if len(dataset) != min_label_count else dataset for dataset in label_datasets.values()]
+            self.dataset = datasets.concatenate_datasets(sampled_datasets)
+
         if self.clean_text:
             self.dataset = self.dataset.map(self._clean_text, batched=not self.streaming_dataset,
                                             batch_size=self.processing_batch_size)
