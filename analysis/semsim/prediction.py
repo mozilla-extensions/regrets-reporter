@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 from torch.utils.data import DataLoader
 from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
-from analysis.semsim import unifiedmodel
+from analysis.semsim import unifiedmodel, data
 
 
 class RRUMPredictionBQWriter(pl.callbacks.BasePredictionWriter):
@@ -104,3 +104,50 @@ def run_prediction(data, write_preds_to_bq, return_preds, batch_size, trained_mo
             f'Wrote in total {prediction_writer.total_rows_written} prediction rows to BigQuery')
     print('Predictions done')
     return predictions_all_batches
+
+
+def create_filtered_predict_table(read_predictions_filtered_table, read_predictions_table, save_predictions_table, bq_client):
+    _query = f'''
+        CREATE OR REPLACE TABLE `regrets-reporter-dev.regrets_reporter_analysis.{read_predictions_filtered_table}` AS
+        SELECT t1.*
+        FROM `regrets-reporter-dev.regrets_reporter_analysis.{read_predictions_table}` t1
+        LEFT JOIN `{save_predictions_table}` t2 ON t2.regret_id = t1.regret_id and t2.recommendation_id = t1.recommendation_id
+        WHERE t2.regret_id IS NULL and t2.recommendation_id IS NULL
+    '''
+    res = bq_client.query(
+        _query
+    ).result()
+    return res
+
+
+def run_streaming_prediction(read_predictions_table, read_predictions_filtered_table, save_predictions_table, with_transcript, batch_size, trained_model_checkpoint_path, project_id, bq_client, bq_storage_client, bq_model_timestamp):
+    context = {
+        'project_id': project_id,
+        'bq_client': bq_client,
+        'bq_storage_client': bq_storage_client,
+    }
+    stream_from_table = read_predictions_table
+    continue_predict = True
+    prediction_run = 0
+    while continue_predict:
+        print(f'Start prediction run {prediction_run}')
+        pred_data = data.get_xe_predict_data_table_streaming(
+            context, dataset_name='regrets_reporter_analysis', table_name=stream_from_table, with_transcript=with_transcript, get_only_english_data=False)
+        try:
+            predictions_all_batches = run_prediction(pred_data, write_preds_to_bq=True, return_preds=False, batch_size=batch_size, trained_model_checkpoint_path=trained_model_checkpoint_path,
+                                                     bq_client=bq_client, bq_predictions_table=save_predictions_table, bq_model_timestamp=bq_model_timestamp)
+            continue_predict = False
+            print('Streaming prediction finished for all the data')
+        except Exception as e:
+            if 'session expired' in str(e):
+                print(str(e))
+                create_filtered_predict_table(
+                    read_predictions_filtered_table, read_predictions_table, save_predictions_table, bq_client)
+                stream_from_table = read_predictions_filtered_table
+                prediction_run += 1
+                print('Streaming prediction got session experired exception (BQ 6 hour stream session limit), created new filtered predict table to continue predicting with new session')
+            else:
+                print(str(e))
+                print(
+                    'Streaming prediction got unexpected exception, stopped predicting')
+                continue_predict = False
