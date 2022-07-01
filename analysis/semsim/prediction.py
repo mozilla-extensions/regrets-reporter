@@ -73,7 +73,7 @@ class RRUMPredictionStreamingProgressBar(pl.callbacks.TQDMProgressBar):
         self.predict_progress_bar.update(1)
 
 
-def run_prediction(data, write_preds_to_bq, return_preds, batch_size, trained_model_checkpoint_path, bq_client=None, bq_predictions_table=None, bq_model_timestamp=None):
+def run_prediction(data, label_map, write_preds_to_bq, return_preds, batch_size, trained_model_checkpoint_path, bq_client=None, bq_predictions_table=None, bq_model_timestamp=None):
     pl_callbacks = []
     if write_preds_to_bq:
         if not bq_client or not bq_predictions_table or not bq_model_timestamp:
@@ -87,7 +87,7 @@ def run_prediction(data, write_preds_to_bq, return_preds, batch_size, trained_mo
     model = unifiedmodel.RRUM.load_from_checkpoint(
         trained_model_checkpoint_path, device=device, optimizer_config=None)
 
-    pred_dataset = unifiedmodel.RRUMDatasetArrow(data, with_transcript='transcript' in model.text_types, keep_video_ids_for_predictions=True,
+    pred_dataset = unifiedmodel.RRUMDatasetArrow(data, label_map=label_map, with_transcript='transcript' in model.text_types, keep_video_ids_for_predictions=True,
                                                  cross_encoder_model_name_or_path=model.cross_encoder_model_name_or_path, label_col=None, processing_batch_size=batch_size, clean_text=False)
     if pred_dataset.streaming_dataset:
         pl_callbacks.append(RRUMPredictionStreamingProgressBar())
@@ -100,6 +100,7 @@ def run_prediction(data, write_preds_to_bq, return_preds, batch_size, trained_mo
     predictions_all_batches = predictor.predict(
         model, dataloaders=pred_loader, return_predictions=return_preds)
     if write_preds_to_bq:
-        print(f'Wrote in total {prediction_writer.total_rows_written} prediction rows to BigQuery')
+        print(
+            f'Wrote in total {prediction_writer.total_rows_written} prediction rows to BigQuery')
     print('Predictions done')
     return predictions_all_batches
