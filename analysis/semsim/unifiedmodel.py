@@ -16,14 +16,16 @@ class RRUMDatasetArrow():
     scalar_features = ['channel_sim']
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
-    _label_map = {'Acceptable Recommendation': 0, 'Bad recommendation': 1}
 
-    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", label_map=None, balance_label_counts=False, max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
         self._with_transcript = with_transcript
         self.tokenizer = AutoTokenizer.from_pretrained(
             cross_encoder_model_name_or_path)
         self.label_col = label_col
+        self.label_map = label_map
+        self.balance_label_counts = balance_label_counts
         self.max_length = max_length
+        self.seed = seed
         self.keep_video_ids_for_predictions = keep_video_ids_for_predictions
         self.clean_text = clean_text
         self.processing_batch_size = processing_batch_size
@@ -44,8 +46,9 @@ class RRUMDatasetArrow():
             examples_iterable = datasets.iterable_dataset.ExamplesIterable(
                 self._streaming_generate_examples, {"iterable": data})
             self.dataset = datasets.IterableDataset(examples_iterable)
+            self._stream_dataset_example = next(iter(self.dataset))
             self._stream_dataset_column_names = list(
-                next(iter(self.dataset)).keys())
+                self._stream_dataset_example.keys())
             self.streaming_dataset = True
         elif isinstance(data, pyarrow.Table):
             self.dataset = datasets.Dataset(data)
@@ -72,7 +75,7 @@ class RRUMDatasetArrow():
             # dataset into train_dataset and/or test_dataset
             if do_train_test_split:
                 ds = self.dataset.train_test_split(
-                    test_size=test_size, shuffle=True, seed=seed, stratify_by_column=self.label_col)
+                    test_size=test_size, shuffle=True, seed=self.seed, stratify_by_column=self.label_col)
                 self.train_dataset = ds['train']
                 self.test_dataset = ds['test']
                 print(
@@ -130,17 +133,38 @@ class RRUMDatasetArrow():
             self.dataset = self.dataset.filter(
                 lambda example: example['regret_transcript'] is None or example['recommendation_transcript'] is None)
         if self.label_col:
-            self.dataset = self.dataset.filter(
-                lambda example: example[self.label_col] in self._label_map.keys())
             if self.streaming_dataset:
-                # cast_column method had issues with streaming dataset
-                self.dataset = self.dataset.map(self._streaming_rename_labels)
+                if self.label_col in self._stream_dataset_column_names and isinstance(self._stream_dataset_example[self.label_col], str):
+                    if not self.label_map:
+                        raise ValueError(
+                            f'"label_map" dict was not provided and is needed to encode string labels for streaming datasets')
+                    # cast_column method had issues with streaming dataset
+                    self.dataset = self.dataset.map(
+                        self._streaming_rename_labels)
             else:
-                self.dataset = self.dataset.cast_column(self.label_col, datasets.ClassLabel(
-                    num_classes=len(self._label_map), names=list(self._label_map.keys())))
+                if self.dataset.features[self.label_col].dtype == 'string':
+                    if not self.label_map:
+                        self.label_map = {k: v for v, k in enumerate(
+                            self.dataset.unique(self.label_col))}
+                    self.dataset = self.dataset.filter(
+                        lambda example: example[self.label_col] in self.label_map.keys())
+                    self.dataset = self.dataset.cast_column(self.label_col, datasets.ClassLabel(
+                        num_classes=len(self.label_map), names=list(self.label_map.keys())))
 
         self.dataset = self.dataset.filter(lambda example: not any(x in [None, ""] for x in [
-                                           example[key] for key in self._text_features + self.scalar_features]))  # dropna
+                                           example[key] for key in self._text_features + self.scalar_features + ([self.label_col] if self.label_col else [])]))  # dropna
+
+        if self.balance_label_counts and self.label_col and not self.streaming_dataset:
+            label_datasets = {}
+            for label in list(self.label_map.values()):
+                label_dataset = self.dataset.filter(
+                    lambda example: example[self.label_col] == label)
+                label_datasets[len(label_dataset)] = label_dataset
+            min_label_count = min(label_datasets)
+            sampled_datasets = [dataset.train_test_split(train_size=min_label_count, shuffle=True, seed=self.seed)[
+                'train'] if len(dataset) != min_label_count else dataset for dataset in label_datasets.values()]
+            self.dataset = datasets.concatenate_datasets(sampled_datasets)
+
         if self.clean_text:
             self.dataset = self.dataset.map(self._clean_text, batched=not self.streaming_dataset,
                                             batch_size=self.processing_batch_size)
@@ -150,10 +174,10 @@ class RRUMDatasetArrow():
     def _streaming_rename_labels(self, example):
         # rename labels according to label_map if not already correct labels
         if isinstance(example[self.label_col], list):
-            example[self.label_col] = [self._label_map.get(
-                ex, None) for ex in example[self.label_col] if ex not in self._label_map.values()]
-        elif isinstance(example[self.label_col], str) and example[self.label_col] not in self._label_map.values():
-            example[self.label_col] = self._label_map.get(
+            example[self.label_col] = [self.label_map.get(
+                ex, None) for ex in example[self.label_col] if ex not in self.label_map.values()]
+        elif isinstance(example[self.label_col], str) and example[self.label_col] not in self.label_map.values():
+            example[self.label_col] = self.label_map.get(
                 example[self.label_col], None)
         else:
             raise ValueError(
