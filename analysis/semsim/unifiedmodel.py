@@ -263,7 +263,7 @@ class RRUMDatasetArrow():
 
 
 class RRUM(pl.LightningModule):
-    def __init__(self, text_types, scalar_features, label_col, optimizer_config, cross_encoder_model_name_or_path, device, freeze_policy=None, pos_weight=None):
+    def __init__(self, text_types, scalar_features, label_col, optimizer_config, cross_encoder_model_name_or_path, freeze_policy=None, pos_weight=None):
         super().__init__()
         self.save_hyperparameters()
         self.text_types = text_types
@@ -274,14 +274,14 @@ class RRUM(pl.LightningModule):
         self.cross_encoders = nn.ModuleDict({})
         for t in self.text_types:
             self.cross_encoders[t] = AutoModelForSequenceClassification.from_pretrained(
-                self.cross_encoder_model_name_or_path).to(device)
+                self.cross_encoder_model_name_or_path)
         if freeze_policy is not None:
             for xe in self.cross_encoders.values():
                 for name, param in xe.named_parameters():
                     if freeze_policy(name):
                         param.requires_grad = False
         cross_encoder_out_features = list(self.cross_encoders.values())[0](
-            torch.randint(1, 2, (1, 2)).to(device)).logits.size(dim=1)
+            torch.randint(1, 2, (1, 2))).logits.size(dim=1)
         self.lin1 = nn.Linear(len(self.cross_encoders) * cross_encoder_out_features +
                               len(self.scalar_features), 1)
         self.ac_metric = torchmetrics.Accuracy()
@@ -296,11 +296,6 @@ class RRUM(pl.LightningModule):
             self.loss = nn.BCEWithLogitsLoss()
 
     def forward(self, x):
-        # for some reason the prediction call wraps the inputs in a length-1 list
-        if isinstance(x, list):
-            if (len(x) != 1):
-                print("BAD!!!")
-            x = x[0]
         cross_logits = {}
         for f in self.text_types:
             inputs = {key.split(f'{f}_')[1]: x[key]

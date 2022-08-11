@@ -31,18 +31,15 @@ def run_training(data, label_map, balance_label_counts, with_transcript, epochs,
     val_loader = DataLoader(train_dataset.test_dataset, shuffle=False,
                             batch_size=batch_size, num_workers=0, pin_memory=False)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     model = unifiedmodel.RRUM(
         text_types=train_dataset.text_types,
         scalar_features=train_dataset.scalar_features,
         label_col=train_dataset.label_col,
         optimizer_config=(lambda x: torch.optim.Adam(x.parameters(), lr=lr)),
         cross_encoder_model_name_or_path=cross_encoder_model_name_or_path,
-        device=device,
         freeze_policy=freeze_policy,
         pos_weight=None
-    ).to(device)
+    )
 
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         save_top_k=1,
