@@ -86,8 +86,8 @@ def run_prediction(data, write_preds_to_bq, return_preds, batch_size, trained_mo
     model = unifiedmodel.RRUM.load_from_checkpoint(
         trained_model_checkpoint_path, optimizer_config=None)
 
-    pred_dataset = unifiedmodel.RRUMDatasetArrow(data, with_transcript='transcript' in model.text_types, keep_video_ids_for_predictions=True,
-                                                 cross_encoder_model_name_or_path=model.cross_encoder_model_name_or_path, label_col=None, processing_batch_size=batch_size, clean_text=False)
+    pred_dataset = unifiedmodel.RRUMDataset(data, with_transcript='transcript' in model.text_types, keep_video_ids_for_predictions=True,
+                                            cross_encoder_model_name_or_path=model.cross_encoder_model_name_or_path, label_col=None, processing_batch_size=batch_size, clean_text=False)
     if pred_dataset.streaming_dataset:
         pl_callbacks.append(RRUMPredictionStreamingProgressBar())
 

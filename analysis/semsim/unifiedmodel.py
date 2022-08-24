@@ -12,12 +12,12 @@ import multiprocessing
 from .text_cleaning import clean_text_funcs
 
 
-class RRUMDatasetArrow():
+class RRUMDataset():
     scalar_features = ['channel_sim']
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
 
-    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", label_map=None, balance_label_counts=False, max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=None):
+    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col="label", label_map=None, balance_label_counts=False, max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, processing_batch_size=1000, processing_num_proc=1):
         self._with_transcript = with_transcript
         self.tokenizer = AutoTokenizer.from_pretrained(
             cross_encoder_model_name_or_path)

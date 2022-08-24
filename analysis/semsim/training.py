@@ -9,7 +9,7 @@ import numpy as np
 from scipy.special import expit
 
 
-def run_training(data, label_map, balance_label_counts, with_transcript, epochs, batch_size, lr, freeze_policy, cross_encoder_model_name_or_path):
+def run_training(data, label_map, balance_label_counts, with_transcript, epochs, batch_size, lr, freeze_policy, optimizer_config, cross_encoder_model_name_or_path):
     exp_data = data.copy(deep=True)
     if not with_transcript:
         exp_data = exp_data[exp_data.regret_transcript.isnull(
@@ -23,7 +23,7 @@ def run_training(data, label_map, balance_label_counts, with_transcript, epochs,
         exp_data, test_size=0.25, stratify=exp_data.label)
     del exp_data
 
-    train_dataset = unifiedmodel.RRUMDatasetArrow(
+    train_dataset = unifiedmodel.RRUMDataset(
         train_data, label_map=label_map, balance_label_counts=balance_label_counts, with_transcript=with_transcript, do_train_test_split=True, cross_encoder_model_name_or_path=cross_encoder_model_name_or_path, processing_num_proc=1)
 
     train_loader = DataLoader(train_dataset.train_dataset, shuffle=True,
@@ -35,7 +35,7 @@ def run_training(data, label_map, balance_label_counts, with_transcript, epochs,
         text_types=train_dataset.text_types,
         scalar_features=train_dataset.scalar_features,
         label_col=train_dataset.label_col,
-        optimizer_config=(lambda x: torch.optim.Adam(x.parameters(), lr=lr)),
+        optimizer_config=optimizer_config,
         cross_encoder_model_name_or_path=cross_encoder_model_name_or_path,
         freeze_policy=freeze_policy,
         pos_weight=None
@@ -55,10 +55,10 @@ def run_training(data, label_map, balance_label_counts, with_transcript, epochs,
 
     trainer.fit(model, train_loader, val_loader)
 
-    test_dataset = unifiedmodel.RRUMDatasetArrow(
+    test_dataset = unifiedmodel.RRUMDataset(
         test_data, with_transcript=with_transcript, label_col=None, cross_encoder_model_name_or_path=cross_encoder_model_name_or_path, processing_num_proc=1)
     test_loader = DataLoader(test_dataset.test_dataset, shuffle=False,
-                             batch_size=128, num_workers=0, pin_memory=False)
+                             batch_size=batch_size, num_workers=0, pin_memory=False)
     predictor = pl.Trainer(devices="auto", accelerator="auto", precision=16)
     predictions_all_batches = predictor.predict(model, dataloaders=test_loader)
     predictions = [expit(x) for x in np.hstack(
