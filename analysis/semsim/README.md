@@ -54,3 +54,71 @@ An example code for predicting with trained semantic similarity model can be fou
 ### BigQuery data fetching code
 
 RegretsReporter project specific code for fetching model training and prediction data from Google BigQuery can be found from `data.py` file.
+
+## Input data format for the model
+
+Generally, input data is pairs of features from two YouTube videos. At RegretsReporter project, those pairs use prefixes "regret" and "recommendation". A regret means a video user regretted seeing (don't want to see similar videos anymore) and recommendation means a video YouTube recommended to the user after the regret.
+
+As explained earlier, model's input data loading and preprocessing is handled with the `RRUMDataset` class. The input data for the `RRUMDataset` is expected to have following feature columns:
+- `regret_title` string for the title of the regret video
+- `recommendation_title` string for the title of the recommendation video
+- `regret_description` string for the description of the regret video
+- `recommendation_description` string for the description of the recommendation video
+- `regret_transcript` string for the transcript of the regret video
+- `recommendation_transcript` string for the transcript of the recommendation video
+- `channel_sim` int for regret and recommendation channel equality (boolean)
+
+You can modify the `RRUMDataset` class code to work with different data formats and features.
+
+`RRUMDataset` class will process the data into correct format for the `RRUM` model so it's adviced to use it. If you want to pass data directly to the `RRUM` model it expects each example to be a dict of PyTorch Tensor features. You can define used text features with the `RRUM` class's `text_types` parameter which should be a list of main text feature names, for example `['title', 'description', 'transcript']` as we had pairs of those features. Text features need to be tokenized which is automatically done at the `RRUMDataset`. Tokenized text features are expected to have following format of key names in the dict: text type name as prefix followed by underscore and tokenizer's output names, for example for the `title` feature the tokenized version should have `title_input_ids` and `title_attention_mask` keys since most tokenizers output `input_ids` and `attention_mask`. You can define used scalar features with the `RRUM` class's `scalar_features` parameter which should be a list of scalar feature names, for example `['channel_sim']` as we had only channel equality as a scalar feature. If you have labels for the training phase of the model, you can define used label key name in the dict with the `RRUM` class's `label_col` parameter.
+As an example, an input dict for the `RRUM` model could look like this:
+```python
+{'title_input_ids': tensor([[     0,   1529,  43833,  ...,      1,      1,      1],
+         [     0,   1342,  47515,  ...,      1,      1,      1],
+         [     0,    581,    911,  ...,      1,      1,      1],
+         ...,
+         [     0,  88902,     12,  ...,      1,      1,      1],
+         [     0,    335,  96222,  ...,      1,      1,      1],
+         [     0, 196458,      9,  ...,      1,      1,      1]]),
+ 'title_attention_mask': tensor([[1, 1, 1,  ..., 0, 0, 0],
+         [1, 1, 1,  ..., 0, 0, 0],
+         [1, 1, 1,  ..., 0, 0, 0],
+         ...,
+         [1, 1, 1,  ..., 0, 0, 0],
+         [1, 1, 1,  ..., 0, 0, 0],
+         [1, 1, 1,  ..., 0, 0, 0]]),
+ 'description_input_ids': tensor([[     0,  20625,   6863,  ...,   2692,     12,      2],
+         [     0,   2646,  10091,  ...,     70,    509,      2],
+         [     0, 127402, 159392,  ...,     12,   1621,      2],
+         ...,
+         [     0,  98065,    613,  ...,      5,    118,      2],
+         [     0,    468,    618,  ...,   1574,      5,      2],
+         [     0,  93807,    397,  ...,     10,   4127,      2]]),
+ 'description_attention_mask': tensor([[1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1],
+         ...,
+         [1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1]]),
+ 'transcript_input_ids': tensor([[     0,    378, 158257,  ...,  56530,    341,      2],
+         [     0,   1650,     83,  ...,     28,    378,      2],
+         [     0,    136,  24145,  ...,  56904,  10160,      2],
+         ...,
+         [     0,  53389,    378,  ...,      8, 151050,      2],
+         [     0,  12960,     88,  ...,   3478,  72856,      2],
+         [     0,   1439, 130365,  ...,    594,  14408,      2]]),
+ 'transcript_attention_mask': tensor([[1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1],
+         ...,
+         [1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1],
+         [1, 1, 1,  ..., 1, 1, 1]]),
+ 'channel_sim': tensor([0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 1, 0, 0, 1, 1, 0]),
+ 'label': tensor([0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0,
+         1, 0, 1, 1, 0, 1, 1, 0])
+}
+```
+
