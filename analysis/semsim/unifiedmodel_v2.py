@@ -20,10 +20,9 @@ class RRUMDatasetV2():
     _image_features = ['regret_thumbnail',
                        'recommendation_thumbnail']  # not used atm
 
-    def __init__(self, data, with_transcript, cross_encoder_model_name_or_path, label_col='label', label_map=None, balance_label_counts=False, max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, use_scalar_features=True, use_channel_embeddings=False, processing_batch_size=1000, processing_num_proc=1):
+    def __init__(self, data, with_transcript, model_name_or_path, label_col='label', label_map=None, balance_label_counts=False, max_length=128, do_train_test_split=False, test_size=0.25, seed=42, keep_video_ids_for_predictions=False, encode_on_the_fly=False, clean_text=False, use_scalar_features=True, use_channel_embeddings=False, processing_batch_size=1000, processing_num_proc=1):
         self._with_transcript = with_transcript
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            cross_encoder_model_name_or_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
         self.label_col = label_col
         self.label_map = label_map
         self.balance_label_counts = balance_label_counts
