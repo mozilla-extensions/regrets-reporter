@@ -43,6 +43,29 @@ The `RRUM` class holds our modeling code and is actually a PyTorch Lightning `Li
 - `freeze_policy` function for configuring the freezing of pretrained transformer (cross-encoder) layers for model training, by default `None` so no freezing. A simple example of freezing every layer except the last classification layer of cross-encoder: `(lambda x: 'classifier' not in x)`.
 - `pos_weight` int for setting the weight of positive label examples in PyTorch's `BCEWithLogitsLoss` loss function, by default `None` so no weight. Read more about it from PyTorch's [documentation](https://pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html).
 
+### Semantic similarity model V2 code
+
+Code for the semantic similarity model V2 and its data loading can be found from `unifiedmodel_v2.py` file. The file contains two classes: `RRUMDatasetV2` for data loading and `RRUMV2` for the model.
+
+The V2 model includes three major architectural changes compared to the original V1 model:
+1. Cross-encoder transformers have been replaced by just a transformer with a pooling layer. The new transformer takes two texts as an input (like the V1 model's cross-encoders) and outputs a pooled embedding. Basically, it's the same cross-encoder as in V1 model but its last classification layer has been remove so we get the pooled embedding as an output to be used further at our unified model V2.
+2. The last linear layer has been replaced by a MLP (multilayer perceptron). Thanks to the change number 1, transformers now output embeddings which include a lot more information than just a single scalar value (as in V1 cross-encoder's output) so it made sense to feed those embeddings through a MLP instead of just a single linear layer.
+3. There is an option to include YouTube channel embeddings as a feature in the V2 model. Channel embeddings must be pre-computed with some method and included in the training dataset so they are not learned on the fly during the unified model training. For example, we have trained a channel embedding model with Node2Vec method since we had channel co-recommendations network graph data. With unified model V2, you can use channel embeddings, or keep using V1's channel similarity scalar, or use both together, or use neither of them at all.
+
+#### RRUMDatasetV2 class
+
+Key changes to the V1's `RRUMDataset` class are:
+- `cross_encoder_model_name_or_path` input parameter has been renamed to `model_name_or_path` as we don't really use cross-encoders anymore
+- New input parameter `use_scalar_features` boolean to choose whether you want to include scalar features in your dataset, by default `True`
+- New input parameter `use_channel_embeddings` boolean to choose whether you want to include channel embedding features in your dataset, by default `False`
+
+#### RRUMV2 class
+
+Key changes to the V1's `RRUM` class are:
+- `cross_encoder_model_name_or_path` input parameter has been renamed to `model_name_or_path` as we don't really use cross-encoders anymore
+- New input parameter `channel_embeddings` list for defining used channel embedding features in the model. At our case, `channel_embeddings` is already defined as variable inside `RRUMDatasetV2` class and can be set for `RRUMV2` from there.
+- New input parameter `channel_embedding_dim` int to set the channel embedding dimension used in, for example, linear layers initialization, by default `None`. GIven dimension must actually match with channel embedding dimension in training data.
+
 ### Model training code
 
 An example code for the training of the semantic similarity model can be found from `training.py` file. The code uses PyTorch Lightning's `Trainer` which you can read more about [here](https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html).
