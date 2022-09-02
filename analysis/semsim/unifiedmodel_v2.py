@@ -290,7 +290,7 @@ class RRUMV2(pl.LightningModule):
         self.optimizer_config = optimizer_config
         self.model_name_or_path = model_name_or_path
         self.channel_embeddings = channel_embeddings
-        self.transformer_models = nn.ModuleDict({})
+        self.transformer_models = nn.ModuleDict({}) if text_types else None
         for t in self.text_types:
             self.transformer_models[t] = Transformer(self.model_name_or_path)
         if freeze_policy is not None:
@@ -298,17 +298,17 @@ class RRUMV2(pl.LightningModule):
                 for name, param in model.named_parameters():
                     if freeze_policy(name):
                         param.requires_grad = False
-
-        word_emb_dim = self.transformer_models[self.text_types[0]
-                                               ].get_word_embedding_dimension()
-        self.pooler = Pooling(word_emb_dim, 'mean')
-        pooled_output_dim = self.pooler.get_sentence_embedding_dimension()
+        if self.transformer_models:
+            word_emb_dim = self.transformer_models[self.text_types[0]
+                                                   ].get_word_embedding_dimension()
+            self.pooler = Pooling(word_emb_dim, 'mean')
+            pooled_output_dim = self.pooler.get_sentence_embedding_dimension()
 
         if self.channel_embeddings and channel_embedding_dim:
             self.channel_emb_fc = nn.Linear(
                 channel_embedding_dim * len(self.channel_embeddings), channel_embedding_dim)
 
-        mlp_input_dim = len(self.transformer_models) * pooled_output_dim + len(
+        mlp_input_dim = (len(self.transformer_models) * pooled_output_dim if self.transformer_models else 0) + len(
             self.scalar_features) + (channel_embedding_dim if channel_embedding_dim else 0)
         self.fc1 = nn.Linear(mlp_input_dim, 1024)
         self.fc2 = nn.Linear(1024, 256)
@@ -331,13 +331,14 @@ class RRUMV2(pl.LightningModule):
 
     def forward(self, x):
         # transformer models forwards
-        transformer_embeddings = []
-        for f in self.text_types:
-            inputs = {key.split(f'{f}_')[1]: x[key]
-                      for key in x if f in key}  # e.g. title_input_ids -> input_ids since we have separate input_ids for each text_type
-            output = self.transformer_models[f](inputs)
-            output = self.pooler(output)
-            transformer_embeddings.append(output['sentence_embedding'])
+        if self.transformer_models:
+            transformer_embeddings = []
+            for f in self.text_types:
+                inputs = {key.split(f'{f}_')[1]: x[key]
+                          for key in x if f in key}  # e.g. title_input_ids -> input_ids since we have separate input_ids for each text_type
+                output = self.transformer_models[f](inputs)
+                output = self.pooler(output)
+                transformer_embeddings.append(output['sentence_embedding'])
 
         # channel embeddings forward
         if self.channel_embeddings:
@@ -347,7 +348,7 @@ class RRUMV2(pl.LightningModule):
             channels_emb = self.dropout(channels_emb)
 
         # concat all features
-        x = torch.cat(transformer_embeddings +
+        x = torch.cat((transformer_embeddings if self.transformer_models else []) +
                       ([channels_emb] if self.channel_embeddings else []) +
                       [x[scalar][:, None] for scalar in self.scalar_features],
                       1
