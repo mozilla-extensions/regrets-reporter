@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, get_linear_schedule_with_warmup
 from sentence_transformers.models import Transformer, Pooling
 from google.cloud.bigquery_storage_v1.reader import ReadRowsIterable
 import datasets
@@ -281,7 +281,7 @@ class RRUMDatasetV2():
 
 
 class RRUMV2(pl.LightningModule):
-    def __init__(self, text_types, scalar_features, label_col, optimizer_config, model_name_or_path, channel_embeddings=[], channel_embedding_dim=None, freeze_policy=None, pos_weight=None):
+    def __init__(self, text_types, scalar_features, label_col, model_name_or_path, optimizer_config=None, channel_embeddings=[], channel_embedding_dim=None, freeze_policy=None, pos_weight=None):
         super().__init__()
         self.save_hyperparameters()
         self.text_types = text_types
@@ -371,7 +371,19 @@ class RRUMV2(pl.LightningModule):
         return x
 
     def configure_optimizers(self):
-        return self.optimizer_config(self)
+        if self.optimizer_config:
+            return self.optimizer_config(self)
+
+        optimizer = torch.optim.AdamW(self.parameters(), lr=5e-5)
+        scheduler = get_linear_schedule_with_warmup(
+            optimizer,
+            num_warmup_steps=int(
+                self.trainer.estimated_stepping_batches * 0.05),
+            num_training_steps=self.trainer.estimated_stepping_batches,
+        )
+        scheduler = {'scheduler': scheduler,
+                     'interval': 'step', 'frequency': 1}
+        return [optimizer], [scheduler]
 
     def training_step(self, train_batch, batch_idx):
         y = train_batch[self.label_col].unsqueeze(1).float()
