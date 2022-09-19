@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup
 from google.cloud.bigquery_storage_v1.reader import ReadRowsIterable
 import datasets
 import pandas as pd
@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch
 import types
 import multiprocessing
-from .text_cleaning import clean_text_funcs
+from .utils.text_cleaning import clean_text_funcs
 
 
 class RRUMDataset():
@@ -263,7 +263,7 @@ class RRUMDataset():
 
 
 class RRUM(pl.LightningModule):
-    def __init__(self, text_types, scalar_features, label_col, optimizer_config, cross_encoder_model_name_or_path, freeze_policy=None, pos_weight=None):
+    def __init__(self, text_types, scalar_features, label_col, cross_encoder_model_name_or_path, optimizer_config=None, freeze_policy=None, pos_weight=None):
         super().__init__()
         self.save_hyperparameters()
         self.text_types = text_types
@@ -311,7 +311,19 @@ class RRUM(pl.LightningModule):
         return x
 
     def configure_optimizers(self):
-        return self.optimizer_config(self)
+        if self.optimizer_config:
+            return self.optimizer_config(self)
+
+        optimizer = torch.optim.AdamW(self.parameters(), lr=5e-5)
+        scheduler = get_linear_schedule_with_warmup(
+            optimizer,
+            num_warmup_steps=int(
+                self.trainer.estimated_stepping_batches * 0.05),
+            num_training_steps=self.trainer.estimated_stepping_batches,
+        )
+        scheduler = {'scheduler': scheduler,
+                     'interval': 'step', 'frequency': 1}
+        return [optimizer], [scheduler]
 
     def training_step(self, train_batch, batch_idx):
         y = train_batch[self.label_col].unsqueeze(1).float()
