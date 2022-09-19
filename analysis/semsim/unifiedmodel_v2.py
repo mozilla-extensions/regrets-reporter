@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch
 import types
 import multiprocessing
-from .text_cleaning import clean_text_funcs
+from .utils.text_cleaning import clean_text_funcs
 
 
 class RRUMDatasetV2():
