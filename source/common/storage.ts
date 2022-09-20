@@ -36,6 +36,7 @@ export function useExtensionState<A>(key: string, defaultValue: A): [A, (val?: A
 }
 
 export const localStorageKeys = {
+	studyResultsClicked: 'study_results_clicked',
 	onboardingCompleted: 'onboarding_completed',
 	experimentOptedIn: 'experiment_opted_in',
 	installationId: 'installation_id',

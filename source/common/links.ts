@@ -7,3 +7,4 @@ export const reminderSurveyUrl = 'https://mozillafoundation.typeform.com/to/b1Pi
 export const privacyNoticeUrl = 'https://foundation.mozilla.org/youtube/regretsreporter/privacy-notice/';
 export const experimentGroupsUrl = 'https://github.com/mozilla-extensions/regrets-reporter/blob/main/experimentinfo.md';
 export const onboardingUrl = browser.runtime.getURL('get-started/index.html');
+export const studyResultsUrl = 'https://foundation.mozilla.org/youtube/user-controls/';

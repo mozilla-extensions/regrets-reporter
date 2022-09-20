@@ -24,6 +24,7 @@ import {
 	installationId,
 	installReason,
 	onboardingCompleted as onboardingCompletedValue,
+	studyResultsClicked as studyResultsClickedValue,
 	surveyReminderDate,
 	videosPlayedSet,
 } from '../common/common';
@@ -121,16 +122,10 @@ export class BackgroundScript {
 	}
 
 	async updateBadgeIcon() {
-		const allSurveysCompleted = await allSurveysCompletedValue.acquire();
-		const onboardingCompleted = await onboardingCompletedValue.acquire();
-		const now = +new Date();
-		const reminderDate = await surveyReminderDate.acquire();
-		const showSurveyReminder = !allSurveysCompleted && reminderDate && now > reminderDate;
-		log('update badge icon', reminderDate, now, showSurveyReminder);
-		const icon =
-			!onboardingCompleted || showSurveyReminder
-				? 'assets/icon/icon-toolbar-badge.svg.38x38.png'
-				: 'assets/icon/icon-toolbar-active.svg.38x38.png';
+		const studyResultsClicked = await studyResultsClickedValue.acquire();
+		const icon = !studyResultsClicked
+			? 'assets/icon/icon-toolbar-badge.svg.38x38.png'
+			: 'assets/icon/icon-toolbar-active.svg.38x38.png';
 		await browser.browserAction.setIcon({
 			path: icon,
 		});
@@ -416,6 +411,12 @@ export class BackgroundScript {
 
 	async onReminderSurveyClick() {
 		await allSurveysCompletedValue.set(true);
+		await this.updateBadgeIcon();
+	}
+
+	async onStudyResultsClick() {
+		await studyResultsClickedValue.set(true);
+		// await allSurveysCompletedValue.set(true);
 		await this.updateBadgeIcon();
 	}
 

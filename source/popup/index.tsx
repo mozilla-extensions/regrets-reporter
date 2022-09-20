@@ -1,13 +1,15 @@
 import * as React from 'react';
 import '../common/tailwind.css';
-import { experimentGroupsUrl, onboardingUrl, reminderSurveyUrl, surveyUrl } from '../common/links';
+import { experimentGroupsUrl, onboardingUrl, reminderSurveyUrl, studyResultsUrl, surveyUrl } from '../common/links';
 import { allSurveysCompleted, installationId, installReason, surveyReminderDate } from '../common/common';
 import { localStorageKeys, useExtensionState } from '../common/storage';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { getBackgroundScript } from '../common/helpers';
+
 export function Main() {
 	const installReasonValue = installReason.use();
 	const [onboardingCompleted] = useExtensionState(localStorageKeys.onboardingCompleted, false);
+	const [experimentOptedIn] = useExtensionState(localStorageKeys.experimentOptedIn, false);
 
 	const surveyDate = surveyReminderDate.use();
 	const secondSurveyCompleted = allSurveysCompleted.use();
@@ -20,6 +22,42 @@ export function Main() {
 		await bg.onReminderSurveyClick();
 		window.open(personalSurveyUrl, '_blank');
 	}, []);
+
+	const onSurveyResultClick = useCallback(async () => {
+		const bg = await getBackgroundScript();
+		await bg.onStudyResultsClick();
+		window.open(studyResultsUrl, '_blank');
+	}, []);
+
+	if (experimentOptedIn) {
+		return (
+			<div className="m-3 text-sm">
+				Thanks for your participation!
+				<br />
+				We have now analysed the data and our findings are available{' '}
+				<a onClick={onSurveyResultClick} className="underline text-red-70 cursor-pointer" rel="noreferrer">
+					here
+				</a>
+				.
+			</div>
+		);
+	} else {
+		return (
+			<div className="m-3 text-sm">
+				<p>
+					We understand that you chose not to opt in to our experiment and no data has been collected from this
+					installation.
+				</p>
+				<p>
+					We have now analysed the data that was contributed and our findings are available{' '}
+					<a onClick={onSurveyResultClick} className="underline text-red-70 cursor-pointer" rel="noreferrer">
+						here
+					</a>
+					.
+				</p>
+			</div>
+		);
+	}
 
 	if (showSurveyReminder) {
 		return (

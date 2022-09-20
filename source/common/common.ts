@@ -99,6 +99,8 @@ export const surveyReminderDate = new StorageValue<number | null>(localStorageKe
 
 export const allSurveysCompleted = new StorageValue<boolean>(localStorageKeys.allSurveysCompleted, () => false);
 
+export const studyResultsClicked = new StorageValue<boolean>(localStorageKeys.studyResultsClicked, () => false);
+
 export const onboardingCompleted = new StorageValue<boolean>(localStorageKeys.onboardingCompleted, () => false);
 
 export const errorReportingEnabled = new StorageValue<boolean>(localStorageKeys.errorReportingEnabled, () => false);
