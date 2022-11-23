@@ -13,7 +13,7 @@ main:
       - https://bugzilla.mozilla.org/show_bug.cgi?id=1740483
     data_reviews: &data_review
       - https://github.com/mozilla-extensions/regrets-reporter/issues/24
-    expires: &expires 2022-12-03
+    expires: &expires 2023-12-03
   video_played:
     type: event
     description: Event sent on video plays
