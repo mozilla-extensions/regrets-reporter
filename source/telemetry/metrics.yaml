@@ -8,7 +8,7 @@ main:
     description: Event sent after user clicks submit on onboarding page
     notification_emails: &notification_emails
       - jessed@mozillafoundation.org
-      - brandi@mozillafoundation.org
+      - rebeccar@mozillafoundation.org
     bugs: &bugs
       - https://bugzilla.mozilla.org/show_bug.cgi?id=1740483
     data_reviews: &data_review
