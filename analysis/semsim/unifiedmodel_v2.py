@@ -281,7 +281,7 @@ class RRUMDatasetV2():
 
 
 class RRUMV2(pl.LightningModule):
-    def __init__(self, text_types, scalar_features, label_col, model_name_or_path, optimizer_config=None, channel_embeddings=[], channel_embedding_dim=None, freeze_policy=None, pos_weight=None):
+    def __init__(self, text_types, scalar_features, label_col, model_name_or_path, optimizer_config=None, channel_embeddings=[], channel_embedding_dim=None, freeze_policy=None, pos_weight=None, dropout=0.1):
         super().__init__()
         self.save_hyperparameters()
         self.text_types = text_types
@@ -315,7 +315,7 @@ class RRUMV2(pl.LightningModule):
         self.fc3 = nn.Linear(256, 1)
         self.norm1 = nn.LayerNorm(mlp_input_dim, eps=1e-5)
         self.norm2 = nn.LayerNorm(1024, eps=1e-5)
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(dropout)
         self.activation = nn.GELU()
 
         self.ac_metric = torchmetrics.Accuracy()
