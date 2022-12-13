@@ -164,6 +164,9 @@ export class BackgroundScript {
 	private attachInstallHook() {
 		browser.runtime.onInstalled.addListener(async (details) => {
 			await installReason.set(details.reason);
+			if (details.reason === 'browser_update' || details.reason === ('chrome_update' as any)) {
+				return;
+			}
 			if (details.reason === 'update') {
 				const [major] = details.previousVersion.split('.');
 				const majorVersion = parseInt(major, 10);
