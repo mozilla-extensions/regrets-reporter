@@ -98,7 +98,7 @@ simplejson==3.17.6
 six==1.16.0
 smmap==5.0.0
 soupsieve==2.3.1
-streamlit==1.5.1
+streamlit==1.11.1
 streamlit-aggrid==0.2.2.post2
 streamlit-player==0.1.5
 terminado==0.12.1
