@@ -281,16 +281,6 @@
   dependencies:
     "@parcel/plugin" "2.0.0-rc.0"
 
-"@mozilla/glean@^0.29.0":
-  version "0.29.0"
-  resolved "https://registry.yarnpkg.com/@mozilla/glean/-/glean-0.29.0.tgz#57920fe7658a9aae8f43bb05df2a7646e2a22502"
-  integrity sha512-XcM7J8yJuw1grIJgHgrYmeJlZ4ktTrxLoqvKdxPrmuTAcKNEOX1udisVC7//VdQ/3GUe7FCl8dwdN81b//rWJQ==
-  dependencies:
-    fflate "^0.7.1"
-    jose "^4.0.4"
-    tslib "^2.3.1"
-    uuid "^8.3.2"
-
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"

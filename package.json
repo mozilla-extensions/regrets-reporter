@@ -8,8 +8,7 @@
 		"lint:css": "stylelint source/**/*.css",
 		"lint:js": "eslint source",
 		"test": "run-p lint:* build",
-		"watch": "NODE_ENV=development parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr",
-		"build:glean": "glean translate source/telemetry/metrics.yaml source/telemetry/pings.yaml -f typescript -o source/telemetry/generated"
+		"watch": "NODE_ENV=development parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr"
 	},
 	"browserslist": [
 		"last 1 Chrome version",
@@ -30,7 +29,6 @@
 	},
 	"dependencies": {
 		"@kkirbatski/parcel-resolver-require-resolve": "^1.0.1",
-		"@mozilla/glean": "^0.29.0",
 		"@parcel/config-webextension": "^2.0.0-rc.0",
 		"@sentry/browser": "^5.15.5",
 		"classnames": "^2.3.1",

@@ -1,5 +1,4 @@
 import { browser, Runtime, WebRequest } from 'webextension-polyfill-ts';
-import Glean from '@mozilla/glean/webext';
 import * as Sentry from '@sentry/browser';
 import {
 	AuthRecordedEvent,
@@ -29,16 +28,6 @@ import {
 	videosPlayedSet,
 } from '../common/common';
 import { v4 as uuid } from 'uuid';
-import * as telemetryEvents from '../telemetry/generated/main';
-import { nativeUiInteraction, onboardingCompleted } from '../telemetry/generated/main';
-import * as metadataEvents from '../telemetry/generated/metadata';
-import * as videoData from '../telemetry/generated/videoData';
-import * as regretDetails from '../telemetry/generated/regretDetails';
-import {
-	mainEvents as mainEventsPing,
-	regretDetails as regretDetailsPing,
-	videoData as videoDataPing,
-} from '../telemetry/generated/pings';
 
 // inject browser polyfill into global scope
 (window as any).browser = browser;
@@ -105,20 +94,6 @@ export class BackgroundScript {
 
 		// initialize played video set
 		await videosPlayedSet.acquire();
-
-		// initialize Glean
-		const enableUploads = experimentArmValue !== ExperimentArm.OptOut;
-		Glean.initialize('regrets.reporter.ucs', enableUploads, {
-			serverEndpoint: process.env.TELEMETRY_SERVER,
-			appBuild: process.env.EXTENSION_VERSION,
-			appDisplayVersion: process.env.EXTENSION_VERSION,
-		});
-
-		Glean.setLogPings(loggingOn);
-
-		metadataEvents.installationId.set(installId);
-		metadataEvents.experimentArm.set(experimentArmValue);
-		metadataEvents.feedbackUiVariant.set(feedbackUiVariantValue);
 	}
 
 	async updateBadgeIcon() {
@@ -214,7 +189,6 @@ export class BackgroundScript {
 			...message.data,
 		};
 		await this.pushEvent(EventType.VideoViewed, 'VideoViewed' as any, tabId, message.data);
-		telemetryEvents.videoPlayed.record({ videos_played: playedVideoCount });
 	}
 
 	private attachAlarmListener() {
@@ -258,13 +232,6 @@ export class BackgroundScript {
 		if (await this.dataCollectionDisabled()) {
 			return;
 		}
-		const video = this.videoIndex[message.videoId];
-		const videoDataId = recordVideoData(video ? video : { id: message.videoId });
-		nativeUiInteraction.record({
-			feedback_type: message.feedbackType,
-			video_data_id: videoDataId,
-		});
-		mainEventsPing.submit();
 		return this.pushEvent(EventType.NativeFeedbackSent, message.feedbackType, tabId, {
 			videoId: message.videoId,
 			feedbackType: message.feedbackType,
@@ -282,9 +249,6 @@ export class BackgroundScript {
 		}
 		const video = this.videoIndex[message.videoId];
 		const videoDataId = recordVideoData(video ? video : { id: message.videoId });
-		regretDetails.videoDataId.set(videoDataId);
-		regretDetails.feedbackText.set(message.feedbackText);
-		regretDetailsPing.submit();
 		return this.pushEvent(EventType.RegretDetailsSubmitted, 'RegretDetailsSubmitted', tabId, {
 			videoId: message.videoId,
 			feedbackText: message.feedbackText,
@@ -327,8 +291,6 @@ export class BackgroundScript {
 
 		if (!(await this.dataCollectionDisabled())) {
 			const videoDataId = recordVideoData(video ? video : { id: message.videoId });
-			telemetryEvents.regretAction.record({ feedback_type: feedbackType || 'none', video_data_id: videoDataId });
-			mainEventsPing.submit();
 			await this.pushEvent(EventType.VideoRegretted, feedbackType, tabId, video);
 		}
 
@@ -355,20 +317,13 @@ export class BackgroundScript {
 				...videoData.tokens,
 			};
 			await this.pushEvent(EventType.VideoBatchRecorded, message.batchType, tabId, videoData);
-			const videoDataId = recordVideoData(videoData);
-			telemetryEvents.videoRecommended.record({
-				video_data_id: videoDataId,
-				recommendation_type: message.batchType,
-			});
 		}
-		mainEventsPing.submit();
 		return;
 	}
 
 	// method called from options page
 	sendDataDeletionRequest(): void {
 		experimentArm.set(ExperimentArm.OptOut);
-		Glean.setUploadEnabled(false);
 	}
 
 	// method called from onboarding page
@@ -376,18 +331,11 @@ export class BackgroundScript {
 		if (!experimentOptedIn) {
 			return;
 		}
-		Glean.setUploadEnabled(true);
 
 		const experimentArmValue = await experimentArm.reset();
 		const installId = await installationId.acquire();
 		const feedbackUiVariantValue = await feedbackUiVariant.acquire();
 
-		metadataEvents.installationId.set(installId);
-		metadataEvents.experimentArm.set(experimentArmValue);
-		metadataEvents.feedbackUiVariant.set(feedbackUiVariantValue);
-
-		onboardingCompleted.record();
-		mainEventsPing.submit();
 	}
 
 	private async initializeSurveyAlarm(create = false): Promise<number> {
@@ -425,14 +373,10 @@ export class BackgroundScript {
 
 	async updateFeedbackUiVariant(variant: FeedbackUiVariant): Promise<void> {
 		await feedbackUiVariant.set(variant);
-		metadataEvents.feedbackUiVariant.set(variant);
-		mainEventsPing.submit();
 	}
 
 	async updateExperimentArm(arm: ExperimentArm): Promise<void> {
 		await experimentArm.set(arm);
-		metadataEvents.experimentArm.set(arm);
-		mainEventsPing.submit();
 	}
 
 	private async getUniquePlayedVideosCount() {
@@ -493,13 +437,5 @@ function recordVideoData(data: Partial<VideoData>): string {
 		channelId: data.channel?.url,
 		description: data.description,
 	};
-
-	Object.keys(payload).forEach(function (key: keyof typeof payload) {
-		const value = payload[key];
-		if (typeof value !== 'undefined') {
-			videoData[key].set(value);
-		}
-	});
-	videoDataPing.submit();
 	return videoDataId;
 }
